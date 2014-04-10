@@ -1,8 +1,8 @@
 package net.mcft.copy.backpacks.client;
 
+import net.minecraft.util.ResourceLocation;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.util.ResourceLocation;
 
 @SideOnly(Side.CLIENT)
 public final class BackpackResources {
