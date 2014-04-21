@@ -23,7 +23,7 @@ import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class CommonProxy {
 	
@@ -38,7 +38,7 @@ public class CommonProxy {
 		// BackpackRegistry.registerBackpackEntity(EntityEnderman.class, backpack, 1.0 / 80);
 	}
 	
-	@EventHandler
+	@SubscribeEvent
 	public void onEntityContructing(EntityConstructing event) {
 		
 		if (!(event.entity instanceof EntityLivingBase)) return;
@@ -50,7 +50,7 @@ public class CommonProxy {
 			
 	}
 	
-	@EventHandler
+	@SubscribeEvent
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		
 		EntityPlayer player = event.entityPlayer;
@@ -69,7 +69,7 @@ public class CommonProxy {
 		
 	}
 	
-	@EventHandler
+	@SubscribeEvent
 	public void onEntityInteract(EntityInteractEvent event) {
 		
 		if (!(event.target instanceof EntityLivingBase)) return;
@@ -85,7 +85,7 @@ public class CommonProxy {
 		
 	}
 	
-	@EventHandler
+	@SubscribeEvent
 	public void onSpecialSpawn(SpecialSpawn event) {
 		
 		EntityLivingBase entity = event.entityLiving;
@@ -103,7 +103,7 @@ public class CommonProxy {
 		
 	}
 	
-	@EventHandler
+	@SubscribeEvent
 	public void onLivingUpdate(LivingUpdateEvent event) {
 		
 		EntityLivingBase entity = event.entityLiving;
