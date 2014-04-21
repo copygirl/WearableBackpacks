@@ -8,6 +8,7 @@ import net.mcft.copy.core.util.NbtUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileEntityBackpack extends TileEntity
                                 implements IBackpackTileEntity {
@@ -16,6 +17,7 @@ public class TileEntityBackpack extends TileEntity
 	private IBackpackData backpackData = null;
 	
 	public int playersUsing = 0;
+	public ForgeDirection orientation = ForgeDirection.UNKNOWN;
 	
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
