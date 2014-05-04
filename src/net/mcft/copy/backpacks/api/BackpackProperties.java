@@ -31,8 +31,11 @@ public class BackpackProperties implements IExtendedEntityProperties {
 	public void saveNBTData(NBTTagCompound compound) {
 		if (backpackStack != null)
 			compound.setTag("stack", backpackStack.writeToNBT(new NBTTagCompound()));
-		if (backpackData != null)
-			compound.setTag("data", backpackData.writeToNBT(new NBTTagCompound()));
+		if (backpackData != null) {
+			NBTTagCompound dataCompound = new NBTTagCompound();
+			backpackData.writeToNBT(dataCompound);
+			compound.setTag("data", dataCompound);
+		}
 	}
 	
 	@Override

@@ -4,6 +4,7 @@ import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.misc.BackpackDataItems;
+import net.mcft.copy.core.misc.BlockLocation;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,6 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor {
 	
@@ -24,9 +26,13 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	public boolean onItemUse(ItemStack stack, EntityPlayer player,
 	                         World world, int x, int y, int z, int side,
 	                         float hitX, float hitY, float hitZ) {
-		
+		// Check if the backpack is being placed on top of a solid block.
+		BlockLocation block = BlockLocation.get(world, x, y, z);
+		if (block.isReplaceable()
+				? !block.below().isSideSolid(ForgeDirection.UP)
+				: ((side != ForgeDirection.UP.ordinal()) || !block.isSideSolid(ForgeDirection.UP)))
+			return false;
 		return super.onItemUse(stack, player, world, x, y, z, side, hitX, hitY, hitZ);
-		
 	}
 	
 	// IBackpack implementation
@@ -49,7 +55,6 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	
 	@Override
 	public void onEquippedInteract(EntityPlayer player, EntityLivingBase target) {
-		// TODO Auto-generated method stub
 		
 	}
 	
@@ -61,7 +66,7 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 		IBackpackData data = BackpackHelper.getEquippedBackpackData(entity);
 		if ((data == null) || !(data instanceof BackpackDataItems)) return;
 		BackpackDataItems dataItems = (BackpackDataItems)data;
-		// Drop items
+		// TODO: Drop items.
 	}
 
 	@Override
@@ -70,8 +75,13 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	}
 	
 	@Override
+	public void onBlockBreak(TileEntity tileEntity) {
+		// TODO: Drop items.
+	}
+	
+	@Override
 	public IBackpackData createBackpackData() {
-		return new BackpackDataItems(36); // TODO: Get backpack size.
+		return new BackpackDataItems(36); // TODO: Get configurable backpack size.
 	}
 	
 	// ISpecialArmor implementation

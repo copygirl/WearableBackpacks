@@ -6,6 +6,7 @@ import net.mcft.copy.backpacks.content.BackpackItems;
 import net.mcft.copy.backpacks.content.BackpackRecipes;
 import net.mcft.copy.backpacks.content.BackpackTileEntities;
 import net.mcft.copy.backpacks.proxy.CommonProxy;
+import net.mcft.copy.core.config.Config;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
@@ -23,8 +24,13 @@ public class WearableBackpacks
 	            serverSide = "net.mcft.copy.backpacks.proxy.CommonProxy")
 	private static CommonProxy proxy;
 	
+	public static Config config;
+	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		
+		config = new BackpacksConfig(MOD_ID, event.getSuggestedConfigurationFile());
+		config.load();
 		
 		proxy.init();
 		
@@ -32,6 +38,8 @@ public class WearableBackpacks
 		BackpackItems.register();
 		BackpackEntities.register();
 		BackpackTileEntities.register();
+		
+		config.save();
 		
 	}
 	

@@ -37,6 +37,9 @@ public interface IBackpack {
 	 *  The backpack is gone, but the backpack data is still there. */
 	public void onFaultyRemoval(EntityLivingBase entity);
 	
+	/** Called when this backpack is broken when placed down. */
+	public void onBlockBreak(TileEntity tileEntity);
+	
 	/** Creates and returns a new backpack data object for this backpack. */
 	public IBackpackData createBackpackData();
 	

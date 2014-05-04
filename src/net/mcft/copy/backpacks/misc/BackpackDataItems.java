@@ -15,13 +15,13 @@ public class BackpackDataItems implements IBackpackData {
 	}
 	
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+	public void writeToNBT(NBTTagCompound compound) {
 		compound.setTag("items", NbtUtils.writeItems(items));
-		return compound;
 	}
 	
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
+		// TODO: Capture invalid items and have them drop or similar?
 		NbtUtils.readItems(compound.getTagList("items", NBT.TAG_COMPOUND), items);
 	}
 	

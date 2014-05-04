@@ -4,7 +4,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
-/** Support is almost non-existant when WearableBackpacks isn't installed.
+/** Support is almost non-existent when WearableBackpacks isn't installed.
     It's recommended to either have it be required, or only add backpacks
     when the mod is present (check with Loader.isModLoaded). */ 
 public final class BackpackHelper {
@@ -37,7 +37,7 @@ public final class BackpackHelper {
 		return ((properties != null) ? properties.backpackStack : null);
 	}
 	
-	/** Returns if the entity can equip a backpack, for example if the
+	/** Returns if the entity can equip a backpack. Returns false if the
 	 *  chest armor slot is taken up or a backpack is already equipped. */
 	public static boolean canEquipBackpack(EntityLivingBase entity) {
 		if (getEquippedBackpack(entity) != null) return false;
@@ -62,7 +62,7 @@ public final class BackpackHelper {
 				properties.backpackStack = null;
 		} else if (properties != null) {
 			properties.backpackStack = backpack;
-			// remove any backpack in the chest slot
+			// Remove any backpack in the chest slot
 			// in case the setting was changed.
 			if (getBackpackInChestSlot(entity) != null)
 				setEquipmentInChestSlot(entity, null);
