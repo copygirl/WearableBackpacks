@@ -36,7 +36,7 @@ public class BlockBackpack extends BlockTileEntityBase implements IRotatableBoun
 	public Class<? extends ItemBlock> getItemClass() { return itemClass; }
 	
 	@Override
-	protected String getBlockNameInternal() { return NameUtils.getGameItemName(itemClass); }
+	protected String getNameInternal() { return NameUtils.getGameItemName(itemClass); }
 	
 	// Block methods
 	
