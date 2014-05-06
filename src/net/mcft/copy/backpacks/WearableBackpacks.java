@@ -32,12 +32,12 @@ public class WearableBackpacks
 		config = new BackpacksConfig(MOD_ID, event.getSuggestedConfigurationFile());
 		config.load();
 		
-		proxy.init();
-		
 		BackpackBlocks.register();
 		BackpackItems.register();
 		BackpackEntities.register();
 		BackpackTileEntities.register();
+		
+		proxy.init();
 		
 		config.save();
 		
