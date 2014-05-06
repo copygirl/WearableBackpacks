@@ -20,6 +20,7 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	
 	public ItemBackpack(Block block) {
 		super(block);
+		setMaxStackSize(1);
 	}
 	
 	@Override
