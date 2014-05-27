@@ -30,6 +30,7 @@ public class BlockBackpack extends BlockTileEntityBase implements IRotatableBoun
 	public BlockBackpack(Class<? extends ItemBackpack> itemClass) {
 		this(itemClass, Material.cloth);
 		setStepSound(Block.soundTypeCloth);
+		setHardness(1.5F);
 	}
 	
 	@Override
