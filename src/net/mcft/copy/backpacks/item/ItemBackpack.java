@@ -74,7 +74,7 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	@Override
 	public void onDeath(EntityLivingBase entity) {
 		IBackpackData data = BackpackHelper.getEquippedBackpackData(entity);
-		if ((data == null) || !(data instanceof BackpackDataItems)) return;
+		if (!(data instanceof BackpackDataItems)) return;
 		BackpackDataItems dataItems = (BackpackDataItems)data;
 		// TODO: Drop items.
 	}

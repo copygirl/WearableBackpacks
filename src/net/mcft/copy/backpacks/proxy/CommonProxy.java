@@ -73,7 +73,7 @@ public class CommonProxy {
 		                               0.5F, 0.5F, 0.5F);
 		
 		if (backpack.stackSize <= 0) {
-			BlockLocation block = BlockLocation.get(player.worldObj, event.x, event.y, event.z);
+			BlockLocation block = BlockLocation.get(player.worldObj, event.x, event.y + 1, event.z);
 			TileEntity tileEntity = block.getTileEntity();
 			if (tileEntity instanceof IBackpackTileEntity) {
 				BackpackHelper.getBackpackType(backpack).onUnequip(player, cast(tileEntity));
