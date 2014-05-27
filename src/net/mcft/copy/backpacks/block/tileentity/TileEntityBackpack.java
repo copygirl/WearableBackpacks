@@ -16,9 +16,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class TileEntityBackpack extends TileEntityBase
                                 implements IBackpackTileEntity {
 	
-	public static final String TAG_STACK = "stack";
+	public static final String TAG_STACK         = "stack";
 	public static final String TAG_BACKPACK_DATA = "data";
-	public static final String TAG_ORIENTATION = "orientation";
+	public static final String TAG_ORIENTATION   = "orientation";
 	
 	private ItemStack backpackStack = null;
 	private IBackpackData backpackData = null;
@@ -27,6 +27,9 @@ public class TileEntityBackpack extends TileEntityBase
 	public ForgeDirection orientation = ForgeDirection.UNKNOWN;
 	
 	// Loading, saving and syncing
+	
+	@Override
+	public boolean hasDescriptionPacket() { return true; }
 	
 	@Override
 	public void write(NBTTagCompound compound) {
@@ -83,8 +86,9 @@ public class TileEntityBackpack extends TileEntityBase
 	@Override
 	public void onBlockPlaced(EntityLivingBase entity, ItemStack stack,
 	                          ForgeDirection side, float hitX, float hitY, float hitZ) {
-		backpackStack = stack.copy();
 		orientation = DirectionUtils.getOrientation(entity).getOpposite();
+		setBackpackStack(stack.copy());
+		setBackpackData(getBackpackType().createBackpackData());
 	}
 	
 	@Override
@@ -109,6 +113,14 @@ public class TileEntityBackpack extends TileEntityBase
 	public void onBlockDestroyed(boolean brokenInCreative) {
 		if (getBackpackStack() != null)
 			getBackpackType().onBlockBreak(this);
+	}
+	
+	@Override
+	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side,
+	                                float hitX, float hitY, float hitZ) {
+		if (getBackpackStack() != null)
+			getBackpackType().onPlacedInteract(player, this);
+		return true;
 	}
 	
 	// Helper methods

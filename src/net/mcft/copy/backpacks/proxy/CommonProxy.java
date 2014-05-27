@@ -8,6 +8,8 @@ import net.mcft.copy.backpacks.api.BackpackProperties;
 import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
+import net.mcft.copy.core.container.ContainerBase;
+import net.mcft.copy.core.container.ContainerRegistry;
 import net.mcft.copy.core.misc.BlockLocation;
 import net.mcft.copy.core.misc.EquipmentSlot;
 import net.mcft.copy.core.util.EntityUtils;
@@ -32,6 +34,8 @@ public class CommonProxy {
 	public void init() {
 		MinecraftForge.EVENT_BUS.register(this);
 		FMLCommonHandler.instance().bus().register(this);
+		
+		ContainerRegistry.register(ContainerBase.class);
 		
 		// TODO: Register entities to spawn with backpacks.
 		// BackpackRegistry.registerBackpackEntity(EntityZombie.class, backpack, 1.0 / 800);
