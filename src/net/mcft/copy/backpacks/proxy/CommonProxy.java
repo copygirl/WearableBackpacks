@@ -78,7 +78,7 @@ public class CommonProxy {
 			if (tileEntity instanceof IBackpackTileEntity) {
 				BackpackHelper.getBackpackType(backpack).onUnequip(player, cast(tileEntity));
 				BackpackHelper.setEquippedBackpack(player, null, null);
-			} else copycore.getLogger().error("TileEntity at " + block + " is not an IBackpackTileEntity");
+			} else copycore.getLogger().error("TileEntity at %s is not an IBackpackTileEntity", block);
 		}
 		
 	}

@@ -8,6 +8,8 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 public class BackpackDataItems implements IBackpackData {
 	
+	public static final String TAG_ITEMS = "items";
+	
 	public final ItemStack[] items;
 	
 	public BackpackDataItems(int size) {
@@ -16,13 +18,13 @@ public class BackpackDataItems implements IBackpackData {
 	
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
-		compound.setTag("items", NbtUtils.writeItems(items));
+		compound.setTag(TAG_ITEMS, NbtUtils.writeItems(items));
 	}
 	
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		// TODO: Capture invalid items and have them drop or similar?
-		NbtUtils.readItems(compound.getTagList("items", NBT.TAG_COMPOUND), items);
+		NbtUtils.readItems(compound.getTagList(TAG_ITEMS, NBT.TAG_COMPOUND), items);
 	}
 	
 }
