@@ -1,5 +1,7 @@
 package net.mcft.copy.backpacks.block.tileentity;
 
+import java.util.List;
+
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
@@ -113,6 +115,13 @@ public class TileEntityBackpack extends TileEntityBase
 	public void onBlockDestroyed(boolean brokenInCreative) {
 		if (getBackpackStack() != null)
 			getBackpackType().onBlockBreak(this);
+	}
+	
+	@Override
+	public void getBlockDrops(List<ItemStack> drops, int fortune) {
+		drops.clear();
+		ItemStack stack = getBackpackStack();
+		if (stack != null) drops.add(stack);
 	}
 	
 	@Override
