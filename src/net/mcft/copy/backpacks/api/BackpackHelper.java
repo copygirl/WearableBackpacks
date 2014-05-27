@@ -23,7 +23,7 @@ public final class BackpackHelper {
 	 *  Note that this will return null on entities which do not support backpacks
 	 *  (see {@link BackpackRegistry}) and when WearableBackpacks is not installed. */
 	public static BackpackProperties getBackpackProperties(EntityLivingBase entity) {
-		return (BackpackProperties)entity.getExtendedProperties(BackpackProperties.identifier);
+		return (BackpackProperties)entity.getExtendedProperties(BackpackProperties.IDENTIFIER);
 	}
 	
 	/** Returns an entity's equipped backpack, null if none. */

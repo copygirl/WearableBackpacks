@@ -10,7 +10,7 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 public class BackpackProperties implements IExtendedEntityProperties {
 	
 	// Used by EntityUtils.getIdentifier().
-	public static final String identifier = "WearableBackpack";
+	public static final String IDENTIFIER = "WearableBackpack";
 	
 	public ItemStack backpackStack = null;
 	public IBackpackData backpackData = null;
