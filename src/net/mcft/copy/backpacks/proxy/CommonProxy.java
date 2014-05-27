@@ -77,10 +77,18 @@ public class CommonProxy {
 			BlockLocation block = BlockLocation.get(player.worldObj, event.x, event.y + 1, event.z);
 			TileEntity tileEntity = block.getTileEntity();
 			if (tileEntity instanceof IBackpackTileEntity) {
+				IBackpack backpackType = BackpackHelper.getBackpackType(backpack);
+				IBackpackData backpackData = BackpackHelper.getEquippedBackpackData(player);
+				if (backpackData == null) {
+					copycore.getLogger().error("Backpack data was null when placing down backpack");
+					backpackData = backpackType.createBackpackData();
+				}
+				
 				IBackpackTileEntity backpackTileEntity = (IBackpackTileEntity)tileEntity;
 				backpackTileEntity.setBackpackStack(StackUtils.copy(backpack, 1));
-				backpackTileEntity.setBackpackData(BackpackHelper.getEquippedBackpackData(player));
-				BackpackHelper.getBackpackType(backpack).onUnequip(player, cast(tileEntity));
+				backpackTileEntity.setBackpackData(backpackData);
+				
+				backpackType.onUnequip(player, cast(tileEntity));
 				BackpackHelper.setEquippedBackpack(player, null, null);
 			} else copycore.getLogger().error("TileEntity at %s is not an IBackpackTileEntity", block);
 		}
@@ -99,8 +107,14 @@ public class CommonProxy {
 		ItemStack backpack = BackpackHelper.getEquippedBackpack(target);
 		if ((backpack == null) || !BackpackHelper.canInteractWithEquippedBackpack(player, target)) return;
 		
-		// When players right click equipped backpacks, interact with them.
 		IBackpack backpackType = BackpackHelper.getBackpackType(backpack);
+		BackpackProperties properties = BackpackHelper.getBackpackProperties(target);
+		if (properties.backpackData == null) {
+			copycore.getLogger().error("Backpack data was null when placing accessing equipped backpack");
+			properties.backpackData = backpackType.createBackpackData();
+		}
+		
+		// When players right click equipped backpacks, interact with them.
 		backpackType.onEquippedInteract(player, target);
 		
 	}
