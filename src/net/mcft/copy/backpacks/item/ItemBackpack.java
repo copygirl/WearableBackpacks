@@ -5,15 +5,12 @@ import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackTileEntity;
 import net.mcft.copy.backpacks.misc.BackpackDataItems;
-import net.mcft.copy.core.copycore;
 import net.mcft.copy.core.container.ContainerBase;
 import net.mcft.copy.core.inventory.InventoryStacks;
 import net.mcft.copy.core.misc.BlockLocation;
-import net.mcft.copy.core.network.packet.PacketOpenGui;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -50,18 +47,15 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	}
 	
 	@Override
-	public void onEquip(EntityPlayer player, TileEntity tileEntity) {  }
+	public <T extends TileEntity & IBackpackTileEntity> void onEquip(EntityPlayer player, T tileEntity) {  }
 	
 	@Override
-	public void onUnequip(EntityPlayer player, TileEntity tileEntity) {  }
+	public <T extends TileEntity & IBackpackTileEntity> void onUnequip(EntityPlayer player, T tileEntity) {  }
 	
 	@Override
-	public void onPlacedInteract(EntityPlayer player, TileEntity target) {
+	public <T extends TileEntity & IBackpackTileEntity> void onPlacedInteract(EntityPlayer player, T target) {
 		if (player.worldObj.isRemote) return;
-		
-		IBackpackTileEntity backpack = (IBackpackTileEntity)target;
-		BackpackDataItems data = (BackpackDataItems)backpack.getBackpackData();
-		
+		BackpackDataItems data = (BackpackDataItems)target.getBackpackData();
 		ContainerBase.create(player,
 				new InventoryStacks(data.items) {
 						@Override public String getInventoryName() { return "Backpack"; }
@@ -91,7 +85,7 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	}
 	
 	@Override
-	public void onBlockBreak(TileEntity tileEntity) {
+	public <T extends TileEntity & IBackpackTileEntity> void onBlockBreak(T tileEntity) {
 		// TODO: Drop items.
 	}
 	

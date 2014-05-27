@@ -11,14 +11,14 @@ public interface IBackpack {
 	public void onSpawnedWith(EntityLivingBase entity);
 	
 	/** Called before the backpack is equipped by a player. */
-	public void onEquip(EntityPlayer player, TileEntity tileEntity);
+	public <T extends TileEntity & IBackpackTileEntity> void onEquip(EntityPlayer player, T tileEntity);
 	
 	/** Called after the backpack is unequipped by a player. */
-	public void onUnequip(EntityPlayer player, TileEntity tileEntity);
+	public <T extends TileEntity & IBackpackTileEntity> void onUnequip(EntityPlayer player, T tileEntity);
 	
 	/** Called when a player interacts with a placed-down backpack. <br>
 	 *  The tile entity will be an instance of IBackpackProperties. */
-	public void onPlacedInteract(EntityPlayer player, TileEntity target);
+	public <T extends TileEntity & IBackpackTileEntity> void onPlacedInteract(EntityPlayer player, T target);
 	
 	/** Called when a player interacts with an equipped backpack. <br>
 	 *  Also called when a player opens eir own backpack while it's
@@ -38,7 +38,7 @@ public interface IBackpack {
 	public void onFaultyRemoval(EntityLivingBase entity);
 	
 	/** Called when this backpack is broken when placed down. */
-	public void onBlockBreak(TileEntity tileEntity);
+	public <T extends TileEntity & IBackpackTileEntity> void onBlockBreak(T tileEntity);
 	
 	/** Creates and returns a new backpack data object for this backpack. */
 	public IBackpackData createBackpackData();

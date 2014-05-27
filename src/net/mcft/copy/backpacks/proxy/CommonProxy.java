@@ -8,6 +8,8 @@ import net.mcft.copy.backpacks.api.BackpackProperties;
 import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
+import net.mcft.copy.backpacks.api.IBackpackTileEntity;
+import net.mcft.copy.core.copycore;
 import net.mcft.copy.core.container.ContainerBase;
 import net.mcft.copy.core.container.ContainerRegistry;
 import net.mcft.copy.core.misc.BlockLocation;
@@ -71,12 +73,17 @@ public class CommonProxy {
 		                               0.5F, 0.5F, 0.5F);
 		
 		if (backpack.stackSize <= 0) {
-			TileEntity tileEntity = BlockLocation.get(player.worldObj, event.x, event.y, event.z).getTileEntity();
-			BackpackHelper.getBackpackType(backpack).onUnequip(player, tileEntity);
-			BackpackHelper.setEquippedBackpack(player, null, null);
+			BlockLocation block = BlockLocation.get(player.worldObj, event.x, event.y, event.z);
+			TileEntity tileEntity = block.getTileEntity();
+			if (tileEntity instanceof IBackpackTileEntity) {
+				BackpackHelper.getBackpackType(backpack).onUnequip(player, cast(tileEntity));
+				BackpackHelper.setEquippedBackpack(player, null, null);
+			} else copycore.getLogger().error("TileEntity at " + block + " is not an IBackpackTileEntity");
 		}
 		
 	}
+	/** Just a helper method to get the TileEntity to also be an IBackpackTileEntity. */
+	private static <T extends TileEntity & IBackpackTileEntity> T cast(TileEntity tileEntity) { return (T)tileEntity; }
 	
 	@SubscribeEvent
 	public void onEntityInteract(EntityInteractEvent event) {
