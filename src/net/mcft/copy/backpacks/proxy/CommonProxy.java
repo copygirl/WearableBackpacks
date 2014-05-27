@@ -16,6 +16,7 @@ import net.mcft.copy.core.misc.BlockLocation;
 import net.mcft.copy.core.misc.EquipmentSlot;
 import net.mcft.copy.core.util.EntityUtils;
 import net.mcft.copy.core.util.RandomUtils;
+import net.mcft.copy.core.util.StackUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -76,6 +77,9 @@ public class CommonProxy {
 			BlockLocation block = BlockLocation.get(player.worldObj, event.x, event.y + 1, event.z);
 			TileEntity tileEntity = block.getTileEntity();
 			if (tileEntity instanceof IBackpackTileEntity) {
+				IBackpackTileEntity backpackTileEntity = (IBackpackTileEntity)tileEntity;
+				backpackTileEntity.setBackpackStack(StackUtils.copy(backpack, 1));
+				backpackTileEntity.setBackpackData(BackpackHelper.getEquippedBackpackData(player));
 				BackpackHelper.getBackpackType(backpack).onUnequip(player, cast(tileEntity));
 				BackpackHelper.setEquippedBackpack(player, null, null);
 			} else copycore.getLogger().error("TileEntity at %s is not an IBackpackTileEntity", block);
