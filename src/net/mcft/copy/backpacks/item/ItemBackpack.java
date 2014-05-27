@@ -8,6 +8,7 @@ import net.mcft.copy.backpacks.misc.BackpackDataItems;
 import net.mcft.copy.core.container.ContainerBase;
 import net.mcft.copy.core.inventory.InventoryStacks;
 import net.mcft.copy.core.misc.BlockLocation;
+import net.mcft.copy.core.util.WorldUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -53,9 +54,9 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	public <T extends TileEntity & IBackpackTileEntity> void onUnequip(EntityPlayer player, T tileEntity) {  }
 	
 	@Override
-	public <T extends TileEntity & IBackpackTileEntity> void onPlacedInteract(EntityPlayer player, T target) {
+	public <T extends TileEntity & IBackpackTileEntity> void onPlacedInteract(EntityPlayer player, T tileEntity) {
 		if (player.worldObj.isRemote) return;
-		BackpackDataItems data = (BackpackDataItems)target.getBackpackData();
+		BackpackDataItems data = (BackpackDataItems)tileEntity.getBackpackData();
 		ContainerBase.create(player,
 				new InventoryStacks(data.items) {
 						@Override public String getInventoryName() { return "Backpack"; }
@@ -86,7 +87,9 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	
 	@Override
 	public <T extends TileEntity & IBackpackTileEntity> void onBlockBreak(T tileEntity) {
-		// TODO: Drop items.
+		BackpackDataItems data = (BackpackDataItems)tileEntity.getBackpackData();
+		for (ItemStack stack : data.items)
+			WorldUtils.dropStackFromBlock(tileEntity, stack);
 	}
 	
 	@Override

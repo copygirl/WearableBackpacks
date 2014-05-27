@@ -16,9 +16,8 @@ public interface IBackpack {
 	/** Called after the backpack is unequipped by a player. */
 	public <T extends TileEntity & IBackpackTileEntity> void onUnequip(EntityPlayer player, T tileEntity);
 	
-	/** Called when a player interacts with a placed-down backpack. <br>
-	 *  The tile entity will be an instance of IBackpackProperties. */
-	public <T extends TileEntity & IBackpackTileEntity> void onPlacedInteract(EntityPlayer player, T target);
+	/** Called when a player interacts with a placed-down backpack. */
+	public <T extends TileEntity & IBackpackTileEntity> void onPlacedInteract(EntityPlayer player, T tileEntity);
 	
 	/** Called when a player interacts with an equipped backpack. <br>
 	 *  Also called when a player opens eir own backpack while it's
