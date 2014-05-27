@@ -28,7 +28,8 @@ public class ClientProxy extends CommonProxy {
 				BackpackBlocks.backpack, TileEntityBackpack.class,
 				new TileEntityRenderer(BackpackResources.textureBackpack,
 				                       new ModelBackpack(BackpackResources.modelBackpack)))
-				.setScale(1.5F).setOffset(-0.08F).setRotation(22.5F);
+				.setScale(1.5F).setOffset(-0.08F).setInventoryRotation(70.0F)
+				                                 .setThirdPersonRotation(-45.0F);
 		
 	}
 	

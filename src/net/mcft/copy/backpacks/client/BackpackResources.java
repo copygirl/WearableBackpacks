@@ -8,6 +8,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public final class BackpackResources {
 	
 	public static final ResourceLocation textureBackpack = new BackpacksResLoc("textures/models/backpack.png");
+	public static final ResourceLocation textureBackpackOverlay = new BackpacksResLoc("textures/models/backpack_overlay.png");
 	
 	public static final ResourceLocation modelBackpack = new BackpacksResLoc("models/backpack.obj");
 	

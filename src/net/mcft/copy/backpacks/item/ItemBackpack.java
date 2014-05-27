@@ -19,6 +19,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.util.ForgeDirection;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor {
 	
@@ -38,6 +40,16 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 				: ((side != ForgeDirection.UP.ordinal()) || !block.isSideSolid(ForgeDirection.UP)))
 			return false;
 		return super.onItemUse(stack, player, world, x, y, z, side, hitX, hitY, hitZ);
+	}
+	
+	@Override
+	public int getRenderPasses(int metadata) { return 2; }
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public int getColorFromItemStack(ItemStack stack, int pass) {
+		if (pass != 0) return 0xFFFFFF;
+		return 0xA06540;
 	}
 	
 	// IBackpack implementation

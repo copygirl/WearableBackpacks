@@ -6,17 +6,23 @@ import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackTileEntity;
+import net.mcft.copy.backpacks.client.BackpackResources;
 import net.mcft.copy.core.base.TileEntityBase;
+import net.mcft.copy.core.client.Color;
+import net.mcft.copy.core.client.renderer.ITextureProvider;
 import net.mcft.copy.core.util.DirectionUtils;
 import net.mcft.copy.core.util.NbtUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileEntityBackpack extends TileEntityBase
-                                implements IBackpackTileEntity {
+                                implements IBackpackTileEntity, ITextureProvider {
 	
 	public static final String TAG_STACK         = "stack";
 	public static final String TAG_BACKPACK_DATA = "data";
@@ -66,23 +72,6 @@ public class TileEntityBackpack extends TileEntityBase
 		}
 	}
 	
-	// IBackpackTileEntity implementation
-	
-	@Override
-	public ItemStack getBackpackStack() { return backpackStack; }
-	
-	@Override
-	public void setBackpackStack(ItemStack stack) { backpackStack = stack; }
-	
-	@Override
-	public IBackpackData getBackpackData() { return backpackData; }
-	
-	@Override
-	public void setBackpackData(IBackpackData data) { backpackData = data; }
-	
-	@Override
-	public boolean isUsedByPlayer() { return (playersUsing > 0); }
-	
 	// TileEntityBase methods
 	
 	@Override
@@ -130,6 +119,46 @@ public class TileEntityBackpack extends TileEntityBase
 		if (getBackpackStack() != null)
 			getBackpackType().onPlacedInteract(player, this);
 		return true;
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void onRenderAsItem(ItemStack stack) {
+		setBackpackStack(stack);
+	}
+	
+	// IBackpackTileEntity implementation
+	
+	@Override
+	public ItemStack getBackpackStack() { return backpackStack; }
+	@Override
+	public void setBackpackStack(ItemStack stack) { backpackStack = stack; }
+	@Override
+	public IBackpackData getBackpackData() { return backpackData; }
+	@Override
+	public void setBackpackData(IBackpackData data) { backpackData = data; }
+	@Override
+	public boolean isUsedByPlayer() { return (playersUsing > 0); }
+	
+	// ITextureProvider implementation
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public int getRenderPasses() {
+		ItemStack stack = getBackpackStack();
+		return ((stack != null) ? stack.getItem().getRenderPasses(stack.getItemDamage()) : 1);
+	}
+	@Override
+	@SideOnly(Side.CLIENT)
+	public ResourceLocation getTexture(int pass) {
+		if (pass != 1) return null;
+		return BackpackResources.textureBackpackOverlay;
+	}
+	@Override
+	@SideOnly(Side.CLIENT)
+	public Color getColor(int pass) {
+		ItemStack stack = getBackpackStack();
+		return ((stack != null) ? Color.fromRGB(stack.getItem().getColorFromItemStack(stack, pass)) : Color.WHITE);
 	}
 	
 	// Helper methods
