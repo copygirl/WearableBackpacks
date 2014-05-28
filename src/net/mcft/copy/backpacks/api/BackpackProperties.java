@@ -21,8 +21,6 @@ public class BackpackProperties implements IExtendedEntityProperties {
 	public IBackpack lastBackpackType = null;
 	public int playersUsing = 0;
 	
-	// IPropertiesBackpack implementation
-	
 	private EntityLivingBase entity;
 	
 	@Override
