@@ -60,10 +60,10 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	}
 	
 	@Override
-	public <T extends TileEntity & IBackpackTileEntity> void onEquip(EntityPlayer player, T tileEntity) {  }
+	public <T extends TileEntity & IBackpackTileEntity> void onEquip(EntityLivingBase entity, T tileEntity) {  }
 	
 	@Override
-	public <T extends TileEntity & IBackpackTileEntity> void onUnequip(EntityPlayer player, T tileEntity) {  }
+	public <T extends TileEntity & IBackpackTileEntity> void onUnequip(EntityLivingBase entity, T tileEntity) {  }
 	
 	@Override
 	public <T extends TileEntity & IBackpackTileEntity> void onPlacedInteract(EntityPlayer player, T tileEntity) {

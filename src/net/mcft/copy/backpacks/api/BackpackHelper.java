@@ -3,6 +3,7 @@ package net.mcft.copy.backpacks.api;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 
 /** Support is almost non-existent when WearableBackpacks isn't installed.
     It's recommended to either have it be required, or only add backpacks
@@ -40,7 +41,8 @@ public final class BackpackHelper {
 	/** Returns if the entity can equip a backpack. Returns false if the
 	 *  chest armor slot is taken up or a backpack is already equipped. */
 	public static boolean canEquipBackpack(EntityLivingBase entity) {
-		if (getEquippedBackpack(entity) != null) return false;
+		if ((getBackpackProperties(entity) == null) ||
+		    (getEquippedBackpack(entity) != null)) return false;
 		else if (equipAsChestArmor && (entity instanceof EntityPlayer))
 			return (getEquipmentInChestSlot(entity) == null);
 		else return (getBackpackProperties(entity) != null);
@@ -98,6 +100,20 @@ public final class BackpackHelper {
 		return (carrier.isEntityAlive() && (player == carrier) ||
 		        ((distance <= INTERACT_MAX_DISTANCE) &&
 		         (angle > (180 - INTERACT_MAX_ANGLE / 2))));
+	}
+	
+	/** Equips a backpack from a tile entity, returns if successful. */
+	public static <T extends TileEntity & IBackpackTileEntity> boolean equipBackpack(EntityLivingBase entity, T tileEntity) {
+		if (!canEquipBackpack(entity)) return false;
+		ItemStack stack = tileEntity.getBackpackStack();
+		getBackpackType(stack).onEquip(entity, tileEntity);
+		if (!entity.worldObj.isRemote) {
+			BackpackHelper.setEquippedBackpack(entity, stack, tileEntity.getBackpackData());
+			tileEntity.setBackpackStack(null);
+			tileEntity.setBackpackData(null);
+			// TODO: Sync backpack across players.
+		}
+		return true;
 	}
 	
 	// Helper functions

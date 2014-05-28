@@ -10,15 +10,15 @@ public interface IBackpack {
 	/** Called when an entity spawns with this backpack naturally. */
 	public void onSpawnedWith(EntityLivingBase entity);
 	
-	/** Called before the backpack is equipped by a player. <br>
+	/** Called before the backpack is equipped by an entity. <br>
 	 *  Note that on the client side, there's no certainty
 	 *  whether the backpack is actually equipped. */
-	public <T extends TileEntity & IBackpackTileEntity> void onEquip(EntityPlayer player, T tileEntity);
+	public <T extends TileEntity & IBackpackTileEntity> void onEquip(EntityLivingBase entity, T tileEntity);
 	
-	/** Called after the backpack is unequipped by a player. <br>
+	/** Called after the backpack is unequipped by an entity. <br>
 	 *  Note that on the client side, there's no certainty
 	 *  whether the backpack is actually unequipped. */
-	public <T extends TileEntity & IBackpackTileEntity> void onUnequip(EntityPlayer player, T tileEntity);
+	public <T extends TileEntity & IBackpackTileEntity> void onUnequip(EntityLivingBase entity, T tileEntity);
 	
 	/** Called when a player interacts with a placed-down backpack. */
 	public <T extends TileEntity & IBackpackTileEntity> void onPlacedInteract(EntityPlayer player, T tileEntity);

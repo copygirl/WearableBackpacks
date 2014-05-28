@@ -84,21 +84,8 @@ public class TileEntityBackpack extends TileEntityBase
 	
 	@Override
 	public boolean onBlockBreak(EntityPlayer player, boolean brokenInCreative) {
-		if (player.isSneaking()) {
-			// Don't break block if it can't be equipped.
-			if (!BackpackHelper.canEquipBackpack(player))
-				return false;
-			
-			getBackpackType().onEquip(player, this);
-			if (!player.worldObj.isRemote) {
-				BackpackHelper.setEquippedBackpack(
-						player, getBackpackStack(), getBackpackData());
-				setBackpackStack(null);
-				setBackpackData(null);
-			}
-			
-		}
-		return true;
+		if (!player.isSneaking()) return false;
+		return BackpackHelper.equipBackpack(player, this);
 	}
 	
 	@Override
