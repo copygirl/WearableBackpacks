@@ -89,12 +89,13 @@ public class TileEntityBackpack extends TileEntityBase
 			if (!BackpackHelper.canEquipBackpack(player))
 				return false;
 			
-			BackpackHelper.setEquippedBackpack(
-					player, getBackpackStack(), getBackpackData());
 			getBackpackType().onEquip(player, this);
-			
-			setBackpackStack(null);
-			setBackpackData(null);
+			if (!player.worldObj.isRemote) {
+				BackpackHelper.setEquippedBackpack(
+						player, getBackpackStack(), getBackpackData());
+				setBackpackStack(null);
+				setBackpackData(null);
+			}
 			
 		}
 		return true;

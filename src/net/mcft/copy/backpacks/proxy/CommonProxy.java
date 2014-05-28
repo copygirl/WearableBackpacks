@@ -63,8 +63,9 @@ public class CommonProxy {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		
 		EntityPlayer player = event.entityPlayer;
-		if ((event.action != Action.RIGHT_CLICK_BLOCK) || !player.isSneaking() ||
-		    (player.getEquipmentInSlot(EquipmentSlot.HELD) != null)) return;
+		if ((event.action != Action.RIGHT_CLICK_BLOCK) ||
+		    (player.getEquipmentInSlot(EquipmentSlot.HELD) != null) ||
+		    !player.isSneaking()) return;
 		
 		ItemStack backpack = BackpackHelper.getEquippedBackpack(player);
 		if (backpack == null) return;
@@ -77,9 +78,10 @@ public class CommonProxy {
 			BlockLocation block = BlockLocation.get(player.worldObj, event.x, event.y + 1, event.z);
 			TileEntity tileEntity = block.getTileEntity();
 			if (tileEntity instanceof IBackpackTileEntity) {
+				
 				IBackpack backpackType = BackpackHelper.getBackpackType(backpack);
 				IBackpackData backpackData = BackpackHelper.getEquippedBackpackData(player);
-				if (backpackData == null) {
+				if ((backpackData == null) && !player.worldObj.isRemote) {
 					copycore.getLogger().error("Backpack data was null when placing down backpack");
 					backpackData = backpackType.createBackpackData();
 				}
@@ -89,8 +91,13 @@ public class CommonProxy {
 				backpackTileEntity.setBackpackData(backpackData);
 				
 				backpackType.onUnequip(player, cast(tileEntity));
-				BackpackHelper.setEquippedBackpack(player, null, null);
-			} else copycore.getLogger().error("TileEntity at %s is not an IBackpackTileEntity", block);
+				
+				if (!player.worldObj.isRemote) {
+					BackpackHelper.setEquippedBackpack(player, null, null);
+					player.inventoryContainer.detectAndSendChanges();
+				}
+				
+			} else copycore.getLogger().error("TileEntity at {} is not an IBackpackTileEntity", block);
 		}
 		
 	}
@@ -109,7 +116,7 @@ public class CommonProxy {
 		
 		IBackpack backpackType = BackpackHelper.getBackpackType(backpack);
 		BackpackProperties properties = BackpackHelper.getBackpackProperties(target);
-		if (properties.backpackData == null) {
+		if ((properties.backpackData == null) && !player.worldObj.isRemote) {
 			copycore.getLogger().error("Backpack data was null when placing accessing equipped backpack");
 			properties.backpackData = backpackType.createBackpackData();
 		}
