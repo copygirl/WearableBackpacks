@@ -62,10 +62,12 @@ public class CommonProxy {
 	@SubscribeEvent
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		
+		// When players sneak-right-click the ground with an
+		// empty hand, place down their equipped backpack.
+		
 		EntityPlayer player = event.entityPlayer;
-		if ((event.action != Action.RIGHT_CLICK_BLOCK) ||
-		    (player.getEquipmentInSlot(EquipmentSlot.HELD) != null) ||
-		    !player.isSneaking()) return;
+		if ((event.action != Action.RIGHT_CLICK_BLOCK) || !player.isSneaking() ||
+		    (player.getEquipmentInSlot(EquipmentSlot.HELD) != null)) return;
 		
 		ItemStack backpack = BackpackHelper.getEquippedBackpack(player);
 		if (backpack == null) return;
@@ -107,6 +109,8 @@ public class CommonProxy {
 	@SubscribeEvent
 	public void onEntityInteract(EntityInteractEvent event) {
 		
+		// When players right click equipped backpacks, interact with them.
+		
 		if (!(event.target instanceof EntityLivingBase)) return;
 		EntityPlayer player = event.entityPlayer;
 		EntityLivingBase target = (EntityLivingBase)event.target;
@@ -120,8 +124,6 @@ public class CommonProxy {
 			copycore.getLogger().error("Backpack data was null when placing accessing equipped backpack");
 			properties.backpackData = backpackType.createBackpackData();
 		}
-		
-		// When players right click equipped backpacks, interact with them.
 		backpackType.onEquippedInteract(player, target);
 		
 	}
@@ -129,12 +131,14 @@ public class CommonProxy {
 	@SubscribeEvent
 	public void onSpecialSpawn(SpecialSpawn event) {
 		
+		// When an entity spawns naturally, check to see
+		// if it should spawn with a backpack.
+		
 		EntityLivingBase entity = event.entityLiving;
 		Map<Item, Double> chances = BackpackRegistry.entities.get(entity.getClass());
 		if ((chances == null) || chances.isEmpty()) return;
 		for (Entry<Item, Double> entry : chances.entrySet())
 			if (RandomUtils.getBoolean(entry.getValue())) {
-				// Spawn entity with backpack.
 				ItemStack stack = new ItemStack(entry.getKey());
 				IBackpack backpackType = BackpackHelper.getBackpackType(stack);
 				IBackpackData data = backpackType.createBackpackData();
@@ -146,6 +150,9 @@ public class CommonProxy {
 	
 	@SubscribeEvent
 	public void onLivingUpdate(LivingUpdateEvent event) {
+		
+		// Update equipped backpacks and check
+		// if they've been removed somehow.
 		
 		EntityLivingBase entity = event.entityLiving;
 		EntityPlayer player = ((entity instanceof EntityPlayer)
