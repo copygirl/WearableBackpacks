@@ -12,6 +12,9 @@ public class BackpackProperties implements IExtendedEntityProperties {
 	// Used by EntityUtils.getIdentifier().
 	public static final String IDENTIFIER = "WearableBackpack";
 	
+	public static final String TAG_STACK = "stack";
+	public static final String TAG_DATA = "data";
+	
 	public ItemStack backpackStack = null;
 	public IBackpackData backpackData = null;
 	
@@ -29,26 +32,32 @@ public class BackpackProperties implements IExtendedEntityProperties {
 	
 	@Override
 	public void saveNBTData(NBTTagCompound compound) {
+		NBTTagCompound properties = new NBTTagCompound();
 		if (backpackStack != null)
-			compound.setTag("stack", backpackStack.writeToNBT(new NBTTagCompound()));
+			properties.setTag(TAG_STACK, backpackStack.writeToNBT(new NBTTagCompound()));
 		if (backpackData != null) {
 			NBTTagCompound dataCompound = new NBTTagCompound();
 			backpackData.writeToNBT(dataCompound);
-			compound.setTag("data", dataCompound);
+			properties.setTag(TAG_DATA, dataCompound);
 		}
+		compound.setTag(IDENTIFIER, properties);
 	}
 	
 	@Override
 	public void loadNBTData(NBTTagCompound compound) {
-		if (compound.hasKey("stack"))
-			backpackStack = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack"));
+		
+		NBTTagCompound properties = compound.getCompoundTag(IDENTIFIER);
+		if (properties == null) return;
+		
+		if (properties.hasKey(TAG_STACK))
+			backpackStack = ItemStack.loadItemStackFromNBT(properties.getCompoundTag(TAG_STACK));
 		
 		ItemStack backpack = BackpackHelper.getEquippedBackpack(entity);
 		lastBackpackType = BackpackHelper.getBackpackType(backpack);
 		
-		if (compound.hasKey("data") && (lastBackpackType != null))
+		if (properties.hasKey(TAG_DATA) && (lastBackpackType != null))
 			(backpackData = lastBackpackType.createBackpackData())
-					.readFromNBT(compound.getCompoundTag("data"));
+					.readFromNBT(properties.getCompoundTag(TAG_DATA));
 	}
 	
 }
