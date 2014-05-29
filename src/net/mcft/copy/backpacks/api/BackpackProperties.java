@@ -1,13 +1,11 @@
 package net.mcft.copy.backpacks.api;
 
-import net.minecraft.entity.Entity;
+import net.mcft.copy.core.misc.SyncedEntityProperties;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
-import net.minecraftforge.common.IExtendedEntityProperties;
 
-public class BackpackProperties implements IExtendedEntityProperties {
+public class BackpackProperties extends SyncedEntityProperties {
 	
 	// Used by EntityUtils.getIdentifier().
 	public static final String IDENTIFIER = "WearableBackpack";
@@ -21,41 +19,41 @@ public class BackpackProperties implements IExtendedEntityProperties {
 	public IBackpack lastBackpackType = null;
 	public int playersUsing = 0;
 	
-	private EntityLivingBase entity;
+	@Override
+	public EntityLivingBase getEntity() { return (EntityLivingBase)super.getEntity(); }
 	
 	@Override
-	public void init(Entity entity, World world) {
-		this.entity = (EntityLivingBase)entity;
+	public boolean isWrittenToEntity() { return ((backpackStack != null) || (backpackData != null)); }
+	@Override
+	public boolean requiresSyncing() { return (backpackStack != null); }
+	
+	@Override
+	public void write(NBTTagCompound compound) {
+		if (backpackStack != null)
+			compound.setTag(TAG_STACK, backpackStack.writeToNBT(new NBTTagCompound()));
+	}
+	@Override
+	public void read(NBTTagCompound compound) {
+		if (compound.hasKey(TAG_STACK))
+			backpackStack = ItemStack.loadItemStackFromNBT(compound.getCompoundTag(TAG_STACK));
 	}
 	
 	@Override
-	public void saveNBTData(NBTTagCompound compound) {
-		NBTTagCompound properties = new NBTTagCompound();
-		if (backpackStack != null)
-			properties.setTag(TAG_STACK, backpackStack.writeToNBT(new NBTTagCompound()));
+	public void writeToEntity(NBTTagCompound compound) {
 		if (backpackData != null) {
 			NBTTagCompound dataCompound = new NBTTagCompound();
 			backpackData.writeToNBT(dataCompound);
-			properties.setTag(TAG_DATA, dataCompound);
+			compound.setTag(TAG_DATA, dataCompound);
 		}
-		compound.setTag(IDENTIFIER, properties);
 	}
-	
 	@Override
-	public void loadNBTData(NBTTagCompound compound) {
-		
-		NBTTagCompound properties = compound.getCompoundTag(IDENTIFIER);
-		if (properties == null) return;
-		
-		if (properties.hasKey(TAG_STACK))
-			backpackStack = ItemStack.loadItemStackFromNBT(properties.getCompoundTag(TAG_STACK));
-		
-		ItemStack backpack = BackpackHelper.getEquippedBackpack(entity);
+	public void readFromEntity(NBTTagCompound compound) {
+		ItemStack backpack = BackpackHelper.getEquippedBackpack(getEntity());
 		lastBackpackType = BackpackHelper.getBackpackType(backpack);
 		
-		if (properties.hasKey(TAG_DATA) && (lastBackpackType != null))
+		if (compound.hasKey(TAG_DATA) && (lastBackpackType != null))
 			(backpackData = lastBackpackType.createBackpackData())
-					.readFromNBT(properties.getCompoundTag(TAG_DATA));
+					.readFromNBT(compound.getCompoundTag(TAG_DATA));
 	}
 	
 }
