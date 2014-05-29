@@ -6,6 +6,7 @@ import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackProperties;
 import net.mcft.copy.core.misc.SyncedEntityProperties;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -16,6 +17,7 @@ public class BackpackProperties extends SyncedEntityProperties implements IBackp
 	
 	public static final String TAG_STACK = "stack";
 	public static final String TAG_DATA = "data";
+	public static final String TAG_TYPE = "type";
 	
 	public int playersUsing = 0;
 	
@@ -47,7 +49,9 @@ public class BackpackProperties extends SyncedEntityProperties implements IBackp
 	@Override
 	public void writeToEntity(NBTTagCompound compound) {
 		if (getBackpackData() != null) {
-			System.out.println("Write");
+			ItemStack backpack = BackpackHelper.getEquippedBackpack(getEntity());
+			if ((getBackpackStack() == null) && (backpack != null))
+				compound.setString(TAG_TYPE, Item.itemRegistry.getNameForObject(backpack.getItem()));
 			NBTTagCompound dataCompound = new NBTTagCompound();
 			getBackpackData().writeToNBT(dataCompound);
 			compound.setTag(TAG_DATA, dataCompound);
@@ -55,9 +59,11 @@ public class BackpackProperties extends SyncedEntityProperties implements IBackp
 	}
 	@Override
 	public void readFromEntity(NBTTagCompound compound) {
-		System.out.println("Read");
 		ItemStack backpack = BackpackHelper.getEquippedBackpack(getEntity());
-		setLastBackpackType(BackpackHelper.getBackpackType(backpack));
+		IBackpack backpackType = ((backpack != null)
+				? BackpackHelper.getBackpackType(backpack)
+				: (IBackpack)Item.itemRegistry.getObject(compound.getString(TAG_TYPE)));
+		setLastBackpackType(backpackType);
 		
 		if (compound.hasKey(TAG_DATA) && (getLastBackpackType() != null)) {
 			IBackpackData data = getLastBackpackType().createBackpackData();
