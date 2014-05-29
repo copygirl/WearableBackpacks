@@ -23,8 +23,8 @@ public final class BackpackHelper {
 	/** Returns the entity's backpack property. <br>
 	 *  Note that this will return null on entities which do not support backpacks
 	 *  (see {@link BackpackRegistry}) and when WearableBackpacks is not installed. */
-	public static BackpackProperties getBackpackProperties(EntityLivingBase entity) {
-		return (BackpackProperties)entity.getExtendedProperties(BackpackProperties.IDENTIFIER);
+	public static IBackpackProperties getBackpackProperties(EntityLivingBase entity) {
+		return (IBackpackProperties)entity.getExtendedProperties(IBackpackProperties.IDENTIFIER);
 	}
 	
 	/** Returns an entity's equipped backpack, null if none. */
@@ -34,8 +34,8 @@ public final class BackpackHelper {
 		if (chestSlotBackpack != null)
 			return chestSlotBackpack;
 		// Check for backpack in backpack properties.
-		BackpackProperties properties = getBackpackProperties(entity);
-		return ((properties != null) ? properties.backpackStack : null);
+		IBackpackProperties properties = getBackpackProperties(entity);
+		return ((properties != null) ? properties.getBackpackStack() : null);
 	}
 	
 	/** Returns if the entity can equip a backpack. Returns false if the
@@ -54,16 +54,16 @@ public final class BackpackHelper {
 		IBackpack backpackType = getBackpackType(backpack);
 		if ((backpack != null) && (backpackType == null))
 			throw new Error("Backpack item isn't an IBackpack.");
-		BackpackProperties properties = getBackpackProperties(entity);
+		IBackpackProperties properties = getBackpackProperties(entity);
 		// Set backpack
 		if (equipAsChestArmor && (entity instanceof EntityPlayer)) {
 			setEquipmentInChestSlot(entity, backpack);
 			// Remove any backpack in the properties
 			// in case the setting was changed.
 			if (properties != null)
-				properties.backpackStack = null;
+				properties.setBackpackStack(null);
 		} else if (properties != null) {
-			properties.backpackStack = backpack;
+			properties.setBackpackStack(backpack);
 			// Remove any backpack in the chest slot
 			// in case the setting was changed.
 			if (getBackpackInChestSlot(entity) != null)
@@ -71,15 +71,15 @@ public final class BackpackHelper {
 		}
 		// Set backpack data and last backpack type.
 		if (properties != null) {
-			properties.backpackData = backpackData;
-			properties.lastBackpackType = backpackType;
+			properties.setBackpackData(backpackData);
+			properties.setLastBackpackType(backpackType);
 		}
 	}
 	
 	/** Returns the backpack data of an equipped backpack, null if none. */
 	public static IBackpackData getEquippedBackpackData(EntityLivingBase entity) {
-		BackpackProperties properties = getBackpackProperties(entity);
-		return ((properties != null) ? properties.backpackData : null);
+		IBackpackProperties properties = getBackpackProperties(entity);
+		return ((properties != null) ? properties.getBackpackData() : null);
 	}
 	
 	/** Returns the backpack type of an item stack, or null if it isn't a backpack. */

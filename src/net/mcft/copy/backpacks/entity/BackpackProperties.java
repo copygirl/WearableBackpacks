@@ -1,11 +1,15 @@
-package net.mcft.copy.backpacks.api;
+package net.mcft.copy.backpacks.entity;
 
+import net.mcft.copy.backpacks.api.BackpackHelper;
+import net.mcft.copy.backpacks.api.IBackpack;
+import net.mcft.copy.backpacks.api.IBackpackData;
+import net.mcft.copy.backpacks.api.IBackpackProperties;
 import net.mcft.copy.core.misc.SyncedEntityProperties;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class BackpackProperties extends SyncedEntityProperties {
+public class BackpackProperties extends SyncedEntityProperties implements IBackpackProperties {
 	
 	// Used by EntityUtils.getIdentifier().
 	public static final String IDENTIFIER = "WearableBackpack";
@@ -18,6 +22,8 @@ public class BackpackProperties extends SyncedEntityProperties {
 	
 	public IBackpack lastBackpackType = null;
 	public int playersUsing = 0;
+	
+	// SyncedEntityProperties methods
 	
 	@Override
 	public EntityLivingBase getEntity() { return (EntityLivingBase)super.getEntity(); }
@@ -55,5 +61,20 @@ public class BackpackProperties extends SyncedEntityProperties {
 			(backpackData = lastBackpackType.createBackpackData())
 					.readFromNBT(compound.getCompoundTag(TAG_DATA));
 	}
+	
+	// IBackpackProperties implementation
+	
+	@Override
+	public ItemStack getBackpackStack() { return backpackStack; }
+	@Override
+	public void setBackpackStack(ItemStack stack) { backpackStack = stack; }
+	@Override
+	public IBackpackData getBackpackData() { return backpackData; }
+	@Override
+	public void setBackpackData(IBackpackData data) { backpackData = data; }
+	@Override
+	public IBackpack getLastBackpackType() { return lastBackpackType; }
+	@Override
+	public void setLastBackpackType(IBackpack type) { lastBackpackType = type; }
 	
 }

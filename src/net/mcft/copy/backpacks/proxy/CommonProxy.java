@@ -4,11 +4,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.mcft.copy.backpacks.api.BackpackHelper;
-import net.mcft.copy.backpacks.api.BackpackProperties;
 import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
+import net.mcft.copy.backpacks.api.IBackpackProperties;
 import net.mcft.copy.backpacks.api.IBackpackTileEntity;
+import net.mcft.copy.backpacks.entity.BackpackProperties;
 import net.mcft.copy.core.copycore;
 import net.mcft.copy.core.container.ContainerBase;
 import net.mcft.copy.core.container.ContainerRegistry;
@@ -123,10 +124,10 @@ public class CommonProxy {
 		if ((backpack == null) || !BackpackHelper.canInteractWithEquippedBackpack(player, target)) return;
 		
 		IBackpack backpackType = BackpackHelper.getBackpackType(backpack);
-		BackpackProperties properties = BackpackHelper.getBackpackProperties(target);
-		if ((properties.backpackData == null) && !player.worldObj.isRemote) {
+		IBackpackProperties properties = BackpackHelper.getBackpackProperties(target);
+		if ((properties.getBackpackData() == null) && !player.worldObj.isRemote) {
 			copycore.getLogger().error("Backpack data was null when placing accessing equipped backpack");
-			properties.backpackData = backpackType.createBackpackData();
+			properties.setBackpackData(backpackType.createBackpackData());
 		}
 		backpackType.onEquippedInteract(player, target);
 		
@@ -163,17 +164,17 @@ public class CommonProxy {
 				? (EntityPlayer)entity : null);
 		
 		ItemStack backpack = BackpackHelper.getEquippedBackpack(entity);
-		BackpackProperties properties =
+		IBackpackProperties properties =
 				BackpackHelper.getBackpackProperties(entity);
 		
 		if (backpack != null) {
 			IBackpack backpackItem = BackpackHelper.getBackpackType(backpack);
 			backpackItem.onEquippedTick(entity);
 		} else if ((BackpackHelper.getEquippedBackpackData(entity) != null) &&
-		           (properties.lastBackpackType != null)) {
+		           (properties.getLastBackpackType() != null)) {
 			// Backpack has been removed somehow.
-			properties.lastBackpackType.onFaultyRemoval(entity);
-			properties.lastBackpackType = null;
+			properties.getLastBackpackType().onFaultyRemoval(entity);
+			properties.setLastBackpackType(null);
 		}
 		
 	}
