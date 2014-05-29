@@ -84,7 +84,7 @@ public class TileEntityBackpack extends TileEntityBase
 	
 	@Override
 	public boolean onBlockBreak(EntityPlayer player, boolean brokenInCreative) {
-		if (!player.isSneaking()) return false;
+		if (!player.isSneaking()) return true;
 		return BackpackHelper.equipBackpack(player, this);
 	}
 	
