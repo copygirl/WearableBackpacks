@@ -55,9 +55,9 @@ public class CommonProxy {
 		EntityLivingBase entity = (EntityLivingBase)event.entity;
 		
 		// Give entities that can support backpacks the backpack properties.
-		if (BackpackRegistry.canEntityWearBackpacks(entity)) return;
+		if (BackpackRegistry.canEntityWearBackpacks(entity))
 			EntityUtils.createProperties(entity, BackpackProperties.class);
-			
+		
 	}
 	
 	@SubscribeEvent
