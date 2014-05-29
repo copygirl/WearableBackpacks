@@ -17,11 +17,11 @@ public class BackpackProperties extends SyncedEntityProperties implements IBackp
 	public static final String TAG_STACK = "stack";
 	public static final String TAG_DATA = "data";
 	
-	public ItemStack backpackStack = null;
-	public IBackpackData backpackData = null;
-	
-	public IBackpack lastBackpackType = null;
 	public int playersUsing = 0;
+	
+	private ItemStack backpackStack = null;
+	private IBackpackData backpackData = null;
+	private IBackpack lastBackpackType = null;
 	
 	// SyncedEntityProperties methods
 	
@@ -29,37 +29,41 @@ public class BackpackProperties extends SyncedEntityProperties implements IBackp
 	public EntityLivingBase getEntity() { return (EntityLivingBase)super.getEntity(); }
 	
 	@Override
-	public boolean isWrittenToEntity() { return ((backpackStack != null) || (backpackData != null)); }
+	public boolean isWrittenToEntity() { return ((getBackpackStack() != null) || (backpackData != null)); }
 	@Override
-	public boolean requiresSyncing() { return (backpackStack != null); }
+	public boolean requiresSyncing() { return (getBackpackStack() != null); }
 	
 	@Override
 	public void write(NBTTagCompound compound) {
-		if (backpackStack != null)
-			compound.setTag(TAG_STACK, backpackStack.writeToNBT(new NBTTagCompound()));
+		if (getBackpackStack() != null)
+			compound.setTag(TAG_STACK, getBackpackStack().writeToNBT(new NBTTagCompound()));
 	}
 	@Override
 	public void read(NBTTagCompound compound) {
 		if (compound.hasKey(TAG_STACK))
-			backpackStack = ItemStack.loadItemStackFromNBT(compound.getCompoundTag(TAG_STACK));
+			setBackpackStack(ItemStack.loadItemStackFromNBT(compound.getCompoundTag(TAG_STACK)));
 	}
 	
 	@Override
 	public void writeToEntity(NBTTagCompound compound) {
-		if (backpackData != null) {
+		if (getBackpackData() != null) {
+			System.out.println("Write");
 			NBTTagCompound dataCompound = new NBTTagCompound();
-			backpackData.writeToNBT(dataCompound);
+			getBackpackData().writeToNBT(dataCompound);
 			compound.setTag(TAG_DATA, dataCompound);
 		}
 	}
 	@Override
 	public void readFromEntity(NBTTagCompound compound) {
+		System.out.println("Read");
 		ItemStack backpack = BackpackHelper.getEquippedBackpack(getEntity());
-		lastBackpackType = BackpackHelper.getBackpackType(backpack);
+		setLastBackpackType(BackpackHelper.getBackpackType(backpack));
 		
-		if (compound.hasKey(TAG_DATA) && (lastBackpackType != null))
-			(backpackData = lastBackpackType.createBackpackData())
-					.readFromNBT(compound.getCompoundTag(TAG_DATA));
+		if (compound.hasKey(TAG_DATA) && (getLastBackpackType() != null)) {
+			IBackpackData data = getLastBackpackType().createBackpackData();
+			data.readFromNBT(compound.getCompoundTag(TAG_DATA));
+			setBackpackData(data);
+		}
 	}
 	
 	// IBackpackProperties implementation
