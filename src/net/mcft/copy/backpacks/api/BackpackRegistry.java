@@ -11,7 +11,6 @@ public final class BackpackRegistry {
 	
 	public static final Map<Class<? extends EntityLivingBase>, Map<Item, Double>> entities =
 			new HashMap<Class<? extends EntityLivingBase>, Map<Item, Double>>();
-	static { registerBackpackEntity(EntityPlayer.class); }
 	
 	private BackpackRegistry() {  }
 	
@@ -42,7 +41,7 @@ public final class BackpackRegistry {
 	
 	/** Returns if the entity can wear backpacks. */
 	public static boolean canEntityWearBackpacks(EntityLivingBase entity) {
-		return entities.containsKey(entity.getClass());
+		return ((entity instanceof EntityPlayer) ? true : entities.containsKey(entity.getClass()));
 	}
 	
 }
