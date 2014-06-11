@@ -2,7 +2,11 @@ package net.mcft.copy.backpacks.api;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 /** Signalizes that an {@link net.minecraft.item.Item Item} can be equipped as a backpack. */
 public interface IBackpack {
@@ -46,5 +50,17 @@ public interface IBackpack {
 	
 	/** Creates and returns a new backpack data object for this backpack. */
 	public IBackpackData createBackpackData();
+	
+	
+	/** Returns the model for this backpack. */
+	@SideOnly(Side.CLIENT)
+	public ResourceLocation getModel(ItemStack backpack);
+	
+	/** Returns the texture for this backpack and render pass. */
+	@SideOnly(Side.CLIENT)
+	public ResourceLocation getTexture(ItemStack backpack, int pass);
+	
+	// NOTE: getRenderPasses is used to get the amount of render passes.
+	//       getColorFromItemStack is used to get the color for one render pass.
 	
 }

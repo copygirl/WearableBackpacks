@@ -7,8 +7,11 @@ import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackTileEntity;
 import net.mcft.copy.backpacks.client.BackpackResources;
+import net.mcft.copy.backpacks.client.model.ModelBackpack;
 import net.mcft.copy.core.base.TileEntityBase;
 import net.mcft.copy.core.client.Color;
+import net.mcft.copy.core.client.model.CoreModelBase;
+import net.mcft.copy.core.client.renderer.IModelProvider;
 import net.mcft.copy.core.client.renderer.ITextureProvider;
 import net.mcft.copy.core.util.DirectionUtils;
 import net.mcft.copy.core.util.NbtUtils;
@@ -22,7 +25,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileEntityBackpack extends TileEntityBase
-                                implements IBackpackTileEntity, ITextureProvider {
+                                implements IBackpackTileEntity,
+                                           IModelProvider, ITextureProvider {
 	
 	public static final String TAG_STACK         = "stack";
 	public static final String TAG_BACKPACK_DATA = "data";
@@ -128,6 +132,15 @@ public class TileEntityBackpack extends TileEntityBase
 	@Override
 	public boolean isUsedByPlayer() { return (playersUsing > 0); }
 	
+	// IModelProvider implementation
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public CoreModelBase getModel() {
+		IBackpack backpack = BackpackHelper.getBackpackType(getBackpackStack());
+		return ((backpack != null) ? ModelBackpack.getModel(backpack.getModel(getBackpackStack())) : null);
+	}
+	
 	// ITextureProvider implementation
 	
 	@Override
@@ -138,15 +151,15 @@ public class TileEntityBackpack extends TileEntityBase
 	}
 	@Override
 	@SideOnly(Side.CLIENT)
-	public ResourceLocation getTexture(int pass) {
-		if (pass != 1) return null;
-		return BackpackResources.textureBackpackOverlay;
-	}
-	@Override
-	@SideOnly(Side.CLIENT)
 	public Color getColor(int pass) {
 		ItemStack stack = getBackpackStack();
 		return ((stack != null) ? Color.fromRGB(stack.getItem().getColorFromItemStack(stack, pass)) : Color.WHITE);
+	}
+	@Override
+	@SideOnly(Side.CLIENT)
+	public ResourceLocation getTexture(int pass) {
+		if (pass != 1) return null;
+		return BackpackResources.textureBackpackOverlay;
 	}
 	
 	// Helper methods

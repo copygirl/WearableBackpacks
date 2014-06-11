@@ -4,6 +4,7 @@ import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackTileEntity;
+import net.mcft.copy.backpacks.client.BackpackResources;
 import net.mcft.copy.backpacks.misc.BackpackDataItems;
 import net.mcft.copy.core.container.ContainerBase;
 import net.mcft.copy.core.inventory.InventoryStacks;
@@ -16,6 +17,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -27,29 +29,6 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	public ItemBackpack(Block block) {
 		super(block);
 		setMaxStackSize(1);
-	}
-	
-	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player,
-	                         World world, int x, int y, int z, int side,
-	                         float hitX, float hitY, float hitZ) {
-		// Check if the backpack is being placed on top of a solid block.
-		BlockLocation block = BlockLocation.get(world, x, y, z);
-		if (block.isReplaceable()
-				? !block.below().isSideSolid(ForgeDirection.UP)
-				: ((side != ForgeDirection.UP.ordinal()) || !block.isSideSolid(ForgeDirection.UP)))
-			return false;
-		return super.onItemUse(stack, player, world, x, y, z, side, hitX, hitY, hitZ);
-	}
-	
-	@Override
-	public int getRenderPasses(int metadata) { return 2; }
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public int getColorFromItemStack(ItemStack stack, int pass) {
-		if (pass != 0) return 0xFFFFFF;
-		return 0xA06540;
 	}
 	
 	// IBackpack implementation
@@ -107,6 +86,45 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	@Override
 	public IBackpackData createBackpackData() {
 		return new BackpackDataItems(36); // TODO: Get configurable backpack size.
+	}
+	
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public ResourceLocation getModel(ItemStack backpack) {
+		return BackpackResources.modelBackpack;
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public ResourceLocation getTexture(ItemStack backpack, int pass) {
+		return ((pass == 0) ? BackpackResources.textureBackpack
+		                    : BackpackResources.textureBackpackOverlay);
+	}
+	
+	// Item methods
+	
+	@Override
+	public int getRenderPasses(int metadata) { return 2; }
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public int getColorFromItemStack(ItemStack stack, int pass) {
+		if (pass != 0) return 0xFFFFFF;
+		return 0xA06540;
+	}
+	
+	@Override
+	public boolean onItemUse(ItemStack stack, EntityPlayer player,
+	                         World world, int x, int y, int z, int side,
+	                         float hitX, float hitY, float hitZ) {
+		// Check if the backpack is being placed on top of a solid block.
+		BlockLocation block = BlockLocation.get(world, x, y, z);
+		if (block.isReplaceable()
+				? !block.below().isSideSolid(ForgeDirection.UP)
+				: ((side != ForgeDirection.UP.ordinal()) || !block.isSideSolid(ForgeDirection.UP)))
+			return false;
+		return super.onItemUse(stack, player, world, x, y, z, side, hitX, hitY, hitZ);
 	}
 	
 	// ISpecialArmor implementation
