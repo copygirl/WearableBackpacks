@@ -14,8 +14,8 @@ public class BackpacksConfig extends Config {
 	// TODO: Add settings.
 	
 	
-	public BackpacksConfig(String id, File file) {
-		super(id, file);
+	public BackpacksConfig(File file) {
+		super(file);
 		
 		// Settings in this category are added
 		// automatically when registering blocks.

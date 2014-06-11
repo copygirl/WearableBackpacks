@@ -29,7 +29,7 @@ public class WearableBackpacks
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		
-		config = new BackpacksConfig(MOD_ID, event.getSuggestedConfigurationFile());
+		config = new BackpacksConfig(event.getSuggestedConfigurationFile());
 		config.load();
 		
 		BackpackBlocks.register();
