@@ -3,6 +3,7 @@ package net.mcft.copy.backpacks.proxy;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.api.IBackpack;
@@ -10,7 +11,6 @@ import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackProperties;
 import net.mcft.copy.backpacks.api.IBackpackTileEntity;
 import net.mcft.copy.backpacks.entity.BackpackProperties;
-import net.mcft.copy.core.copycore;
 import net.mcft.copy.core.container.ContainerBase;
 import net.mcft.copy.core.container.ContainerRegistry;
 import net.mcft.copy.core.misc.BlockLocation;
@@ -85,7 +85,7 @@ public class CommonProxy {
 				IBackpack backpackType = BackpackHelper.getBackpackType(backpack);
 				IBackpackData backpackData = BackpackHelper.getEquippedBackpackData(player);
 				if ((backpackData == null) && !player.worldObj.isRemote) {
-					copycore.getLogger().error("Backpack data was null when placing down backpack");
+					WearableBackpacks.log.error("Backpack data was null when placing down backpack");
 					backpackData = backpackType.createBackpackData();
 				}
 				
@@ -101,7 +101,7 @@ public class CommonProxy {
 					// TODO: Sync backpack across players.
 				}
 				
-			} else copycore.getLogger().error("TileEntity at {} is not an IBackpackTileEntity", block);
+			} else WearableBackpacks.log.error("TileEntity at {} is not an IBackpackTileEntity", block);
 		} else {
 			// TODO: Sync backpack to player, make sure e
 			//       thinks e still has a backpack equipped.
@@ -126,7 +126,7 @@ public class CommonProxy {
 		IBackpack backpackType = BackpackHelper.getBackpackType(backpack);
 		IBackpackProperties properties = BackpackHelper.getBackpackProperties(target);
 		if ((properties.getBackpackData() == null) && !player.worldObj.isRemote) {
-			copycore.getLogger().error("Backpack data was null when placing accessing equipped backpack");
+			WearableBackpacks.log.error("Backpack data was null when placing accessing equipped backpack");
 			properties.setBackpackData(backpackType.createBackpackData());
 		}
 		backpackType.onEquippedInteract(player, target);
