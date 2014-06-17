@@ -4,10 +4,11 @@ import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackProperties;
+import net.mcft.copy.backpacks.block.tileentity.TileEntityBackpack;
 import net.mcft.copy.backpacks.client.BackpackResources;
+import net.mcft.copy.backpacks.inventory.InventoryBackpack;
 import net.mcft.copy.backpacks.misc.BackpackDataItems;
 import net.mcft.copy.core.container.ContainerBase;
-import net.mcft.copy.core.inventory.InventoryStacks;
 import net.mcft.copy.core.misc.BlockLocation;
 import net.mcft.copy.core.util.WorldUtils;
 import net.minecraft.block.Block;
@@ -47,21 +48,25 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	@Override
 	public <T extends TileEntity & IBackpackProperties> void onPlacedInteract(EntityPlayer player, final T tileEntity) {
 		if (player.worldObj.isRemote) return;
+		ItemStack backpack = tileEntity.getBackpackStack();
 		BackpackDataItems data = (BackpackDataItems)tileEntity.getBackpackData();
 		ContainerBase.create(player,
-				new InventoryStacks(data.items) {
-						@Override public String getInventoryName() { return "Backpack"; }
-						@Override public boolean hasCustomInventoryName() { return true; }
-						@Override public void openInventory() {
-							tileEntity.setPlayersUsing(tileEntity.getPlayersUsing() + 1); }
-						@Override public void closeInventory() {
-							tileEntity.setPlayersUsing(tileEntity.getPlayersUsing() - 1); }
-					}).open();
+				new InventoryBackpack(backpack, data) {
+					@Override public boolean isUseableByPlayer(EntityPlayer player) {
+						return ((TileEntityBackpack)tileEntity).isUsable(player); }
+				}).open();
 	}
 	
 	@Override
-	public void onEquippedInteract(EntityPlayer player, EntityLivingBase target) {
-		
+	public void onEquippedInteract(EntityPlayer player, final EntityLivingBase target) {
+		if (player.worldObj.isRemote) return;
+		ItemStack backpack = BackpackHelper.getEquippedBackpack(target);
+		BackpackDataItems data = (BackpackDataItems)BackpackHelper.getEquippedBackpackData(target);
+		ContainerBase.create(player,
+				new InventoryBackpack(backpack, data) {
+					@Override public boolean isUseableByPlayer(EntityPlayer player) {
+						return BackpackHelper.canInteractWithEquippedBackpack(player, target); }
+				}).open();
 	}
 	
 	@Override
