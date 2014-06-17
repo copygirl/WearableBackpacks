@@ -5,7 +5,7 @@ import java.util.List;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
-import net.mcft.copy.backpacks.api.IBackpackTileEntity;
+import net.mcft.copy.backpacks.api.IBackpackProperties;
 import net.mcft.copy.backpacks.client.BackpackResources;
 import net.mcft.copy.backpacks.client.model.ModelBackpack;
 import net.mcft.copy.core.base.TileEntityBase;
@@ -25,18 +25,22 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileEntityBackpack extends TileEntityBase
-                                implements IBackpackTileEntity,
+                                implements IBackpackProperties,
                                            IModelProvider, ITextureProvider {
 	
 	public static final String TAG_STACK         = "stack";
 	public static final String TAG_BACKPACK_DATA = "data";
 	public static final String TAG_ORIENTATION   = "orientation";
+	public static final String TAG_USING         = "using";
 	
 	private ItemStack backpackStack = null;
 	private IBackpackData backpackData = null;
 	
-	public int playersUsing = 0;
 	public ForgeDirection orientation = ForgeDirection.UNKNOWN;
+	
+	public int playersUsing = 0;
+	public int prevLidTicks = 0;
+	public int lidTicks = 0;
 	
 	// Loading, saving and syncing
 	
@@ -49,7 +53,6 @@ public class TileEntityBackpack extends TileEntityBase
 			compound.setTag(TAG_STACK, NbtUtils.writeItem(getBackpackStack()));
 		compound.setByte(TAG_ORIENTATION, (byte)orientation.ordinal());
 	}
-	
 	@Override
 	public void read(NBTTagCompound compound) {
 		if (compound.hasKey(TAG_STACK))
@@ -65,7 +68,6 @@ public class TileEntityBackpack extends TileEntityBase
 			compound.setTag(TAG_BACKPACK_DATA, dataCompound);
 		}
 	}
-	
 	@Override
 	public void readFromSave(NBTTagCompound compound) {
 		if (compound.hasKey(TAG_BACKPACK_DATA) && (getBackpackStack() != null)) {
@@ -74,6 +76,15 @@ public class TileEntityBackpack extends TileEntityBase
 			data.readFromNBT(compound.getCompoundTag(TAG_BACKPACK_DATA));
 			setBackpackData(data);
 		}
+	}
+	
+	@Override
+	public void writeToDescriptionPacket(NBTTagCompound compound) {
+		compound.setBoolean(TAG_USING, (playersUsing > 0));
+	}
+	@Override
+	public void readFromDescriptionPacket(NBTTagCompound compound) {
+		playersUsing = (compound.getBoolean(TAG_USING) ? 1 : 0);
 	}
 	
 	// TileEntityBase methods
@@ -119,18 +130,55 @@ public class TileEntityBackpack extends TileEntityBase
 		setBackpackStack(stack);
 	}
 	
-	// IBackpackTileEntity implementation
+	// TileEntity methods
+	
+	@Override
+	public void updateEntity() {
+		if (worldObj.isRemote)
+			BackpackHelper.updateLidTicks(this, xCoord + 0.5, yCoord + 0.5, zCoord + 0.5);
+	}
+	
+	@Override
+	public boolean receiveClientEvent(int event, int value) {
+		if (event == 0) {
+			playersUsing = value;
+			return true;
+		} else return false;
+	}
+	
+	// IBackpackProperties implementation
 	
 	@Override
 	public ItemStack getBackpackStack() { return backpackStack; }
 	@Override
 	public void setBackpackStack(ItemStack stack) { backpackStack = stack; }
+	
 	@Override
 	public IBackpackData getBackpackData() { return backpackData; }
 	@Override
 	public void setBackpackData(IBackpackData data) { backpackData = data; }
+	
 	@Override
-	public boolean isUsedByPlayer() { return (playersUsing > 0); }
+	public IBackpack getLastBackpackType() { return null; }
+	@Override
+	public void setLastBackpackType(IBackpack type) {  }
+	
+	@Override
+	public int getPlayersUsing() { return playersUsing; }
+	@Override
+	public void setPlayersUsing(int players) {
+		if ((players > 0) != (playersUsing > 0))
+			sendEvent(0, (players > 0) ? 1 : 0);
+		playersUsing = players;
+	}
+	
+	@Override
+	public int getLidTicks() { return lidTicks; }
+	@Override
+	public void setLidTicks(int ticks) {
+		prevLidTicks = lidTicks;
+		lidTicks = ticks;
+	}
 	
 	// IModelProvider implementation
 	

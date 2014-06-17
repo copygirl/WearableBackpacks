@@ -9,7 +9,6 @@ import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackProperties;
-import net.mcft.copy.backpacks.api.IBackpackTileEntity;
 import net.mcft.copy.backpacks.entity.BackpackProperties;
 import net.mcft.copy.core.container.ContainerBase;
 import net.mcft.copy.core.container.ContainerRegistry;
@@ -80,7 +79,7 @@ public class CommonProxy {
 		if (backpack.stackSize <= 0) {
 			BlockLocation block = BlockLocation.get(player.worldObj, event.x, event.y + 1, event.z);
 			TileEntity tileEntity = block.getTileEntity();
-			if (tileEntity instanceof IBackpackTileEntity) {
+			if (tileEntity instanceof IBackpackProperties) {
 				
 				IBackpack backpackType = BackpackHelper.getBackpackType(backpack);
 				IBackpackData backpackData = BackpackHelper.getEquippedBackpackData(player);
@@ -89,7 +88,7 @@ public class CommonProxy {
 					backpackData = backpackType.createBackpackData();
 				}
 				
-				IBackpackTileEntity backpackTileEntity = (IBackpackTileEntity)tileEntity;
+				IBackpackProperties backpackTileEntity = (IBackpackProperties)tileEntity;
 				backpackTileEntity.setBackpackStack(StackUtils.copy(backpack, 1));
 				backpackTileEntity.setBackpackData(backpackData);
 				
@@ -108,8 +107,8 @@ public class CommonProxy {
 		}
 		
 	}
-	/** Just a helper method to get the TileEntity to also be an IBackpackTileEntity. */
-	private static <T extends TileEntity & IBackpackTileEntity> T cast(TileEntity tileEntity) { return (T)tileEntity; }
+	/** Just a helper method to get the TileEntity to also be an IBackpackProperties. */
+	private static <T extends TileEntity & IBackpackProperties> T cast(TileEntity tileEntity) { return (T)tileEntity; }
 	
 	@SubscribeEvent
 	public void onEntityInteract(EntityInteractEvent event) {
@@ -164,12 +163,14 @@ public class CommonProxy {
 				? (EntityPlayer)entity : null);
 		
 		ItemStack backpack = BackpackHelper.getEquippedBackpack(entity);
-		IBackpackProperties properties =
-				BackpackHelper.getBackpackProperties(entity);
+		BackpackProperties properties =
+				(BackpackProperties)BackpackHelper.getBackpackProperties(entity);
 		
 		if (backpack != null) {
 			IBackpack backpackItem = BackpackHelper.getBackpackType(backpack);
 			backpackItem.onEquippedTick(entity);
+			if (entity.worldObj.isRemote)
+				BackpackHelper.updateLidTicks(properties, entity.posX, entity.posY + 1.0, entity.posZ);
 		} else if ((BackpackHelper.getEquippedBackpackData(entity) != null) &&
 		           (properties.getLastBackpackType() != null)) {
 			// Backpack has been removed somehow.

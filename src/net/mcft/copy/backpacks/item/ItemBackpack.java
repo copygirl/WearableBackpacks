@@ -3,7 +3,7 @@ package net.mcft.copy.backpacks.item;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
-import net.mcft.copy.backpacks.api.IBackpackTileEntity;
+import net.mcft.copy.backpacks.api.IBackpackProperties;
 import net.mcft.copy.backpacks.client.BackpackResources;
 import net.mcft.copy.backpacks.misc.BackpackDataItems;
 import net.mcft.copy.core.container.ContainerBase;
@@ -39,19 +39,23 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	}
 	
 	@Override
-	public <T extends TileEntity & IBackpackTileEntity> void onEquip(EntityLivingBase entity, T tileEntity) {  }
+	public <T extends TileEntity & IBackpackProperties> void onEquip(EntityLivingBase entity, T tileEntity) {  }
 	
 	@Override
-	public <T extends TileEntity & IBackpackTileEntity> void onUnequip(EntityLivingBase entity, T tileEntity) {  }
+	public <T extends TileEntity & IBackpackProperties> void onUnequip(EntityLivingBase entity, T tileEntity) {  }
 	
 	@Override
-	public <T extends TileEntity & IBackpackTileEntity> void onPlacedInteract(EntityPlayer player, T tileEntity) {
+	public <T extends TileEntity & IBackpackProperties> void onPlacedInteract(EntityPlayer player, final T tileEntity) {
 		if (player.worldObj.isRemote) return;
 		BackpackDataItems data = (BackpackDataItems)tileEntity.getBackpackData();
 		ContainerBase.create(player,
 				new InventoryStacks(data.items) {
 						@Override public String getInventoryName() { return "Backpack"; }
 						@Override public boolean hasCustomInventoryName() { return true; }
+						@Override public void openInventory() {
+							tileEntity.setPlayersUsing(tileEntity.getPlayersUsing() + 1); }
+						@Override public void closeInventory() {
+							tileEntity.setPlayersUsing(tileEntity.getPlayersUsing() - 1); }
 					}).open();
 	}
 	
@@ -77,7 +81,7 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	}
 	
 	@Override
-	public <T extends TileEntity & IBackpackTileEntity> void onBlockBreak(T tileEntity) {
+	public <T extends TileEntity & IBackpackProperties> void onBlockBreak(T tileEntity) {
 		BackpackDataItems data = (BackpackDataItems)tileEntity.getBackpackData();
 		for (ItemStack stack : data.items)
 			WorldUtils.dropStackFromBlock(tileEntity, stack);
@@ -100,6 +104,17 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	public ResourceLocation getTexture(ItemStack backpack, int pass) {
 		return ((pass == 0) ? BackpackResources.textureBackpack
 		                    : BackpackResources.textureBackpackOverlay);
+	}
+	
+	
+	@Override
+	public int getLidMaxTicks() { return 5; }
+	
+	@Override
+	public float getLidAngle(int prevLidTicks, int lidTicks, float partialTicks) {
+		float progress = lidTicks + (lidTicks - prevLidTicks) * partialTicks;
+		progress = Math.max(0, Math.min(getLidMaxTicks(), progress)) / getLidMaxTicks();
+		return (1.0F - (float)Math.pow(1.0F - progress, 2)) * 45;
 	}
 	
 	// Item methods

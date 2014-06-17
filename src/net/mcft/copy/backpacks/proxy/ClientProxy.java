@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.mcft.copy.backpacks.api.BackpackHelper;
+import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.block.tileentity.TileEntityBackpack;
 import net.mcft.copy.backpacks.client.BackpackResources;
 import net.mcft.copy.backpacks.client.model.ModelBackpack;
 import net.mcft.copy.backpacks.client.model.ModelRendererBackpack;
 import net.mcft.copy.backpacks.content.BackpackBlocks;
+import net.mcft.copy.backpacks.entity.BackpackProperties;
 import net.mcft.copy.core.client.renderer.ItemRendererTileEntity;
 import net.mcft.copy.core.client.renderer.TileEntityRenderer;
+import net.mcft.copy.core.util.ClientUtils;
 import net.mcft.copy.core.util.RegistryUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.model.ModelBase;
@@ -41,10 +44,23 @@ public class ClientProxy extends CommonProxy {
 		
 		registerTileEntityRenderer(
 				BackpackBlocks.backpack, TileEntityBackpack.class,
+				// TODO: Move this to a separate class.
 				new TileEntityRenderer(BackpackResources.textureBackpack,
-				                       ModelBackpack.getModel(BackpackResources.modelBackpack)))
-				.setScale(1.5F).setOffset(-0.08F).setInventoryRotation(70.0F)
-				                                 .setThirdPersonRotation(-45.0F);
+				                       ModelBackpack.getModel(BackpackResources.modelBackpack)) {
+						@Override
+						public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTicks) {
+							TileEntityBackpack tileEntityBackpack = (TileEntityBackpack)tileEntity;
+							IBackpack backpackType = BackpackHelper.getBackpackType(tileEntityBackpack.getBackpackStack());
+							float lidAngle = 0.0F;
+							if (backpackType != null)
+								lidAngle = backpackType.getLidAngle(tileEntityBackpack.prevLidTicks,
+								                                    tileEntityBackpack.lidTicks, partialTicks);
+							ModelBackpack modelBackpack = (ModelBackpack)getModel(tileEntity);
+							if (modelBackpack != null) modelBackpack.setLidAngle(lidAngle);
+							super.renderTileEntityAt(tileEntity, x, y, z, partialTicks);
+						}
+				}).setScale(1.5F).setOffset(-0.08F).setInventoryRotation(70.0F)
+				                                   .setThirdPersonRotation(-45.0F);
 		
 	}
 	
@@ -72,6 +88,9 @@ public class ClientProxy extends CommonProxy {
 		ItemStack backpack = BackpackHelper.getEquippedBackpack(entity);
 		if (backpack == null) return;
 		
+		IBackpack backpackType = BackpackHelper.getBackpackType(backpack);
+		BackpackProperties properties = (BackpackProperties)BackpackHelper.getBackpackProperties(entity);
+		
 		ModelBiped model = getModelBipedFromRenderer(event.renderer);
 		if ((model == null) || (model.bipedBody == null)) return;
 		
@@ -89,7 +108,9 @@ public class ClientProxy extends CommonProxy {
 			backpackRenderer = new ModelRendererBackpack(model);
 			model.bipedBody.childModels.add(backpackRenderer);
 		}
-		backpackRenderer.setEntityAndBackpack(entity, backpack);
+		float lidAngle = backpackType.getLidAngle(
+				properties.prevLidTicks, properties.lidTicks, ClientUtils.getPartialTicks());
+		backpackRenderer.setBackpackRenderData(entity, backpack, lidAngle);
 	}
 	
 	private static ModelBiped getModelBipedFromRenderer(RendererLivingEntity renderer) {

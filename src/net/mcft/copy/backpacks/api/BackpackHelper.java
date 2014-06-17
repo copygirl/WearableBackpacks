@@ -103,7 +103,7 @@ public final class BackpackHelper {
 	}
 	
 	/** Equips a backpack from a tile entity, returns if successful. */
-	public static <T extends TileEntity & IBackpackTileEntity> boolean equipBackpack(EntityLivingBase entity, T tileEntity) {
+	public static <T extends TileEntity & IBackpackProperties> boolean equipBackpack(EntityLivingBase entity, T tileEntity) {
 		if (!canEquipBackpack(entity)) return false;
 		ItemStack stack = tileEntity.getBackpackStack();
 		getBackpackType(stack).onEquip(entity, tileEntity);
@@ -114,6 +114,15 @@ public final class BackpackHelper {
 			// TODO: Sync backpack across players.
 		}
 		return true;
+	}
+	
+	/** Updates the lid ticks for some backpack properties.
+	 *  Plays a sound when the backpack is being opened or closed. */
+	public static void updateLidTicks(IBackpackProperties properties, double x, double y, double z) {
+		IBackpack backpackType = getBackpackType(properties.getBackpackStack());
+		properties.setLidTicks(Math.max(-1, Math.min(((backpackType != null) ? backpackType.getLidMaxTicks() : 0),
+				properties.getLidTicks() + ((properties.getPlayersUsing() > 0) ? +1 : -1))));
+		// TODO: Play opening / closing sounds.
 	}
 	
 	// Helper functions

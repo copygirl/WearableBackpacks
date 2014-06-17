@@ -3,7 +3,6 @@ package net.mcft.copy.backpacks.client.model;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.core.client.Color;
-import net.mcft.copy.core.client.model.CoreModelBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
@@ -19,15 +18,17 @@ public class ModelRendererBackpack extends ModelRenderer {
 	
 	private EntityLivingBase entity;
 	private ItemStack backpack;
+	private float lidAngle;
 	
 	public ModelRendererBackpack(ModelBase modelBase) {
 		super(modelBase);
 	}
 	
 	/** Sets the entity and backpack item used for this render iteration. */
-	public void setEntityAndBackpack(EntityLivingBase entity, ItemStack backpack) {
+	public void setBackpackRenderData(EntityLivingBase entity, ItemStack backpack, float lidAngle) {
 		this.entity = entity;
 		this.backpack = backpack;
+		this.lidAngle = lidAngle;
 	}
 	
 	@Override
@@ -39,11 +40,13 @@ public class ModelRendererBackpack extends ModelRenderer {
 		GL11.glPushMatrix();
 		
 		GL11.glScalef(0.8F, 0.8F, 0.8F);
+		// TODO: Generalize backpack positioning.
 		GL11.glTranslatef(0, 12 / 16.0F, 5.5F / 16.0F);
 		GL11.glRotatef(180, 0, 0, 1.0F);
 		
 		IBackpack backpackType = BackpackHelper.getBackpackType(backpack);
-		CoreModelBase modelBackpack = ModelBackpack.getModel(backpackType.getModel(backpack));
+		ModelBackpack modelBackpack = ModelBackpack.getModel(backpackType.getModel(backpack));
+		modelBackpack.setLidAngle(lidAngle);
 		int passes = backpack.getItem().getRenderPasses(backpack.getItemDamage());
 		for (int pass = 0; pass < passes; pass++) {
 			Minecraft.getMinecraft().renderEngine.bindTexture(backpackType.getTexture(backpack, pass));

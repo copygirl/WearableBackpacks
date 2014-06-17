@@ -17,15 +17,15 @@ public interface IBackpack {
 	/** Called before the backpack is equipped by an entity. <br>
 	 *  Note that on the client side, there's no certainty
 	 *  whether the backpack is actually equipped. */
-	public <T extends TileEntity & IBackpackTileEntity> void onEquip(EntityLivingBase entity, T tileEntity);
+	public <T extends TileEntity & IBackpackProperties> void onEquip(EntityLivingBase entity, T tileEntity);
 	
 	/** Called after the backpack is unequipped by an entity. <br>
 	 *  Note that on the client side, there's no certainty
 	 *  whether the backpack is actually unequipped. */
-	public <T extends TileEntity & IBackpackTileEntity> void onUnequip(EntityLivingBase entity, T tileEntity);
+	public <T extends TileEntity & IBackpackProperties> void onUnequip(EntityLivingBase entity, T tileEntity);
 	
 	/** Called when a player interacts with a placed-down backpack. */
-	public <T extends TileEntity & IBackpackTileEntity> void onPlacedInteract(EntityPlayer player, T tileEntity);
+	public <T extends TileEntity & IBackpackProperties> void onPlacedInteract(EntityPlayer player, T tileEntity);
 	
 	/** Called when a player interacts with an equipped backpack. <br>
 	 *  Also called when a player opens eir own backpack while it's
@@ -46,7 +46,7 @@ public interface IBackpack {
 	public void onFaultyRemoval(EntityLivingBase entity);
 	
 	/** Called when this backpack is broken when placed down. */
-	public <T extends TileEntity & IBackpackTileEntity> void onBlockBreak(T tileEntity);
+	public <T extends TileEntity & IBackpackProperties> void onBlockBreak(T tileEntity);
 	
 	/** Creates and returns a new backpack data object for this backpack. */
 	public IBackpackData createBackpackData();
@@ -62,5 +62,13 @@ public interface IBackpack {
 	
 	// NOTE: getRenderPasses is used to get the amount of render passes.
 	//       getColorFromItemStack is used to get the color for one render pass.
+	
+	
+	/** Returns the number of ticks the backpack's lid takes to fully open. */
+	public int getLidMaxTicks();
+	
+	/** Returns the lid angle, from current ticks the backpack is open.
+	 *  Used for rendering the backpack model with an animated lid. */
+	public float getLidAngle(int lidTicks, int prevLidTicks, float partialTicks);
 	
 }

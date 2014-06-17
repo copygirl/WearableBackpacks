@@ -7,15 +7,18 @@ public interface IBackpackProperties {
 	public static final String IDENTIFIER = "WearableBackpack";
 	
 	public ItemStack getBackpackStack();
-	
 	public void setBackpackStack(ItemStack stack);
 	
 	public IBackpackData getBackpackData();
-	
 	public void setBackpackData(IBackpackData data);
 	
 	public IBackpack getLastBackpackType();
-	
 	public void setLastBackpackType(IBackpack type);
+	
+	public int getPlayersUsing();
+	public void setPlayersUsing(int players);
+	
+	public int getLidTicks();
+	public void setLidTicks(int ticks);
 	
 }

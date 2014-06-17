@@ -20,6 +20,8 @@ public class BackpackProperties extends SyncedEntityProperties implements IBackp
 	public static final String TAG_TYPE = "type";
 	
 	public int playersUsing = 0;
+	public int prevLidTicks = 0;
+	public int lidTicks = 0;
 	
 	private ItemStack backpackStack = null;
 	private IBackpackData backpackData = null;
@@ -78,13 +80,28 @@ public class BackpackProperties extends SyncedEntityProperties implements IBackp
 	public ItemStack getBackpackStack() { return backpackStack; }
 	@Override
 	public void setBackpackStack(ItemStack stack) { backpackStack = stack; }
+	
 	@Override
 	public IBackpackData getBackpackData() { return backpackData; }
 	@Override
 	public void setBackpackData(IBackpackData data) { backpackData = data; }
+	
 	@Override
 	public IBackpack getLastBackpackType() { return lastBackpackType; }
 	@Override
 	public void setLastBackpackType(IBackpack type) { lastBackpackType = type; }
+	
+	@Override
+	public int getPlayersUsing() { return playersUsing; }
+	@Override
+	public void setPlayersUsing(int players) { playersUsing = players; }
+	
+	@Override
+	public int getLidTicks() { return lidTicks; }
+	@Override
+	public void setLidTicks(int ticks) {
+		prevLidTicks = lidTicks;
+		lidTicks = ticks;
+	}
 	
 }
