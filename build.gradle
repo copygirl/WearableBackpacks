@@ -11,19 +11,19 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
 
 apply plugin: 'forge'
+
+version = "1.0.0.1"
+group = "net.mcft.copy.backpacks"
+archivesBaseName = project.projectDir.name
+
 minecraft {
-    mcversion = "1.7.2"
-    version = mcversion + "-10.12.1.1101"
+    version = "1.7.2-10.12.2.1121"
 }
-
-version = "1.0"
-
-archivesBaseName = project.projectDir.name + "-" + minecraft.mcversion
 
 sourceSets.main {
     java { srcDirs 'src' }
@@ -31,6 +31,9 @@ sourceSets.main {
 }
 
 processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+    
     from (sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
         expand 'version':project.version, 'mcversion':project.minecraft.version
