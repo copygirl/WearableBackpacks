@@ -159,12 +159,13 @@ public class CommonProxy {
 		// if they've been removed somehow.
 		
 		EntityLivingBase entity = event.entityLiving;
-		EntityPlayer player = ((entity instanceof EntityPlayer)
-				? (EntityPlayer)entity : null);
+		if (!BackpackRegistry.canEntityWearBackpacks(entity)) return;
+		EntityPlayer player = ((entity instanceof EntityPlayer) ? (EntityPlayer)entity : null);
 		
 		ItemStack backpack = BackpackHelper.getEquippedBackpack(entity);
 		BackpackProperties properties =
 				(BackpackProperties)BackpackHelper.getBackpackProperties(entity);
+		properties.update();
 		
 		if (backpack != null) {
 			IBackpack backpackItem = BackpackHelper.getBackpackType(backpack);

@@ -1,100 +1,61 @@
 package net.mcft.copy.backpacks.entity;
 
-import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackProperties;
-import net.mcft.copy.core.misc.SyncedEntityProperties;
+import net.mcft.copy.core.entity.EntityPropertiesBase;
+import net.mcft.copy.core.entity.EntityProperty;
+import net.mcft.copy.core.entity.EntityPropertyPrimitive;
+import net.mcft.copy.core.entity.EntityPropertyStack;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
-public class BackpackProperties extends SyncedEntityProperties implements IBackpackProperties {
+public class BackpackProperties extends EntityPropertiesBase implements IBackpackProperties {
 	
 	// Used by EntityUtils.getIdentifier().
 	public static final String IDENTIFIER = "WearableBackpack";
 	
-	public static final String TAG_STACK = "stack";
-	public static final String TAG_DATA = "data";
-	public static final String TAG_TYPE = "type";
+	public final EntityProperty<Integer>       playersUsing;
+	public final EntityProperty<ItemStack>     backpackStack;
+	public final EntityProperty<IBackpackData> backpackData;
+	public final EntityProperty<IBackpack>     backpackType;
 	
-	public int playersUsing = 0;
 	public int prevLidTicks = 0;
 	public int lidTicks = 0;
 	
-	private ItemStack backpackStack = null;
-	private IBackpackData backpackData = null;
-	private IBackpack lastBackpackType = null;
+	public BackpackProperties() {
+		add(playersUsing = new EntityPropertyPrimitive<Integer>("using", 0));
+		add(backpackStack = new EntityPropertyStack("stack").setSaved().setSynced());
+		add(backpackType = new EntityPropertyBackpackType("type", this).setSaved());
+		add(backpackData = new EntityPropertyBackpackData("data", this).setSaved());
+	}
 	
-	// SyncedEntityProperties methods
+	// EntityPropertiesBase methods
 	
 	@Override
 	public EntityLivingBase getEntity() { return (EntityLivingBase)super.getEntity(); }
 	
-	@Override
-	public boolean isWrittenToEntity() { return ((getBackpackStack() != null) || (backpackData != null)); }
-	@Override
-	public boolean requiresSyncing() { return (getBackpackStack() != null); }
-	
-	@Override
-	public void write(NBTTagCompound compound) {
-		if (getBackpackStack() != null)
-			compound.setTag(TAG_STACK, getBackpackStack().writeToNBT(new NBTTagCompound()));
-	}
-	@Override
-	public void read(NBTTagCompound compound) {
-		if (compound.hasKey(TAG_STACK))
-			setBackpackStack(ItemStack.loadItemStackFromNBT(compound.getCompoundTag(TAG_STACK)));
-	}
-	
-	@Override
-	public void writeToEntity(NBTTagCompound compound) {
-		if (getBackpackData() != null) {
-			ItemStack backpack = BackpackHelper.getEquippedBackpack(getEntity());
-			if ((getBackpackStack() == null) && (backpack != null))
-				compound.setString(TAG_TYPE, Item.itemRegistry.getNameForObject(backpack.getItem()));
-			NBTTagCompound dataCompound = new NBTTagCompound();
-			getBackpackData().writeToNBT(dataCompound);
-			compound.setTag(TAG_DATA, dataCompound);
-		}
-	}
-	@Override
-	public void readFromEntity(NBTTagCompound compound) {
-		ItemStack backpack = BackpackHelper.getEquippedBackpack(getEntity());
-		IBackpack backpackType = ((backpack != null)
-				? BackpackHelper.getBackpackType(backpack)
-				: (IBackpack)Item.itemRegistry.getObject(compound.getString(TAG_TYPE)));
-		setLastBackpackType(backpackType);
-		
-		if (compound.hasKey(TAG_DATA) && (getLastBackpackType() != null)) {
-			IBackpackData data = getLastBackpackType().createBackpackData();
-			data.readFromNBT(compound.getCompoundTag(TAG_DATA));
-			setBackpackData(data);
-		}
-	}
-	
 	// IBackpackProperties implementation
 	
 	@Override
-	public ItemStack getBackpackStack() { return backpackStack; }
+	public ItemStack getBackpackStack() { return backpackStack.get(); }
 	@Override
-	public void setBackpackStack(ItemStack stack) { backpackStack = stack; }
+	public void setBackpackStack(ItemStack stack) { backpackStack.set(stack); }
 	
 	@Override
-	public IBackpackData getBackpackData() { return backpackData; }
+	public IBackpackData getBackpackData() { return backpackData.get(); }
 	@Override
-	public void setBackpackData(IBackpackData data) { backpackData = data; }
+	public void setBackpackData(IBackpackData data) { backpackData.set(data); }
 	
 	@Override
-	public IBackpack getLastBackpackType() { return lastBackpackType; }
+	public IBackpack getLastBackpackType() { return backpackType.get(); }
 	@Override
-	public void setLastBackpackType(IBackpack type) { lastBackpackType = type; }
+	public void setLastBackpackType(IBackpack type) { backpackType.set(type); }
 	
 	@Override
-	public int getPlayersUsing() { return playersUsing; }
+	public int getPlayersUsing() { return playersUsing.get(); }
 	@Override
-	public void setPlayersUsing(int players) { playersUsing = players; }
+	public void setPlayersUsing(int players) { playersUsing.set(players); }
 	
 	@Override
 	public int getLidTicks() { return lidTicks; }
