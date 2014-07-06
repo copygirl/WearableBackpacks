@@ -25,7 +25,7 @@ public class BackpackProperties extends EntityPropertiesBase implements IBackpac
 	
 	public BackpackProperties() {
 		add(playersUsing = new EntityPropertyPrimitive<Integer>("using", 0));
-		add(backpackStack = new EntityPropertyStack("stack").setSaved().setSynced());
+		add(backpackStack = new EntityPropertyStack("stack").setSaved().setSynced(true));
 		add(backpackType = new EntityPropertyBackpackType("type", this).setSaved());
 		add(backpackData = new EntityPropertyBackpackData("data", this).setSaved());
 	}
@@ -34,6 +34,9 @@ public class BackpackProperties extends EntityPropertiesBase implements IBackpac
 	
 	@Override
 	public EntityLivingBase getEntity() { return (EntityLivingBase)super.getEntity(); }
+	
+	@Override
+	public boolean isSynced() { return true; }
 	
 	// IBackpackProperties implementation
 	
