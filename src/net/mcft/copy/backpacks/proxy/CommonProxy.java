@@ -9,6 +9,7 @@ import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackProperties;
+import net.mcft.copy.backpacks.container.SlotArmorBackpack;
 import net.mcft.copy.backpacks.entity.BackpackProperties;
 import net.mcft.copy.core.container.ContainerBase;
 import net.mcft.copy.core.container.ContainerRegistry;
@@ -19,6 +20,7 @@ import net.mcft.copy.core.util.RandomUtils;
 import net.mcft.copy.core.util.StackUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -170,6 +172,7 @@ public class CommonProxy {
 		if (backpack != null) {
 			IBackpack backpackItem = BackpackHelper.getBackpackType(backpack);
 			backpackItem.onEquippedTick(entity);
+			replaceChestArmorSlot(player, backpack);
 			if (entity.worldObj.isRemote)
 				BackpackHelper.updateLidTicks(properties, entity.posX, entity.posY + 1.0, entity.posZ);
 		} else if ((BackpackHelper.getEquippedBackpackData(entity) != null) &&
@@ -179,6 +182,18 @@ public class CommonProxy {
 			properties.setLastBackpackType(null);
 		}
 		
+	}
+	
+	/** Replaces the chest armor slot with one that prevents
+	 *  backpacks from being taken out, if necessary. */
+	private static void replaceChestArmorSlot(EntityPlayer player, ItemStack backpack) {
+		if ((player == null) || (player.getEquipmentInSlot(EquipmentSlot.CHEST) != backpack)) return;
+		Slot slot = player.inventoryContainer.getSlot(6);
+		if (slot instanceof SlotArmorBackpack) return;
+		Slot newSlot = new SlotArmorBackpack(slot.inventory, slot.getSlotIndex(),
+		                                     slot.xDisplayPosition, slot.yDisplayPosition);
+		newSlot.slotNumber = slot.slotNumber;
+		player.inventoryContainer.inventorySlots.set(slot.slotNumber, newSlot);
 	}
 	
 }
