@@ -38,8 +38,9 @@ public final class BackpackHelper {
 		return ((properties != null) ? properties.getBackpackStack() : null);
 	}
 	
-	/** Returns if the entity can equip a backpack. Returns false if the
-	 *  chest armor slot is taken up or a backpack is already equipped. */
+	/** Returns if the entity can equip a backpack. <br>
+	 *  Returns false if the chest armor slot is taken up or a backpack is already equipped. <br>
+	 *  Also see {@link BackpackRegistry#canEntityWearBackpacks}. */
 	public static boolean canEquipBackpack(EntityLivingBase entity) {
 		if ((getBackpackProperties(entity) == null) ||
 		    (getEquippedBackpack(entity) != null)) return false;
@@ -53,7 +54,7 @@ public final class BackpackHelper {
 	                                       IBackpackData backpackData) {
 		IBackpack backpackType = getBackpackType(backpack);
 		if ((backpack != null) && (backpackType == null))
-			throw new Error("Backpack item isn't an IBackpack.");
+			throw new IllegalArgumentException("Backpack item isn't an IBackpack.");
 		IBackpackProperties properties = getBackpackProperties(entity);
 		// Set backpack
 		if (equipAsChestArmor && (entity instanceof EntityPlayer)) {
@@ -89,7 +90,8 @@ public final class BackpackHelper {
 	}
 	
 	/** Checks if a player can open an entity's equipped backpack. <br>
-	 *  Returns if the player stands close enough to and behind the carrier. */
+	 *  Returns if the player stands close enough to and behind the carrier. <br>
+	 *  Always returns true if player and carrier are the same entity. */
 	public static boolean canInteractWithEquippedBackpack(EntityPlayer player, EntityLivingBase carrier) {
 		double distance = player.getDistanceToEntity(carrier);
 		// Calculate angle between player and carrier.
@@ -111,7 +113,6 @@ public final class BackpackHelper {
 			BackpackHelper.setEquippedBackpack(entity, stack, tileEntity.getBackpackData());
 			tileEntity.setBackpackStack(null);
 			tileEntity.setBackpackData(null);
-			// TODO: Sync backpack across players.
 		}
 		return true;
 	}
