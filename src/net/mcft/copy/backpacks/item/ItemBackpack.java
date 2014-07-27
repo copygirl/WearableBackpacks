@@ -1,5 +1,6 @@
 package net.mcft.copy.backpacks.item;
 
+import java.util.Arrays;
 import java.util.List;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
@@ -7,10 +8,10 @@ import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackProperties;
-import net.mcft.copy.backpacks.block.tileentity.TileEntityBackpack;
 import net.mcft.copy.backpacks.client.BackpackResources;
 import net.mcft.copy.backpacks.inventory.InventoryBackpack;
 import net.mcft.copy.backpacks.misc.BackpackDataItems;
+import net.mcft.copy.core.base.TileEntityBase;
 import net.mcft.copy.core.container.ContainerBase;
 import net.mcft.copy.core.misc.BlockLocation;
 import net.mcft.copy.core.util.LocalizationUtils;
@@ -52,22 +53,18 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	@Override
 	public <T extends TileEntity & IBackpackProperties> void onPlacedInteract(EntityPlayer player, final T tileEntity) {
 		if (player.worldObj.isRemote) return;
-		ItemStack backpack = tileEntity.getBackpackStack();
-		BackpackDataItems data = (BackpackDataItems)tileEntity.getBackpackData();
 		ContainerBase.create(player,
-				new InventoryBackpack(backpack, data) {
+				new InventoryBackpack(tileEntity) {
 					@Override public boolean isUseableByPlayer(EntityPlayer player) {
-						return ((TileEntityBackpack)tileEntity).isUsable(player); }
+						return ((TileEntityBase)tileEntity).isUsable(player); }
 				}).open();
 	}
 	
 	@Override
 	public void onEquippedInteract(EntityPlayer player, final EntityLivingBase target) {
 		if (player.worldObj.isRemote) return;
-		ItemStack backpack = BackpackHelper.getEquippedBackpack(target);
-		BackpackDataItems data = (BackpackDataItems)BackpackHelper.getEquippedBackpackData(target);
 		ContainerBase.create(player,
-				new InventoryBackpack(backpack, data) {
+				new InventoryBackpack(BackpackHelper.getBackpackProperties(player)) {
 					@Override public boolean isUseableByPlayer(EntityPlayer player) {
 						return BackpackHelper.canInteractWithEquippedBackpack(player, target); }
 				}).open();

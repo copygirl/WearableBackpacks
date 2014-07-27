@@ -1,9 +1,14 @@
 package net.mcft.copy.backpacks.api;
 
+import net.mcft.copy.core.util.ClientUtils;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 /** Support is almost non-existent when WearableBackpacks isn't installed.
     It's recommended to either have it be required, or only add backpacks
@@ -119,11 +124,24 @@ public final class BackpackHelper {
 	
 	/** Updates the lid ticks for some backpack properties.
 	 *  Plays a sound when the backpack is being opened or closed. */
+	@SideOnly(Side.CLIENT)
 	public static void updateLidTicks(IBackpackProperties properties, double x, double y, double z) {
+		World world = ClientUtils.getLocalWorld();
+		boolean usedByPlayer = (properties.getPlayersUsing() > 0);
+		int prevLidTicks = properties.getLidTicks();
 		IBackpack backpackType = getBackpackType(properties.getBackpackStack());
-		properties.setLidTicks(Math.max(-1, Math.min(((backpackType != null) ? backpackType.getLidMaxTicks() : 0),
-				properties.getLidTicks() + ((properties.getPlayersUsing() > 0) ? +1 : -1))));
-		// TODO: Play opening / closing sounds.
+		int maxLidTicks = ((backpackType != null) ? backpackType.getLidMaxTicks() : 0);
+		
+		int lidTicks = Math.max(-1, Math.min(maxLidTicks, prevLidTicks + (usedByPlayer ? +1 : -1)));
+		properties.setLidTicks(lidTicks);
+		
+		String sound = Block.soundTypeSnow.getStepResourcePath();
+		// Play sound when backpack is being opened.
+		if ((lidTicks > 0) && (prevLidTicks <= 0))
+			world.playSound(x, y, z, sound, 1.0F, 0.6F, false);
+		// Play sound when backpack is being closed.
+		if ((lidTicks < (maxLidTicks / 5)) && (prevLidTicks >= (maxLidTicks / 5)))
+			world.playSound(x, y, z, sound, 0.8F, 0.4F, false);
 	}
 	
 	// Helper functions
