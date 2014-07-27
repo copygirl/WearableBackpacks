@@ -1,0 +1,9 @@
+container.wearablebackpack.backpack=Backpack
+
+tile.wearablebackpacks.backpack.name=Backpack
+
+tooltip.wearablebackpacks.backpack.equipHint=Place down and break\nwhile sneaking to equip.
+tooltip.wearablebackpacks.backpack.equipHint.extended=Sneak and break to equip.\nSneak and right click ground\nwith empty hand to unequip.
+tooltip.wearablebackpacks.backpack.openHint=Press %1$s to open while equipped.
+tooltip.wearablebackpacks.backpack.unequipHint=Sneak and right click ground\nwith empty hand to unequip.
+tooltip.wearablebackpacks.backpack.used=Currently being used by a player.

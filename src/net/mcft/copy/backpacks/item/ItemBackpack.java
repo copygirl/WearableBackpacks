@@ -1,5 +1,8 @@
 package net.mcft.copy.backpacks.item;
 
+import java.util.List;
+
+import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
@@ -10,6 +13,7 @@ import net.mcft.copy.backpacks.inventory.InventoryBackpack;
 import net.mcft.copy.backpacks.misc.BackpackDataItems;
 import net.mcft.copy.core.container.ContainerBase;
 import net.mcft.copy.core.misc.BlockLocation;
+import net.mcft.copy.core.util.LocalizationUtils;
 import net.mcft.copy.core.util.WorldUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
@@ -132,6 +136,26 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 	public int getColorFromItemStack(ItemStack stack, int pass) {
 		if (pass != 0) return 0xFFFFFF;
 		return 0xA06540;
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advancedTooltips) {
+		boolean enableHelpTooltips = true;
+		// Check if the stack is the player's currently equipped backpack.
+		if (BackpackHelper.getEquippedBackpack(player) == stack) {
+			// If someone's using the player's backpack, display it in the tooltip.
+			// As long as someone's accessing the backpack, it can't be placed down.
+			if (BackpackHelper.getBackpackProperties(player).getPlayersUsing() > 0)
+				LocalizationUtils.translateTooltipMultiline(list, WearableBackpacks.MOD_ID, "backpack.used");
+			// Display the unequip hint as the tooltip.
+			else if (enableHelpTooltips)
+				LocalizationUtils.translateTooltipMultiline(list, WearableBackpacks.MOD_ID, "backpack.unequipHint");
+		} else if (enableHelpTooltips)
+			// Display the equip hint as the tooltip. If the chestplate setting is off,
+			// use the extended tooltip, which also shows how to unequip the backpack.
+			LocalizationUtils.translateTooltipMultiline(list, WearableBackpacks.MOD_ID,
+					(BackpackHelper.equipAsChestArmor ? "backpack.equipHint" : "backpack.equipHint.extended"));
 	}
 	
 	@Override
