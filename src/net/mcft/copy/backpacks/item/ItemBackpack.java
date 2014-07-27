@@ -78,7 +78,7 @@ public class ItemBackpack extends ItemBlock implements IBackpack, ISpecialArmor 
 		IBackpackData data = BackpackHelper.getEquippedBackpackData(entity);
 		if (!(data instanceof BackpackDataItems)) return;
 		BackpackDataItems dataItems = (BackpackDataItems)data;
-		// TODO: Drop items.
+		WorldUtils.dropStacksFromEntity(entity, Arrays.asList(dataItems.items), 4.0F);
 	}
 
 	@Override
