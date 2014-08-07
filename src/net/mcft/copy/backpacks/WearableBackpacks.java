@@ -1,12 +1,9 @@
 package net.mcft.copy.backpacks;
 
 import net.mcft.copy.backpacks.content.BackpackBlocks;
-import net.mcft.copy.backpacks.content.BackpackEntities;
-import net.mcft.copy.backpacks.content.BackpackItems;
 import net.mcft.copy.backpacks.content.BackpackRecipes;
-import net.mcft.copy.backpacks.content.BackpackTileEntities;
 import net.mcft.copy.backpacks.proxy.CommonProxy;
-import net.mcft.copy.core.config.Config;
+import net.mcft.copy.core.config.ContentConfig;
 
 import org.apache.logging.log4j.Logger;
 
@@ -28,7 +25,7 @@ public class WearableBackpacks
 	private static CommonProxy proxy;
 
 	public static Logger log;
-	public static Config config;
+	public static ContentConfig config;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -36,16 +33,15 @@ public class WearableBackpacks
 		log = event.getModLog();
 		
 		config = new BackpacksConfig(event.getSuggestedConfigurationFile());
-		config.load();
+		config.addContentSettingsViaReflection("blocks", BackpackBlocks.class);
 		
-		BackpackBlocks.register();
-		BackpackItems.register();
-		BackpackEntities.register();
-		BackpackTileEntities.register();
+		config.load();
+		config.update();
+		config.save();
+		
+		BackpackBlocks.register(config);
 		
 		proxy.init();
-		
-		config.save();
 		
 	}
 	

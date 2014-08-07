@@ -99,13 +99,9 @@ public class CommonProxy {
 				if (!player.worldObj.isRemote) {
 					BackpackHelper.setEquippedBackpack(player, null, null);
 					player.inventoryContainer.detectAndSendChanges();
-					// TODO: Sync backpack across players.
 				}
 				
 			} else WearableBackpacks.log.error("TileEntity at {} is not an IBackpackTileEntity", block);
-		} else {
-			// TODO: Sync backpack to player, make sure e
-			//       thinks e still has a backpack equipped.
 		}
 		
 	}

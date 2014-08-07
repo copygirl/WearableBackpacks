@@ -11,12 +11,13 @@ public final class BackpackRecipes {
 	
 	public static void register() {
 		
-		GameRegistry.addRecipe(new ItemStack(BackpackBlocks.backpack),
-				"#i#",
-				"#o#",
-				"###", 'i', Items.gold_ingot,
-				       'o', Blocks.wool,
-				       '#', Items.leather);
+		if (BackpackBlocks.backpack != null)
+			GameRegistry.addRecipe(new ItemStack(BackpackBlocks.backpack),
+					"#i#",
+					"#o#",
+					"###", 'i', Items.gold_ingot,
+					       'o', Blocks.wool,
+					       '#', Items.leather);
 		
 	}
 	
