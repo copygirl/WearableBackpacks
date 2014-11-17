@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.SpecialSpawn;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
@@ -177,6 +178,15 @@ public class CommonProxy {
 			properties.getLastBackpackType().onFaultyRemoval(entity);
 			properties.setLastBackpackType(null);
 		}
+		
+	}
+	
+	@SubscribeEvent
+	public void onLivingDeath(LivingDeathEvent event) {
+		
+		ItemStack backpack = BackpackHelper.getEquippedBackpack(event.entityLiving);
+		if (backpack != null)
+			BackpackHelper.getBackpackType(backpack).onDeath(event.entityLiving);
 		
 	}
 	
