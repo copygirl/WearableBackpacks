@@ -36,7 +36,6 @@ public class WearableBackpacks
 		config.addContentSettingsViaReflection("blocks", BackpackBlocks.class);
 		
 		config.load();
-		config.update();
 		config.save();
 		
 		BackpackBlocks.register(config);
