@@ -1,0 +1,33 @@
+{
+	"elements": [{
+		"__comment": "top",
+		"from": [  3,  9,  5 ],
+		"to":   [ 13, 12, 10 ],
+		"faces": {
+			"down":  { "uv": [ 7.5,   0, 12.5, 2.5 ], "texture": "#all", "tintindex": 0 },
+			"up":    { "uv": [ 2.5,   0,  7.5, 2.5 ], "texture": "#all", "tintindex": 0 },
+			"north": { "uv": [  10, 2.5,   15,   4 ], "texture": "#all", "tintindex": 0 },
+			"south": { "uv": [ 2.5, 2.5,  7.5,   4 ], "texture": "#all", "tintindex": 0 },
+			"west":  { "uv": [   0, 2.5,  2.5,   4 ], "texture": "#all", "tintindex": 0 },
+			"east":  { "uv": [ 7.5, 2.5,   10,   4 ], "texture": "#all", "tintindex": 0 }
+		}
+	},
+	{
+		"__comment": "topo",
+		"from": [  3,  9,  5 ],
+		"to":   [ 13, 12, 10 ],
+		"faces": {
+			"down":  { "uv": [ 7.5,   0, 12.5, 2.5 ], "texture": "#overlay" },
+			"up":    { "uv": [ 2.5,   0,  7.5, 2.5 ], "texture": "#overlay" },
+			"north": { "uv": [  10, 2.5,   15,   4 ], "texture": "#overlay" },
+			"south": { "uv": [ 2.5, 2.5,  7.5,   4 ], "texture": "#overlay" },
+			"west":  { "uv": [   0, 2.5,  2.5,   4 ], "texture": "#overlay" },
+			"east":  { "uv": [ 7.5, 2.5,   10,   4 ], "texture": "#overlay" }
+		}
+	}],
+	"textures": {
+		"all": "wearablebackpacks:blocks/backpack",
+		"overlay": "wearablebackpacks:blocks/backpack_overlay",
+		"particle": "wearablebackpacks:blocks/backpack"
+	}
+}

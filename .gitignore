@@ -1,16 +1,33 @@
-/.gradle/
-/.settings/
-/gradle/
-/eclipse/
-/build/
+# Eclipse
 /bin/
-
+/*.launch
+/.settings/
+/.metadata/
 /.classpath
 /.project
+
+# IDEA
+/out/
+/*.ipr
+/*.iws
+/*.iml
+/.idea/
+
+# vscode
+/.vscode/
+
+# Gradle
+/build/
+/.gradle/
+/gradle/
 /gradlew
 /gradlew.bat
 
-# Project related files
-# Currently not included
+# Other
+/eclipse/
+/run/
+
+# Project
 /downloads/
 /images/
+/models/

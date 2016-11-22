@@ -1,44 +1,62 @@
 buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
-    }
+	repositories {
+		jcenter()
+		maven { url = "http://files.minecraftforge.net/maven" }
+	}
+	dependencies {
+		classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+	}
 }
+apply plugin: 'net.minecraftforge.gradle.forge'
 
-apply plugin: 'forge'
 
-version = "1.0.0.1"
-group = "net.mcft.copy.backpacks"
+version = "1.0.0.1-beta"
+group   = "net.mcft.copy.backpacks"
 archivesBaseName = project.projectDir.name
 
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+compileJava { sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8 }
+
 minecraft {
-    version = "1.7.2-10.12.2.1121"
+	version  = "1.10.2-12.18.2.2151"
+	runDir   = "run"
+	mappings = "snapshot_20160518"
 }
 
-sourceSets.main {
-    java { srcDirs 'src' }
-    resources { srcDirs 'resources' }
-}
+dependencies {  }
 
 processResources {
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-    
-    from (sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-    from (sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
+	inputs.property "version", project.version
+	inputs.property "mcversion", project.minecraft.version
+	
+	from (sourceSets.main.resources.srcDirs) {
+		include 'mcmod.info'
+		expand 'version':project.version, 'mcversion':project.minecraft.version
+	}
+	
+	from (sourceSets.main.resources.srcDirs) {
+		exclude 'mcmod.info'
+	}
+}
+
+task apiJar(type: Jar, dependsOn: classes) {
+	from sourceSets.main.output
+	include 'net/mcft/copy/backpacks/api/**'
+	classifier = 'api'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	from sourceSets.main.allSource
+	classifier = 'sources'
+}
+
+task deobfJar(type: Jar) {
+	from sourceSets.main.output
+	classifier = 'deobf'
+}
+
+artifacts {
+	archives sourcesJar
+	archives apiJar
+	archives deobfJar
 }

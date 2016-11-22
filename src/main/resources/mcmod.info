@@ -1,0 +1,16 @@
+[{
+  "modid": "WearableBackpacks",
+  "name": "Wearable Backpacks",
+  "description": "",
+  "authors": [ "copygirl", "asiekierka" ],
+  "credits": "",
+  
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "dependencies": [  ],
+  
+  "url": "https://github.com/copygirl/WearableBackpacks",
+  "updateUrl": "",
+  "logoFile": "",
+  "screenshots": [  ]
+}]
