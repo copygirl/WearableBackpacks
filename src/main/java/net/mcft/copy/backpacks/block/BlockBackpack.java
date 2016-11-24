@@ -1,6 +1,7 @@
 package net.mcft.copy.backpacks.block;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.block.BlockContainer;
@@ -11,6 +12,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -160,39 +162,60 @@ public class BlockBackpack extends BlockContainer {
 		return true;
 	}
 	
-	// Equipping / item dropping logic
+	// Equipping / block breaking / drops related
 	
 	@Override
 	public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player) {
-		if (!worldIn.isRemote && player.isSneaking() &&
-		    BackpackHelper.equipBackpack(player, worldIn.getTileEntity(pos)))
-			worldIn.setTileEntity(pos, null);
+		if (!worldIn.isRemote && player.isSneaking())
+			// On the server, try to equip the backpack
+			// if the player is sneaking while breaking it.
+			BackpackHelper.equipBackpack(player, worldIn.getTileEntity(pos));
 	}
 	
 	@Override
-	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		TileEntity entity = worldIn.getTileEntity(pos);
-		IBackpack backpack = BackpackHelper.getBackpack(entity);
-		if ((backpack != null) && (backpack.getType() != null))
-			backpack.getType().onBlockBreak(entity, backpack);
-		// Don't call the super method, as it removes
-		// the tile entity, which we need in getDrops.
+	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos,
+	                               EntityPlayer player, boolean willHarvest) {
+		// The super method will set the block to air before getDrops.
+		// But we need the tile entity there to drop the backpack item.
+		
+		// Fun fact:
+		//   "willHarvest" depends on if the block can be harvested with the current tool.
+		//   For example stone can only be harvested with a pick. Without, harvestBlock and
+		//   therefore getDrops aren't called and no items are dropped. This will always be
+		//   true since we don't require a specific tool, but for correctness' sake, ...
+		
+		if (willHarvest) {
+			// Super method calls this usually, we need to do it manually.
+			onBlockHarvested(world, pos, state, player);
+			return true;
+		} else return super.removedByPlayer(state, world, pos, player, willHarvest);
 	}
 	
 	@Override
 	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
 		IBackpack backpack = BackpackHelper.getBackpack(world.getTileEntity(pos));
-		return Arrays.asList((backpack != null)
-			? (backpack.getStack() != null) // If we have a backpack entity, drop either its stack ..
-				? backpack.getStack() : new ItemStack(this) // .. or in case it's missing, create a new one.
-			: null); // No backpack entity likely means the backpack was equipped, so don't drop anything.
+		return ((backpack != null) && (backpack.getStack() != null))
+			? Arrays.asList(backpack.getStack()) // Return the backpack's stack if broken normally.
+			: Collections.emptyList(); // If backpack is equipped, stack is set to null: Don't drop anything.
 	}
 	
 	@Override
 	public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos,
 	                         IBlockState state, TileEntity entity, ItemStack stack) {
+		// The super method calls getDrops and spawns the items in-world.
 		super.harvestBlock(worldIn, player, pos, state, entity, stack);
-		worldIn.removeTileEntity(pos); // Remove the tile entity, which was delayed.
+		worldIn.setBlockToAir(pos); // Set block to air, as it was delayed from removedByPlayer.
+	}
+	
+	@Override
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		// This is called when the block is set to air by any means.
+		// Afterward, the tile entity is also removed automatically.
+		TileEntity entity = worldIn.getTileEntity(pos);
+		IBackpack backpack = BackpackHelper.getBackpack(entity);
+		if ((backpack != null) && (backpack.getType() != null))
+			// This would drop the contents of a normal backpack.
+			backpack.getType().onBlockBreak(entity, backpack);
 	}
 	
 	// Blockstates
