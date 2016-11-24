@@ -182,9 +182,10 @@ public class BlockBackpack extends BlockContainer {
 	@Override
 	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
 		IBackpack backpack = BackpackHelper.getBackpack(world.getTileEntity(pos));
-		// Either drop the backpack stack or, if missing, a new
-		return Arrays.asList(((backpack != null) && (backpack.getStack() != null))
-			? backpack.getStack() : new ItemStack(this));
+		return Arrays.asList((backpack != null)
+			? (backpack.getStack() != null) // If we have a backpack entity, drop either its stack ..
+				? backpack.getStack() : new ItemStack(this) // .. or in case it's missing, create a new one.
+			: null); // No backpack entity likely means the backpack was equipped, so don't drop anything.
 	}
 	
 	@Override
