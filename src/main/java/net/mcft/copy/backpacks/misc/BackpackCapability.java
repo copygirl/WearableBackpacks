@@ -23,8 +23,12 @@ import net.mcft.copy.backpacks.network.MessageUpdateStack;
 
 public class BackpackCapability implements IBackpack {
 	
+	public static final String TAG_STACK = "stack";
+	public static final String TAG_TYPE = "type";
+	public static final String TAG_DATA = "data";
+	
 	public static final ResourceLocation IDENTIFIER =
-		new ResourceLocation("wearablebackpacks", "backpack");
+		new ResourceLocation("wearablebackpacks:backpack");
 	
 	
 	public final EntityLivingBase entity;
@@ -135,11 +139,11 @@ public class BackpackCapability implements IBackpack {
 		
 		@Override
 		public void deserializeNBT(NBTTagCompound compound) {
-			backpack.stack = NbtUtils.readItem(compound.getCompoundTag("stack"));
+			backpack.stack = NbtUtils.readItem(compound.getCompoundTag(TAG_STACK));
 			
 			IBackpackType type;
 			if (backpack.stack == null) {
-				String typeString = compound.getString("type");
+				String typeString = compound.getString(TAG_TYPE);
 				type = BackpackHelper.getBackpackType((typeString != null)
 					? Item.getByNameOrId(typeString) : null);
 				backpack.lastType = type;
@@ -151,7 +155,7 @@ public class BackpackCapability implements IBackpack {
 			}
 			
 			backpack.data = type.createBackpackData();
-			NBTBase dataTag = compound.getTag("data");
+			NBTBase dataTag = compound.getTag(TAG_DATA);
 			if ((backpack.data != null) && (dataTag != null))
 				backpack.data.deserializeNBT(dataTag);
 		}
@@ -159,10 +163,10 @@ public class BackpackCapability implements IBackpack {
 		@Override
 		public NBTTagCompound serializeNBT() {
 			return NbtUtils.createCompound(
-				"stack", ((backpack.stack != null) ? backpack.stack.serializeNBT() : null),
+				TAG_STACK, ((backpack.stack != null) ? backpack.stack.serializeNBT() : null),
 				// If the backpack is stored in the chest armor slot, we need to save the item. See deserializeNBT.
-				"type", (backpack.isChestArmor() ? backpack.getStack().getItem().getRegistryName().toString() : null),
-				"data", ((backpack.data != null) ? backpack.data.serializeNBT() : null));
+				TAG_TYPE, (backpack.isChestArmor() ? backpack.getStack().getItem().getRegistryName().toString() : null),
+				TAG_DATA, ((backpack.data != null) ? backpack.data.serializeNBT() : null));
 		}
 		
 	}
@@ -174,8 +178,8 @@ public class BackpackCapability implements IBackpack {
 			BackpackCapability backpack = (BackpackCapability)instance;
 			return ((backpack.stack == null) && (backpack.data == null)) ? null
 				: NbtUtils.createCompound(
-					"stack", ((backpack.stack != null) ? backpack.stack.serializeNBT() : null),
-					"data", ((backpack.data != null) ? backpack.data.serializeNBT() : null));
+					TAG_STACK, ((backpack.stack != null) ? backpack.stack.serializeNBT() : null),
+					TAG_DATA, ((backpack.data != null) ? backpack.data.serializeNBT() : null));
 		}
 		
 		@Override
@@ -184,7 +188,7 @@ public class BackpackCapability implements IBackpack {
 			if (!(nbt instanceof NBTTagCompound)) return;
 			NBTTagCompound compound = (NBTTagCompound)nbt;
 			
-			ItemStack stack = NbtUtils.readItem(compound.getCompoundTag("stack"));
+			ItemStack stack = NbtUtils.readItem(compound.getCompoundTag(TAG_STACK));
 			backpack.setStack(stack);
 			
 			IBackpackType type;
@@ -196,7 +200,7 @@ public class BackpackCapability implements IBackpack {
 			} else type = BackpackHelper.getBackpackType(stack);
 			
 			IBackpackData data = type.createBackpackData();
-			NBTBase dataTag = compound.getTag("data");
+			NBTBase dataTag = compound.getTag(TAG_DATA);
 			if (dataTag != null) data.deserializeNBT(dataTag);
 			backpack.setData(data);
 		}
