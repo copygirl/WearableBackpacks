@@ -7,17 +7,13 @@ import java.util.List;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -27,18 +23,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
 
+// FIXME: Currently shows missing texture as break particle.
 public class BlockBackpack extends BlockContainer {
-	
-	// TODO: Move this over to the tile entity instead and render the whole backpack in the TileEntitySpecialRenderer.
-	public static final PropertyDirection FACING =
-		PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 	
 	private final AxisAlignedBB[] _boundsFromFacing = new AxisAlignedBB[4];
 	
@@ -63,6 +53,9 @@ public class BlockBackpack extends BlockContainer {
 	@Override
 	public boolean isFullCube(IBlockState state) { return false; }
 	
+	@Override
+	public EnumBlockRenderType getRenderType(IBlockState state) { return EnumBlockRenderType.INVISIBLE; }
+	
 	// Block bounds
 	
 	protected float getBoundsWidth() { return 12 / 16.0F; }
@@ -71,7 +64,10 @@ public class BlockBackpack extends BlockContainer {
 	
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-		return _boundsFromFacing[state.getValue(FACING).ordinal() - 2];
+		TileEntity entity = source.getTileEntity(pos);
+		EnumFacing facing = ((entity instanceof TileEntityBackpack)
+			? ((TileEntityBackpack)entity).facing : EnumFacing.NORTH);
+		return _boundsFromFacing[facing.ordinal() - 2];
 	}
 	
 	private void initBlockBounds() {
@@ -86,15 +82,6 @@ public class BlockBackpack extends BlockContainer {
 		}
 	}
 	
-	// Rendering related
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public BlockRenderLayer getBlockLayer() { return BlockRenderLayer.CUTOUT_MIPPED; }
-	
-	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state) { return EnumBlockRenderType.MODEL; }
-	
 	// Block methods / events
 	
 	@Override
@@ -106,10 +93,11 @@ public class BlockBackpack extends BlockContainer {
 	}
 	
 	@Override
-	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing,
-	                                 float hitX, float hitY, float hitZ,
-	                                 int meta, EntityLivingBase placer) {
-		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing());
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state,
+	                            EntityLivingBase placer, ItemStack stack) {
+		TileEntity tileEntity = worldIn.getTileEntity(pos);
+		if (tileEntity instanceof TileEntityBackpack)
+			((TileEntityBackpack)tileEntity).facing = placer.getHorizontalFacing();
 	}
 	
 	@Override
@@ -216,19 +204,6 @@ public class BlockBackpack extends BlockContainer {
 		if ((backpack != null) && (backpack.getType() != null))
 			// This would drop the contents of a normal backpack.
 			backpack.getType().onBlockBreak(entity, backpack);
-	}
-	
-	// Blockstates
-	
-	@Override
-	protected BlockStateContainer createBlockState() { return new BlockStateContainer(this, FACING); }
-	
-	@Override
-	public int getMetaFromState(IBlockState state) { return state.getValue(FACING).ordinal() - 2; }
-	
-	@Override
-	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(FACING, EnumFacing.getFront((meta & 3) + 2));
 	}
 	
 }

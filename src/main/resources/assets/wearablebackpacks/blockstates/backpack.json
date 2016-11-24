@@ -4,20 +4,12 @@
 		"model": "wearablebackpacks:backpack"
 	},
 	"variants": {
-		"normal": [{
-			"submodel": { "straps": { "model": "wearablebackpacks:backpack_straps" } }
-		}],
+		"normal": [{  }],
 		"inventory": [{
 			"submodel": {
 				"straps": { "model": "wearablebackpacks:backpack_straps" },
 				"top": { "model": "wearablebackpacks:backpack_top" }
 			}
-		}],
-		"facing": {
-			"south": { "submodel": { "straps": { "model": "wearablebackpacks:backpack_straps" } }, "y": 0 },
-			"north": { "submodel": { "straps": { "model": "wearablebackpacks:backpack_straps" } }, "y": 180 },
-			"west":  { "submodel": { "straps": { "model": "wearablebackpacks:backpack_straps" } }, "y": 90 },
-			"east":  { "submodel": { "straps": { "model": "wearablebackpacks:backpack_straps" } }, "y": 270 }
-		}
+		}]
 	}
 }

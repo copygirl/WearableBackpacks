@@ -4,13 +4,10 @@ import java.util.Map;
 import com.google.common.base.Function;
 
 import net.minecraft.block.state.IBlockState;
-
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
-
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -19,15 +16,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -36,7 +30,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mcft.copy.backpacks.BackpacksContent;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
-
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.ProxyCommon;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
@@ -49,6 +42,7 @@ public class ProxyClient extends ProxyCommon {
 	
 	public static IBakedModel MODEL_BACKPACK;
 	public static IBakedModel MODEL_BACKPACK_TOP;
+	public static IBakedModel MODEL_BACKPACK_STRAPS;
 	
 	@Override
 	public void preInit() {
@@ -89,14 +83,15 @@ public class ProxyClient extends ProxyCommon {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void onModelBake(ModelBakeEvent event) {
-		IModel backpackModelBase = getModel(new ResourceLocation("wearablebackpacks:block/backpack"));
-		IModel backpackTopModelBase = getModel(new ResourceLocation("wearablebackpacks:block/backpack_top"));
-		MODEL_BACKPACK = backpackModelBase.bake(
-				new TRSRTransformation(EnumFacing.NORTH),
-				DefaultVertexFormats.BLOCK, TEXTURE_GETTER);
-		MODEL_BACKPACK_TOP = backpackTopModelBase.bake(
-				new TRSRTransformation(EnumFacing.NORTH),
-				DefaultVertexFormats.BLOCK, TEXTURE_GETTER);
+		MODEL_BACKPACK = bakeBlockModel("wearablebackpacks:block/backpack");
+		MODEL_BACKPACK_TOP = bakeBlockModel("wearablebackpacks:block/backpack_top");
+		MODEL_BACKPACK_STRAPS = bakeBlockModel("wearablebackpacks:block/backpack_straps");
+	}
+	
+	static IBakedModel bakeBlockModel(String location) {
+		IModel model = getModel(new ResourceLocation(location));
+		return model.bake(model.getDefaultState(),
+			DefaultVertexFormats.BLOCK, TEXTURE_GETTER);
 	}
 	
 	static IModel getModel(ResourceLocation location) {

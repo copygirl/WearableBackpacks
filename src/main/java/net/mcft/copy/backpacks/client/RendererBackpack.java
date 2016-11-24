@@ -8,21 +8,18 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 
 import net.mcft.copy.backpacks.ProxyClient;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackType;
-import net.mcft.copy.backpacks.block.BlockBackpack;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
 
 public class RendererBackpack {
 	
 	private RendererBackpack() {  }
 	
-	private static void render(IBackpack backpack, float partialTicks, boolean renderBase) {
+	private static void render(IBackpack backpack, float partialTicks, boolean renderStraps) {
 		
 		BlockModelRenderer renderer = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer();
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -33,8 +30,9 @@ public class RendererBackpack {
 		float g = (color >> 8 & 0xFF) / 255.0F;
 		float b = (color & 0xFF) / 255.0F;
 		
-		if (renderBase)
-			renderer.renderModelBrightnessColor(ProxyClient.MODEL_BACKPACK, 1.0f, r, g, b);
+		renderer.renderModelBrightnessColor(ProxyClient.MODEL_BACKPACK, 1.0f, r, g, b);
+		if (renderStraps)
+			renderer.renderModelBrightnessColor(ProxyClient.MODEL_BACKPACK_STRAPS, 1.0f, r, g, b);
 		
 		float lidAngle = 0.0F;
 		IBackpackType type = backpack.getType();
@@ -56,6 +54,8 @@ public class RendererBackpack {
 		
 	}
 	
+	// TODO: See if this can be changed back to FastTESR?
+	//       Forge apparently has an animation API? asie says to ask fry.
 	public static class TileEntity extends TileEntitySpecialRenderer<TileEntityBackpack> {
 		
 		@Override
@@ -63,16 +63,13 @@ public class RendererBackpack {
 		                               float partialTicks, int breakStage) {
 			IBackpack backpack = BackpackHelper.getBackpack(entity);
 			if (backpack == null) return;
-			
-			BlockPos pos = entity.getPos();
-			EnumFacing facing = getWorld().getBlockState(pos).getValue(BlockBackpack.FACING);
-			float angle = ((facing != null) ? facing.getHorizontalAngle() : 0.0F);
+			float angle = entity.facing.getHorizontalAngle();
 			
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x + 0.5, y + 0.5, z + 0.5);
 			GlStateManager.rotate(angle, 0.0F, -1.0F, 0.0F);
 			GlStateManager.translate(-0.5, -0.5, -0.5);
-			render(backpack, partialTicks, false);
+			render(backpack, partialTicks, true);
 			GlStateManager.popMatrix();
 		}
 		
@@ -80,6 +77,7 @@ public class RendererBackpack {
 	
 	public static class Layer implements LayerRenderer<EntityLivingBase> {
 		
+		// TODO: Allow this to be changed for backpack models that are visually bigger.
 		private static final float HEIGHT_OFFSET = 4.0F / 16.0F;
 		private static final float DEPTH_OFFSET = 10.5F / 16.0F;
 		
@@ -100,7 +98,7 @@ public class RendererBackpack {
 			GlStateManager.translate(0.5F, 0.5F, 0.5F);
 			GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
 			GlStateManager.translate(0, -HEIGHT_OFFSET, -DEPTH_OFFSET);
-			render(backpack, partialTicks, true);
+			render(backpack, partialTicks, false);
 			GlStateManager.popMatrix();
 		}
 		
