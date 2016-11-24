@@ -49,7 +49,7 @@ public class ItemBackpack extends ItemBlock implements IBackpackType, IDyeableIt
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		// TODO: Move tooltip adding code into helper class. DRY!
-		boolean enableHelpTooltips = true;
+		boolean enableHelpTooltips = WearableBackpacks.CONFIG.enableHelpTooltips.getValue();
 		// Check if the stack is the player's currently equipped backpack.
 		IBackpack backpack = BackpackHelper.getBackpack(playerIn);
 		if ((backpack != null) && (backpack.getStack() == stack)) {
@@ -189,7 +189,7 @@ public class ItemBackpack extends ItemBlock implements IBackpackType, IDyeableIt
 	
 	@Override
 	public IBackpackData createBackpackData() {
-		return new BackpackDataItems(36); // TODO: Get configurable backpack size.
+		return new BackpackDataItems(WearableBackpacks.CONFIG.backpackRows.getValue() * 9);
 	}
 	
 	@Override

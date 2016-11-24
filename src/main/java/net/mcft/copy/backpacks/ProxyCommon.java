@@ -3,7 +3,6 @@ package net.mcft.copy.backpacks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
@@ -18,6 +17,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
+import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.api.IBackpack;
@@ -113,7 +113,8 @@ public class ProxyCommon {
 		
 		// When players right-click equipped backpacks, interact with them.
 		
-		if (!(event.getTarget() instanceof EntityLivingBase)) return;
+		if (!WearableBackpacks.CONFIG.enableEquippedInteraction.getValue() ||
+		    !(event.getTarget() instanceof EntityLivingBase)) return;
 		EntityPlayer player = event.getEntityPlayer();
 		EntityLivingBase target = (EntityLivingBase)event.getTarget();
 		

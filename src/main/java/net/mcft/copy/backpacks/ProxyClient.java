@@ -54,9 +54,11 @@ public class ProxyClient extends ProxyCommon {
 	public void preInit() {
 		super.preInit();
 		
-		ModelLoader.setCustomModelResourceLocation(
-			Item.getItemFromBlock(BackpacksContent.BACKPACK), 0,
-			new ModelResourceLocation("wearablebackpacks:backpack", "inventory"));
+		if (BackpacksContent.BACKPACK != null) {
+			ModelLoader.setCustomModelResourceLocation(
+				Item.getItemFromBlock(BackpacksContent.BACKPACK), 0,
+				new ModelResourceLocation("wearablebackpacks:backpack", "inventory"));
+		}
 	}
 	
 	@Override
@@ -65,10 +67,11 @@ public class ProxyClient extends ProxyCommon {
 		
 		Minecraft mc = Minecraft.getMinecraft();
 		
-		mc.getBlockColors().registerBlockColorHandler(BLOCK_COLOR, BackpacksContent.BACKPACK);
-		mc.getItemColors().registerItemColorHandler(ITEM_COLOR, BackpacksContent.BACKPACK);
-		
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBackpack.class, new RendererBackpack.TileEntity());
+		if (BackpacksContent.BACKPACK != null) {
+			mc.getBlockColors().registerBlockColorHandler(BLOCK_COLOR, BackpacksContent.BACKPACK);
+			mc.getItemColors().registerItemColorHandler(ITEM_COLOR, BackpacksContent.BACKPACK);
+			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBackpack.class, new RendererBackpack.TileEntity());
+		}
 		
 		Map<String, RenderPlayer> skinMap = mc.getRenderManager().getSkinMap();
 		skinMap.get("default").addLayer(new RendererBackpack.Layer());

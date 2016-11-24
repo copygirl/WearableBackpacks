@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.SidedProxy;
 
+import net.mcft.copy.backpacks.config.BackpacksConfig;
 import net.mcft.copy.backpacks.network.BackpacksChannel;
 
 // TODO: Add more documentation / comments to source code.
@@ -27,14 +28,18 @@ public class WearableBackpacks {
 	public static ProxyCommon PROXY;
 	
 	public static Logger LOG;
-	public static BackpacksConfig CONFIG;
 	public static BackpacksChannel CHANNEL;
+	public static BackpacksConfig CONFIG;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		LOG = event.getModLog();
-		CONFIG = new BackpacksConfig();
 		CHANNEL = new BackpacksChannel();
+		
+		CONFIG = new BackpacksConfig(event.getSuggestedConfigurationFile());
+		CONFIG.load();
+		CONFIG.save();
+		
 		BackpacksContent.init();
 		PROXY.preInit();
 	}
