@@ -19,6 +19,7 @@ import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackType;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
+import net.mcft.copy.backpacks.misc.util.NbtUtils.NbtType;
 import net.mcft.copy.backpacks.network.MessageUpdateStack;
 
 public class BackpackCapability implements IBackpack {
@@ -143,10 +144,14 @@ public class BackpackCapability implements IBackpack {
 			
 			IBackpackType type;
 			if (backpack.stack == null) {
-				String typeString = compound.getString(TAG_TYPE);
-				type = BackpackHelper.getBackpackType((typeString != null)
-					? Item.getByNameOrId(typeString) : null);
-				backpack.lastType = type;
+				if (!compound.hasKey(TAG_TYPE, NbtType.STRING)) return;
+				// If the backpack has its type saved, restore it.
+				// This is the case when the backpack stack is equipped
+				// in the chest armor slot, which has not yet been loaded.
+				String id = compound.getString(TAG_TYPE);
+				backpack.lastType = type = BackpackHelper.getBackpackType(
+					Item.REGISTRY.getObject(new ResourceLocation(id)));
+				if (type == null) return;
 			} else type = BackpackHelper.getBackpackType(backpack.stack);
 			
 			if (type == null) {
