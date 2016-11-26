@@ -22,6 +22,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.mcft.copy.backpacks.WearableBackpacks;
+
 
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
@@ -129,8 +131,7 @@ public class BlockBackpack extends BlockContainer {
 	@Override
 	public void onBlockClicked(World world, BlockPos pos, EntityPlayer player) {
 		if (world.isRemote && player.isSneaking() && !BackpackHelper.canEquipBackpack(player) &&
-		    // TODO: Implement "enable help tooltips" config option.
-		    //BetterStorage.globalConfig.getBoolean(GlobalConfig.enableHelpTooltips) &&
+		    WearableBackpacks.CONFIG.enableHelpTooltips.getValue() &&
 		    (System.currentTimeMillis() > _lastHelpMessage + 10 * 1000)) {
 			boolean backpack = (BackpackHelper.getBackpack(player) != null);
 			player.addChatMessage(new TextComponentTranslation(
