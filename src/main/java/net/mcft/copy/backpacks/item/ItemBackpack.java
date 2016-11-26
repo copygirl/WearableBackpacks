@@ -192,14 +192,4 @@ public class ItemBackpack extends ItemBlock implements IBackpackType, IDyeableIt
 		return new BackpackDataItems(WearableBackpacks.CONFIG.backpackRows.getValue() * 9);
 	}
 	
-	@Override
-	public int getLidMaxTicks() { return 5; }
-	
-	@Override
-	public float getLidAngle(int prevLidTicks, int lidTicks, float partialTicks) {
-		float progress = lidTicks + (lidTicks - prevLidTicks) * partialTicks;
-		progress = Math.max(0, Math.min(getLidMaxTicks(), progress)) / getLidMaxTicks();
-		return (1.0F - (float)Math.pow(1.0F - progress, 2)) * 45;
-	}
-	
 }
