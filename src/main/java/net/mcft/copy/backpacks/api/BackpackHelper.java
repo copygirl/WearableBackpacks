@@ -1,5 +1,8 @@
 package net.mcft.copy.backpacks.api;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -9,7 +12,9 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,7 +34,6 @@ public final class BackpackHelper {
 	public static double INTERACT_MAX_ANGLE = 90;
 	
 	/** Controlled by a WearableBackpacks config setting. Don't change this. */
-	// TODO: Actually implement said config option!
 	public static boolean equipAsChestArmor = true;
 	
 	
@@ -107,6 +111,74 @@ public final class BackpackHelper {
 			backpack.setData(null);
 		}
 		return true;
+	}
+	
+	/** Attempts to place down a backpack, unequipping it
+	 *  if the specified entity is currently wearing it. */
+	public static boolean placeBackpack(World world, BlockPos pos,
+	                                    ItemStack stack, EntityLivingBase entity) {
+		
+		EntityPlayer player = ((entity instanceof EntityPlayer) ? (EntityPlayer)entity : null);
+		if ((player != null) && !player.canPlayerEdit(pos, EnumFacing.UP, stack))
+			return false;
+		// TODO: Should permission things be handled outside the API method?
+		// TODO: For mobs, use mob griefing gamerule?
+		
+		Item item = stack.getItem();
+		Block block = Block.getBlockFromItem(item);
+		if (!world.canBlockBePlaced(block, pos, false, EnumFacing.UP, null, stack))
+			return false;
+		
+		// Actually go ahead and try to set the block in the world.
+		IBlockState state = block.getStateForPlacement(
+			world, pos, EnumFacing.UP, 0.5F, 0.5F, 0.5F,
+			item.getMetadata(stack.getMetadata()), player, stack);
+		if (!world.setBlockState(pos, state, 3) ||
+		    (world.getBlockState(pos).getBlock() != block)) return false;
+		block.onBlockPlacedBy(world, pos, state, entity, stack);
+		
+		SoundType sound = block.getSoundType(state, world, pos, player);
+		world.playSound(player, pos, sound.getPlaceSound(), SoundCategory.BLOCKS,
+		                (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
+		stack.stackSize -= 1;
+		
+		TileEntity tileEntity = world.getTileEntity(pos);
+		if (tileEntity == null) return true;
+		IBackpack placedBackpack = BackpackHelper.getBackpack(tileEntity);
+		if (placedBackpack == null) return true;
+		
+		IBackpack carrierBackpack = BackpackHelper.getBackpack(player);
+		boolean isEquipped = ((carrierBackpack != null) && (carrierBackpack.getStack() == stack));
+		
+		// Create a copy of the stack with stackSize set to 1 and transfer it.
+		stack = ItemStack.copyItemStack(stack);
+		stack.stackSize = 1;
+		placedBackpack.setStack(stack);
+		
+		// If the carrier had the backpack equipped, transfer data and unequip.
+		if (isEquipped) {
+			
+			IBackpackType type = carrierBackpack.getType();
+			IBackpackData data = carrierBackpack.getData();
+			if ((data == null) && !world.isRemote) {
+				// FIXME: Can't log an error through the WearableBackpacks logger in the API.
+				// WearableBackpacks.LOG.error("Backpack data was null when placing down equipped backpack");
+				data = type.createBackpackData();
+			}
+			
+			placedBackpack.setData(data);
+			
+			if (!world.isRemote)
+				BackpackHelper.setEquippedBackpack(entity, null, null);
+			
+			type.onUnequip(entity, tileEntity, placedBackpack);
+		
+		// Otherwise create a fresh backpack data on the server.
+		} else if (!world.isRemote) placedBackpack.setData(
+			placedBackpack.getType().createBackpackData());
+		
+		return true;
+		
 	}
 	
 	/** Updates the lid ticks for some backpack properties.

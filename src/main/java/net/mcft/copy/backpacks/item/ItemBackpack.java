@@ -30,6 +30,9 @@ import net.mcft.copy.backpacks.item.recipe.IDyeableItem;
 import net.mcft.copy.backpacks.misc.BackpackDataItems;
 import net.mcft.copy.backpacks.misc.util.WorldUtils;
 
+// TODO: Turn this into ItemArmor?
+// TODO: Support armor enchantments like on BetterStorage backpacks?
+// TODO: Implement additional enchantments?
 public class ItemBackpack extends ItemBlock implements IBackpackType, IDyeableItem {
 	
 	public static final int DEFAULT_COLOR = 0xA06540;
@@ -37,7 +40,6 @@ public class ItemBackpack extends ItemBlock implements IBackpackType, IDyeableIt
 	public ItemBackpack(BlockBackpack block) {
 		super(block);
 		setMaxStackSize(1);
-		// TODO: Implement item data / protection / enchantments.
 	}
 	
 	@Override
@@ -77,57 +79,21 @@ public class ItemBackpack extends ItemBlock implements IBackpackType, IDyeableIt
 	                                  World worldIn, BlockPos pos,
 	                                  EnumHand hand, EnumFacing facing,
 	                                  float hitX, float hitY, float hitZ) {
-		
-		// If block clicked is replacable, (like for example
-		// tall grass or snow), check the block below instead.
 		IBlockState state = worldIn.getBlockState(pos);
-		if (state.getMaterial().isReplaceable()) {
-			pos = pos.offset(EnumFacing.DOWN);
-			state = worldIn.getBlockState(pos);
-			facing = EnumFacing.UP;
-		// If block isn't replacable, make sure the top side is clicked.
-		} else if (facing != EnumFacing.UP) return EnumActionResult.FAIL;
-		// Check if top of block is solid.
-		if (!state.isSideSolid(worldIn, pos, EnumFacing.UP))
-			return EnumActionResult.FAIL;
+		// If the block is replaceable, keep the placing position
+		// the same but check the block below for solidity.
+		if (state.getMaterial().isReplaceable())
+			state = worldIn.getBlockState(pos.offset(EnumFacing.DOWN));
+		// Otherwise make sure the top side is used, and
+		// change the placing position to the block above.
+		else if (facing == EnumFacing.UP)
+			pos = pos.offset(EnumFacing.UP);
+		else return EnumActionResult.FAIL;
 		
-		EnumActionResult result = super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
-		if (result != EnumActionResult.SUCCESS) return result;
-		
-		TileEntity tileEntity = worldIn.getTileEntity(pos.offset(EnumFacing.UP));
-		if (tileEntity == null) return EnumActionResult.SUCCESS;
-		IBackpack tileEntityBackpack = BackpackHelper.getBackpack(tileEntity);
-		if (tileEntityBackpack == null) return EnumActionResult.SUCCESS;
-		
-		IBackpack backpack = BackpackHelper.getBackpack(playerIn);
-		boolean isEquipped = ((backpack != null) && (backpack.getStack() == stack));
-		
-		stack = ItemStack.copyItemStack(stack);
-		stack.stackSize = 1;
-		tileEntityBackpack.setStack(stack);
-		
-		// If the backpack was equipped on the player, transfer data and unequip.
-		if (isEquipped) {
-			
-			IBackpackType type = backpack.getType();
-			IBackpackData data = backpack.getData();
-			if ((data == null) && !worldIn.isRemote) {
-				WearableBackpacks.LOG.error("Backpack data was null when placing down backpack");
-				data = type.createBackpackData();
-			}
-			
-			tileEntityBackpack.setData(data);
-			
-			if (!worldIn.isRemote)
-				BackpackHelper.setEquippedBackpack(playerIn, null, null);
-			
-			type.onUnequip(playerIn, tileEntity, tileEntityBackpack);
-		
-		// Otherwise create a fresh backpack data on the server.
-		} else if (!worldIn.isRemote) tileEntityBackpack.setData(
-			tileEntityBackpack.getType().createBackpackData());
-		
-		return EnumActionResult.SUCCESS;
+		// Check if the side is solid and try to place the backpack.
+		return (state.isSideSolid(worldIn, pos, EnumFacing.UP) &&
+		        BackpackHelper.placeBackpack(worldIn, pos, stack, playerIn))
+			? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
 	}
 	
 	// IBackpackType implementation
@@ -172,7 +138,7 @@ public class ItemBackpack extends ItemBlock implements IBackpackType, IDyeableIt
 	public void onDeath(EntityLivingBase entity, IBackpack backpack) {
 		onFaultyRemoval(entity, backpack);
 	}
-
+	
 	@Override
 	public void onFaultyRemoval(EntityLivingBase entity, IBackpack backpack) {
 		if (!(backpack.getData() instanceof BackpackDataItems)) return;
