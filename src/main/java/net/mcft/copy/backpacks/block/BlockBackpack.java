@@ -110,21 +110,9 @@ public class BlockBackpack extends BlockContainer {
 		float hardness = super.getPlayerRelativeBlockHardness(state, player, worldIn, pos);
 		boolean sneaking = player.isSneaking();
 		boolean canEquip = BackpackHelper.canEquipBackpack(player);
-		// TODO: Is this needed still?
-		//       Backpack breaks instantly after harvesting it while
-		//       sneaking when already having one equipped, so yes.
-		boolean stoppedSneaking = localPlayerStoppedSneaking(player);
-		return ((stoppedSneaking || (sneaking && !canEquip))
+		return (sneaking && !canEquip)
 			? -1.0F /* Unbreakable */
-			: (hardness * (sneaking ? 4 : 1)));
-	}
-	
-	boolean lastSneaking = false;
-	private boolean localPlayerStoppedSneaking(EntityPlayer player) {
-		if (!player.worldObj.isRemote) return false;
-		boolean stoppedSneaking = (!player.isSneaking() && lastSneaking);
-		lastSneaking = player.isSneaking();
-		return stoppedSneaking;
+			: (hardness * (sneaking ? 4 : 1));
 	}
 	
 	private long _lastHelpMessage = System.currentTimeMillis();
