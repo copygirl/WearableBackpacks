@@ -22,9 +22,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentTranslation;
+
 import net.mcft.copy.backpacks.WearableBackpacks;
-
-
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
@@ -86,6 +85,7 @@ public class BlockBackpack extends BlockContainer {
 	
 	// Block methods / events
 	
+	// FIXME: Fix crash when ctrl-middle-clicking.
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target,
 	                              World world, BlockPos pos, EntityPlayer player) {

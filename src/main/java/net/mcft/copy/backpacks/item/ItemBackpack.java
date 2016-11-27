@@ -3,6 +3,7 @@ package net.mcft.copy.backpacks.item;
 import java.util.Arrays;
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +25,6 @@ import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackType;
-import net.mcft.copy.backpacks.block.BlockBackpack;
 import net.mcft.copy.backpacks.container.ContainerBackpack;
 import net.mcft.copy.backpacks.item.recipe.IDyeableItem;
 import net.mcft.copy.backpacks.misc.BackpackDataItems;
@@ -37,7 +37,7 @@ public class ItemBackpack extends ItemBlock implements IBackpackType, IDyeableIt
 	
 	public static final int DEFAULT_COLOR = 0xA06540;
 	
-	public ItemBackpack(BlockBackpack block) {
+	public ItemBackpack(Block block) {
 		super(block);
 		setMaxStackSize(1);
 	}
@@ -82,7 +82,7 @@ public class ItemBackpack extends ItemBlock implements IBackpackType, IDyeableIt
 		IBlockState state = worldIn.getBlockState(pos);
 		// If the block is replaceable, keep the placing position
 		// the same but check the block below for solidity.
-		if (state.getMaterial().isReplaceable())
+		if (state.getBlock().isReplaceable(worldIn, pos))
 			state = worldIn.getBlockState(pos.offset(EnumFacing.DOWN));
 		// Otherwise make sure the top side is used, and
 		// change the placing position to the block above.

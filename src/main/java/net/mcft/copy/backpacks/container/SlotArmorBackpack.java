@@ -13,6 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.api.IBackpackType;
 
+// TODO: Open backpack when interacting with slot?
 /** Replaces the player's regular chest armor slot to
  *  prevent them from taking out equipped backpacks. */
 public class SlotArmorBackpack extends Slot {

@@ -12,7 +12,9 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.mcft.copy.backpacks.config.BackpacksConfig;
 import net.mcft.copy.backpacks.network.BackpacksChannel;
 
+// TODO: Add a README file to the repository for GitHubs <3
 // TODO: Add more documentation / comments to source code.
+// TODO: Add achievement(s)! <3
 
 @Mod(modid = WearableBackpacks.MOD_ID, name = WearableBackpacks.MOD_NAME, version = "${version}")
 public class WearableBackpacks {
