@@ -1,21 +1,30 @@
 package net.mcft.copy.backpacks;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
@@ -25,6 +34,7 @@ import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackType;
 import net.mcft.copy.backpacks.container.SlotArmorBackpack;
 import net.mcft.copy.backpacks.misc.BackpackCapability;
+import net.mcft.copy.backpacks.misc.util.WorldUtils;
 import net.mcft.copy.backpacks.network.MessageUpdateStack;
 
 public class ProxyCommon {
@@ -57,10 +67,13 @@ public class ProxyCommon {
 		sendBackpackStack(event.player, event.player);
 	}
 	@SubscribeEvent
+	public void onPlayerRespawn(PlayerRespawnEvent event) {
+		sendBackpackStack(event.player, event.player);
+	}
+	@SubscribeEvent
 	public void onPlayerStartTracking(PlayerEvent.StartTracking event) {
 		sendBackpackStack(event.getTarget(), event.getEntityPlayer());
 	}
-	
 	private void sendBackpackStack(Entity carrier, EntityPlayer player) {
 		BackpackCapability backpack = (BackpackCapability)BackpackHelper.getBackpack(carrier);
 		if (backpack != null) WearableBackpacks.CHANNEL.sendTo(
@@ -68,10 +81,6 @@ public class ProxyCommon {
 	}
 	
 	// Backpack interactions / events
-	
-	// TODO: Implement backpack dropping as block on death.
-	// TODO: Implement "drop as block on death" option.
-	//       (Unequip backpack automatically and don't call IBackpackType.onDeath?)
 	
 	@SubscribeEvent
 	public void onPlayerInteractBlock(PlayerInteractEvent.RightClickBlock event) {
@@ -87,11 +96,11 @@ public class ProxyCommon {
 		if (backpack == null) return;
 		
 		if (event.getHand() == EnumHand.MAIN_HAND) {
-			// Since cancelling the event will not prevent the RightClickBlock
-			// event for the other hand to be fired, we need to cancel this one
-			// first and wait for the OFF_HAND one to actually do the unequipping,
-			// so we can also cancel that. Otherwise, the OFF_HAND interaction
-			// would cause items to be used or blocks being activated.
+			// Since cancelling the event will not prevent the RightClickBlock event
+			// for the other hand from being fired, we need to cancel this one first
+			// and wait for the OFF_HAND one to actually do the unequipping, so we
+			// can also cancel that. Otherwise, the OFF_HAND interaction would cause
+			// items to be used or blocks being activated.
 			event.setCanceled(true);
 			return;
 		}
@@ -170,6 +179,96 @@ public class ProxyCommon {
 				BackpackHelper.updateLidTicks(backpack, entity.posX, entity.posY + 1.0, entity.posZ);
 		}
 		
+	}
+	
+	@SubscribeEvent
+	public void onLivingDeath(LivingDeathEvent event) {
+		
+		// If an entity wearing a backpack dies, try
+		// to place it as a block, or drop the items.
+		
+		EntityLivingBase entity = event.getEntityLiving();
+		World world = entity.worldObj;
+		if (world.isRemote) return;
+		
+		BackpackCapability backpack = (BackpackCapability)BackpackHelper.getBackpack(entity);
+		if (backpack == null) return;
+		
+		// If keep inventory is on, keep the backpack capability so we
+		// can copy it over to the new player entity in onPlayerClone.
+		EntityPlayer player = ((entity instanceof EntityPlayer) ? (EntityPlayer)entity : null);
+		boolean keepInventory = world.getGameRules().getBoolean("keepInventory");
+		if ((player != null) && keepInventory) return;
+		
+		// Attempt to place the backpack as a block instead of dropping the items.
+		if (WearableBackpacks.CONFIG.dropAsBlockOnDeath.getValue()) {
+			
+			class BlockCoord extends MutableBlockPos {
+				public double distance;
+				public int moved = 0;
+				public BlockCoord(Entity entity, int x, int z) {
+					super((int)entity.posX + x, (int)entity.posY, (int)entity.posZ + z);
+					distance = Math.sqrt(Math.pow(getX() + 0.5 - entity.posX, 2) +
+					                     Math.pow(getY() + 0.5 - entity.posY, 2) +
+					                     Math.pow(getZ() + 0.5 - entity.posZ, 2));
+				}
+			}
+			
+			List<BlockCoord> coords = new ArrayList<BlockCoord>();
+			for (int x = -2; x <= 2; x++)
+				for (int z = -2; z <= 2; z++)
+					coords.add(new BlockCoord(entity, x, z));
+			
+			// Try to place the backpack on the ground nearby,
+			// or look for a ground above or below to place it.
+			
+			Collections.sort(coords, new Comparator<BlockCoord>() {
+				@Override public int compare(BlockCoord o1, BlockCoord o2) {
+					if (o1.distance < o2.distance) return -1;
+					else if (o1.distance > o2.distance) return 1;
+					else return 0;
+				}
+			});
+			while (!coords.isEmpty()) {
+				Iterator<BlockCoord> iter = coords.iterator();
+				while (iter.hasNext()) {
+					BlockCoord coord = iter.next();
+					// Attempt to place and unequip the backpack at
+					// this coordinate. If successful, we're done here.
+					if (BackpackHelper.placeBackpack(world, coord, backpack.getStack(), entity))
+						return;
+					boolean replacable = world.getBlockState(coord).getBlock().isReplaceable(world, coord);
+					coord.add(0, (replacable ? -1 : 1), 0);
+					coord.moved += (replacable ? 1 : 5);
+					if ((coord.getY() <= 0) || (coord.getY() > world.getHeight()) ||
+						(coord.moved > 24 - coord.distance * 4)) iter.remove();
+				}
+			}
+			
+		}
+		
+		// In the case of regular backpacks, this causes their contents to be dropped.
+		backpack.getType().onDeath(entity, backpack);
+		
+		// Drop the backpack as an item and remove it from the entity.
+		if (backpack.getStack() != null)
+			WorldUtils.dropStackFromEntity(entity, backpack.getStack(), 4.0F);
+		BackpackHelper.setEquippedBackpack(entity, null, null);
+		
+	}
+	
+	@SubscribeEvent
+	public void onPlayerClone(PlayerEvent.Clone event) {
+		// This comes into play when the "keepInventory" gamerule is on.
+		// In that case, onLivingDeath will keep the backpack information,
+		// so we can transfer it to the new player entity.
+		IBackpack originalBackpack = BackpackHelper.getBackpack(event.getOriginal());
+		if (originalBackpack == null) return;
+		
+		EntityPlayer player = event.getEntityPlayer();
+		IBackpack clonedBackpack = player.getCapability(IBackpack.CAPABILITY, null);
+		clonedBackpack.setStack(originalBackpack.getStack());
+		clonedBackpack.setData(originalBackpack.getData());
 	}
 	
 }

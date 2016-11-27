@@ -21,11 +21,11 @@ public class BackpacksConfig {
 	public final Setting<Boolean> enableEquippedInteraction = new SettingBoolean("general", "enableEquippedInteraction", true)
 		.setComment("If enabled, allows equipped backpacks to be opened by players by right clicking the target's back.");
 	
-	//public final Setting<Boolean> enableSelfInteraction = new Setting<Boolean>("general", "enableSelfInteraction", false)
+	//public final Setting<Boolean> enableSelfInteraction = new SettingBoolean("general", "enableSelfInteraction", false)
 	//	.setComment("If enabled, allows players to open their own equipped backpack without requiring it to be placed first.");
 	
-	//public final Setting<Boolean> dropAsBlockOnDeath = new Setting<Boolean>("general", "dropAsBlockOnDeath", true)
-	//	.setComment("If enabled, places equipped backpacks as a block on death, instead of scattering the items all around.");
+	public final Setting<Boolean> dropAsBlockOnDeath = new SettingBoolean("general", "dropAsBlockOnDeath", true)
+		.setComment("If enabled, places equipped backpacks as a block on death, instead of scattering the items all around.");
 	
 	public final Setting<Boolean> enableHelpTooltips = new SettingBoolean("general", "enableHelpTooltips", true)
 		.setComment("If enabled, adds helpful usage instructions to item tooltips.");
