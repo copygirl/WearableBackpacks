@@ -203,17 +203,6 @@ public class ProxyCommon {
 		// Attempt to place the backpack as a block instead of dropping the items.
 		if (WearableBackpacks.CONFIG.dropAsBlockOnDeath.getValue()) {
 			
-			class BlockCoord extends MutableBlockPos {
-				public double distance;
-				public int moved = 0;
-				public BlockCoord(Entity entity, int x, int z) {
-					super((int)entity.posX + x, (int)entity.posY, (int)entity.posZ + z);
-					distance = Math.sqrt(Math.pow(getX() + 0.5 - entity.posX, 2) +
-					                     Math.pow(getY() + 0.5 - entity.posY, 2) +
-					                     Math.pow(getZ() + 0.5 - entity.posZ, 2));
-				}
-			}
-			
 			List<BlockCoord> coords = new ArrayList<BlockCoord>();
 			for (int x = -2; x <= 2; x++)
 				for (int z = -2; z <= 2; z++)
@@ -255,6 +244,17 @@ public class ProxyCommon {
 			WorldUtils.dropStackFromEntity(entity, backpack.getStack(), 4.0F);
 		BackpackHelper.setEquippedBackpack(entity, null, null);
 		
+	}
+	// Would use a method local class but "extractRangemapReplacedMain" doesn't like that.
+	private static class BlockCoord extends MutableBlockPos {
+		public double distance;
+		public int moved = 0;
+		public BlockCoord(Entity entity, int x, int z) {
+			super((int)entity.posX + x, (int)entity.posY, (int)entity.posZ + z);
+			distance = Math.sqrt(Math.pow(getX() + 0.5 - entity.posX, 2) +
+			                     Math.pow(getY() + 0.5 - entity.posY, 2) +
+			                     Math.pow(getZ() + 0.5 - entity.posZ, 2));
+		}
 	}
 	
 	@SubscribeEvent
