@@ -20,7 +20,7 @@ import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackType;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils.NbtType;
-import net.mcft.copy.backpacks.network.MessageUpdateStack;
+import net.mcft.copy.backpacks.network.MessageBackpackUpdate;
 
 public class BackpackCapability implements IBackpack {
 	
@@ -89,7 +89,7 @@ public class BackpackCapability implements IBackpack {
 			// If backpack capability stack was changed, send it to everyone who can see the entity.
 			if (stack != lastStack)
 				WearableBackpacks.CHANNEL.sendToAllTracking(
-					new MessageUpdateStack(entity, stack), entity, true);
+					MessageBackpackUpdate.stack(entity, stack), entity, true);
 		}
 	}
 	
@@ -98,11 +98,15 @@ public class BackpackCapability implements IBackpack {
 	@Override
 	public void setData(IBackpackData value) { data = value; }
 	
-	// TODO: Sent update to client capability to get backpack opening / closing effect.
 	@Override
 	public int getPlayersUsing() { return playersUsing; }
 	@Override
-	public void setPlayersUsing(int value) { playersUsing = value; }
+	public void setPlayersUsing(int value) {
+		if ((value > 0) != (playersUsing > 0))
+			WearableBackpacks.CHANNEL.sendToAllTracking(
+					MessageBackpackUpdate.open(entity, (value > 0)), entity, true);
+		playersUsing = value;
+	}
 	
 	@Override
 	public int getLidTicks() { return lidTicks; }

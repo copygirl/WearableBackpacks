@@ -35,7 +35,7 @@ import net.mcft.copy.backpacks.api.IBackpackType;
 import net.mcft.copy.backpacks.container.SlotArmorBackpack;
 import net.mcft.copy.backpacks.misc.BackpackCapability;
 import net.mcft.copy.backpacks.misc.util.WorldUtils;
-import net.mcft.copy.backpacks.network.MessageUpdateStack;
+import net.mcft.copy.backpacks.network.MessageBackpackUpdate;
 
 public class ProxyCommon {
 	
@@ -77,7 +77,7 @@ public class ProxyCommon {
 	private void sendBackpackStack(Entity carrier, EntityPlayer player) {
 		BackpackCapability backpack = (BackpackCapability)BackpackHelper.getBackpack(carrier);
 		if (backpack != null) WearableBackpacks.CHANNEL.sendTo(
-			new MessageUpdateStack(carrier, backpack.stack), player);
+			MessageBackpackUpdate.stack(carrier, backpack.stack), player);
 	}
 	
 	// Backpack interactions / events

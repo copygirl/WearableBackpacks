@@ -110,9 +110,8 @@ public class TileEntityBackpack extends TileEntity implements ITickable, IBackpa
 	public int getPlayersUsing() { return _playersUsing; }
 	@Override
 	public void setPlayersUsing(int value) {
-		if ((value > 0) != (_playersUsing > 0)) {
+		if ((value > 0) != (_playersUsing > 0))
 			worldObj.addBlockEvent(pos, getBlockType(), 0, (value > 0) ? 1 : 0);
-		}
 		_playersUsing = value;
 	}
 	
