@@ -38,7 +38,7 @@ public class RendererBackpack {
 		IBackpackType type = backpack.getType();
 		if (type != null) {
 			int lidTicks = backpack.getLidTicks();
-			int prevLidTicks = backpack.getLidTicks();
+			int prevLidTicks = backpack.getPrevLidTicks();
 			lidAngle = type.getLidAngle(lidTicks, prevLidTicks, partialTicks);
 		}
 		
