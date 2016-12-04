@@ -90,10 +90,10 @@ public final class BackpackHelper {
 		
 		double distance = player.getDistanceToEntity(carrier);
 		// Calculate angle between player and carrier.
-		double angle = Math.toDegrees(Math.atan2(carrier.posY - player.posY, carrier.posX - player.posX));
+		double angle = Math.toDegrees(Math.atan2(carrier.posZ - player.posZ, carrier.posX - player.posX));
 		// Calculate difference between angle and the direction the carrier entity is looking.
-		angle = ((angle - carrier.renderYawOffset + 90.0F) % 360 + 540) % 360;
-		return ((distance <= INTERACT_MAX_DISTANCE) && (angle > (180 - INTERACT_MAX_ANGLE / 2)));
+		angle = ((angle - carrier.renderYawOffset - 90) % 360 + 540) % 360 - 180;
+		return ((distance <= INTERACT_MAX_DISTANCE) && (Math.abs(angle) < INTERACT_MAX_ANGLE / 2));
 	}
 	
 	/** Equips a backpack from a tile entity, returns if successful. */
