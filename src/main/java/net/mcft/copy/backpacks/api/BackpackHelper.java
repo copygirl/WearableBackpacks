@@ -29,9 +29,9 @@ public final class BackpackHelper {
 	
 	
 	/** The maximum distance from which an equipped backpack can be opened. */
-	public static double INTERACT_MAX_DISTANCE = 2;
+	public static double INTERACT_MAX_DISTANCE = 1.8;
 	/** The maximum angle from which an equipped backpack can be opened. */
-	public static double INTERACT_MAX_ANGLE = 90;
+	public static double INTERACT_MAX_ANGLE = 110;
 	
 	/** Controlled by a WearableBackpacks config setting. Don't change this. */
 	public static boolean equipAsChestArmor = true;
