@@ -16,7 +16,7 @@ import net.mcft.copy.backpacks.network.BackpacksChannel;
 // TODO: Add more documentation / comments to source code.
 // TODO: Add achievement(s)! <3
 
-@Mod(modid = WearableBackpacks.MOD_ID, name = WearableBackpacks.MOD_NAME, version = "${version}")
+@Mod(modid = WearableBackpacks.MOD_ID, name = WearableBackpacks.MOD_NAME)
 public class WearableBackpacks {
 	
 	public static final String MOD_ID   = "wearablebackpacks";

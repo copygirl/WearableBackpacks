@@ -4,10 +4,10 @@ buildscript {
 		maven { url = "http://files.minecraftforge.net/maven" }
 	}
 	dependencies {
-		classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+		classpath "net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT"
 	}
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: "net.minecraftforge.gradle.forge"
 
 version = "1.2.2.7-beta"
 group   = "net.mcft.copy.backpacks"
@@ -29,29 +29,29 @@ processResources {
 	inputs.property "mcversion", project.minecraft.version
 	
 	from (sourceSets.main.resources.srcDirs) {
-		include 'mcmod.info'
-		expand 'version':project.version, 'mcversion':project.minecraft.version
+		include "mcmod.info"
+		expand "version":project.version, "mcversion":project.minecraft.version
 	}
 	
 	from (sourceSets.main.resources.srcDirs) {
-		exclude 'mcmod.info'
+		exclude "mcmod.info"
 	}
 }
 
 task apiJar(type: Jar, dependsOn: classes) {
 	from sourceSets.main.output
-	include 'net/mcft/copy/backpacks/api/**'
-	classifier = 'api'
+	include "net/mcft/copy/backpacks/api/**"
+	classifier = "api"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
 	from sourceSets.main.allSource
-	classifier = 'sources'
+	classifier = "sources"
 }
 
 task deobfJar(type: Jar) {
 	from sourceSets.main.output
-	classifier = 'deobf'
+	classifier = "deobf"
 }
 
 artifacts {
