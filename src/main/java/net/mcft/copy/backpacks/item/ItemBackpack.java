@@ -10,12 +10,14 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -29,17 +31,25 @@ import net.mcft.copy.backpacks.item.recipe.IDyeableItem;
 import net.mcft.copy.backpacks.misc.BackpackDataItems;
 import net.mcft.copy.backpacks.misc.util.WorldUtils;
 
-// TODO: Turn this into ItemArmor?
-// TODO: Support armor enchantments like on BetterStorage backpacks?
+// TODO: Support armor enchantments like on BetterStorage backpacks? (Delayed to 1.11 version due to lack of enchantment hooks.)
 // TODO: Implement additional enchantments?
-public class ItemBackpack extends Item implements IBackpackType, IDyeableItem {
+//       - Holding: Increases backpack size (dungeon loot only?)
+//       - Supply I: Automatically fills up stackable items from backpack
+//       - Supply II: Automatically replaces broken items (and allow middle click to pull from backpack?)
+//       - Demand: If a picked up item is stackable and would occupy a new stack in the player's inventory, see
+//                 if there's already a non-full stack of it in the backpack, if so pick it up into the backpack.
+public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, ISpecialArmor {
 	
 	public static final int DEFAULT_COLOR = 0xA06540;
 	
 	
 	public ItemBackpack() {
 		setMaxStackSize(1);
+		setMaxDamage(WearableBackpacks.CONFIG.backpackDurability.getValue());
 	}
+	
+	/** Returns the damage reduction amount. Functions identically to the Vanilla ItemArmor value. */
+	public int getDamageReductionAmount(ItemStack stack) { return 3; }
 	
 	@Override
 	public boolean canDye(ItemStack stack) { return true; }
@@ -133,14 +143,19 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem {
 	
 	@Override
 	public void onDeath(EntityLivingBase entity, IBackpack backpack) {
-		onFaultyRemoval(entity, backpack);
+		if (!(backpack.getData() instanceof BackpackDataItems)) return;
+		BackpackDataItems dataItems = (BackpackDataItems)backpack.getData();
+		WorldUtils.dropStacksFromEntity(entity, dataItems.items, 4.0F);
+	}
+	
+	@Override
+	public void onEquippedBroken(EntityLivingBase entity, IBackpack backpack) {
+		onDeath(entity, backpack);
 	}
 	
 	@Override
 	public void onFaultyRemoval(EntityLivingBase entity, IBackpack backpack) {
-		if (!(backpack.getData() instanceof BackpackDataItems)) return;
-		BackpackDataItems dataItems = (BackpackDataItems)backpack.getData();
-		WorldUtils.dropStacksFromEntity(entity, dataItems.items, 4.0F);
+		onDeath(entity, backpack);
 	}
 	
 	@Override
@@ -153,6 +168,30 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem {
 	@Override
 	public IBackpackData createBackpackData() {
 		return new BackpackDataItems(WearableBackpacks.CONFIG.backpackRows.getValue() * 9);
+	}
+	
+	// ISpecialArmor implementation
+	
+	public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage, int slot) {
+		if (source.isUnblockable()) return new ArmorProperties(0, 0.0, 0);
+		int reductionAmount = ((ItemBackpack)armor.getItem()).getDamageReductionAmount(armor);
+		int maxDamage = armor.getMaxDamage() + 1 - armor.getItemDamage();
+		return new ArmorProperties(0, reductionAmount / 25.0, maxDamage);
+	}
+	
+	public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot) {
+		return ((ItemBackpack)armor.getItem()).getDamageReductionAmount(armor);
+	}
+	
+	public void damageArmor(EntityLivingBase entity, ItemStack stack,
+	                        DamageSource source, int damage, int slot) {
+		// TODO: Check to see if 1.11 fixes the lack of sound / particles when armor breaks.
+		stack.damageItem(damage, entity);
+		if (stack.stackSize > 0) return;
+		// If backpack breaks while equipped, call onEquippedBroken.
+		IBackpack backpack = BackpackHelper.getBackpack(entity);
+		if (backpack == null) return;
+		backpack.getType().onEquippedBroken(entity, backpack);
 	}
 	
 }

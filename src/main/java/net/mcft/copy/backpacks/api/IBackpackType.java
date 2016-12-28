@@ -47,6 +47,9 @@ public interface IBackpackType {
 	 *  gamerule are enabled, this method won't be called. */
 	void onDeath(EntityLivingBase entity, IBackpack backpack);
 	
+	/** Called when the backpack breaks while being equipped. */
+	void onEquippedBroken(EntityLivingBase entity, IBackpack backpack);
+	
 	/** Called when the backpack is removed from the
 	 *  chestplate slot by means it's not supposed to. */
 	void onFaultyRemoval(EntityLivingBase entity, IBackpack backpack);
