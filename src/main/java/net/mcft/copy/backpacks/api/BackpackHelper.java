@@ -1,5 +1,8 @@
 package net.mcft.copy.backpacks.api;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
@@ -33,8 +36,10 @@ public final class BackpackHelper {
 	/** The maximum angle from which an equipped backpack can be opened. */
 	public static double INTERACT_MAX_ANGLE = 110;
 	
-	/** Controlled by a WearableBackpacks config setting. Don't change this. */
+	/** Controlled by a WearableBackpacks config setting. Don't change this, please. */
 	public static boolean equipAsChestArmor = true;
+	
+	public static Logger LOG = LogManager.getLogger("wearablebackpacks:api");
 	
 	
 	/** Returns the entity's backpack capability, or null if the
@@ -163,8 +168,7 @@ public final class BackpackHelper {
 			IBackpackType type = carrierBackpack.getType();
 			IBackpackData data = carrierBackpack.getData();
 			if ((data == null) && !world.isRemote) {
-				// FIXME: Can't log an error through the WearableBackpacks logger in the API.
-				// WearableBackpacks.LOG.error("Backpack data was null when placing down equipped backpack");
+				LOG.error("Backpack data was null when placing down equipped backpack");
 				data = type.createBackpackData();
 			}
 			
