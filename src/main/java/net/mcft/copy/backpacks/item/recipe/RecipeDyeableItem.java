@@ -23,43 +23,38 @@ public class RecipeDyeableItem implements IRecipe {
 	
 	@Override
 	public boolean matches(InventoryCrafting crafting, World world) {
-		boolean hasArmor = false;
+		boolean hasDyeable = false;
 		boolean hasDyes = false;
 		for (int i = 0; i < crafting.getSizeInventory(); i++) {
 			ItemStack stack = crafting.getStackInSlot(i);
 			if (stack == null) continue;
-			IDyeableItem dyeable = ((stack.getItem() instanceof IDyeableItem)
-					? (IDyeableItem)stack.getItem() : null);
-			if ((dyeable != null) && dyeable.canDye(stack)) {
-				if (hasArmor) return false;
-				hasArmor = true;
-			} else if (DyeUtils.isDye(stack)) hasDyes = true;
-			else return false;
+			else if (DyeUtils.isDye(stack)) hasDyes = true;
+			else if (!(stack.getItem() instanceof IDyeableItem)) return false;
+			else if (!((IDyeableItem)stack.getItem()).canDye(stack)) return false;
+			else if (hasDyeable) return false;
+			else hasDyeable = true;
 		}
-		return (hasArmor && hasDyes);
+		return (hasDyeable && hasDyes);
 	}
 	
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting crafting) {
-		ItemStack armor = null;
-		IDyeableItem dyeable = null;
+		ItemStack dyeable = null;
 		List<ItemStack> dyes = new ArrayList<ItemStack>();
 		for (int i = 0; i < crafting.getSizeInventory(); i++) {
 			ItemStack stack = crafting.getStackInSlot(i);
 			if (stack == null) continue;
-			dyeable = ((stack.getItem() instanceof IDyeableItem)
-					? (IDyeableItem)stack.getItem() : null);
-			if ((dyeable != null) && dyeable.canDye(stack)) {
-				if (armor != null) return null;
-				armor = stack.copy();
-			} else if (DyeUtils.isDye(stack)) dyes.add(stack);
-			else return null;
+			else if (DyeUtils.isDye(stack)) dyes.add(stack);
+			else if (!(stack.getItem() instanceof IDyeableItem)) return null;
+			else if (!((IDyeableItem)stack.getItem()).canDye(stack)) return null;
+			else if (dyeable != null) return null;
+			else dyeable = stack.copy();
 		}
 		if (dyes.isEmpty()) return null;
-		int oldColor = NbtUtils.get(armor, -1, "display", "color");
+		int oldColor = NbtUtils.get(dyeable, -1, "display", "color");
 		int newColor = DyeUtils.getColorFromDyes(oldColor, dyes);
-		NbtUtils.set(armor, newColor, "display", "color");
-		return armor;
+		NbtUtils.set(dyeable, newColor, "display", "color");
+		return dyeable;
 	}
 	
 	@Override
