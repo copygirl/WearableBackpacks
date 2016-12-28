@@ -44,6 +44,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	
 	public ItemBackpack() {
+		setUnlocalizedName("wearablebackpacks.backpack");
 		setMaxStackSize(1);
 		setMaxDamage(WearableBackpacks.CONFIG.backpackDurability.getValue());
 	}

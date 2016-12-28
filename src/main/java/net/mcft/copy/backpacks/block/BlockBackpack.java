@@ -27,6 +27,7 @@ import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
+import net.mcft.copy.backpacks.misc.util.MiscUtils;
 
 // FIXME: Currently shows missing texture as break particle.
 public class BlockBackpack extends BlockContainer {
@@ -35,10 +36,15 @@ public class BlockBackpack extends BlockContainer {
 	
 	public BlockBackpack() {
 		super(Material.CLOTH);
-		setUnlocalizedName("wearablebackpacks.backpack");
 		setSoundType(SoundType.SNOW);
 		setHardness(1.5F);
 		initBlockBounds();
+	}
+	
+	@Override
+	public String getUnlocalizedName() {
+		// Just use the item's unlocalized name for this block.
+		return MiscUtils.getItemFromBlock(this).getUnlocalizedName();
 	}
 	
 	@Override
@@ -97,6 +103,7 @@ public class BlockBackpack extends BlockContainer {
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state,
 	                            EntityLivingBase placer, ItemStack stack) {
+		// Set the facing value of the backpack when placed.
 		TileEntity tileEntity = worldIn.getTileEntity(pos);
 		if (tileEntity instanceof TileEntityBackpack)
 			((TileEntityBackpack)tileEntity).facing = placer.getHorizontalFacing();
@@ -118,6 +125,7 @@ public class BlockBackpack extends BlockContainer {
 	private long _lastHelpMessage = System.currentTimeMillis();
 	@Override
 	public void onBlockClicked(World world, BlockPos pos, EntityPlayer player) {
+		// Show a help message if the local player is trying to equip a backpack when it's not possible.
 		if (world.isRemote && player.isSneaking() && !BackpackHelper.canEquipBackpack(player) &&
 		    WearableBackpacks.CONFIG.enableHelpTooltips.getValue() &&
 		    (System.currentTimeMillis() > _lastHelpMessage + 10 * 1000)) {
