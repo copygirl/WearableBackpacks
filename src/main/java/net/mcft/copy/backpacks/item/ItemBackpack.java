@@ -3,12 +3,11 @@ package net.mcft.copy.backpacks.item;
 import java.util.Arrays;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
@@ -33,12 +32,12 @@ import net.mcft.copy.backpacks.misc.util.WorldUtils;
 // TODO: Turn this into ItemArmor?
 // TODO: Support armor enchantments like on BetterStorage backpacks?
 // TODO: Implement additional enchantments?
-public class ItemBackpack extends ItemBlock implements IBackpackType, IDyeableItem {
+public class ItemBackpack extends Item implements IBackpackType, IDyeableItem {
 	
 	public static final int DEFAULT_COLOR = 0xA06540;
 	
-	public ItemBackpack(Block block) {
-		super(block);
+	
+	public ItemBackpack() {
 		setMaxStackSize(1);
 	}
 	
@@ -75,10 +74,8 @@ public class ItemBackpack extends ItemBlock implements IBackpackType, IDyeableIt
 	// Item events
 	
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn,
-	                                  World worldIn, BlockPos pos,
-	                                  EnumHand hand, EnumFacing facing,
-	                                  float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos,
+	                                  EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		IBlockState state = worldIn.getBlockState(pos);
 		// If the block is replaceable, keep the placing position
 		// the same but check the block below for solidity.

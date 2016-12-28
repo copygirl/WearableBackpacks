@@ -3,7 +3,6 @@ package net.mcft.copy.backpacks.misc;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,6 +17,7 @@ import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackType;
+import net.mcft.copy.backpacks.misc.util.MiscUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils.NbtType;
 import net.mcft.copy.backpacks.network.MessageBackpackUpdate;
@@ -153,8 +153,7 @@ public class BackpackCapability implements IBackpack {
 				// This is the case when the backpack stack is equipped
 				// in the chest armor slot, which has not yet been loaded.
 				String id = compound.getString(TAG_TYPE);
-				backpack.lastType = type = BackpackHelper.getBackpackType(
-					Item.REGISTRY.getObject(new ResourceLocation(id)));
+				backpack.lastType = type = BackpackHelper.getBackpackType(MiscUtils.getItemFromName(id));
 				if (type == null) return;
 			} else type = BackpackHelper.getBackpackType(backpack.stack);
 			

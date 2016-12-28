@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -35,6 +34,7 @@ import net.mcft.copy.backpacks.ProxyCommon;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
 import net.mcft.copy.backpacks.client.RendererBackpack;
 import net.mcft.copy.backpacks.item.ItemBackpack;
+import net.mcft.copy.backpacks.misc.util.MiscUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 
 @SideOnly(Side.CLIENT)
@@ -49,8 +49,7 @@ public class ProxyClient extends ProxyCommon {
 		super.preInit();
 		
 		if (BackpacksContent.BACKPACK != null) {
-			ModelLoader.setCustomModelResourceLocation(
-				Item.getItemFromBlock(BackpacksContent.BACKPACK), 0,
+			ModelLoader.setCustomModelResourceLocation(BackpacksContent.BACKPACK, 0,
 				new ModelResourceLocation("wearablebackpacks:backpack", "inventory"));
 		}
 	}
@@ -62,7 +61,7 @@ public class ProxyClient extends ProxyCommon {
 		Minecraft mc = Minecraft.getMinecraft();
 		
 		if (BackpacksContent.BACKPACK != null) {
-			mc.getBlockColors().registerBlockColorHandler(BLOCK_COLOR, BackpacksContent.BACKPACK);
+			mc.getBlockColors().registerBlockColorHandler(BLOCK_COLOR, MiscUtils.getBlockFromItem(BackpacksContent.BACKPACK));
 			mc.getItemColors().registerItemColorHandler(ITEM_COLOR, BackpacksContent.BACKPACK);
 			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBackpack.class, new RendererBackpack.TileEntity());
 		}

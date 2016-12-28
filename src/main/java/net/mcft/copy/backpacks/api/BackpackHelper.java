@@ -125,7 +125,9 @@ public final class BackpackHelper {
 		// TODO: For mobs, use mob griefing gamerule?
 		
 		Item item = stack.getItem();
-		Block block = Block.getBlockFromItem(item);
+		// Would use this instead, but gotta avoid depending on the rest of WearableBackpacks.
+		//Block block = MiscUtils.getBlockFromItem(item);
+		Block block = Block.REGISTRY.getObject(item.getRegistryName());
 		if (!world.canBlockBePlaced(block, pos, false, EnumFacing.UP, null, stack))
 			return false;
 		
