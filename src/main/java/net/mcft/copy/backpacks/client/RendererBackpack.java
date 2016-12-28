@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHandSide;
+import net.minecraft.util.math.MathHelper;
 
 import net.mcft.copy.backpacks.ProxyClient;
 import net.mcft.copy.backpacks.api.BackpackHelper;
@@ -89,16 +91,27 @@ public class RendererBackpack {
 			if (backpack == null) return;
 			
 			GlStateManager.pushMatrix();
+			
+			// Make backpack "swing" with body.
+			float swingProgress = entity.getSwingProgress(partialTicks);
+			float swingAngle = MathHelper.sin(MathHelper.sqrt_float(swingProgress) * ((float)Math.PI * 2.0F)) * 0.2F;
+			if (entity.getPrimaryHand() == EnumHandSide.LEFT) swingAngle *= -1;
+			if (swingAngle != 0) GlStateManager.rotate((float)Math.toDegrees(swingAngle), 0.0F, 1.0F, 0.0F);
+			
+			// Rotate backpack if entity is sneaking.
 			if (entity.isSneaking()) {
 				// FIXME: Can be sneaking while flying with the elytra, then backpack is misaligned..?
 				GlStateManager.translate(0.0F, 0.2F, 0.0F);
 				GlStateManager.rotate(90.0F / (float)Math.PI, 1.0F, 0.0F, 0.0F);
 			}
+			
 			GlStateManager.scale(0.8F, 0.8F, 0.8F);
 			GlStateManager.translate(0.5F, 0.5F, 0.5F);
 			GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
 			GlStateManager.translate(0, -HEIGHT_OFFSET, -DEPTH_OFFSET);
+			
 			render(backpack, partialTicks, false);
+			
 			GlStateManager.popMatrix();
 		}
 		
