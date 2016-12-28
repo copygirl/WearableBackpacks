@@ -47,6 +47,7 @@ public class MessageBackpackUpdate implements IMessage {
 			switch (_type) {
 				case STACK: _stack = buffer.readItemStackFromBuffer(); break;
 				case OPEN: _open = buffer.readBoolean(); break;
+				default: throw new RuntimeException("Invalid UpdateType");
 			}
 		} catch (Exception ex) {
 			_entityId = -1;
@@ -64,6 +65,7 @@ public class MessageBackpackUpdate implements IMessage {
 		switch (_type) {
 			case STACK: buffer.writeItemStackToBuffer(_stack); break;
 			case OPEN: buffer.writeBoolean(_open); break;
+			default: throw new RuntimeException("Invalid UpdateType");
 		}
 	}
 	
@@ -79,6 +81,7 @@ public class MessageBackpackUpdate implements IMessage {
 			switch (message._type) {
 				case STACK: backpack.stack = message._stack; break;
 				case OPEN: backpack.playersUsing = (message._open ? 1 : 0); break;
+				default: throw new RuntimeException("Invalid UpdateType");
 			}
 		}
 	}
