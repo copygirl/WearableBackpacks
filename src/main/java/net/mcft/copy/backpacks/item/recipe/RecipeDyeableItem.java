@@ -13,6 +13,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.mcft.copy.backpacks.misc.util.DyeUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 
+/** Recipe which handled coloring of dyeable items which implement IDyeableItem. */
 public class RecipeDyeableItem implements IRecipe {
 	
 	@Override
@@ -23,22 +24,27 @@ public class RecipeDyeableItem implements IRecipe {
 	
 	@Override
 	public boolean matches(InventoryCrafting crafting, World world) {
+		// Check if crafting inventory has:
+		// - Exactly one dyeable item.
+		// - At least one dye.
+		// - No other items.
 		boolean hasDyeable = false;
 		boolean hasDyes = false;
 		for (int i = 0; i < crafting.getSizeInventory(); i++) {
 			ItemStack stack = crafting.getStackInSlot(i);
-			if (stack == null) continue;
-			else if (DyeUtils.isDye(stack)) hasDyes = true;
-			else if (!(stack.getItem() instanceof IDyeableItem)) return false;
-			else if (!((IDyeableItem)stack.getItem()).canDye(stack)) return false;
-			else if (hasDyeable) return false;
-			else hasDyeable = true;
+			if (stack == null) continue;                                           // Ignore empty stacks.
+			else if (DyeUtils.isDye(stack)) hasDyes = true;                        // Check for dyes.
+			else if (!(stack.getItem() instanceof IDyeableItem)) return false;     // Don't allow non-dyeable items.
+			else if (!((IDyeableItem)stack.getItem()).canDye(stack)) return false; // canDye has to return true, too.
+			else if (hasDyeable) return false;                                     // Check if we already have one.
+			else hasDyeable = true;                                                // Item is dyeable.
 		}
 		return (hasDyeable && hasDyes);
 	}
 	
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting crafting) {
+		// Collect dyeable item and dyes.
 		ItemStack dyeable = null;
 		List<ItemStack> dyes = new ArrayList<ItemStack>();
 		for (int i = 0; i < crafting.getSizeInventory(); i++) {
@@ -51,6 +57,7 @@ public class RecipeDyeableItem implements IRecipe {
 			else dyeable = stack.copy();
 		}
 		if (dyes.isEmpty()) return null;
+		// Caclulate and set resulting item's color.
 		int oldColor = NbtUtils.get(dyeable, -1, "display", "color");
 		int newColor = DyeUtils.getColorFromDyes(oldColor, dyes);
 		NbtUtils.set(dyeable, newColor, "display", "color");

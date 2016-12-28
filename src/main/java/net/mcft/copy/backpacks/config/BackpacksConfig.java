@@ -50,6 +50,7 @@ public class BackpacksConfig {
 	
 	public BackpacksConfig(File file) {
 		_file = file;
+		// Add settings to _settings list using reflection.
 		try { for (Field field : getClass().getFields()) {
 			if (!Setting.class.isAssignableFrom(field.getType())) continue;
 			_settings.add((Setting<?>)field.get(this));

@@ -10,10 +10,15 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.oredict.OreDictionary;
 
+/** Contains utility methods related to dyes. */
 public final class DyeUtils {
+	
+	private DyeUtils() {  }
+	
 	
 	private static final Map<String, Integer> dyes = new HashMap<String, Integer>();
 	static {
+		// Collect dye colors into map using the ore dictionary name as a key.
 		for (EnumDyeColor color : EnumDyeColor.values()) {
 			String name = color.getUnlocalizedName();
 			name = "dye" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
@@ -25,10 +30,9 @@ public final class DyeUtils {
 		}
 	};
 	
-	private DyeUtils() {  }
 	
-	/** Gets the dye color of the item stack. <br>
-	 *  If it's not a dye, it will return -1. */
+	/** Gets the dye color of the item stack by checking the ore dictionary.
+	 *  Return -1 if the stack is not a dye. */
 	public static int getDyeColor(ItemStack stack) {
 		if (stack == null) return -1;
 		int[] oreIds = OreDictionary.getOreIDs(stack);

@@ -15,12 +15,14 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 
+/** Main network class. Handles registering messages
+ *  and sending them to clients as well as the server. */
 public class BackpacksChannel extends SimpleNetworkWrapper {
 	
 	public BackpacksChannel() {
 		super(WearableBackpacks.MOD_ID);
 		
-		registerMessage(MessageOpenGui.Handler.class, MessageOpenGui.class, 0, Side.CLIENT);
+		registerMessage(MessageOpenGui.Handler.class,        MessageOpenGui.class,        0, Side.CLIENT);
 		registerMessage(MessageBackpackUpdate.Handler.class, MessageBackpackUpdate.class, 1, Side.CLIENT);
 	}
 	

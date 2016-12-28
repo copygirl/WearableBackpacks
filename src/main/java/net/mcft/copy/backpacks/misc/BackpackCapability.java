@@ -22,11 +22,12 @@ import net.mcft.copy.backpacks.misc.util.NbtUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils.NbtType;
 import net.mcft.copy.backpacks.network.MessageBackpackUpdate;
 
+/** Concrete implementation of the IBackpack interface and capability, used for entities. */
 public class BackpackCapability implements IBackpack {
 	
 	public static final String TAG_STACK = "stack";
-	public static final String TAG_TYPE = "type";
-	public static final String TAG_DATA = "data";
+	public static final String TAG_TYPE  = "type";
+	public static final String TAG_DATA  = "data";
 	
 	public static final ResourceLocation IDENTIFIER =
 		new ResourceLocation("wearablebackpacks:backpack");
@@ -45,6 +46,7 @@ public class BackpackCapability implements IBackpack {
 	
 	public BackpackCapability(EntityLivingBase entity) { this.entity = entity; }
 	
+	/** Returns if the entity is wearing the backpack in the chest armor slot. */
 	public boolean isChestArmor() {
 		return ((lastType != null) || (BackpackHelper.getBackpackType(
 			entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST)) != null));
@@ -102,9 +104,12 @@ public class BackpackCapability implements IBackpack {
 	public int getPlayersUsing() { return playersUsing; }
 	@Override
 	public void setPlayersUsing(int value) {
+		// If the backpack is being opened or closed (# of players
+		// using changed from 0 to non-zero or the other way around),
+		// send an update to anyone who can see this entity.
 		if ((value > 0) != (playersUsing > 0))
 			WearableBackpacks.CHANNEL.sendToAllTracking(
-					MessageBackpackUpdate.open(entity, (value > 0)), entity, true);
+				MessageBackpackUpdate.open(entity, (value > 0)), entity, true);
 		playersUsing = value;
 	}
 	
@@ -150,8 +155,8 @@ public class BackpackCapability implements IBackpack {
 			if (backpack.stack == null) {
 				if (!compound.hasKey(TAG_TYPE, NbtType.STRING)) return;
 				// If the backpack has its type saved, restore it.
-				// This is the case when the backpack stack is equipped
-				// in the chest armor slot, which has not yet been loaded.
+				// This is the case when the backpack stack is equipped in
+				// the chest armor slot, which has not yet been loaded. :'(
 				String id = compound.getString(TAG_TYPE);
 				backpack.lastType = type = BackpackHelper.getBackpackType(MiscUtils.getItemFromName(id));
 				if (type == null) return;

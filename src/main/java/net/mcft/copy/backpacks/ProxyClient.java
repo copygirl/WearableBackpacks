@@ -99,10 +99,7 @@ public class ProxyClient extends ProxyCommon {
 			if (model == null)
 				WearableBackpacks.LOG.error("Model " + location + " is missing! THIS WILL CAUSE A CRASH!");
 			return model;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		} catch (Exception e) { e.printStackTrace(); return null; }
 	}
 	
 	// IBlockColor and IItemColor implementations
@@ -122,7 +119,7 @@ public class ProxyClient extends ProxyCommon {
 	public static final IItemColor ITEM_COLOR = new IItemColor() {
 		@Override
 		public int getColorFromItemstack(ItemStack stack, int tintIndex) {
-			// TODO: Make work for different default colors / not dyable backpacks.
+			// TODO: Make this work for different default colors / non-dyeable backpacks.
 			return NbtUtils.get(stack, ItemBackpack.DEFAULT_COLOR, "display", "color");
 		}
 	};

@@ -17,7 +17,9 @@ import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackType;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
 
-public class RendererBackpack {
+/** Contains methods and nested classes which handle rendering
+    of backpacks as tile entity and layer on regular entities. */
+public final class RendererBackpack {
 	
 	private RendererBackpack() {  }
 	
@@ -92,7 +94,7 @@ public class RendererBackpack {
 			
 			GlStateManager.pushMatrix();
 			
-			// Make backpack "swing" with body.
+			// Make backpack swing with body as players swing their arms.
 			float swingProgress = entity.getSwingProgress(partialTicks);
 			float swingAngle = MathHelper.sin(MathHelper.sqrt_float(swingProgress) * ((float)Math.PI * 2.0F)) * 0.2F;
 			if (entity.getPrimaryHand() == EnumHandSide.LEFT) swingAngle *= -1;

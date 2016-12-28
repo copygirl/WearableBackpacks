@@ -5,10 +5,13 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 
+/** Contains NBT related methods for manipulating NBT tags and item stacks. */
 public final class NbtUtils {
 	
 	private NbtUtils() {  }
 	
+	
+	// TODO: Update to use enum instead and make methods "safer" by checking the type before casting.
 	public static final class NbtType {
 		private NbtType() {  }
 		public static final int END = 0;
@@ -25,14 +28,20 @@ public final class NbtUtils {
 		public static final int INT_ARRAY = 11;
 	}
 	
+	
 	public static final String TAG_INDEX = "index";
 	public static final String TAG_STACK = "stack";
 	
+	
 	// Utility ItemStack / NBT manipulation methods
 	
+	/** Gets an NBT tag of the specified item stack, or null if it doesn't exist.
+	 *  Example: <pre>{@code StackUtils.get(stack, "display", "color") }</pre> */
 	public static NBTBase get(ItemStack stack, String... tags) {
 		return get(((stack != null) ? stack.getTagCompound() : null), tags);
 	}
+	/** Gets a child NBT tag of the specified compound tag, or null if it doesn't exist.
+	 *  Example: <pre>{@code StackUtils.get(compound, "display", "color") }</pre> */
 	public static NBTBase get(NBTTagCompound compound, String... tags) {
 		if (compound == null) return null;
 		String tag = null;
@@ -45,21 +54,31 @@ public final class NbtUtils {
 		return compound.getTag(tag);
 	}
 	
+	/** Gets a value from the specified item stack's compound tag, or the default if it doesn't exist.
+	 *  Example: <pre>{@code StackUtils.get(stack, -1, "display", "color") }</pre> */
 	public static <T> T get(ItemStack stack, T defaultValue, String... tags) {
 		return get(((stack != null) ? stack.getTagCompound() : null), defaultValue, tags);
 	}
+	/** Gets a value from the specified compound tag, or the default if it doesn't exist.
+	 *  Example: <pre>{@code StackUtils.get(compound, -1, "display", "color") }</pre> */
 	public static <T> T get(NBTTagCompound compound, T defaultValue, String... tags) {
 		NBTBase tag = get(compound, tags);
 		return ((tag != null) ? getTagValue(tag) : defaultValue);
 	}
 	
+	/** Returns if the specified item stack's compound tag has a certain NBT tag.
+	 *  Example: <pre>{@code StackUtils.has(stack, "display", "color") }</pre> */
 	public static boolean has(ItemStack stack, String... tags) {
 		return has(((stack != null) ? stack.getTagCompound() : null), tags);
 	}
+	/** Returns if the specified compound tag has a certain child NBT tag.
+	 *  Example: <pre>{@code StackUtils.has(compound, "display", "color") }</pre> */
 	public static boolean has(NBTTagCompound compound, String... tags) {
 		return (get(compound, tags) != null);
 	}
 	
+	/** Adds or replaces a tag on the specified item stack's compound tag, creating it and any parent compound tags if necessary.
+	 *  Example: <pre>{@code StackUtils.set(stack, new NBTTagInt(0xFF0000), "display", "color") }</pre> */
 	public static void set(ItemStack stack, NBTBase nbtTag, String... tags) {
 		if (stack == null)
 			throw new IllegalArgumentException("stack is null");
@@ -67,6 +86,8 @@ public final class NbtUtils {
 		if (compound == null) stack.setTagCompound(compound = new NBTTagCompound());
 		set(compound, nbtTag, tags);
 	}
+	/** Adds or replaces a tag on the specified compound tag, creating any parent compound tags if necessary.
+	 *  Example: <pre>{@code StackUtils.set(compound, new NBTTagInt(0xFF0000), "display", "color") }</pre> */
 	public static void set(NBTTagCompound compound, NBTBase nbtTag, String... tags) {
 		if (compound == null)
 			throw new IllegalArgumentException("compound is null");
@@ -83,17 +104,26 @@ public final class NbtUtils {
 		compound.setTag(tag, nbtTag);
 	}
 	
+	/** Adds or replaces a value on the specified item stack's compound tag, creating it and any parent compound tags if necessary.
+	 *  Example: <pre>{@code StackUtils.set(stack, 0xFF0000, "display", "color") }</pre> */
 	public static <T> void set(ItemStack stack, T value, String... tags) {
 		set(stack, createTag(value), tags);
 	}
+	/** Adds or replaces a value on the specified compound tag, creating any parent compound tags if necessary.
+	 *  Example: <pre>{@code StackUtils.set(compound, 0xFF0000, "display", "color") }</pre> */
 	public static <T> void set(NBTTagCompound compound, T value, String... tags) {
 		set(compound, createTag(value), tags);
 	}
 	
+	/** Removes a certain NBT tag from the specified item stack's compound tag.
+	 *  Example: <pre>{@code StackUtils.remove(stack, "display", "color") }</pre> */
 	public static void remove(ItemStack stack, String... tags) {
 		remove(((stack != null) ? stack.getTagCompound() : null), tags);
 	}
+	/** Removes a certain NBT tag from the specified compound tag.
+	 *  Example: <pre>{@code StackUtils.remove(compound, "display", "color") }</pre> */
 	public static void remove(NBTTagCompound compound, String... tags) {
+		// TODO: Remove empty parent compound tags?
 		if (compound == null) return;
 		String tag = null;
 		for (int i = 0; i < tags.length; i++) {
@@ -105,17 +135,18 @@ public final class NbtUtils {
 		compound.removeTag(tag);
 	}
 	
+	
 	// Compound / List creation
 	
 	/** Creates an NBT compound from the name-value pairs in the parameters.
-	 *  Example: <code> NbtUtils.createCompound("id", 1, "name", "copygirl") </code>
-	 *  Doesn't add any null values to the resulting compound tag. */
+	 *  Doesn't add any null values to the resulting compound tag.
+	 *  Example: <pre>{@code NbtUtils.createCompound("id", 1, "name", "copygirl") }</pre> */
 	public static NBTTagCompound createCompound(Object... nameValuePairs) {
 		return addToCompound(new NBTTagCompound(), nameValuePairs);
 	}
 	/** Adds entries to an ItemStack's NBT data from the name-value pairs in the parameters.
-	 *  Example: <code> NbtUtils.createCompound("id", 1, "name", "copygirl") </code>
-	 *  Doesn't add any null values to the ItemStack's compound tag. */
+	 *  Doesn't add any null values to the ItemStack's compound tag.
+	 *  Example: <pre>{@code NbtUtils.createCompound("id", 1, "name", "copygirl") }</pre> */
 	public static NBTTagCompound add(ItemStack stack, Object... nameValuePairs) {
 		if (stack == null) throw new IllegalArgumentException("stack is null");
 		if (!stack.hasTagCompound()) {
@@ -125,8 +156,8 @@ public final class NbtUtils {
 		} else return addToCompound(stack.getTagCompound(), nameValuePairs);
 	}
 	/** Adds entries to an NBT compound from the name-value pairs in the parameters.
-	 *  Example: <code> NbtUtils.addToCompound(compound, "id", 1, "name", "copygirl") </code>
-	 *  Doesn't add any null values to the specified compound tag. */
+	 *  Doesn't add any null values to the specified compound tag.
+	 *  Example: <pre>{@code NbtUtils.addToCompound(compound, "id", 1, "name", "copygirl") }</pre> */
 	public static NBTTagCompound addToCompound(NBTTagCompound compound, Object... nameValuePairs) {
 		if (compound == null) throw new IllegalArgumentException("compound is null");
 		for (int i = 0; i < nameValuePairs.length; i += 2) {
@@ -143,8 +174,7 @@ public final class NbtUtils {
 	public static NBTTagList createList(Object... values) {
 		return addToList(new NBTTagList(), values);
 	}
-	/** Adds values to an NBT list. Doesn't add
-	 *  null values to the specified list tag. */
+	/** Adds values to an NBT list. Doesn't add any null values to the specified list tag. */
 	public static NBTTagList addToList(NBTTagList list, Object... values) {
 		if (list == null) throw new IllegalArgumentException("list is null");
 		for (Object value : values) {
@@ -153,6 +183,7 @@ public final class NbtUtils {
 		}
 		return list;
 	}
+	
 	
 	// Reading / writing ItemStacks
 	
@@ -203,6 +234,7 @@ public final class NbtUtils {
 		}
 		return items;
 	}
+	
 	
 	// Other utility functions
 	

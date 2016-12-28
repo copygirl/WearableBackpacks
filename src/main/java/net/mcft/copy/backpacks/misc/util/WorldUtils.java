@@ -13,6 +13,7 @@ public final class WorldUtils {
 	
 	private WorldUtils() {  }
 	
+	
 	/** Spawns an ItemStack in the world. */
 	public static EntityItem spawnItem(World world, double x, double y, double z, ItemStack stack) {
 		if ((stack == null) || (stack.stackSize <= 0)) return null;

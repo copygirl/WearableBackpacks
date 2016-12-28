@@ -9,6 +9,7 @@ import net.mcft.copy.backpacks.container.ContainerBackpack;
 
 public class GuiBackpack extends GuiContainer {
 	
+	// TODO: Use own container texture which can be resized.
 	private static final ResourceLocation CONTAINER_TEX =
 		new ResourceLocation("textures/gui/container/generic_54.png");
 	

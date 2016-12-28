@@ -16,7 +16,7 @@ import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 
-// TODO: Implement ItemStackHandler (only for bottom side?)
+// TODO: Implement ItemStackHandler (only for bottom side)?
 public class TileEntityBackpack extends TileEntity implements ITickable, IBackpack {
 	
 	public static final String TAG_STACK = "stack";

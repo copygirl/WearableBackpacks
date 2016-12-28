@@ -8,6 +8,7 @@ public final class MiscUtils {
 	
 	private MiscUtils() {  }
 	
+	
 	/** Returns the block associated with the specified resource location. */
 	public static Block getBlockFromName(ResourceLocation location) { return Block.REGISTRY.getObject(location); }
 	/** Returns the block associated with the specified resource location name (for example "minecraft:cobblestone"). */

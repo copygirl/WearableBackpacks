@@ -245,7 +245,7 @@ public class ProxyCommon {
 		BackpackHelper.setEquippedBackpack(entity, null, null);
 		
 	}
-	// Would use a method local class but "extractRangemapReplacedMain" doesn't like that.
+	// Would use a method local class but "extractRangemapReplacedMain" gradle task doesn't like that.
 	private static class BlockCoord extends MutableBlockPos {
 		public double distance;
 		public int moved = 0;
