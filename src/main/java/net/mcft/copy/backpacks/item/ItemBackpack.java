@@ -111,7 +111,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem {
 		if (player.worldObj.isRemote) return;
 		new ContainerBackpack(player, backpack) {
 			@Override public boolean canInteractWith(EntityPlayer player) {
-				return (!player.isDead && !tileEntity.isInvalid() &&
+				return (player.isEntityAlive() && !tileEntity.isInvalid() &&
 						(player.worldObj.getTileEntity(tileEntity.getPos()) == tileEntity) &&
 						(player.getDistanceSq(tileEntity.getPos()) <= 64));
 			}
