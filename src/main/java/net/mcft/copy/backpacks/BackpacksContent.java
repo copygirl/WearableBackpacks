@@ -25,6 +25,7 @@ public final class BackpacksContent {
 		if (WearableBackpacks.CONFIG.backpackEnabled.getValue()) {
 			BACKPACK = new ItemBackpack();
 			Block backpackBlock = new BlockBackpack();
+			
 			GameRegistry.register(BACKPACK.setRegistryName("backpack"));
 			GameRegistry.register(backpackBlock.setRegistryName("backpack"));
 			GameRegistry.registerTileEntity(TileEntityBackpack.class, "wearablebackpacks:backpack");

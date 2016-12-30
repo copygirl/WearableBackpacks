@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
@@ -45,8 +46,12 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	public ItemBackpack() {
 		setUnlocalizedName("wearablebackpacks.backpack");
+		
 		setMaxStackSize(1);
 		setMaxDamage(WearableBackpacks.CONFIG.backpackDurability.getValue());
+		
+		// TODO: Use our own creative tab?
+		setCreativeTab(CreativeTabs.TOOLS);
 	}
 	
 	/** Returns the damage reduction amount. Functions identically to the Vanilla ItemArmor value. */
