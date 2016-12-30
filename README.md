@@ -36,8 +36,9 @@ option unlike any other!
 - **Dying is [FUN][1]!**  
   Sick of losing all your valuables when you make a small little misstep into the nearest
   pool of lava? Don't worry, the items inside your backpack will be... mostly safe. While
-  the backpack itself is not unbreakable, after death, it will gently place itself down
-  near your point of failure, ready to be retrieved.
+  the backpack itself is not immune to explosions or being broken by other players, after
+  death it will gently place itself down near your point of failure, ready to be
+  retrieved.
 
 - **Dyeing is fun~!**  
   Backpacks can be colored using Minecraft's *fantastic* dyeing system. Unlike some silly
@@ -92,17 +93,16 @@ treated the same.
 
 ### Special thanks to ...
 
-- **asiekierka** for letting me to use [Charset](http://charset.asie.pl/) as a reference,
-  to the point where he's getting an honorable co-author mention, and in general being an
-  amazing friend ❤️  
-- The **Penguins' Revenge** server for encouraging me to rework / finish this mod.  
+- **asiekierka** for in general being an amazing friend, and letting me use [Charset][3]
+  as a reference, which was so useful he's getting an honorable co-author mention. ❤
+- The **Penguins' Revenge** server for encouraging me to rework / finish this mod.
 
 ## Contact
 
-Feature requests and bug reports belong on the [issue tracker][3]. For general inqueries,
-discussions and praise, you can contact **copygirl** directly at [Twitter (@koppeh)][4]
-or via [email][5], but you're also very welcome to join our little community's
-[IRC channel][6] and [Discord guild][7].
+Feature requests and bug reports belong on the [issue tracker][4]. For general inqueries,
+discussions and praise, you can contact **copygirl** directly at [Twitter (@koppeh)][5]
+or via [email][6], but you're also very welcome to join our little community's IRC
+channel (#obsidian on Esper.net) and [Discord guild][7].
 
 *In the event that this mod becomes self-aware, we are not responsible for any damage it causes.*
 
@@ -110,8 +110,8 @@ or via [email][5], but you're also very welcome to join our little community's
 [0]: https://github.com/copygirl/BetterStorage
 [1]: http://dwarffortresswiki.org/index.php/DF2014:Fun
 [2]: https://github.com/copygirl/WearableBackpacks/releases
-[3]: https://github.com/copygirl/WearableBackpacks/issues
-[4]: https://twitter.com/koppeh
-[5]: mailto:halfnerd.copygirl@gmail.com
-[6]: irc://irc.esper.net/#obsidian
+[3]: http://charset.asie.pl/
+[4]: https://github.com/copygirl/WearableBackpacks/issues
+[5]: https://twitter.com/koppeh
+[6]: mailto:halfnerd.copygirl@gmail.com
 [7]: https://discord.gg/0bNJM8qj0Jiv6BlK
