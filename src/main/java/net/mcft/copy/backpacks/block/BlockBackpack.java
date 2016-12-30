@@ -130,7 +130,7 @@ public class BlockBackpack extends BlockContainer {
 		    WearableBackpacks.CONFIG.enableHelpTooltips.getValue() &&
 		    (System.currentTimeMillis() > _lastHelpMessage + 10 * 1000)) {
 			boolean backpack = (BackpackHelper.getBackpack(player) != null);
-			player.addChatMessage(new TextComponentTranslation(
+			player.sendMessage(new TextComponentTranslation(
 				"notice.wearablebackpacks.backpack.cantEquip." + (backpack ? "backpack" : "chestplate")));
 			_lastHelpMessage = System.currentTimeMillis();
 		}

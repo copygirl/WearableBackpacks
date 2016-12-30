@@ -17,9 +17,9 @@ sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 compileJava { sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8 }
 
 minecraft {
-	version  = "1.10.2-12.18.2.2151"
+	version  = "1.10.2-12.18.3.2185"
 	runDir   = "run"
-	mappings = "snapshot_20160518"
+	mappings = "stable_29"
 }
 
 dependencies {  }

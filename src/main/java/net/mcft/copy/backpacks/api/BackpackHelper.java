@@ -110,7 +110,7 @@ public final class BackpackHelper {
 		IBackpackType type = getBackpackType(stack);
 		if (type == null) return false;
 		type.onEquip(entity, tileEntity, backpack);
-		if (!entity.worldObj.isRemote) {
+		if (!entity.world.isRemote) {
 			BackpackHelper.setEquippedBackpack(entity, stack, backpack.getData());
 			backpack.setStack(null);
 			backpack.setData(null);
@@ -191,7 +191,7 @@ public final class BackpackHelper {
 	 *  Plays a sound when the backpack is being opened or closed. */
 	@SideOnly(Side.CLIENT)
 	public static void updateLidTicks(IBackpack properties, double x, double y, double z) {
-		World world = Minecraft.getMinecraft().theWorld;
+		World world = Minecraft.getMinecraft().world;
 		boolean usedByPlayer = (properties.getPlayersUsing() > 0);
 		int prevLidTicks = properties.getLidTicks();
 		IBackpackType backpackType = getBackpackType(properties.getStack());

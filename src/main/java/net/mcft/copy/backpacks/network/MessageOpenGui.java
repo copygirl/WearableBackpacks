@@ -33,7 +33,7 @@ public class MessageOpenGui implements IMessage {
 		PacketBuffer buffer = new PacketBuffer(buf);
 		try {
 			_windowId = buffer.readInt();
-			_data = buffer.readNBTTagCompoundFromBuffer();
+			_data = buffer.readCompoundTag();
 		} catch (Exception ex) {
 			_windowId = -1;
 			_data = null;
@@ -44,7 +44,7 @@ public class MessageOpenGui implements IMessage {
 	public void toBytes(ByteBuf buf) {
 		PacketBuffer buffer = new PacketBuffer(buf);
 		buffer.writeInt(_windowId);
-		buffer.writeNBTTagCompoundToBuffer(_data);
+		buffer.writeCompoundTag(_data);
 	}
 	
 	public static class Handler extends BackpacksMessageHandler<MessageOpenGui> {

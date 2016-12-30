@@ -14,10 +14,10 @@ public final class ClientUtils {
 	
 	
 	/** Returns the local (client) player entity. Will crash if called on the server. */
-	public static EntityPlayer getPlayer() { return getMC().thePlayer; }
+	public static EntityPlayer getPlayer() { return getMC().player; }
 	
 	/** Returns the local (client) world. Will crash if called on the server. */
-	public static World getWorld() { return getMC().theWorld; }
+	public static World getWorld() { return getMC().world; }
 	
 	/** Returns the local (client) thread scheduler, which allows tasks to be
 	 *  scheduled on the main game thread. Will crash if called on the server. */

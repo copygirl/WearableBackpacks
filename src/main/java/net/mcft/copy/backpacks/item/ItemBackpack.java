@@ -124,11 +124,11 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	@Override
 	public void onPlacedInteract(EntityPlayer player, TileEntity tileEntity, IBackpack backpack) {
-		if (player.worldObj.isRemote) return;
+		if (player.world.isRemote) return;
 		new ContainerBackpack(player, backpack) {
 			@Override public boolean canInteractWith(EntityPlayer player) {
 				return (player.isEntityAlive() && !tileEntity.isInvalid() &&
-						(player.worldObj.getTileEntity(tileEntity.getPos()) == tileEntity) &&
+						(player.world.getTileEntity(tileEntity.getPos()) == tileEntity) &&
 						(player.getDistanceSq(tileEntity.getPos()) <= 64));
 			}
 		}.open();
@@ -136,7 +136,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	@Override
 	public void onEquippedInteract(EntityPlayer player, EntityLivingBase target, IBackpack backpack) {
-		if (player.worldObj.isRemote) return;
+		if (player.world.isRemote) return;
 		new ContainerBackpack(player, backpack) {
 			@Override public boolean canInteractWith(EntityPlayer player) {
 				return BackpackHelper.canInteractWithEquippedBackpack(player, target);

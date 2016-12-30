@@ -135,7 +135,7 @@ public class ProxyCommon {
 			WearableBackpacks.LOG.error("Backpack type was null when accessing equipped backpack");
 			return;
 		}
-		if (!player.worldObj.isRemote && (backpack.getData() == null)) {
+		if (!player.world.isRemote && (backpack.getData() == null)) {
 			IBackpackData data = type.createBackpackData();
 			if (data != null) {
 				// Only show this error message if the backpack type is supposed to have backpack data.
@@ -175,7 +175,7 @@ public class ProxyCommon {
 		if (backpack.getStack() != null) {
 			backpack.getType().onEquippedTick(entity, backpack);
 			
-			if (entity.worldObj.isRemote)
+			if (entity.world.isRemote)
 				BackpackHelper.updateLidTicks(backpack, entity.posX, entity.posY + 1.0, entity.posZ);
 		}
 		
@@ -188,7 +188,7 @@ public class ProxyCommon {
 		// to place it as a block, or drop the items.
 		
 		EntityLivingBase entity = event.getEntityLiving();
-		World world = entity.worldObj;
+		World world = entity.world;
 		if (world.isRemote) return;
 		
 		BackpackCapability backpack = (BackpackCapability)BackpackHelper.getBackpack(entity);

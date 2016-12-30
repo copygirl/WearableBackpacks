@@ -28,8 +28,7 @@ public class SlotArmorBackpack extends Slot {
 	public static void replace(EntityPlayer player) {
 		Slot slot = player.inventoryContainer.getSlot(6);
 		if (slot instanceof SlotArmorBackpack) return;
-		Slot newSlot = new SlotArmorBackpack(slot.inventory, slot.getSlotIndex(),
-		                                     slot.xDisplayPosition, slot.yDisplayPosition);
+		Slot newSlot = new SlotArmorBackpack(slot.inventory, slot.getSlotIndex(), slot.xPos, slot.yPos);
 		newSlot.slotNumber = slot.slotNumber;
 		player.inventoryContainer.inventorySlots.set(slot.slotNumber, newSlot);
 	}

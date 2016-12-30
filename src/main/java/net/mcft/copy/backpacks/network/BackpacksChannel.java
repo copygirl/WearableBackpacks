@@ -52,8 +52,8 @@ public class BackpacksChannel extends SimpleNetworkWrapper {
 	/** Sends a message to a everyone tracking an entity. If sendToEntity is
 	 *  true and the entity is a player, also sends the message to them. */
 	public void sendToAllTracking(IMessage message, Entity entity, boolean sendToEntity) {
-		((WorldServer)entity.worldObj).getEntityTracker()
-			.sendToAllTrackingEntity(entity, getPacketFrom(message));
+		((WorldServer)entity.world).getEntityTracker()
+			.sendToTracking(entity, getPacketFrom(message));
 		if (sendToEntity && (entity instanceof EntityPlayer))
 			sendTo(message, (EntityPlayer)entity);
 	}

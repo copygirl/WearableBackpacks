@@ -41,7 +41,7 @@ public abstract class BackpacksMessageHandler<T extends IMessage> implements IMe
 	 *  On the server, returns the world the player is in who sent the message.
 	 *  On the client, returns the local world. */
 	public static World getWorld(MessageContext ctx) {
-		return getPlayer(ctx).worldObj;
+		return getPlayer(ctx).world;
 	}
 	
 	/** Returns the appropriate thread scheduler for this message context.

@@ -33,7 +33,7 @@ public class TileEntityBackpack extends TileEntity implements ITickable, IBackpa
 	
 	@Override
 	public void update() {
-		if (worldObj.isRemote)
+		if (world.isRemote)
 			BackpackHelper.updateLidTicks(this,
 				pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
 	}
@@ -111,7 +111,7 @@ public class TileEntityBackpack extends TileEntity implements ITickable, IBackpa
 	@Override
 	public void setPlayersUsing(int value) {
 		if ((value > 0) != (_playersUsing > 0))
-			worldObj.addBlockEvent(pos, getBlockType(), 0, (value > 0) ? 1 : 0);
+			world.addBlockEvent(pos, getBlockType(), 0, (value > 0) ? 1 : 0);
 		_playersUsing = value;
 	}
 	

@@ -18,7 +18,7 @@ public final class WorldUtils {
 	public static EntityItem spawnItem(World world, double x, double y, double z, ItemStack stack) {
 		if ((stack == null) || (stack.stackSize <= 0)) return null;
 		EntityItem item = new EntityItem(world, x, y, z, stack);
-		world.spawnEntityInWorld(item);
+		world.spawnEntity(item);
 		return item;
 	}
 	/** Spawns an ItemStack in the world with random motion. */
@@ -67,7 +67,7 @@ public final class WorldUtils {
 		EntityItem item;
 		if (player == null) {
 			double y = entity.posY + entity.getEyeHeight() - 0.3;
-			item = spawnItem(entity.worldObj, entity.posX, y, entity.posZ, stack);
+			item = spawnItem(entity.world, entity.posX, y, entity.posZ, stack);
 			if (item == null) return null;
 			item.setPickupDelay(40);
 			float f1 = RandomUtils.getFloat(0.5F);

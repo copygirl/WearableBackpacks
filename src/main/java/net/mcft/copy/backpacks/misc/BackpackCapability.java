@@ -84,7 +84,7 @@ public class BackpackCapability implements IBackpack {
 			lastType = null;
 		}
 		
-		if (!entity.worldObj.isRemote) {
+		if (!entity.world.isRemote) {
 			// If chest armor was changed and this is a player, send the updated stack.
 			if (chestArmorChanged && (entity instanceof EntityPlayer))
 				((EntityPlayer)entity).inventoryContainer.detectAndSendChanges();
