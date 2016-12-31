@@ -1,5 +1,6 @@
 package net.mcft.copy.backpacks.container;
 
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -14,7 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mcft.copy.backpacks.api.IBackpackType;
 
 // TODO: Open backpack when interacting with slot?
-// FIXME: In 1.11, is it possible to do without this hack?
+// TODO: Still not possible to do without this hack in Vanilla 1.11. Leave it up to Forge?
 /** Replaces the player's regular chest armor slot to
  *  prevent them from taking out equipped backpacks. */
 public class SlotArmorBackpack extends Slot {
@@ -50,8 +51,10 @@ public class SlotArmorBackpack extends Slot {
 	
 	@Override
 	public boolean canTakeStack(EntityPlayer player) { 
-		ItemStack backpack = getStack();
-		return ((backpack == null) || !(backpack.getItem() instanceof IBackpackType));
+		ItemStack stack = getStack();
+		return (!(stack.getItem() instanceof IBackpackType) &&
+				(player.isCreative() || !EnchantmentHelper.hasBindingCurse(stack)));
+		// Why, Mojang, whhhyyyyy??! Still no Item.canEquip / canUnequip!?
 	}
 	
 }
