@@ -138,7 +138,7 @@ public class BlockBackpack extends BlockContainer {
 	
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state,
-	                                EntityPlayer player, EnumHand hand, ItemStack heldItem,
+	                                EntityPlayer player, EnumHand hand,
 	                                EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (worldIn.isRemote) return true;
 		TileEntity entity = worldIn.getTileEntity(pos);

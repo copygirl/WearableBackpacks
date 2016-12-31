@@ -18,7 +18,7 @@ public class MessageBackpackUpdate implements IMessage {
 	
 	private int _entityId;
 	private UpdateType _type;
-	private ItemStack _stack;
+	private ItemStack _stack = ItemStack.EMPTY;
 	private boolean _open;
 	
 	public MessageBackpackUpdate() {  }
@@ -52,7 +52,7 @@ public class MessageBackpackUpdate implements IMessage {
 		} catch (Exception ex) {
 			_entityId = -1;
 			_type = UpdateType.INVALID;
-			_stack = null;
+			_stack = ItemStack.EMPTY;
 			_open = false;
 		}
 	}

@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.ForgeHooks;
@@ -20,7 +21,7 @@ public class RecipeDyeableItem implements IRecipe {
 	public int getRecipeSize() { return 10; }
 	
 	@Override
-	public ItemStack getRecipeOutput() { return null; }
+	public ItemStack getRecipeOutput() { return ItemStack.EMPTY; }
 	
 	@Override
 	public boolean matches(InventoryCrafting crafting, World world) {
@@ -32,7 +33,7 @@ public class RecipeDyeableItem implements IRecipe {
 		boolean hasDyes = false;
 		for (int i = 0; i < crafting.getSizeInventory(); i++) {
 			ItemStack stack = crafting.getStackInSlot(i);
-			if (stack == null) continue;                                           // Ignore empty stacks.
+			if (stack.isEmpty()) continue;                                         // Ignore empty stacks.
 			else if (DyeUtils.isDye(stack)) hasDyes = true;                        // Check for dyes.
 			else if (!(stack.getItem() instanceof IDyeableItem)) return false;     // Don't allow non-dyeable items.
 			else if (!((IDyeableItem)stack.getItem()).canDye(stack)) return false; // canDye has to return true, too.
@@ -45,18 +46,18 @@ public class RecipeDyeableItem implements IRecipe {
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting crafting) {
 		// Collect dyeable item and dyes.
-		ItemStack dyeable = null;
+		ItemStack dyeable = ItemStack.EMPTY;;
 		List<ItemStack> dyes = new ArrayList<ItemStack>();
 		for (int i = 0; i < crafting.getSizeInventory(); i++) {
 			ItemStack stack = crafting.getStackInSlot(i);
-			if (stack == null) continue;
+			if (stack.isEmpty()) continue;
 			else if (DyeUtils.isDye(stack)) dyes.add(stack);
-			else if (!(stack.getItem() instanceof IDyeableItem)) return null;
-			else if (!((IDyeableItem)stack.getItem()).canDye(stack)) return null;
-			else if (dyeable != null) return null;
+			else if (!(stack.getItem() instanceof IDyeableItem)) return ItemStack.EMPTY;
+			else if (!((IDyeableItem)stack.getItem()).canDye(stack)) return ItemStack.EMPTY;
+			else if (!dyeable.isEmpty()) return ItemStack.EMPTY;
 			else dyeable = stack.copy();
 		}
-		if (dyes.isEmpty()) return null;
+		if (dyes.isEmpty()) return ItemStack.EMPTY;
 		// Caclulate and set resulting item's color.
 		int oldColor = NbtUtils.get(dyeable, -1, "display", "color");
 		int newColor = DyeUtils.getColorFromDyes(oldColor, dyes);
@@ -65,13 +66,14 @@ public class RecipeDyeableItem implements IRecipe {
 	}
 	
 	@Override
-	public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-		ItemStack[] stacks = new ItemStack[inv.getSizeInventory()];
-		for (int i = 0; i < stacks.length; ++i) {
+	public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+		NonNullList<ItemStack> list = NonNullList.<ItemStack>withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+
+		for (int i = 0; i < list.size(); ++i) {
 			ItemStack stack = inv.getStackInSlot(i);
-			stacks[i] = ForgeHooks.getContainerItem(stack);
+			list.set(i, ForgeHooks.getContainerItem(stack));
 		}
-		return stacks;
+
+		return list;
 	}
-	
 }

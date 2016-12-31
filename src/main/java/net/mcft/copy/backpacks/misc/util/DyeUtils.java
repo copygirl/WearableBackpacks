@@ -34,7 +34,7 @@ public final class DyeUtils {
 	/** Gets the dye color of the item stack by checking the ore dictionary.
 	 *  Return -1 if the stack is not a dye. */
 	public static int getDyeColor(ItemStack stack) {
-		if (stack == null) return -1;
+		if (stack.isEmpty()) return -1;
 		int[] oreIds = OreDictionary.getOreIDs(stack);
 		for (int ore : oreIds) {
 			String name = OreDictionary.getOreName(ore);

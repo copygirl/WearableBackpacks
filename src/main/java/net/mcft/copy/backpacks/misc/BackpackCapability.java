@@ -35,7 +35,7 @@ public class BackpackCapability implements IBackpack {
 	
 	public final EntityLivingBase entity;
 	
-	public ItemStack stack = null;
+	public ItemStack stack = ItemStack.EMPTY;
 	public IBackpackData data = null;
 	public int playersUsing = 0;
 	public int lidTicks = 0;
@@ -56,9 +56,9 @@ public class BackpackCapability implements IBackpack {
 	
 	@Override
 	public ItemStack getStack() {
-		if (stack != null) return stack;
+		if (!stack.isEmpty()) return stack;
 		ItemStack chestArmor = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-		return ((BackpackHelper.getBackpackType(chestArmor) != null) ? chestArmor : null);
+		return ((BackpackHelper.getBackpackType(chestArmor) != null) ? chestArmor : ItemStack.EMPTY);
 	}
 	
 	@Override
@@ -68,14 +68,14 @@ public class BackpackCapability implements IBackpack {
 		
 		// Remove previous backpack from chest armor slot, if any.
 		if (isChestArmor()) {
-			entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, null);
+			entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStack.EMPTY);
 			chestArmorChanged = true;
 		}
 		
 		// Equip backpack to chest armor slot if config option is set to enabled.
 		if (BackpackHelper.equipAsChestArmor) {
-			stack = null;
-			lastType = ((value != null) ? BackpackHelper.getBackpackType(value) : null);
+			stack = ItemStack.EMPTY;
+			lastType = ((!value.isEmpty()) ? BackpackHelper.getBackpackType(value) : null);
 			entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, value);
 			chestArmorChanged = true;
 		// Otherwise store it inside the capability.
@@ -152,7 +152,7 @@ public class BackpackCapability implements IBackpack {
 			backpack.stack = NbtUtils.readItem(compound.getCompoundTag(TAG_STACK));
 			
 			IBackpackType type;
-			if (backpack.stack == null) {
+			if (backpack.stack.isEmpty()) {
 				if (!compound.hasKey(TAG_TYPE, NbtType.STRING)) return;
 				// If the backpack has its type saved, restore it.
 				// This is the case when the backpack stack is equipped in
@@ -176,7 +176,7 @@ public class BackpackCapability implements IBackpack {
 		@Override
 		public NBTTagCompound serializeNBT() {
 			return NbtUtils.createCompound(
-				TAG_STACK, ((backpack.stack != null) ? backpack.stack.serializeNBT() : null),
+				TAG_STACK, ((!backpack.stack.isEmpty()) ? backpack.stack.serializeNBT() : null),
 				// If the backpack is stored in the chest armor slot, we need to save the item. See deserializeNBT.
 				TAG_TYPE, (backpack.isChestArmor() ? backpack.getStack().getItem().getRegistryName().toString() : null),
 				TAG_DATA, ((backpack.data != null) ? backpack.data.serializeNBT() : null));
@@ -189,9 +189,9 @@ public class BackpackCapability implements IBackpack {
 		@Override
 		public NBTBase writeNBT(Capability<IBackpack> capability, IBackpack instance, EnumFacing side) {
 			BackpackCapability backpack = (BackpackCapability)instance;
-			return ((backpack.stack == null) && (backpack.data == null)) ? null
+			return ((backpack.stack.isEmpty()) && (backpack.data == null)) ? null
 				: NbtUtils.createCompound(
-					TAG_STACK, ((backpack.stack != null) ? backpack.stack.serializeNBT() : null),
+					TAG_STACK, ((!backpack.stack.isEmpty()) ? backpack.stack.serializeNBT() : null),
 					TAG_DATA, ((backpack.data != null) ? backpack.data.serializeNBT() : null));
 		}
 		
@@ -205,7 +205,7 @@ public class BackpackCapability implements IBackpack {
 			backpack.setStack(stack);
 			
 			IBackpackType type;
-			if (stack == null) {
+			if (stack.isEmpty()) {
 				// Try to get the backpack type from the chestplate slot.
 				stack = backpack.entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 				backpack.lastType = type = BackpackHelper.getBackpackType(stack);

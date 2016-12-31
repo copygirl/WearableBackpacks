@@ -90,8 +90,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	// Item events
 	
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos,
-	                                  EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		IBlockState state = worldIn.getBlockState(pos);
 		// If the block is replaceable, keep the placing position
 		// the same but check the block below for solidity.
@@ -105,7 +104,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		
 		// Check if the side is solid and try to place the backpack.
 		return (state.isSideSolid(worldIn, pos, EnumFacing.UP) &&
-		        BackpackHelper.placeBackpack(worldIn, pos, stack, playerIn))
+		        BackpackHelper.placeBackpack(worldIn, pos, player.getHeldItem(hand), player))
 			? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
 	}
 	
@@ -193,7 +192,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	                        DamageSource source, int damage, int slot) {
 		// TODO: Check to see if 1.11 fixes the lack of sound / particles when armor breaks.
 		stack.damageItem(damage, entity);
-		if (stack.stackSize > 0) return;
+		if (!stack.isEmpty()) return;
 		// If backpack breaks while equipped, call onEquippedBroken.
 		IBackpack backpack = BackpackHelper.getBackpack(entity);
 		if (backpack == null) return;

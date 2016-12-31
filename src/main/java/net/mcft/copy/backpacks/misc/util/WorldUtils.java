@@ -16,7 +16,7 @@ public final class WorldUtils {
 	
 	/** Spawns an ItemStack in the world. */
 	public static EntityItem spawnItem(World world, double x, double y, double z, ItemStack stack) {
-		if ((stack == null) || (stack.stackSize <= 0)) return null;
+		if (stack.isEmpty()) return null;
 		EntityItem item = new EntityItem(world, x, y, z, stack);
 		world.spawnEntity(item);
 		return item;

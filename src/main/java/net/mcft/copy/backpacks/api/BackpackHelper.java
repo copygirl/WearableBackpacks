@@ -1,5 +1,6 @@
 package net.mcft.copy.backpacks.api;
 
+import net.minecraft.util.EnumHand;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,7 +48,7 @@ public final class BackpackHelper {
 	public static IBackpack getBackpack(Entity entity) {
 		if (entity == null) return null;
 		IBackpack backpack = entity.getCapability(IBackpack.CAPABILITY, null);
-		return (((backpack != null) && (backpack.getStack() != null)) ? backpack : null);
+		return (((backpack != null) && (!backpack.getStack().isEmpty())) ? backpack : null);
 	}
 	
 	/** Returns the tile entity's backpack capability. */
@@ -57,7 +58,7 @@ public final class BackpackHelper {
 	
 	/** Returns the backpack type of an item stack, or null if it isn't a backpack. */
 	public static IBackpackType getBackpackType(ItemStack stack) {
-		return ((stack != null) ? getBackpackType(stack.getItem()) : null);
+		return ((!stack.isEmpty()) ? getBackpackType(stack.getItem()) : null);
 	}
 	/** Returns the backpack type of an item, or null if it doesn't implement IBackpackType. */
 	public static IBackpackType getBackpackType(Item item) {
@@ -70,14 +71,14 @@ public final class BackpackHelper {
 	public static boolean canEquipBackpack(EntityLivingBase entity) {
 		return (BackpackRegistry.canEntityWearBackpacks(entity) && (getBackpack(entity) == null) &&
 		        !(equipAsChestArmor && (entity instanceof EntityPlayer) &&
-		          (entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST) != null)));
+		          (!entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST).isEmpty())));
 	}
 	
 	/** Sets the entity's equipped backpack and data. */
 	public static void setEquippedBackpack(EntityLivingBase entity, ItemStack stack,
 	                                       IBackpackData backpackData) {
 		IBackpackType backpackType = getBackpackType(stack);
-		if ((stack != null) && (backpackType == null))
+		if (!stack.isEmpty() && (backpackType == null))
 			throw new IllegalArgumentException("Backpack item isn't an IBackpackType.");
 		
 		IBackpack backpack = entity.getCapability(IBackpack.CAPABILITY, null);
@@ -112,7 +113,7 @@ public final class BackpackHelper {
 		type.onEquip(entity, tileEntity, backpack);
 		if (!entity.world.isRemote) {
 			BackpackHelper.setEquippedBackpack(entity, stack, backpack.getData());
-			backpack.setStack(null);
+			backpack.setStack(ItemStack.EMPTY);
 			backpack.setData(null);
 		}
 		return true;
@@ -133,13 +134,13 @@ public final class BackpackHelper {
 		// Would use this instead, but gotta avoid depending on the rest of WearableBackpacks.
 		//Block block = MiscUtils.getBlockFromItem(item);
 		Block block = Block.REGISTRY.getObject(item.getRegistryName());
-		if (!world.canBlockBePlaced(block, pos, false, EnumFacing.UP, null, stack))
+		if (!world.mayPlace(block, pos, false, EnumFacing.UP, null))
 			return false;
 		
 		// Actually go ahead and try to set the block in the world.
 		IBlockState state = block.getStateForPlacement(
 			world, pos, EnumFacing.UP, 0.5F, 0.5F, 0.5F,
-			item.getMetadata(stack.getMetadata()), player, stack);
+			item.getMetadata(stack.getMetadata()), player, EnumHand.MAIN_HAND);
 		if (!world.setBlockState(pos, state, 3) ||
 		    (world.getBlockState(pos).getBlock() != block)) return false;
 		block.onBlockPlacedBy(world, pos, state, entity, stack);
@@ -147,7 +148,6 @@ public final class BackpackHelper {
 		SoundType sound = block.getSoundType(state, world, pos, player);
 		world.playSound(player, pos, sound.getPlaceSound(), SoundCategory.BLOCKS,
 		                (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
-		stack.stackSize -= 1;
 		
 		TileEntity tileEntity = world.getTileEntity(pos);
 		if (tileEntity == null) return true;
@@ -156,10 +156,12 @@ public final class BackpackHelper {
 		
 		IBackpack carrierBackpack = BackpackHelper.getBackpack(player);
 		boolean isEquipped = ((carrierBackpack != null) && (carrierBackpack.getStack() == stack));
-		
+
+		ItemStack stackOrig = stack;
+
 		// Create a copy of the stack with stackSize set to 1 and transfer it.
-		stack = ItemStack.copyItemStack(stack);
-		stack.stackSize = 1;
+		stack = stack.copy();
+		stack.setCount(1);
 		placedBackpack.setStack(stack);
 		
 		// If the carrier had the backpack equipped, transfer data and unequip.
@@ -175,14 +177,18 @@ public final class BackpackHelper {
 			placedBackpack.setData(data);
 			
 			if (!world.isRemote)
-				BackpackHelper.setEquippedBackpack(entity, null, null);
+				BackpackHelper.setEquippedBackpack(entity, ItemStack.EMPTY, null);
 			
 			type.onUnequip(entity, tileEntity, placedBackpack);
 		
 		// Otherwise create a fresh backpack data on the server.
 		} else if (!world.isRemote) placedBackpack.setData(
 			placedBackpack.getType().createBackpackData());
-		
+
+		// We only shrink the original stack here as its information is still used
+		// in earlier checks, and shrinking it from 1 to 0 would effectively
+		// empty the stack.
+		stackOrig.shrink(1);
 		return true;
 		
 	}

@@ -38,7 +38,7 @@ public final class NbtUtils {
 	/** Gets an NBT tag of the specified item stack, or null if it doesn't exist.
 	 *  Example: <pre>{@code StackUtils.get(stack, "display", "color") }</pre> */
 	public static NBTBase get(ItemStack stack, String... tags) {
-		return get(((stack != null) ? stack.getTagCompound() : null), tags);
+		return get(stack.getTagCompound(), tags);
 	}
 	/** Gets a child NBT tag of the specified compound tag, or null if it doesn't exist.
 	 *  Example: <pre>{@code StackUtils.get(compound, "display", "color") }</pre> */
@@ -57,7 +57,7 @@ public final class NbtUtils {
 	/** Gets a value from the specified item stack's compound tag, or the default if it doesn't exist.
 	 *  Example: <pre>{@code StackUtils.get(stack, -1, "display", "color") }</pre> */
 	public static <T> T get(ItemStack stack, T defaultValue, String... tags) {
-		return get(((stack != null) ? stack.getTagCompound() : null), defaultValue, tags);
+		return get(stack.getTagCompound(), defaultValue, tags);
 	}
 	/** Gets a value from the specified compound tag, or the default if it doesn't exist.
 	 *  Example: <pre>{@code StackUtils.get(compound, -1, "display", "color") }</pre> */
@@ -69,7 +69,7 @@ public final class NbtUtils {
 	/** Returns if the specified item stack's compound tag has a certain NBT tag.
 	 *  Example: <pre>{@code StackUtils.has(stack, "display", "color") }</pre> */
 	public static boolean has(ItemStack stack, String... tags) {
-		return has(((stack != null) ? stack.getTagCompound() : null), tags);
+		return has(stack.getTagCompound(), tags);
 	}
 	/** Returns if the specified compound tag has a certain child NBT tag.
 	 *  Example: <pre>{@code StackUtils.has(compound, "display", "color") }</pre> */
@@ -80,8 +80,8 @@ public final class NbtUtils {
 	/** Adds or replaces a tag on the specified item stack's compound tag, creating it and any parent compound tags if necessary.
 	 *  Example: <pre>{@code StackUtils.set(stack, new NBTTagInt(0xFF0000), "display", "color") }</pre> */
 	public static void set(ItemStack stack, NBTBase nbtTag, String... tags) {
-		if (stack == null)
-			throw new IllegalArgumentException("stack is null");
+		if (stack.isEmpty())
+			throw new IllegalArgumentException("stack is empty");
 		NBTTagCompound compound = stack.getTagCompound();
 		if (compound == null) stack.setTagCompound(compound = new NBTTagCompound());
 		set(compound, nbtTag, tags);
@@ -118,7 +118,7 @@ public final class NbtUtils {
 	/** Removes a certain NBT tag from the specified item stack's compound tag.
 	 *  Example: <pre>{@code StackUtils.remove(stack, "display", "color") }</pre> */
 	public static void remove(ItemStack stack, String... tags) {
-		remove(((stack != null) ? stack.getTagCompound() : null), tags);
+		remove(stack.getTagCompound(), tags);
 	}
 	/** Removes a certain NBT tag from the specified compound tag.
 	 *  Example: <pre>{@code StackUtils.remove(compound, "display", "color") }</pre> */
@@ -148,7 +148,7 @@ public final class NbtUtils {
 	 *  Doesn't add any null values to the ItemStack's compound tag.
 	 *  Example: <pre>{@code NbtUtils.createCompound("id", 1, "name", "copygirl") }</pre> */
 	public static NBTTagCompound add(ItemStack stack, Object... nameValuePairs) {
-		if (stack == null) throw new IllegalArgumentException("stack is null");
+		if (stack.isEmpty()) throw new IllegalArgumentException("stack is empty");
 		if (!stack.hasTagCompound()) {
 			NBTTagCompound compound = new NBTTagCompound();
 			addToCompound(compound, nameValuePairs);
@@ -193,14 +193,14 @@ public final class NbtUtils {
 	}
 	/** Writes an item stack to an NBT compound. */
 	public static NBTTagCompound writeItem(ItemStack item, boolean writeNullAsEmptyCompound) {
-		return (item != null) ? item.writeToNBT(new NBTTagCompound())
+		return (!item.isEmpty()) ? item.writeToNBT(new NBTTagCompound())
 			: (writeNullAsEmptyCompound ? new NBTTagCompound() : null);
 	}
 	
 	/** Reads an item stack from an NBT compound. */
 	public static ItemStack readItem(NBTTagCompound compound) {
 		return ((compound != null) && !compound.hasNoTags())
-				? ItemStack.loadItemStackFromNBT(compound) : null;
+				? new ItemStack(compound) : ItemStack.EMPTY;
 	}
 	
 	
