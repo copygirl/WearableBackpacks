@@ -9,6 +9,7 @@ import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
@@ -90,7 +91,7 @@ public class ProxyCommon {
 		
 		EntityPlayer player = event.getEntityPlayer();
 		World world = event.getWorld();
-		if (!player.isSneaking() || (player.getHeldItemMainhand() != null)) return;
+		if (!player.isSneaking() || (!player.getHeldItem(EnumHand.MAIN_HAND).isEmpty())) return;
 		
 		IBackpack backpack = BackpackHelper.getBackpack(player);
 		if (backpack == null) return;
@@ -108,11 +109,14 @@ public class ProxyCommon {
 		// Try place the equipped backpack on the ground by using it. Also takes
 		// care of setting the tile entity stack and data as well as unequipping.
 		// See ItemBackpack.onItemUse.
+		player.setHeldItem(EnumHand.MAIN_HAND, backpack.getStack());
 		if (backpack.getStack().onItemUse(
-				player, world, event.getPos(), null,
+				player, world, event.getPos(), EnumHand.MAIN_HAND,
 				event.getFace(), 0.5F, 0.5F, 0.5F) == EnumActionResult.SUCCESS) {
 			player.swingArm(EnumHand.MAIN_HAND);
 			event.setCanceled(true);
+		} else {
+			player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
 		}
 		
 	}
@@ -165,14 +169,14 @@ public class ProxyCommon {
 			if (entity instanceof EntityPlayer)
 				SlotArmorBackpack.replace((EntityPlayer)entity);
 			
-			if (backpack.getStack() == null) {
+			if (backpack.getStack().isEmpty()) {
 				// Backpack has been removed somehow.
 				backpack.getType().onFaultyRemoval(entity, backpack);
-				backpack.setStack(null);
+				backpack.setStack(ItemStack.EMPTY);
 			}
 		}
 		
-		if (backpack.getStack() != null) {
+		if (!backpack.getStack().isEmpty()) {
 			backpack.getType().onEquippedTick(entity, backpack);
 			
 			if (entity.world.isRemote)
@@ -240,9 +244,9 @@ public class ProxyCommon {
 		backpack.getType().onDeath(entity, backpack);
 		
 		// Drop the backpack as an item and remove it from the entity.
-		if (backpack.getStack() != null)
+		if (!backpack.getStack().isEmpty())
 			WorldUtils.dropStackFromEntity(entity, backpack.getStack(), 4.0F);
-		BackpackHelper.setEquippedBackpack(entity, null, null);
+		BackpackHelper.setEquippedBackpack(entity, ItemStack.EMPTY, null);
 		
 	}
 	// Would use a method local class but "extractRangemapReplacedMain" gradle task doesn't like that.

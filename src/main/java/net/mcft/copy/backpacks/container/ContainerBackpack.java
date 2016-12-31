@@ -122,16 +122,16 @@ public abstract class ContainerBackpack extends Container {
 		Slot slot = inventorySlots.get(index);
 		if (slot == null) return null;
 		ItemStack stack = slot.getStack();
-		if (stack == null) return null;
+		if (stack.isEmpty()) return ItemStack.EMPTY;
 		ItemStack result = stack.copy();
 		
 		if (index < items.getSlots()) {
 			if (!mergeItemStack(stack, items.getSlots(), inventorySlots.size(), true))
-				return null;
+				return ItemStack.EMPTY;
 		} else if (!mergeItemStack(stack, 0, items.getSlots(), false))
-			return null;
+			return ItemStack.EMPTY;
 		
-		if (stack.stackSize == 0) slot.putStack(null);
+		if (stack.isEmpty()) slot.putStack(ItemStack.EMPTY);
 		else slot.onSlotChanged();
 		
 		return result;

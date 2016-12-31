@@ -23,7 +23,7 @@ public class TileEntityBackpack extends TileEntity implements ITickable, IBackpa
 	public static final String TAG_DATA = "data";
 	public static final String TAG_FACING = "facing";
 	
-	private ItemStack _stack = null;
+	private ItemStack _stack = ItemStack.EMPTY;
 	private IBackpackData _data = null;
 	private int _playersUsing = 0;
 	private int _lidTicks = 0;
@@ -50,7 +50,7 @@ public class TileEntityBackpack extends TileEntity implements ITickable, IBackpa
 		facing = EnumFacing.getFront(NbtUtils.get(compound, (byte)0, TAG_FACING) + 2);
 		
 		_stack = NbtUtils.readItem(compound.getCompoundTag(TAG_STACK));
-		if ((_stack == null) || isClient) { _data = null; return; }
+		if ((_stack.isEmpty()) || isClient) { _data = null; return; }
 		
 		_data = BackpackHelper.getBackpackType(_stack).createBackpackData();
 		NBTBase dataTag = compound.getTag(TAG_DATA);
@@ -60,7 +60,7 @@ public class TileEntityBackpack extends TileEntity implements ITickable, IBackpa
 	public NBTTagCompound writeNBT(NBTTagCompound compound, boolean isClient) {
 		NbtUtils.addToCompound(compound,
 			TAG_FACING, (byte)(facing.ordinal() - 2),
-			TAG_STACK, ((_stack != null) ? _stack.serializeNBT() : null),
+			TAG_STACK, ((!_stack.isEmpty()) ? _stack.serializeNBT() : null),
 			TAG_DATA, (((_data != null) && !isClient) ? _data.serializeNBT() : null));
 		return compound;
 	}
