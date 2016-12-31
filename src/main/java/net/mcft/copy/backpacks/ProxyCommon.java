@@ -91,7 +91,7 @@ public class ProxyCommon {
 		
 		EntityPlayer player = event.getEntityPlayer();
 		World world = event.getWorld();
-		if (!player.isSneaking() || (!player.getHeldItem(EnumHand.MAIN_HAND).isEmpty())) return;
+		if (!player.isSneaking() || !player.getHeldItem(EnumHand.MAIN_HAND).isEmpty()) return;
 		
 		IBackpack backpack = BackpackHelper.getBackpack(player);
 		if (backpack == null) return;
@@ -115,9 +115,7 @@ public class ProxyCommon {
 				event.getFace(), 0.5F, 0.5F, 0.5F) == EnumActionResult.SUCCESS) {
 			player.swingArm(EnumHand.MAIN_HAND);
 			event.setCanceled(true);
-		} else {
-			player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
-		}
+		} else player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
 		
 	}
 	

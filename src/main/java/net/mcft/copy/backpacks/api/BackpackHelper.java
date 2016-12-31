@@ -26,7 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 /** Support is almost non-existent when WearableBackpacks isn't installed.
     It's recommended to either have it be required, or only add backpacks
-    when the mod is present (check with Loader.isModLoaded). */ 
+    when the mod is present (check with <code>Loader.isModLoaded</code>). */ 
 public final class BackpackHelper {
 	
 	private BackpackHelper() {  }
@@ -48,7 +48,7 @@ public final class BackpackHelper {
 	public static IBackpack getBackpack(Entity entity) {
 		if (entity == null) return null;
 		IBackpack backpack = entity.getCapability(IBackpack.CAPABILITY, null);
-		return (((backpack != null) && (!backpack.getStack().isEmpty())) ? backpack : null);
+		return (((backpack != null) && !backpack.getStack().isEmpty()) ? backpack : null);
 	}
 	
 	/** Returns the tile entity's backpack capability. */
@@ -58,7 +58,7 @@ public final class BackpackHelper {
 	
 	/** Returns the backpack type of an item stack, or null if it isn't a backpack. */
 	public static IBackpackType getBackpackType(ItemStack stack) {
-		return ((!stack.isEmpty()) ? getBackpackType(stack.getItem()) : null);
+		return (!stack.isEmpty() ? getBackpackType(stack.getItem()) : null);
 	}
 	/** Returns the backpack type of an item, or null if it doesn't implement IBackpackType. */
 	public static IBackpackType getBackpackType(Item item) {
@@ -71,7 +71,7 @@ public final class BackpackHelper {
 	public static boolean canEquipBackpack(EntityLivingBase entity) {
 		return (BackpackRegistry.canEntityWearBackpacks(entity) && (getBackpack(entity) == null) &&
 		        !(equipAsChestArmor && (entity instanceof EntityPlayer) &&
-		          (!entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST).isEmpty())));
+		          !entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST).isEmpty()));
 	}
 	
 	/** Sets the entity's equipped backpack and data. */
@@ -156,9 +156,8 @@ public final class BackpackHelper {
 		
 		IBackpack carrierBackpack = BackpackHelper.getBackpack(player);
 		boolean isEquipped = ((carrierBackpack != null) && (carrierBackpack.getStack() == stack));
-
+		
 		ItemStack stackOrig = stack;
-
 		// Create a copy of the stack with stackSize set to 1 and transfer it.
 		stack = stack.copy();
 		stack.setCount(1);
@@ -184,10 +183,10 @@ public final class BackpackHelper {
 		// Otherwise create a fresh backpack data on the server.
 		} else if (!world.isRemote) placedBackpack.setData(
 			placedBackpack.getType().createBackpackData());
-
-		// We only shrink the original stack here as its information is still used
-		// in earlier checks, and shrinking it from 1 to 0 would effectively
-		// empty the stack.
+		
+		// We only shrink the original stack here instead of earlier
+		// as its information is still needed for other checks, and
+		// shrinking it from 1 to 0 would effectively empty the stack.
 		stackOrig.shrink(1);
 		return true;
 		
