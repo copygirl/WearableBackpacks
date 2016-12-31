@@ -9,28 +9,34 @@ buildscript {
 }
 apply plugin: "net.minecraftforge.gradle.forge"
 
-version = "1.3.0.8"
+file "build.properties" withReader {
+	def prop = new Properties()
+	prop.load(it)
+	ext.config = new ConfigSlurper().parse prop
+}
+
+version = config.mod.version
 group   = "net.mcft.copy.backpacks"
-archivesBaseName = project.projectDir.name
+archivesBaseName = "${project.projectDir.name}-${config.minecraft.version}"
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 compileJava { sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8 }
 
 minecraft {
-	version  = "1.10.2-12.18.3.2185"
+	version  = "${config.minecraft.version}-${config.forge.version}"
+	mappings = config.minecraft.mappings
 	runDir   = "run"
-	mappings = "stable_29"
 }
 
 dependencies {  }
 
 processResources {
-	inputs.property "version", project.version
-	inputs.property "mcversion", project.minecraft.version
+	inputs.property "mod_version", project.version
+	inputs.property "minecraft_version", project.minecraft.version
 	
 	from (sourceSets.main.resources.srcDirs) {
 		include "mcmod.info"
-		expand "version":project.version, "mcversion":project.minecraft.version
+		expand "mod_version":project.version, "minecraft_version":project.minecraft.version
 	}
 	
 	from (sourceSets.main.resources.srcDirs) {
