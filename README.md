@@ -73,7 +73,7 @@ top of a solid block).
 
 ## Download
 
-Available for **Minecraft 1.10.2** right here through [GitHub Releases][2].
+Available right here through [GitHub Releases][2].
 
 ## License & Permissions
 
