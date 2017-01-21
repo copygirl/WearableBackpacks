@@ -190,7 +190,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	public void damageArmor(EntityLivingBase entity, ItemStack stack,
 	                        DamageSource source, int damage, int slot) {
-		// TODO: Check to see if 1.11 fixes the lack of sound / particles when armor breaks.
+		// TODO: There's still a lack of sound / particles when armor breaks in 1.11..?
 		stack.damageItem(damage, entity);
 		if (!stack.isEmpty()) return;
 		// If backpack breaks while equipped, call onEquippedBroken.

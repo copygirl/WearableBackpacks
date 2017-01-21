@@ -75,6 +75,9 @@ top of a solid block).
 
 Available right here through [GitHub Releases][2].
 
+Also available on [CurseForge][3] thanks to [MindlessPuppetz][4].  
+All profits gained through Curse's reward system go directly to [Child's Play][5] charity.
+
 ## License & Permissions
 
 **Wearable Backpacks** is licensed under the [MIT license](LICENSE), though feel free to
@@ -88,30 +91,33 @@ treated the same.
 ## Credits
 
 **Authors:** copygirl, asiekierka  
-**Contributers:** -  
+**Contributors:** -  
 **Localizations:** -  
 
 ### Special thanks to ...
 
-- **asiekierka** for in general being an amazing friend, and letting me use [Charset][3]
-  as a reference, which was so useful he's getting an honorable co-author mention. ❤
+- **asiekierka** for being an amazing friend in general, letting me use [Charset][6]
+  as a reference and updating the mod to 1.11, so he's getting a co-author mention. ❤
 - The **Penguins' Revenge** server for encouraging me to rework / finish this mod.
 
 ## Contact
 
-Feature requests and bug reports belong on the [issue tracker][4]. For general inqueries,
-discussions and praise, you can contact **copygirl** directly at [Twitter (@koppeh)][5]
-or via [email][6], but you're also very welcome to join our little community's IRC
-channel (#obsidian on Esper.net) and [Discord guild][7].
+Feature requests and bug reports belong on the [issue tracker][7]. For general inqueries,
+discussions and praise, you can contact **copygirl** directly at [Twitter (@koppeh)][8]
+or via [email][9], but you're also very welcome to join our little community's IRC
+channel (#obsidian on Esper.net) and [Discord guild][10].
 
 *In the event that this mod becomes self-aware, we are not responsible for any damage it causes.*
 
 
-[0]: https://github.com/copygirl/BetterStorage
-[1]: http://dwarffortresswiki.org/index.php/DF2014:Fun
-[2]: https://github.com/copygirl/WearableBackpacks/releases
-[3]: http://charset.asie.pl/
-[4]: https://github.com/copygirl/WearableBackpacks/issues
-[5]: https://twitter.com/koppeh
-[6]: mailto:halfnerd.copygirl@gmail.com
-[7]: https://discord.gg/0bNJM8qj0Jiv6BlK
+[0]:  https://github.com/copygirl/BetterStorage
+[1]:  http://dwarffortresswiki.org/index.php/DF2014:Fun
+[2]:  https://github.com/copygirl/WearableBackpacks/releases
+[3]:  https://minecraft.curseforge.com/projects/wearable-backpacks
+[4]:  https://github.com/MindlessPuppetz
+[5]:  http://childsplaycharity.org/
+[6]:  http://charset.asie.pl/
+[7]:  https://github.com/copygirl/WearableBackpacks/issues
+[8]:  https://twitter.com/koppeh
+[9]:  mailto:halfnerd.copygirl@gmail.com
+[10]: https://discord.gg/0bNJM8qj0Jiv6BlK
