@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.common.ForgeHooks;
 
+import net.mcft.copy.backpacks.item.IDyeableItem;
 import net.mcft.copy.backpacks.misc.util.DyeUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 

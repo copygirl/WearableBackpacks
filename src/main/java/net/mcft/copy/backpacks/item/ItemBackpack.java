@@ -28,7 +28,7 @@ import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackType;
 import net.mcft.copy.backpacks.container.ContainerBackpack;
-import net.mcft.copy.backpacks.item.recipe.IDyeableItem;
+import net.mcft.copy.backpacks.item.IDyeableItem;
 import net.mcft.copy.backpacks.misc.BackpackDataItems;
 import net.mcft.copy.backpacks.misc.util.WorldUtils;
 
@@ -56,9 +56,6 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	/** Returns the damage reduction amount. Functions identically to the Vanilla ItemArmor value. */
 	public int getDamageReductionAmount(ItemStack stack) { return 3; }
-	
-	@Override
-	public boolean canDye(ItemStack stack) { return true; }
 	
 	// Item properties
 	

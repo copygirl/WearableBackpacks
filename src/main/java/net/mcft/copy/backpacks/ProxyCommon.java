@@ -34,6 +34,7 @@ import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackType;
 import net.mcft.copy.backpacks.container.SlotArmorBackpack;
+import net.mcft.copy.backpacks.item.DyeWashingHandler;
 import net.mcft.copy.backpacks.misc.BackpackCapability;
 import net.mcft.copy.backpacks.misc.util.WorldUtils;
 import net.mcft.copy.backpacks.network.MessageBackpackUpdate;
@@ -42,6 +43,7 @@ public class ProxyCommon {
 	
 	public void preInit() {
 		MinecraftForge.EVENT_BUS.register(this);
+		MinecraftForge.EVENT_BUS.register(new DyeWashingHandler());
 		
 		CapabilityManager.INSTANCE.register(IBackpack.class,
 			new BackpackCapability.Storage(), BackpackCapability.class);
