@@ -85,39 +85,45 @@ public class ProxyCommon {
 	
 	// Backpack interactions / events
 	
+	private boolean cancelOffHand = false;
+	
 	@SubscribeEvent
 	public void onPlayerInteractBlock(PlayerInteractEvent.RightClickBlock event) {
+		
+		// This event is fired twice, once for each hand. Unfortunately there
+		// is no way to set the result of the main hand interaction to SUCCESS
+		// so the off hand one will be skipped. So: Hacky code!
+		
+		if (cancelOffHand) {
+			cancelOffHand = false;
+			if (event.getHand() == EnumHand.OFF_HAND)
+				{ event.setCanceled(true); return; }
+		}
 		
 		// When players sneak-right-click the ground with an
 		// empty hand, place down their equipped backpack.
 		
 		EntityPlayer player = event.getEntityPlayer();
 		World world = event.getWorld();
-		if (!player.isSneaking() || !player.getHeldItem(EnumHand.MAIN_HAND).isEmpty()) return;
+		if (!player.isSneaking() || (event.getHand() != EnumHand.MAIN_HAND) ||
+		    !player.getHeldItem(EnumHand.MAIN_HAND).isEmpty()) return;
 		
 		IBackpack backpack = BackpackHelper.getBackpack(player);
 		if (backpack == null) return;
 		
-		if (event.getHand() == EnumHand.MAIN_HAND) {
-			// Since cancelling the event will not prevent the RightClickBlock event
-			// for the other hand from being fired, we need to cancel this one first
-			// and wait for the OFF_HAND one to actually do the unequipping, so we
-			// can also cancel that. Otherwise, the OFF_HAND interaction would cause
-			// items to be used or blocks being activated.
-			event.setCanceled(true);
-			return;
-		}
-		
 		// Try place the equipped backpack on the ground by using it. Also takes
 		// care of setting the tile entity stack and data as well as unequipping.
 		// See ItemBackpack.onItemUse.
-		player.setHeldItem(EnumHand.MAIN_HAND, backpack.getStack());
+		player.inventory.mainInventory.set(player.inventory.currentItem, backpack.getStack());
 		if (backpack.getStack().onItemUse(
 				player, world, event.getPos(), EnumHand.MAIN_HAND,
 				event.getFace(), 0.5F, 0.5F, 0.5F) == EnumActionResult.SUCCESS) {
+			
 			player.swingArm(EnumHand.MAIN_HAND);
 			event.setCanceled(true);
-		} else player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+			cancelOffHand = true;
+			
+		} else player.inventory.mainInventory.set(player.inventory.currentItem, ItemStack.EMPTY);
 		
 	}
 	
