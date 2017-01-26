@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.MathHelper;
 
@@ -97,7 +98,8 @@ public final class RendererBackpack {
 			// Make backpack swing with body as players swing their arms.
 			float swingProgress = entity.getSwingProgress(partialTicks);
 			float swingAngle = MathHelper.sin(MathHelper.sqrt(swingProgress) * ((float)Math.PI * 2.0F)) * 0.2F;
-			if (entity.getPrimaryHand() == EnumHandSide.LEFT) swingAngle *= -1;
+			if ((entity.swingingHand == EnumHand.OFF_HAND) ^
+			    (entity.getPrimaryHand() == EnumHandSide.LEFT)) swingAngle *= -1;
 			if (swingAngle != 0) GlStateManager.rotate((float)Math.toDegrees(swingAngle), 0.0F, 1.0F, 0.0F);
 			
 			// Rotate backpack if entity is sneaking.
