@@ -15,6 +15,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mcft.copy.backpacks.client.GuiBackpack;
 import net.mcft.copy.backpacks.container.ContainerBackpack;
 
+/** Causes the receiving player to open a GUI.
+ *  (Currently hardcoded to GuiBackpack, though.) */
 public class MessageOpenGui implements IMessage {
 	
 	private int _windowId;
@@ -22,10 +24,12 @@ public class MessageOpenGui implements IMessage {
 	
 	public MessageOpenGui() {  }
 	
-	public MessageOpenGui(ContainerBackpack container) {
-		_windowId = container.windowId;
-		_data = new NBTTagCompound();
-		container.writeToNBT(_data);
+	public static MessageOpenGui create(ContainerBackpack container) {
+		MessageOpenGui message = new MessageOpenGui();
+		message._windowId = container.windowId;
+		message._data = new NBTTagCompound();
+		container.writeToNBT(message._data);
+		return message;
 	}
 	
 	@Override

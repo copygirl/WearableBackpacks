@@ -46,12 +46,8 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	public ItemBackpack() {
 		setUnlocalizedName("wearablebackpacks.backpack");
-		
 		setMaxStackSize(1);
-		setMaxDamage(WearableBackpacks.CONFIG.backpackDurability.getValue());
-		
-		// TODO: Use our own creative tab?
-		setCreativeTab(CreativeTabs.TOOLS);
+		setCreativeTab(CreativeTabs.TOOLS); // TODO: Use our own creative tab?
 	}
 	
 	/** Returns the damage reduction amount. Functions identically to the Vanilla ItemArmor value. */
@@ -63,7 +59,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		// TODO: Move tooltip adding code into helper class. DRY!
-		boolean enableHelpTooltips = WearableBackpacks.CONFIG.enableHelpTooltips.getValue();
+		boolean enableHelpTooltips = WearableBackpacks.CONFIG.enableHelpTooltips.get();
 		// Check if the stack is the player's currently equipped backpack.
 		IBackpack backpack = BackpackHelper.getBackpack(playerIn);
 		if ((backpack != null) && (backpack.getStack() == stack)) {
@@ -170,7 +166,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	@Override
 	public IBackpackData createBackpackData() {
-		return new BackpackDataItems(WearableBackpacks.CONFIG.backpackRows.getValue() * 9);
+		return new BackpackDataItems(WearableBackpacks.CONFIG.backpackRows.get() * 9);
 	}
 	
 	// ISpecialArmor implementation

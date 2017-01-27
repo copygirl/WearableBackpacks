@@ -37,6 +37,7 @@ import net.mcft.copy.backpacks.item.DyeWashingHandler;
 import net.mcft.copy.backpacks.misc.BackpackCapability;
 import net.mcft.copy.backpacks.misc.util.WorldUtils;
 import net.mcft.copy.backpacks.network.MessageBackpackUpdate;
+import net.mcft.copy.backpacks.network.MessageSyncSettings;
 
 public class ProxyCommon {
 	
@@ -62,6 +63,7 @@ public class ProxyCommon {
 	
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerLoggedInEvent event) {
+		WearableBackpacks.CHANNEL.sendTo(MessageSyncSettings.create(), event.player);
 		sendBackpackStack(event.player, event.player);
 	}
 	@SubscribeEvent
@@ -131,7 +133,7 @@ public class ProxyCommon {
 		
 		// When players right-click equipped backpacks, interact with them.
 		
-		if (!WearableBackpacks.CONFIG.enableEquippedInteraction.getValue() ||
+		if (!WearableBackpacks.CONFIG.enableEquippedInteraction.get() ||
 		    !(event.getTarget() instanceof EntityLivingBase)) return;
 		EntityPlayer player = event.getEntityPlayer();
 		EntityLivingBase target = (EntityLivingBase)event.getTarget();
@@ -210,7 +212,7 @@ public class ProxyCommon {
 		if ((player != null) && keepInventory) return;
 		
 		// Attempt to place the backpack as a block instead of dropping the items.
-		if (WearableBackpacks.CONFIG.dropAsBlockOnDeath.getValue()) {
+		if (WearableBackpacks.CONFIG.dropAsBlockOnDeath.get()) {
 			
 			List<BlockCoord> coords = new ArrayList<BlockCoord>();
 			for (int x = -2; x <= 2; x++)

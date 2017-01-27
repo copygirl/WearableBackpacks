@@ -22,8 +22,9 @@ public class BackpacksChannel extends SimpleNetworkWrapper {
 	public BackpacksChannel() {
 		super(WearableBackpacks.MOD_ID);
 		
-		registerMessage(MessageOpenGui.Handler.class,        MessageOpenGui.class,        0, Side.CLIENT);
-		registerMessage(MessageBackpackUpdate.Handler.class, MessageBackpackUpdate.class, 1, Side.CLIENT);
+		registerMessage(MessageSyncSettings.Handler.class,   MessageSyncSettings.class,   0, Side.CLIENT);
+		registerMessage(MessageOpenGui.Handler.class,        MessageOpenGui.class,        1, Side.CLIENT);
+		registerMessage(MessageBackpackUpdate.Handler.class, MessageBackpackUpdate.class, 2, Side.CLIENT);
 	}
 	
 	/** Sends a message to a player. */

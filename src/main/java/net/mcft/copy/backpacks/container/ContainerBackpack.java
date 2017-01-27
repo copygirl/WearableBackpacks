@@ -66,7 +66,7 @@ public abstract class ContainerBackpack extends Container {
 		player.closeContainer();
 		player.openContainer = this;
 		windowId = player.currentWindowId;
-		WearableBackpacks.CHANNEL.sendTo(new MessageOpenGui(this), player);
+		WearableBackpacks.CHANNEL.sendTo(MessageOpenGui.create(this), player);
 		addListener(player);
 		backpack.setPlayersUsing(backpack.getPlayersUsing() + 1);
 	}

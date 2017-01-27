@@ -127,7 +127,7 @@ public class BlockBackpack extends BlockContainer {
 	public void onBlockClicked(World world, BlockPos pos, EntityPlayer player) {
 		// Show a help message if the local player is trying to equip a backpack when it's not possible.
 		if (world.isRemote && player.isSneaking() && !BackpackHelper.canEquipBackpack(player) &&
-		    WearableBackpacks.CONFIG.enableHelpTooltips.getValue() &&
+		    WearableBackpacks.CONFIG.enableHelpTooltips.get() &&
 		    (System.currentTimeMillis() > _lastHelpMessage + 10 * 1000)) {
 			boolean backpack = (BackpackHelper.getBackpack(player) != null);
 			player.sendMessage(new TextComponentTranslation(

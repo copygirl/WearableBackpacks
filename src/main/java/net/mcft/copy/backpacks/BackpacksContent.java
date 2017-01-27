@@ -22,7 +22,7 @@ public final class BackpacksContent {
 	
 	public static void init() {
 		
-		if (WearableBackpacks.CONFIG.backpackEnabled.getValue()) {
+		if (WearableBackpacks.CONFIG.backpackEnabled.get()) {
 			BACKPACK = new ItemBackpack();
 			Block backpackBlock = new BlockBackpack();
 			
