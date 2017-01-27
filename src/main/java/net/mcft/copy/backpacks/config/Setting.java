@@ -1,6 +1,8 @@
 package net.mcft.copy.backpacks.config;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import net.minecraft.nbt.NBTBase;
 
@@ -19,13 +21,14 @@ public abstract class Setting<T> {
 	/** The setting's full name, for example "general.equipAsChestArmor".
 	 *  Used as the key in BackpacksConfig._settings map. */
 	public final String fullName;
-	/** The setting's comment used in the config file, if any. */
-	private String _comment = null;
 	
 	/** Default value, used when no config file is present. */
 	private final T _defaultValue;
 	/** Loaded "own" value, directly from the config file (or using the default). */
 	private T _value;
+	
+	/** Function which is used to validate the setting's value, null if none. */
+	private Function<T, String> _validationFunc = null;
 	
 	/** Stores whether the setting will be synced to players joining a world. */
 	private boolean _isSynced = false;
@@ -34,12 +37,30 @@ public abstract class Setting<T> {
 	/** Action fired when setting is synced on the receiving player's side, null if none. */
 	private Consumer<T> _syncAction = null;
 	
+	/** The setting's comment used in the config file, if any. */
+	private String _comment = null;
+	
 	
 	public Setting(String category, String name, T defaultValue) {
 		this.category = category;
 		this.name = name;
 		this.fullName = (category + "." + name);
 		_defaultValue = _value = defaultValue;
+	}
+	
+	/** Sets the setting's validation function, which returns null
+	 *  if the passed-in value is valid, or an error string if not. */
+	public Setting<T> setValidationFunc(Function<T, String> validationFunc) {
+		_validationFunc = validationFunc;
+		return this;
+	}
+	/** Sets the valid values for this setting, causing a validation
+	 *  error if any value besides the specified ones are being used. */
+	@SafeVarargs
+	public final Setting<T> setValidValues(T... values) {
+		return setValidationFunc((value) -> Arrays.asList(values).contains(value) ? null
+			: String.format("Value %s is not one of the valid values (%s)",
+			                value, Arrays.toString(values).replaceAll("^.|.$", ""))); // Removes first and last char.
 	}
 	
 	/** Sets the setting to be synchronized to players joining a world. */
@@ -85,12 +106,16 @@ public abstract class Setting<T> {
 	 *  (after it has been loaded from file), validating it. */
 	protected final void load(Configuration config) {
 		_value = load(getProperty(config));
-		String validationError = validate(_value);
-		if (validationError != null) {
-			WearableBackpacks.LOG.error("Error validating config option '{}': {}",
-			                            fullName, validationError);
-			_value = _defaultValue;
+		// Validate the value.
+		if (_validationFunc != null) {
+			String validationError = _validationFunc.apply(_value);
+			if (validationError != null) {
+				WearableBackpacks.LOG.error("Error validating config option '{}': {}",
+				                            fullName, validationError);
+				_value = _defaultValue;
+			}
 		}
+		// Update synced value.
 		if (_isSynced) _syncedValue = _value;
 	}
 	/** Saves the setting to the Forge Configuration object. */
@@ -105,9 +130,6 @@ public abstract class Setting<T> {
 	protected abstract T load(Property property);
 	/** Saves the raw value to the specified config Property. */
 	protected abstract void save(Property property, T value);
-	
-	/** Validates the setting, returning a non-null error string if invalid. */
-	protected String validate(T value) { return null; }
 	
 	
 	// Synchronization
