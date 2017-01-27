@@ -14,6 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.misc.BackpackCapability;
 
+/** Sends and updates equipped backpack capability data. */
 public class MessageBackpackUpdate implements IMessage {
 	
 	private int _entityId;
