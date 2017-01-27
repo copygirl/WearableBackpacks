@@ -21,12 +21,12 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.TextComponentTranslation;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
+import net.mcft.copy.backpacks.misc.util.LangUtils;
 import net.mcft.copy.backpacks.misc.util.MiscUtils;
 
 // FIXME: Currently shows missing texture as break particle.
@@ -130,8 +130,7 @@ public class BlockBackpack extends BlockContainer {
 		    WearableBackpacks.CONFIG.enableHelpTooltips.get() &&
 		    (System.currentTimeMillis() > _lastHelpMessage + 10 * 1000)) {
 			boolean backpack = (BackpackHelper.getBackpack(player) != null);
-			player.sendMessage(new TextComponentTranslation(
-				"notice.wearablebackpacks.backpack.cantEquip." + (backpack ? "backpack" : "chestplate")));
+			LangUtils.displayChatMessage("cantEquip" + (!backpack ? ".chestplate" : ""));
 			_lastHelpMessage = System.currentTimeMillis();
 		}
 	}

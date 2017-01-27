@@ -1,10 +1,8 @@
 package net.mcft.copy.backpacks.item;
 
-import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.EntityLivingBase;
@@ -30,6 +28,7 @@ import net.mcft.copy.backpacks.api.IBackpackType;
 import net.mcft.copy.backpacks.container.ContainerBackpack;
 import net.mcft.copy.backpacks.item.IDyeableItem;
 import net.mcft.copy.backpacks.misc.BackpackDataItems;
+import net.mcft.copy.backpacks.misc.util.LangUtils;
 import net.mcft.copy.backpacks.misc.util.WorldUtils;
 
 // TODO: Support armor enchantments like on BetterStorage backpacks? (Delayed to 1.11 version due to lack of enchantment hooks.)
@@ -58,26 +57,21 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-		// TODO: Move tooltip adding code into helper class. DRY!
 		boolean enableHelpTooltips = WearableBackpacks.CONFIG.enableHelpTooltips.get();
 		// Check if the stack is the player's currently equipped backpack.
 		IBackpack backpack = BackpackHelper.getBackpack(playerIn);
 		if ((backpack != null) && (backpack.getStack() == stack)) {
 			// If someone's using the player's backpack, display it in the tooltip.
-			// As long as someone's accessing the backpack, it can't be placed down.
 			if (backpack.getPlayersUsing() > 0)
-				tooltip.addAll(Arrays.asList(I18n.format(
-					"tooltip.wearablebackpacks.backpack.used").split("\\\\n")));
+				LangUtils.formatTooltip(tooltip, "used");
 			// Otherwise, if help tooltips are enabled, display the unequip hint.
 			else if (enableHelpTooltips)
-				tooltip.addAll(Arrays.asList(I18n.format(
-					"tooltip.wearablebackpacks.backpack.unequipHint").split("\\\\n")));
+				LangUtils.formatTooltip(tooltip, "unequipHint");
 		} else if (enableHelpTooltips)
 			// Display the equip hint. If the chestplate setting is off, use the
 			// extended tooltip, which also explains how to unequip the backpack.
-			tooltip.addAll(Arrays.asList(I18n.format(
-				"tooltip.wearablebackpacks.backpack.equipHint" +
-				(!BackpackHelper.equipAsChestArmor ? ".extended" : "")).split("\\\\n")));
+			LangUtils.formatTooltip(tooltip, "equipHint" +
+				(!BackpackHelper.equipAsChestArmor ? ".extended" : ""));
 	}
 	
 	// Item events
