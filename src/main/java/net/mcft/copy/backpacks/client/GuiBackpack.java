@@ -24,8 +24,8 @@ public class GuiBackpack extends GuiContainer {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		String title = (_container.titleLocalized ? _container.title : I18n.format(_container.title));
-		fontRendererObj.drawString(title, 8, 6, 0x404040);
-		fontRendererObj.drawString(I18n.format("container.inventory"), 8, ySize - 94, 0x404040);
+		fontRenderer.drawString(title, 8, 6, 0x404040);
+		fontRenderer.drawString(I18n.format("container.inventory"), 8, ySize - 94, 0x404040);
 	}
 	
 	@Override
