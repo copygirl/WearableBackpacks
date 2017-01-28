@@ -1,5 +1,6 @@
 package net.mcft.copy.backpacks.misc.util;
 
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
@@ -118,21 +119,32 @@ public final class NbtUtils {
 	/** Removes a certain NBT tag from the specified item stack's compound tag.
 	 *  Example: <pre>{@code StackUtils.remove(stack, "display", "color") }</pre> */
 	public static void remove(ItemStack stack, String... tags) {
-		remove(stack.getTagCompound(), tags);
+		if (tags.length == 0) throw new IllegalArgumentException(
+			"tags should have at least one element");
+		if (!stack.hasTagCompound()) return;
+		
+		NBTTagCompound compound = stack.getTagCompound();
+		remove(compound, tags);
+		// If compound is empty, remove it from the stack.
+		if (compound.hasNoTags())
+			stack.setTagCompound(null);
 	}
 	/** Removes a certain NBT tag from the specified compound tag.
 	 *  Example: <pre>{@code StackUtils.remove(compound, "display", "color") }</pre> */
 	public static void remove(NBTTagCompound compound, String... tags) {
-		// TODO: Remove empty parent compound tags?
+		if (tags.length == 0) throw new IllegalArgumentException(
+			"tags should have at least one element");
 		if (compound == null) return;
-		String tag = null;
-		for (int i = 0; i < tags.length; i++) {
-			tag = tags[i];
-			if (!compound.hasKey(tag)) return;
-			if (i == tags.length - 1) break;
-			compound = compound.getCompoundTag(tag);
+		
+		if (tags.length > 1) {
+			NBTBase tag = compound.getTag(tags[0]);
+			if (!(tag instanceof NBTTagCompound)) return;
+			NBTTagCompound subCompound = (NBTTagCompound)tag;
+			remove(subCompound, (String[])Arrays.copyOfRange(tags, 1, tags.length));
+			// If subCompound is empty, remove it from the parent compound.
+			if (!subCompound.hasNoTags()) return;
 		}
-		compound.removeTag(tag);
+		compound.removeTag(tags[0]);
 	}
 	
 	
