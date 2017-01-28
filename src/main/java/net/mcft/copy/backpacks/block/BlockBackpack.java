@@ -22,7 +22,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 
-import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
@@ -127,7 +126,6 @@ public class BlockBackpack extends BlockContainer {
 	public void onBlockClicked(World world, BlockPos pos, EntityPlayer player) {
 		// Show a help message if the local player is trying to equip a backpack when it's not possible.
 		if (world.isRemote && player.isSneaking() && !BackpackHelper.canEquipBackpack(player) &&
-		    WearableBackpacks.CONFIG.enableHelpTooltips.get() &&
 		    (System.currentTimeMillis() > _lastHelpMessage + 10 * 1000)) {
 			boolean backpack = (BackpackHelper.getBackpack(player) != null);
 			LangUtils.displayChatMessage("cantEquip" + (!backpack ? ".chestplate" : ""));

@@ -2,11 +2,12 @@ container.wearablebackpacks.backpack=Backpack
 
 item.wearablebackpacks.backpack.name=Backpack
 
+tooltip.wearablebackpacks.moreInfo=Hold %1$s for more info
+tooltip.wearablebackpacks.openHint=Press %1$s to open while equipped
 tooltip.wearablebackpacks.equipHint=Place down and break\nwhile sneaking to equip.
 tooltip.wearablebackpacks.equipHint.extended=Sneak and break to equip.\nSneak and right click ground\nwith empty hand to unequip.
-tooltip.wearablebackpacks.openHint=Press %1$s to open while equipped.
 tooltip.wearablebackpacks.unequipHint=Sneak and right click ground\nwith empty hand to unequip.
-tooltip.wearablebackpacks.used=Currently being used by a player.
+tooltip.wearablebackpacks.used=Currently being used by a player
 
 chat.wearablebackpacks.cantEquip=You already have a backpack equipped
 chat.wearablebackpacks.cantEquip.chestplate=You can't equip a backpack while wearing a chestplate
