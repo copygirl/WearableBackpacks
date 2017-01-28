@@ -1,7 +1,9 @@
 package net.mcft.copy.backpacks.config;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.io.File;
 import java.lang.reflect.Field;
@@ -45,6 +47,7 @@ public class BackpacksConfig implements Iterable<Setting<?>> {
 	
 	
 	private final Map<String, Setting<?>> _settings = new HashMap<String, Setting<?>>();
+	private final Map<String, List<String>> _settingsOrder = new HashMap<String, List<String>>();
 	private final File _file;
 	private Configuration _config;
 	
@@ -52,17 +55,28 @@ public class BackpacksConfig implements Iterable<Setting<?>> {
 		_file = file;
 		// Add settings to _settings list using reflection.
 		try { for (Field field : getClass().getFields()) {
+			
 			if (!Setting.class.isAssignableFrom(field.getType())) continue;
 			Setting<?> setting = (Setting<?>)field.get(this);
 			_settings.put(setting.fullName, setting);
+			
+			// Add setting to order map to later control the _config property order.
+			List<String> order = _settingsOrder.get(setting.category);
+			if (order == null) _settingsOrder.put(setting.category, (order = new ArrayList<String>()));
+			order.add(setting.name);
+			
 		} } catch (IllegalAccessException ex) { throw new RuntimeException(ex); }
 	}
 	
 	
 	/** Load all settings from configuration file. */
 	public void load() {
-		if (_config == null) _config = new Configuration(_file);
-		else _config.load();
+		if (_config == null) {
+			_config = new Configuration(_file);
+			// Restore the order! Fight the power! Be the change!
+			for (Map.Entry<String, List<String>> entry : _settingsOrder.entrySet())
+				_config.setCategoryPropertyOrder(entry.getKey(), entry.getValue());
+		} else _config.load();
 		for (Setting<?> setting : _settings.values())
 			setting.load(_config);
 	}
