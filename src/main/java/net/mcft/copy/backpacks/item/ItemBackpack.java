@@ -2,8 +2,6 @@ package net.mcft.copy.backpacks.item;
 
 import java.util.List;
 
-import org.lwjgl.input.Keyboard;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -60,35 +58,30 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-		boolean enableHelpTooltips = WearableBackpacks.CONFIG.enableHelpTooltips.get();
+		// If the shift key isn't being held down, display
+		// "Hold SHIFT for more info" message and return.
+		if (!LangUtils.tooltipIsShiftKeyDown(tooltip)) return;
+		
 		IBackpack backpack = BackpackHelper.getBackpack(playerIn);
-		// Check if the stack is the player's currently equipped backpack.
-		if ((backpack != null) && (backpack.getStack() == stack)) {
-			// If someone's using the player's backpack, display it in the tooltip.
-			if (backpack.getPlayersUsing() > 0)
-				LangUtils.formatTooltip(tooltip, "used");
-			// If help tooltips are enabled, display
-			// the unequip and maybe the open hint.
-			if (enableHelpTooltips) {
-				LangUtils.formatTooltip(tooltip, "unequipHint");
-				addOpenHintIfEnabled(tooltip);
-			}
-		} else if (enableHelpTooltips) {
-			boolean equipAsChestArmor = WearableBackpacks.CONFIG.equipAsChestArmor.get();
-			// Display the equip hint. If the chestplate setting is off, use the
-			// extended tooltip, which also explains how to unequip the backpack.
-			LangUtils.formatTooltip(tooltip, "equipHint" + (!equipAsChestArmor ? ".extended" : ""));
-			// Maybe display open hint if backpacks are not equipped as chest armor.
-			if (!equipAsChestArmor) addOpenHintIfEnabled(tooltip);
-		}
-	}
-	/** Display open hint if backpack can be accessed
-	 *  while equipped and key binding isn't set to NONE. */
-	private static void addOpenHintIfEnabled(List<String> tooltip) {
-		if (!WearableBackpacks.CONFIG.enableSelfInteraction.get() ||
-			(KeyBindingHandler.openBackpack.getKeyCode() == Keyboard.KEY_NONE)) return;
-		String key = KeyBindingHandler.openBackpack.getDisplayName();
-		LangUtils.formatTooltip(tooltip, "openHint", key);
+		boolean isEquipped = ((backpack != null) && (backpack.getStack() == stack));
+		boolean equipAsChestArmor = WearableBackpacks.CONFIG.equipAsChestArmor.get();
+		boolean enableSelfInteraction = WearableBackpacks.CONFIG.enableSelfInteraction.get();
+		
+		// If own backpacks can be interacted with while equipped and one is either
+		// currently equipped or won't be equipped as chest armor, display open hint.
+		// Does not display anything if key is unbound.
+		if (enableSelfInteraction && (isEquipped || !equipAsChestArmor))
+			LangUtils.formatTooltipKey(tooltip, "openHint", KeyBindingHandler.openBackpack);
+		
+		// If the backpack is the player's currently equipped backpack, display unequip hint.
+		if (isEquipped) LangUtils.formatTooltip(tooltip, "unequipHint");
+		// If not equipped, display the equip hint. If equipAsChestArmor is off,
+		// use extended tooltip, which also explains how to unequip the backpack.
+		else LangUtils.formatTooltip(tooltip, "equipHint" + (!equipAsChestArmor ? ".extended" : ""));
+		
+		// If someone's using the player's backpack, display it in the tooltip.
+		if (isEquipped && (backpack.getPlayersUsing() > 0))
+			LangUtils.formatTooltipPrepend(tooltip, "\u00A8o", "used");
 	}
 	
 	// Item events

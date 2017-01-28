@@ -29,9 +29,6 @@ public class BackpacksConfig implements Iterable<Setting<?>> {
 	public final Setting<Boolean> dropAsBlockOnDeath = new SettingBoolean("general", "dropAsBlockOnDeath", true)
 		.setComment("If enabled, places equipped backpacks as a block on death, instead of scattering the items all around. Default: true.");
 	
-	public final Setting<Boolean> enableHelpTooltips = new SettingBoolean("general", "enableHelpTooltips", true)
-		.setComment("If enabled, adds helpful usage instructions to item tooltips. Default: true.");
-	
 	// == BACKPACK ==
 	
 	public final Setting<Boolean> backpackEnabled = new SettingBoolean("backpack", "enabled", true);
