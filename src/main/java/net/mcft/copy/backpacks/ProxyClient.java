@@ -21,6 +21,7 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -32,6 +33,7 @@ import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.ProxyCommon;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
+import net.mcft.copy.backpacks.client.KeyBindingHandler;
 import net.mcft.copy.backpacks.client.RendererBackpack;
 import net.mcft.copy.backpacks.item.ItemBackpack;
 import net.mcft.copy.backpacks.misc.util.MiscUtils;
@@ -47,6 +49,7 @@ public class ProxyClient extends ProxyCommon {
 	@Override
 	public void preInit() {
 		super.preInit();
+		MinecraftForge.EVENT_BUS.register(new KeyBindingHandler());
 		
 		if (BackpacksContent.BACKPACK != null) {
 			ModelLoader.setCustomModelResourceLocation(BackpacksContent.BACKPACK, 0,

@@ -10,3 +10,6 @@ tooltip.wearablebackpacks.used=Currently being used by a player.
 
 chat.wearablebackpacks.cantEquip=You already have a backpack equipped
 chat.wearablebackpacks.cantEquip.chestplate=You can't equip a backpack while wearing a chestplate
+
+key.wearablebackpacks.category=Wearable Backpacks
+key.wearablebackpacks.open=Open Backpack

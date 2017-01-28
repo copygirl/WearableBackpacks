@@ -23,8 +23,8 @@ public class BackpacksConfig implements Iterable<Setting<?>> {
 	public final Setting<Boolean> enableEquippedInteraction = new SettingBoolean("general", "enableEquippedInteraction", true)
 		.setComment("If enabled, allows equipped backpacks to be opened by other players by right clicking the target's back. Default: true.");
 	
-	//public final Setting<Boolean> enableSelfInteraction = new SettingBoolean("general", "enableSelfInteraction", false).setSynced()
-	//	.setComment("If enabled, allows players to open their own equipped backpack without requiring it to be placed first using a keybind. Default: false.");
+	public final Setting<Boolean> enableSelfInteraction = new SettingBoolean("general", "enableSelfInteraction", false).setSynced()
+		.setComment("If enabled, allows players to open their own equipped backpack without requiring it to be placed first using a keybind. Default: false.");
 	
 	public final Setting<Boolean> dropAsBlockOnDeath = new SettingBoolean("general", "dropAsBlockOnDeath", true)
 		.setComment("If enabled, places equipped backpacks as a block on death, instead of scattering the items all around. Default: true.");
