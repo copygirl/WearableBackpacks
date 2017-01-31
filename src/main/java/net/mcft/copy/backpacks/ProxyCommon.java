@@ -119,12 +119,11 @@ public class ProxyCommon {
 		if (backpack.getStack().onItemUse(
 				player, world, event.getPos(), null,
 				event.getFace(), 0.5F, 0.5F, 0.5F) == EnumActionResult.SUCCESS) {
-			
 			player.swingArm(EnumHand.MAIN_HAND);
 			event.setCanceled(true);
 			cancelOffHand = true;
-			
-		} else player.inventory.mainInventory[player.inventory.currentItem] = null;
+		}
+		player.inventory.mainInventory[player.inventory.currentItem] = null;
 		
 	}
 	
