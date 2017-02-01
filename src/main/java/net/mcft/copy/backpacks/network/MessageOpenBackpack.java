@@ -27,7 +27,6 @@ public class MessageOpenBackpack implements IMessage {
 	
 	public static class Handler extends BackpacksMessageHandler<MessageOpenBackpack> {
 		@Override
-		@SideOnly(Side.CLIENT)
 		public void handle(MessageOpenBackpack message, MessageContext ctx) {
 			EntityPlayer player = getPlayer(ctx);
 			IBackpack backpack = BackpackHelper.getBackpack(player);
