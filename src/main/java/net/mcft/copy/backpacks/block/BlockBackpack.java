@@ -90,12 +90,12 @@ public class BlockBackpack extends BlockContainer {
 	
 	// Block methods / events
 	
-	// FIXME: Fix crash when ctrl-middle-clicking.
+	// TODO: Fixed crash, but still doesn't return functioning ItemStack.
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target,
 	                              World world, BlockPos pos, EntityPlayer player) {
 		IBackpack backpack = BackpackHelper.getBackpack(world.getTileEntity(pos));
-		return (backpack != null) ? backpack.getStack()
+		return (backpack != null) ? backpack.getStack().copy()
 			: super.getPickBlock(state, target, world, pos, player);
 	}
 	
