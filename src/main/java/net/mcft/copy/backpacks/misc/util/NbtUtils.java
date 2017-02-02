@@ -161,11 +161,8 @@ public final class NbtUtils {
 	 *  Example: <pre>{@code NbtUtils.createCompound("id", 1, "name", "copygirl") }</pre> */
 	public static NBTTagCompound add(ItemStack stack, Object... nameValuePairs) {
 		if (stack.isEmpty()) throw new IllegalArgumentException("stack is empty");
-		if (!stack.hasTagCompound()) {
-			NBTTagCompound compound = new NBTTagCompound();
-			addToCompound(compound, nameValuePairs);
-			return compound;
-		} else return addToCompound(stack.getTagCompound(), nameValuePairs);
+		if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+		return addToCompound(stack.getTagCompound(), nameValuePairs);
 	}
 	/** Adds entries to an NBT compound from the name-value pairs in the parameters.
 	 *  Doesn't add any null values to the specified compound tag.
