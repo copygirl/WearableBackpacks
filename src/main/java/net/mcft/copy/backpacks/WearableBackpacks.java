@@ -14,7 +14,8 @@ import net.mcft.copy.backpacks.network.BackpacksChannel;
 
 // TODO: Add achievement(s)! <3
 
-@Mod(modid = WearableBackpacks.MOD_ID, name = WearableBackpacks.MOD_NAME)
+@Mod(modid = WearableBackpacks.MOD_ID, name = WearableBackpacks.MOD_NAME,
+     guiFactory = "net.mcft.copy.backpacks.client.BackpacksGuiFactory")
 public class WearableBackpacks {
 	
 	public static final String MOD_ID   = "wearablebackpacks";
@@ -41,6 +42,7 @@ public class WearableBackpacks {
 		CONFIG.save();
 		
 		BackpacksContent.init();
+		CONFIG.init();
 		PROXY.preInit();
 	}
 	
