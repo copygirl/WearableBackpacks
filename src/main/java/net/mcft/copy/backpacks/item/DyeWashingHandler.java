@@ -16,7 +16,8 @@ public class DyeWashingHandler {
 	@SubscribeEvent
 	public void onPlayerInteractBlock(PlayerInteractEvent.RightClickBlock event) {
 		
-		if (event.getEntityPlayer().isSneaking()) return;
+		if (event.getWorld().isRemote ||
+		    event.getEntityPlayer().isSneaking()) return;
 		
 		// Check if item is washable and currently dyed.
 		ItemStack stack = event.getItemStack();
