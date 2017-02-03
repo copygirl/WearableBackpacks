@@ -12,17 +12,22 @@ import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -38,7 +43,9 @@ import net.mcft.copy.backpacks.client.RendererBackpack;
 import net.mcft.copy.backpacks.item.ItemBackpack;
 import net.mcft.copy.backpacks.misc.util.MiscUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
+import net.mcft.copy.backpacks.misc.util.ReflectUtils;
 
+// TODO: Disable cape rendering when backpack is equipped.
 @SideOnly(Side.CLIENT)
 public class ProxyClient extends ProxyCommon {
 	
@@ -76,6 +83,43 @@ public class ProxyClient extends ProxyCommon {
 	}
 	
 	
+	// Lots of code just to disable capes when backpacks are equipped!
+	
+	private static DataParameter<Byte> PLAYER_MODEL_FLAG =
+		ReflectUtils.get(EntityPlayer.class, "PLAYER_MODEL_FLAG", "field_184827_bp");
+	
+	/** Sets whether the player is currently wearing the specified model part.
+	 *  This is the opposite of the {@link EntityPlayer#isWearing} method. */
+	private static void setWearing(EntityPlayer player, EnumPlayerModelParts part, boolean value) {
+		byte current = player.getDataManager().get(PLAYER_MODEL_FLAG).byteValue();
+		if (value) current |= part.getPartMask();
+		else current &= ~part.getPartMask();
+		player.getDataManager().set(PLAYER_MODEL_FLAG, current);
+	}
+	
+	private boolean _disabledCape = false;
+	@SubscribeEvent(priority=EventPriority.LOWEST)
+	public void onRenderPlayerPre(RenderPlayerEvent.Pre event) {
+		EntityPlayer player = event.getEntityPlayer();
+		if ((BackpackHelper.getBackpack(player) == null) ||
+		    !player.isWearing(EnumPlayerModelParts.CAPE)) return;
+		// Disable player rendering for players with equipped backpacks
+		// by temporarily setting whether they are wearing it to false.
+		setWearing(player, EnumPlayerModelParts.CAPE, false);
+		_disabledCape = true;
+	}
+	@SubscribeEvent(priority=EventPriority.HIGHEST)
+	public void onRenderPlayerPost(RenderPlayerEvent.Post event) {
+		if (!_disabledCape) return;
+		// Reenable cape rendering if it was disabled in the
+		EntityPlayer player = event.getEntityPlayer();
+		setWearing(player, EnumPlayerModelParts.CAPE, true);
+		_disabledCape = false;
+	}
+	
+	
+	// Model related
+	
 	private static final Function<ResourceLocation, TextureAtlasSprite> TEXTURE_GETTER =
 		new Function<ResourceLocation, TextureAtlasSprite>() {
 			public TextureAtlasSprite apply(ResourceLocation location) {
@@ -104,6 +148,7 @@ public class ProxyClient extends ProxyCommon {
 			return model;
 		} catch (Exception e) { e.printStackTrace(); return null; }
 	}
+	
 	
 	// IBlockColor and IItemColor implementations
 	
