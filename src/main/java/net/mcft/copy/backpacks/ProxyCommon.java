@@ -37,12 +37,12 @@ import net.mcft.copy.backpacks.item.DyeWashingHandler;
 import net.mcft.copy.backpacks.misc.BackpackCapability;
 import net.mcft.copy.backpacks.misc.util.WorldUtils;
 import net.mcft.copy.backpacks.network.MessageBackpackUpdate;
-import net.mcft.copy.backpacks.network.MessageSyncSettings;
 
 public class ProxyCommon {
 	
 	public void preInit() {
 		MinecraftForge.EVENT_BUS.register(this);
+		MinecraftForge.EVENT_BUS.register(WearableBackpacks.CONFIG);
 		MinecraftForge.EVENT_BUS.register(new DyeWashingHandler());
 		
 		CapabilityManager.INSTANCE.register(IBackpack.class,
@@ -63,7 +63,6 @@ public class ProxyCommon {
 	
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerLoggedInEvent event) {
-		WearableBackpacks.CHANNEL.sendTo(MessageSyncSettings.create(), event.player);
 		sendBackpackStack(event.player, event.player);
 	}
 	@SubscribeEvent

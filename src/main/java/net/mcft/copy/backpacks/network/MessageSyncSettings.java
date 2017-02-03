@@ -24,9 +24,9 @@ public class MessageSyncSettings implements IMessage {
 	public static MessageSyncSettings create() {
 		MessageSyncSettings message = new MessageSyncSettings();
 		message._data = new NBTTagCompound();
-		for (Setting<?> setting : WearableBackpacks.CONFIG)
-			if (setting.isSynced())
-				message._data.setTag(setting.fullName, setting.writeSynced());
+		for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings())
+			if (setting.doesSync() && setting.isRequiredEnabled())
+				message._data.setTag(setting.getFullName(), setting.writeSynced());
 		return message;
 	}
 	
@@ -51,8 +51,9 @@ public class MessageSyncSettings implements IMessage {
 		public void handle(MessageSyncSettings message, MessageContext ctx) {
 			for (String key : message._data.getKeySet()) {
 				NBTBase tag = message._data.getTag(key);
-				Setting<?> setting = WearableBackpacks.CONFIG.find(key);
-				setting.readSynced(tag);
+				Setting<?> setting = WearableBackpacks.CONFIG.getSetting(key);
+				if ((setting != null) && setting.doesSync())
+					setting.readSynced(tag);
 			}
 		}
 	}
