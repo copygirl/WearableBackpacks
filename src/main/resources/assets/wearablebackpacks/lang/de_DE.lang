@@ -1,0 +1,35 @@
+container.wearablebackpacks.backpack=Rucksack
+
+item.wearablebackpacks.backpack.name=Rucksack
+
+tooltip.wearablebackpacks.moreInfo=Halte %1$s für mehr Info
+tooltip.wearablebackpacks.openHint=Drücke %1$s zum Öffnen des getragenen Rucksacks
+tooltip.wearablebackpacks.equipHint=Zum Ausrüsten platzieren\nund schleichend abbauen
+tooltip.wearablebackpacks.equipHint.extended=Zum Ausrüsten schleichen und abbauen.\nZum Absetzen schleichen und Boden\nmit freier Hand rechtsklicken.
+tooltip.wearablebackpacks.unequipHint=Zum Absetzen schleichen und\nBoden mit freier Hand rechtsklicken.
+tooltip.wearablebackpacks.used=Wird gerade vom einem Spieler benutzt
+
+chat.wearablebackpacks.cantEquip=Du trägst bereits einen Rucksack.
+chat.wearablebackpacks.cantEquip.chestplate=Du kannst keinen Rucksack zusammen mit sonstigem Brustschutz tragen
+
+key.wearablebackpacks.category=Wearable Backpacks
+key.wearablebackpacks.open=Rucksack öffnen
+
+
+config.wearablebackpacks.general.equipAsChestArmor=Als Brustrüstung ausrüsten
+config.wearablebackpacks.general.equipAsChestArmor.tooltip=Kontrolliert, ob getragene Rucksäcke den Brustrüstungsplatz beanspruchen
+config.wearablebackpacks.general.enableEquippedInteraction=Interaktionen mit getragenen Rucksäcken aktivieren
+config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Kontrolliert, ob Spieler die Rucksäcke anderer Spieler (und Monster) öffnen können
+config.wearablebackpacks.general.enableSelfInteraction=Selbstinteraktion aktivieren
+config.wearablebackpacks.general.enableSelfInteraction.tooltip=Kontolliert, ob Spieler ihre eigenen getragenen Rucksäcke auf Tastendrück öffnen können
+config.wearablebackpacks.general.dropAsBlockOnDeath=Bei Tod als Block absetzen
+config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Kontrolliert, ob Rucksäcke sich als Block platzieren, wenn ihre Besitzer sterben, anstatt ihre Inhalte auf dem Boden zu verteilen
+
+config.wearablebackpacks.category.backpack=Rucksackeinstellungen
+config.wearablebackpacks.category.backpack.tooltip=Kontrolliert Einstellungen für normale Rucksäcke
+config.wearablebackpacks.backpack.enabled=Aktiviert
+config.wearablebackpacks.backpack.enabled.tooltip=Kontrolliert, ob der normale Rucksack aktiviert ist
+config.wearablebackpacks.backpack.durability=Haltbarkeit
+config.wearablebackpacks.backpack.durability.tooltip=Kontrolliert die Haltbarkeit von normalen Rucksäcken (0 für unzerstörbar). Vermindern (auch auf 0) kann Probleme mit bereits beschädigten Rucksäcken hervorrufen
+config.wearablebackpacks.backpack.rows=Lagerreihen
+config.wearablebackpacks.backpack.rows.tooltip=Kontrolliert die Anzahl an Reihen für Lagerung. Hat keinen Einfluss auf platzierte und ausgerüstete Rucksäcke
