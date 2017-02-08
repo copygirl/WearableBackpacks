@@ -26,6 +26,8 @@ minecraft {
 	version  = "${config.minecraft.version}-${config.forge.version}"
 	mappings = config.minecraft.mappings
 	runDir   = "run"
+	
+	replace "@VERSION@", project.version
 }
 
 dependencies {  }
