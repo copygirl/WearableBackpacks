@@ -18,10 +18,15 @@ public final class DyeUtils {
 	
 	private static final Map<String, Integer> dyes = new HashMap<String, Integer>();
 	static {
+		// Ore dictionary dye names. EnumDyeColor uses "silver" instead
+		// of "light gray", so this is a little more straight-forward.
+		String[] nameLookup = {
+			"Black", "Red" , "Green", "Brown" , "Blue"     , "Purple" , "Cyan"  , "LightGray",
+			"Gray" , "Pink", "Lime" , "Yellow", "LightBlue", "Magenta", "Orange", "White"
+		};
 		// Collect dye colors into map using the ore dictionary name as a key.
 		for (EnumDyeColor color : EnumDyeColor.values()) {
-			String name = color.getUnlocalizedName();
-			name = "dye" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
+			String name = "dye" + nameLookup[color.getDyeDamage()];
 			float[] values = EntitySheep.getDyeRgb(color);
 			int r = (int)(values[0] * 255);
 			int g = (int)(values[1] * 255);
