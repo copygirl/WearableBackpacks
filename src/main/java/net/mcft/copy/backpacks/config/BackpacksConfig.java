@@ -75,6 +75,9 @@ public class BackpacksConfig extends Configuration {
 			try { addSettingsFromClass(field.get(this), field.getName()); }
 			catch (IllegalAccessException ex) { throw new RuntimeException(ex); }
 		}
+		
+		// Remove old config properties.
+		getCategory(Configuration.CATEGORY_GENERAL).remove("enableHelpTooltips");
 	}
 	
 	/** Iterates over the Setting fields on the specified
