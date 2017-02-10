@@ -20,7 +20,7 @@ config.wearablebackpacks.general.equipAsChestArmor.tooltip=Controls whether equi
 config.wearablebackpacks.general.enableEquippedInteraction=Enable Equipped Interaction
 config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Controls whether players can access equipped backpacks on other players (and entities)
 config.wearablebackpacks.general.enableSelfInteraction=Enable Self Interaction
-config.wearablebackpacks.general.enableSelfInteraction.tooltip=Controls whether player can access their own equipped backpack using a keybind
+config.wearablebackpacks.general.enableSelfInteraction.tooltip=Controls whether players can access their own equipped backpack using a keybind
 config.wearablebackpacks.general.dropAsBlockOnDeath=Drop as Block on Death
 config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Controls whether backpacks place themselves down upon death, instead of scattering their contents
 
@@ -29,6 +29,6 @@ config.wearablebackpacks.category.backpack.tooltip=Controls settings regarding r
 config.wearablebackpacks.backpack.enabled=Enabled
 config.wearablebackpacks.backpack.enabled.tooltip=Controls whether the regular backpack is enabled
 config.wearablebackpacks.backpack.durability=Durability
-config.wearablebackpacks.backpack.durability.tooltip=Controls the durability of the regular backpack (0 for unbreakable). Lowering this (including setting to 0) can make damaged backpacks break
+config.wearablebackpacks.backpack.durability.tooltip=Controls the durability of the regular backpack (0 for unbreakable). Lowering this (including setting to 0) can cause issues with already damaged backpacks
 config.wearablebackpacks.backpack.rows=Storage Rows
 config.wearablebackpacks.backpack.rows.tooltip=Controls the number of rows of storage. Does not affect placed or equipped backpacks
