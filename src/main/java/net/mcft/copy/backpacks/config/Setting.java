@@ -4,9 +4,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import net.mcft.copy.backpacks.WearableBackpacks;
-
-
 import net.minecraft.nbt.NBTBase;
 
 import net.minecraftforge.common.config.Property;

@@ -19,7 +19,7 @@ import net.mcft.copy.backpacks.network.MessageOpenBackpack;
 @SideOnly(Side.CLIENT)
 public class KeyBindingHandler {
 	
-	public static final String CATEGORY = "key." + WearableBackpacks.MOD_ID + ".category";
+	public static final String CATEGORY = WearableBackpacks.MOD_NAME;
 	
 	public static final KeyBinding openBackpack = new KeyBinding(
 		"key." + WearableBackpacks.MOD_ID + ".open",
