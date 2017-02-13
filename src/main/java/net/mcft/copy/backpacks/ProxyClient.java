@@ -45,7 +45,6 @@ import net.mcft.copy.backpacks.misc.util.MiscUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 import net.mcft.copy.backpacks.misc.util.ReflectUtils;
 
-// TODO: Disable cape rendering when backpack is equipped.
 @SideOnly(Side.CLIENT)
 public class ProxyClient extends ProxyCommon {
 	

@@ -202,7 +202,7 @@ public class ProxyCommon {
 		World world = entity.world;
 		if (world.isRemote) return;
 		
-		BackpackCapability backpack = (BackpackCapability)BackpackHelper.getBackpack(entity);
+		IBackpack backpack = BackpackHelper.getBackpack(entity);
 		if (backpack == null) return;
 		
 		// If keep inventory is on, keep the backpack capability so we
