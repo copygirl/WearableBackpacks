@@ -170,7 +170,8 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	@Override
 	public IBackpackData createBackpackData() {
-		return new BackpackDataItems(WearableBackpacks.CONFIG.backpack.rows.get() * 9);
+		return new BackpackDataItems(WearableBackpacks.CONFIG.backpack.columns.get(),
+		                             WearableBackpacks.CONFIG.backpack.rows.get());
 	}
 	
 	// ISpecialArmor implementation
