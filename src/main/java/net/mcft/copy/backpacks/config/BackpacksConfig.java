@@ -50,7 +50,14 @@ public class BackpacksConfig extends Configuration {
 			.setComment("Durability of a normal backpack. Set to 0 for unbreakable. Default: 214.\n" +
 			            "Lowering this (including setting to 0) can make damaged backpacks break.");
 		
-		// TODO: Allow specifying both colums and rows.
+		// TODO: Combine columns and rows into a single setting with custom config control?
+		
+		public final Setting<Integer> columns = new SettingInteger(9)
+			.setValidRange(1, 17).setRequired(enabled)
+			.setConfigEntryClass("net.minecraftforge.fml.client.config.GuiConfigEntries$NumberSliderEntry")
+			.setComment("Number of columns of storage in a normal backpack. Valid values are 1 to 17. Default: 9.\n" +
+			            "Changing this doesn't affect placed or equipped backpacks until turned back into an item.");
+		
 		public final Setting<Integer> rows = new SettingInteger(4)
 			.setValidRange(1, 6).setRequired(enabled)
 			.setConfigEntryClass("net.minecraftforge.fml.client.config.GuiConfigEntries$NumberSliderEntry")
