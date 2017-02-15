@@ -5,13 +5,15 @@ import java.util.regex.Pattern;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTPrimitive;
+import net.minecraft.nbt.NBTTagByteArray;
+import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 
 import net.minecraftforge.common.util.INBTSerializable;
 
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 
-public class BackpackSize implements INBTSerializable<NBTTagList> {
+public class BackpackSize implements INBTSerializable<NBTTagByteArray> {
 	
 	private static final Pattern PATTERN = Pattern.compile("^\\[([1-9]\\d?)x([1-9])\\]$");
 	
@@ -42,30 +44,33 @@ public class BackpackSize implements INBTSerializable<NBTTagList> {
 	}
 	
 	public static BackpackSize parse(NBTBase tag) {
-		BackpackSize size = new BackpackSize();
-		size.deserializeNBT((NBTTagList)tag);
-		return size;
+		int columns, rows;
+		if (tag instanceof NBTTagByteArray) {
+			NBTTagByteArray array = (NBTTagByteArray)tag;
+			columns = array.getByteArray()[0];
+			rows    = array.getByteArray()[1];
+		} else if (tag instanceof NBTTagIntArray) {
+			NBTTagIntArray array = (NBTTagIntArray)tag;
+			columns = array.getIntArray()[0];
+			rows    = array.getIntArray()[1];
+		} else if (tag instanceof NBTTagList) {
+			NBTTagList list = (NBTTagList)tag;
+			columns = ((NBTPrimitive)list.get(0)).getInt();
+			rows    = ((NBTPrimitive)list.get(1)).getInt();
+		} else throw new RuntimeException("Invalid tag type " + NBTBase.NBT_TYPES[tag.getId()]);
+		return new BackpackSize(columns, rows);
 	}
 	
 	
 	@Override
-	public NBTTagList serializeNBT() {
-		return NbtUtils.createList((byte)_columns, (byte)_rows);
+	public NBTTagByteArray serializeNBT() {
+		return new NBTTagByteArray(new byte[]{ (byte)_columns, (byte)_rows });
 	}
 	
 	@Override
-	public void deserializeNBT(NBTTagList nbt) {
-		if (nbt.tagCount() != 2) throw new RuntimeException(
-			"Invalid number of tags in list (" + nbt.tagCount() + " given, 2 required");
-		// Cast to NBTPrimitive to allow list to be specified using [X,Y] instead of [Xb,Yb].
-		int columns = ((NBTPrimitive)nbt.get(0)).getInt();
-		int rows    = ((NBTPrimitive)nbt.get(1)).getInt();
-		if ((columns < MIN.getColumns()) || (rows < MIN.getRows())) throw new RuntimeException(
-			"Backpack size [" + columns + "x" + rows + "] under minimum (" + BackpackSize.MIN + ")");
-		if ((columns > MAX.getColumns()) || (rows > MAX.getRows())) throw new RuntimeException(
-			"Backpack size [" + columns + "x" + rows + "] over maximum (" + BackpackSize.MAX + ")");
-		_columns = columns;
-		_rows    = rows;
+	public void deserializeNBT(NBTTagByteArray nbt) {
+		_columns = nbt.getByteArray()[0];
+		_rows    = nbt.getByteArray()[1];
 	}
 	
 	
