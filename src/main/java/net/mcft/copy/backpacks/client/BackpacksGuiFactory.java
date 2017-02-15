@@ -8,6 +8,8 @@ import net.minecraftforge.fml.client.IModGuiFactory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import net.mcft.copy.backpacks.client.config.BackpacksGuiConfig;
+
 @SideOnly(Side.CLIENT)
 public class BackpacksGuiFactory implements IModGuiFactory {
 		

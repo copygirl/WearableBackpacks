@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnection
 import net.mcft.copy.backpacks.BackpacksContent;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
+import net.mcft.copy.backpacks.misc.BackpackSize;
 import net.mcft.copy.backpacks.network.MessageSyncSettings;
 
 public class BackpacksConfig extends Configuration {
@@ -50,18 +51,8 @@ public class BackpacksConfig extends Configuration {
 			.setComment("Durability of a normal backpack. Set to 0 for unbreakable. Default: 214.\n" +
 			            "Lowering this (including setting to 0) can make damaged backpacks break.");
 		
-		// TODO: Combine columns and rows into a single setting with custom config control?
-		
-		public final Setting<Integer> columns = new SettingInteger(9)
-			.setValidRange(1, 17).setRequired(enabled)
-			.setConfigEntryClass("net.minecraftforge.fml.client.config.GuiConfigEntries$NumberSliderEntry")
-			.setComment("Number of columns of storage in a normal backpack. Valid values are 1 to 17. Default: 9.\n" +
-			            "Changing this doesn't affect placed or equipped backpacks until turned back into an item.");
-		
-		public final Setting<Integer> rows = new SettingInteger(4)
-			.setValidRange(1, 6).setRequired(enabled)
-			.setConfigEntryClass("net.minecraftforge.fml.client.config.GuiConfigEntries$NumberSliderEntry")
-			.setComment("Number of rows of storage in a normal backpack. Valid values are 1 to 6. Default: 4.\n" +
+		public final Setting<BackpackSize> size = new SettingBackpackSize(9, 4).setRequired(enabled)
+			.setComment("Storage size of a normal backpack. Valid values are [1x1] to [17x6]. Default: [9x4].\n" +
 			            "Changing this doesn't affect placed or equipped backpacks until turned back into an item.");
 		
 	}
@@ -82,9 +73,6 @@ public class BackpacksConfig extends Configuration {
 			try { addSettingsFromClass(field.get(this), field.getName()); }
 			catch (IllegalAccessException ex) { throw new RuntimeException(ex); }
 		}
-		
-		// Remove old config properties.
-		getCategory(Configuration.CATEGORY_GENERAL).remove("enableHelpTooltips");
 	}
 	
 	/** Iterates over the Setting fields on the specified
@@ -126,6 +114,14 @@ public class BackpacksConfig extends Configuration {
 		// instead we call load manually afterwards from the main mod class.
 		if (_settings == null) return;
 		super.load();
+		
+		// Update config settings from old versions.
+		if (getCategory("backpack").containsKey("rows")) {
+			int rows = get("backpack", "rows", 4).getInt();
+			get("backpack", "size", "").set("[9," + rows +"]");
+			getCategory("backpack").remove("rows");
+		}
+		
 		getSettings().forEach(Setting::onPropertyLoaded);
 	}
 	
@@ -143,6 +139,9 @@ public class BackpacksConfig extends Configuration {
 			setCategoryPropertyOrder(category, order);
 		}
 		// Unfortunately ordering is not possible for categories in the config file itself.
+		
+		// Remove old config properties.
+		getCategory(Configuration.CATEGORY_GENERAL).remove("enableHelpTooltips");
 		
 		super.save();
 	}
