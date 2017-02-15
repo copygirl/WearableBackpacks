@@ -167,7 +167,7 @@ public class BackpackCapability implements IBackpack {
 				return;
 			}
 			
-			backpack.data = type.createBackpackData();
+			backpack.data = type.createBackpackData(backpack.getStack());
 			NBTBase dataTag = compound.getTag(TAG_DATA);
 			if ((backpack.data != null) && (dataTag != null))
 				backpack.data.deserializeNBT(dataTag);
@@ -212,7 +212,7 @@ public class BackpackCapability implements IBackpack {
 				if (type == null) return; // No backpack equipped.
 			} else type = BackpackHelper.getBackpackType(stack);
 			
-			IBackpackData data = type.createBackpackData();
+			IBackpackData data = type.createBackpackData(stack);
 			NBTBase dataTag = compound.getTag(TAG_DATA);
 			if (dataTag != null) data.deserializeNBT(dataTag);
 			backpack.setData(data);

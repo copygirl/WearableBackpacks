@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
@@ -29,7 +30,9 @@ import net.mcft.copy.backpacks.client.KeyBindingHandler;
 import net.mcft.copy.backpacks.container.ContainerBackpack;
 import net.mcft.copy.backpacks.item.IDyeableItem;
 import net.mcft.copy.backpacks.misc.BackpackDataItems;
+import net.mcft.copy.backpacks.misc.BackpackSize;
 import net.mcft.copy.backpacks.misc.util.LangUtils;
+import net.mcft.copy.backpacks.misc.util.NbtUtils;
 import net.mcft.copy.backpacks.misc.util.WorldUtils;
 
 // TODO: Support armor enchantments like on BetterStorage backpacks? (Delayed to 1.11 version due to lack of enchantment hooks.)
@@ -42,6 +45,8 @@ import net.mcft.copy.backpacks.misc.util.WorldUtils;
 public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, ISpecialArmor {
 	
 	public static final int DEFAULT_COLOR = 0xA06540;
+	
+	public static final String[] TAG_CUSTOM_SIZE = { "backpack", "size" };
 	
 	
 	public ItemBackpack() {
@@ -58,30 +63,42 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-		// If the shift key isn't being held down, display
-		// "Hold SHIFT for more info" message and return.
-		if (!LangUtils.tooltipIsShiftKeyDown(tooltip)) return;
 		
 		IBackpack backpack = BackpackHelper.getBackpack(playerIn);
 		boolean isEquipped = ((backpack != null) && (backpack.getStack() == stack));
-		boolean equipAsChestArmor = WearableBackpacks.CONFIG.equipAsChestArmor.get();
-		boolean enableSelfInteraction = WearableBackpacks.CONFIG.enableSelfInteraction.get();
 		
-		// If own backpacks can be interacted with while equipped and one is either
-		// currently equipped or won't be equipped as chest armor, display open hint.
-		// Does not display anything if key is unbound.
-		if (enableSelfInteraction && (isEquipped || !equipAsChestArmor))
-			LangUtils.formatTooltipKey(tooltip, "openHint", KeyBindingHandler.openBackpack);
+		// If the shift key is held down, display equip / unequip hints,
+		// otherwise just display "Hold SHIFT for more info" message.
+		if (LangUtils.tooltipIsShiftKeyDown(tooltip)) {
+			boolean equipAsChestArmor = WearableBackpacks.CONFIG.equipAsChestArmor.get();
+			boolean enableSelfInteraction = WearableBackpacks.CONFIG.enableSelfInteraction.get();
+			
+			// If own backpacks can be interacted with while equipped and one is either
+			// currently equipped or won't be equipped as chest armor, display open hint.
+			// Does not display anything if key is unbound.
+			if (enableSelfInteraction && (isEquipped || !equipAsChestArmor))
+				LangUtils.formatTooltipKey(tooltip, "openHint", KeyBindingHandler.openBackpack);
+			
+			// If the backpack is the player's currently equipped backpack, display unequip hint.
+			if (isEquipped) LangUtils.formatTooltip(tooltip, "unequipHint");
+			// If not equipped, display the equip hint. If equipAsChestArmor is off,
+			// use extended tooltip, which also explains how to unequip the backpack.
+			else LangUtils.formatTooltip(tooltip, "equipHint" + (!equipAsChestArmor ? ".extended" : ""));
+		}
 		
-		// If the backpack is the player's currently equipped backpack, display unequip hint.
-		if (isEquipped) LangUtils.formatTooltip(tooltip, "unequipHint");
-		// If not equipped, display the equip hint. If equipAsChestArmor is off,
-		// use extended tooltip, which also explains how to unequip the backpack.
-		else LangUtils.formatTooltip(tooltip, "equipHint" + (!equipAsChestArmor ? ".extended" : ""));
-		
-		// If someone's using the player's backpack, display it in the tooltip.
+		// If someone's using the player's backpack right now, display it in the tooltip.
 		if (isEquipped && (backpack.getPlayersUsing() > 0))
 			LangUtils.formatTooltipPrepend(tooltip, "\u00A8o", "used");
+		
+		
+		// Only display the following information if advanced tooltips are enabled.
+		if (!advanced) return;
+		
+		NBTBase customSize = NbtUtils.get(stack, TAG_CUSTOM_SIZE);
+		if (customSize != null)
+			try { tooltip.add("Custom Size: " + BackpackSize.parse(customSize)); }
+			catch (Exception ex) {  } // Ignore NBT parse exceptions - they're already logged in createBackpackData.
+		
 	}
 	
 	// Item events
@@ -168,8 +185,17 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	}
 	
 	@Override
-	public IBackpackData createBackpackData() {
-		return new BackpackDataItems(WearableBackpacks.CONFIG.backpack.size.get());
+	public IBackpackData createBackpackData(ItemStack stack) {
+		BackpackSize size = WearableBackpacks.CONFIG.backpack.size.get();
+		
+		// Custom size can be specified in stack's NBT data.
+		NBTBase customSize = NbtUtils.get(stack, TAG_CUSTOM_SIZE);
+		if (customSize != null)
+			try { size = BackpackSize.parse(customSize); }
+			catch (Exception ex) { WearableBackpacks.LOG.error(
+				"Error trying to deserialize backpack size from custom size NBT tag.", ex); }
+		
+		return new BackpackDataItems(size);
 	}
 	
 	// ISpecialArmor implementation

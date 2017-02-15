@@ -147,7 +147,7 @@ public class ProxyCommon {
 			return;
 		}
 		if (!player.world.isRemote && (backpack.getData() == null)) {
-			IBackpackData data = type.createBackpackData();
+			IBackpackData data = type.createBackpackData(backpack.getStack());
 			if (data != null) {
 				// Only show this error message if the backpack type is supposed to have backpack data.
 				// Some backpacks might not need any to function, for example an ender backpack.

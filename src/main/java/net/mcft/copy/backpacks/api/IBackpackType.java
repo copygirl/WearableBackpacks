@@ -2,6 +2,7 @@ package net.mcft.copy.backpacks.api;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 /** Signalizes that an {@link net.minecraft.item.Item Item} can be equipped as a backpack. */
@@ -58,7 +59,7 @@ public interface IBackpackType {
 	void onBlockBreak(TileEntity tileEntity, IBackpack backpack);
 	
 	/** Creates and returns a new backpack data object for this backpack. */
-	IBackpackData createBackpackData();
+	IBackpackData createBackpackData(ItemStack stack);
 	
 	
 	/** Returns the number of ticks the backpack's lid takes to fully open. */
