@@ -24,7 +24,7 @@ public class SettingBackpackSize extends Setting<BackpackSize> {
 	public BackpackSize getFromProperty() { return BackpackSize.parse(getProperty().getString()); }
 	
 	@Override
-	public BackpackSize read(NBTBase tag) { return new BackpackSize(tag); }
+	public BackpackSize read(NBTBase tag) { return BackpackSize.parse(tag); }
 	@Override
 	public NBTBase write(BackpackSize value) { return value.serializeNBT(); }
 	

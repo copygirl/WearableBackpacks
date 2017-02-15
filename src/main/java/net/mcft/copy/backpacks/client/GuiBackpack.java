@@ -78,7 +78,7 @@ public class GuiBackpack extends GuiContainer {
 		y += h; ty += maxh + 2;
 		
 		// Space between container and player inventory
-		if (_container.size.columns > 9) {
+		if (_container.size.getColumns() > 9) {
 			int sw = (w - (pw + b * 2)) / 2;
 			CONTAINER_TEX.drawQuad(x1, y, tx1 - 2, ty, b, bBot);
 			CONTAINER_TEX.drawQuad(x2, y, tx1 + b, ty, sw, bBot);
@@ -87,7 +87,7 @@ public class GuiBackpack extends GuiContainer {
 			CONTAINER_TEX.drawQuad(x3, y, tx3 + 2, ty, b, bBot);
 		}
 		ty += bufi + 2;
-		if (_container.size.columns <= 9)
+		if (_container.size.getColumns() <= 9)
 			CONTAINER_TEX.drawQuad(x, y, tpx, ty, pw + b * 2, bufi);
 		y += bufi; ty += bufi + 2;
 		
