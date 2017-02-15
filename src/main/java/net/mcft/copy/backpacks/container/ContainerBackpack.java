@@ -15,12 +15,12 @@ import net.minecraftforge.items.SlotItemHandler;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.misc.BackpackDataItems;
+import net.mcft.copy.backpacks.misc.BackpackSize;
 import net.mcft.copy.backpacks.network.MessageOpenGui;
 
 public abstract class ContainerBackpack extends Container {
 	
-	public static final String TAG_COLUMNS = "columns";
-	public static final String TAG_ROWS    = "rows";
+	public static final String TAG_SIZE      = "size";
 	public static final String TAG_TITLE     = "title";
 	public static final String TAG_LOCALIZED = "localized";
 	
@@ -29,8 +29,7 @@ public abstract class ContainerBackpack extends Container {
 	public final IBackpack backpack;
 	public final BackpackDataItems data;
 	
-	public final int columns;
-	public final int rows;
+	public final BackpackSize size;
 	public final ItemStackHandler items;
 	
 	public final String title;
@@ -42,9 +41,8 @@ public abstract class ContainerBackpack extends Container {
 		this.backpack = backpack;
 		this.data     = ((BackpackDataItems)backpack.getData());
 		
-		columns = data.columns;
-		rows    = data.rows;
-		items   = data.items;
+		size  = data.size;
+		items = data.items;
 		
 		ItemStack stack = backpack.getStack();
 		title = (stack.hasDisplayName() ? stack.getDisplayName()
@@ -60,9 +58,8 @@ public abstract class ContainerBackpack extends Container {
 		this.backpack = null;
 		this.data     = null;
 		
-		columns = data.getByte(TAG_COLUMNS);
-		rows    = data.getByte(TAG_ROWS);
-		items   = new ItemStackHandler(columns * rows);
+		size  = new BackpackSize(data.getTag(TAG_SIZE));
+		items = new ItemStackHandler(size.columns * size.rows);
 		
 		title = data.getString(TAG_TITLE);
 		titleLocalized = data.getBoolean(TAG_LOCALIZED);
@@ -92,17 +89,17 @@ public abstract class ContainerBackpack extends Container {
 	/** Returns the space between player inventory and hotbar in pixels. */
 	public int getBufferHotbar() { return 4; }
 	
-	public int getMaxColumns() { return 17; }
-	public int getMaxRows() { return 6; }
+	public int getMaxColumns() { return BackpackSize.MAX.columns; }
+	public int getMaxRows() { return BackpackSize.MAX.rows; }
 	
 	
-	public int getWidth() { return Math.max(columns, 9) * 18 + getBorderSide() * 2; }
-	public int getHeight() { return getBorderTop() + (rows * 18) +
+	public int getWidth() { return Math.max(size.columns, 9) * 18 + getBorderSide() * 2; }
+	public int getHeight() { return getBorderTop() + (size.rows * 18) +
 	                                getBufferInventory() + (4 * 18) +
 	                                getBufferHotbar() + getBorderBottom(); }
 	
-	public int getContainerInvWidth() { return columns * 18; }
-	public int getContainerInvHeight() { return rows * 18; }
+	public int getContainerInvWidth() { return size.columns * 18; }
+	public int getContainerInvHeight() { return size.rows * 18; }
 	public int getContainerInvXOffset() { return getBorderSide() +
 		Math.max(0, (getPlayerInvWidth() - getContainerInvWidth()) / 2); }
 	
@@ -120,9 +117,9 @@ public abstract class ContainerBackpack extends Container {
 	protected void setupBackpackSlots() {
 		int xOffset = 1 + getContainerInvXOffset();
 		int yOffset = 1 + getBorderTop();
-		for (int y = 0; y < rows; y++, yOffset += 18)
-			for (int x = 0; x < columns; x++)
-				addSlotToContainer(new SlotItemHandler(items, x + y * columns,
+		for (int y = 0; y < size.rows; y++, yOffset += 18)
+			for (int x = 0; x < size.columns; x++)
+				addSlotToContainer(new SlotItemHandler(items, x + y * size.columns,
 					xOffset + x * 18, yOffset));
 	}
 	
@@ -147,8 +144,7 @@ public abstract class ContainerBackpack extends Container {
 	
 	
 	public void writeToNBT(NBTTagCompound compound) {
-		compound.setByte(TAG_COLUMNS, (byte)columns);
-		compound.setByte(TAG_ROWS, (byte)rows);
+		compound.setTag(TAG_SIZE, size.serializeNBT());
 		compound.setString(TAG_TITLE, title);
 		compound.setBoolean(TAG_LOCALIZED, titleLocalized);
 	}

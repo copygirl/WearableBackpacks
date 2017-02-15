@@ -1,4 +1,4 @@
-package net.mcft.copy.backpacks.client;
+package net.mcft.copy.backpacks.client.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +10,10 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.config.GuiConfig;
+import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.client.config.DummyConfigElement.DummyCategoryElement;
+import net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -37,7 +39,7 @@ public class BackpacksGuiConfig extends GuiConfig {
 		for (String category : WearableBackpacks.CONFIG.getCategoryNames()) {
 			if (category.equals(Configuration.CATEGORY_GENERAL)) continue;
 			String tooltipKey = "config." + WearableBackpacks.MOD_ID + ".category." + category;
-			list.add(new DummyCategoryElement(category, tooltipKey, getElements(category)));
+			list.add(new DummyCategoryElement(category, tooltipKey, getElements(category), BackpacksCategoryEntry.class));
 		}
 		return list;
 	}
@@ -50,7 +52,7 @@ public class BackpacksGuiConfig extends GuiConfig {
 	}
 	
 	
-	private static class BackpacksConfigElement extends ConfigElement {
+	public static class BackpacksConfigElement extends ConfigElement {
 		private final Setting<?> _setting;
 		
 		@SuppressWarnings("unchecked")
@@ -70,6 +72,18 @@ public class BackpacksGuiConfig extends GuiConfig {
 		@Override public String getLanguageKey() {
 			return "config." + WearableBackpacks.MOD_ID + "." +
 			       _setting.getCategory() + "." + _setting.getName();
+		}
+	}
+	
+	public static class BackpacksCategoryEntry extends CategoryEntry {
+		public BackpacksCategoryEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement) {
+			super(owningScreen, owningEntryList, configElement); }
+		@Override
+		protected GuiScreen buildChildScreen() {
+			return new GuiConfigExt(owningScreen, configElement.getChildElements(), owningScreen.modID,
+			                        owningScreen.allRequireWorldRestart || configElement.requiresWorldRestart(),
+			                        owningScreen.allRequireMcRestart || configElement.requiresMcRestart(), owningScreen.title,
+			                        ((owningScreen.titleLine2 != null) ? owningScreen.titleLine2 : "") + " > " + this.name);
 		}
 	}
 	
