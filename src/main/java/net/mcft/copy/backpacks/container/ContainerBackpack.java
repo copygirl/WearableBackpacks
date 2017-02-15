@@ -58,8 +58,8 @@ public abstract class ContainerBackpack extends Container {
 		this.backpack = null;
 		this.data     = null;
 		
-		size  = new BackpackSize(data.getTag(TAG_SIZE));
-		items = new ItemStackHandler(size.columns * size.rows);
+		size  = BackpackSize.parse(data.getTag(TAG_SIZE));
+		items = new ItemStackHandler(size.getColumns() * size.getRows());
 		
 		title = data.getString(TAG_TITLE);
 		titleLocalized = data.getBoolean(TAG_LOCALIZED);
@@ -89,17 +89,17 @@ public abstract class ContainerBackpack extends Container {
 	/** Returns the space between player inventory and hotbar in pixels. */
 	public int getBufferHotbar() { return 4; }
 	
-	public int getMaxColumns() { return BackpackSize.MAX.columns; }
-	public int getMaxRows() { return BackpackSize.MAX.rows; }
+	public int getMaxColumns() { return BackpackSize.MAX.getColumns(); }
+	public int getMaxRows() { return BackpackSize.MAX.getRows(); }
 	
 	
-	public int getWidth() { return Math.max(size.columns, 9) * 18 + getBorderSide() * 2; }
-	public int getHeight() { return getBorderTop() + (size.rows * 18) +
+	public int getWidth() { return Math.max(size.getColumns(), 9) * 18 + getBorderSide() * 2; }
+	public int getHeight() { return getBorderTop() + (size.getRows() * 18) +
 	                                getBufferInventory() + (4 * 18) +
 	                                getBufferHotbar() + getBorderBottom(); }
 	
-	public int getContainerInvWidth() { return size.columns * 18; }
-	public int getContainerInvHeight() { return size.rows * 18; }
+	public int getContainerInvWidth() { return size.getColumns() * 18; }
+	public int getContainerInvHeight() { return size.getRows() * 18; }
 	public int getContainerInvXOffset() { return getBorderSide() +
 		Math.max(0, (getPlayerInvWidth() - getContainerInvWidth()) / 2); }
 	
@@ -117,9 +117,9 @@ public abstract class ContainerBackpack extends Container {
 	protected void setupBackpackSlots() {
 		int xOffset = 1 + getContainerInvXOffset();
 		int yOffset = 1 + getBorderTop();
-		for (int y = 0; y < size.rows; y++, yOffset += 18)
-			for (int x = 0; x < size.columns; x++)
-				addSlotToContainer(new SlotItemHandler(items, x + y * size.columns,
+		for (int y = 0; y < size.getRows(); y++, yOffset += 18)
+			for (int x = 0; x < size.getColumns(); x++)
+				addSlotToContainer(new SlotItemHandler(items, x + y * size.getColumns(),
 					xOffset + x * 18, yOffset));
 	}
 	

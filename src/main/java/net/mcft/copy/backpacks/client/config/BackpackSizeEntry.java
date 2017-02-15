@@ -24,7 +24,7 @@ public class BackpackSizeEntry extends ListEntryBase implements GuiConfigExt.IVa
 		super(owningScreen, owningEntryList, configElement);
 		BackpackSize value = BackpackSize.parse(configElement.get().toString());
 		_control = new Control(value);
-		_beforeValue = value.copy();
+		_beforeValue = value;
 	}
 	
 	@Override
@@ -76,7 +76,7 @@ public class BackpackSizeEntry extends ListEntryBase implements GuiConfigExt.IVa
 	@Override
 	public boolean isChanged() { return !_control.value.equals(_beforeValue); }
 	@Override
-	public void undoChanges() { if (enabled()) _control.value = _beforeValue.copy(); }
+	public void undoChanges() { if (enabled()) _control.value = _beforeValue; }
 	
 	@Override
 	public boolean saveConfigElement() {
@@ -105,18 +105,19 @@ public class BackpackSizeEntry extends ListEntryBase implements GuiConfigExt.IVa
 		
 		@Override
 		public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
-			int slotSize = (width - 8) / BackpackSize.MAX.columns;
-			int offset   = (width - slotSize * BackpackSize.MAX.columns) / 2;
+			int slotSize = (width - 8) / BackpackSize.MAX.getColumns();
+			int offset   = (width - slotSize * BackpackSize.MAX.getColumns()) / 2;
 			
 			int x1 = xPosition + offset;
 			int y1 = yPosition + offset;
-			int x2 = x1 + BackpackSize.MAX.columns * slotSize;
-			int y2 = y1 + BackpackSize.MAX.rows    * slotSize;
+			int x2 = x1 + BackpackSize.MAX.getColumns() * slotSize;
+			int y2 = y1 + BackpackSize.MAX.getRows()    * slotSize;
 			
 			if (enabled && (mouseX >= x1) && (mouseY >= y1) &&
 			               (mouseX <  x2) && (mouseY <  y2)) {
-				value.columns = Math.min(Math.max(1 + (mouseX - x1) / slotSize, 1), BackpackSize.MAX.columns);
-				value.rows    = Math.min(Math.max(1 + (mouseY - y1) / slotSize, 1), BackpackSize.MAX.rows);
+				value = new BackpackSize(
+					Math.min(Math.max(1 + (mouseX - x1) / slotSize, 1), BackpackSize.MAX.getColumns()),
+					Math.min(Math.max(1 + (mouseY - y1) / slotSize, 1), BackpackSize.MAX.getRows()));
 				_dragging = true;
 				return true;
 			} else return false;
@@ -126,14 +127,15 @@ public class BackpackSizeEntry extends ListEntryBase implements GuiConfigExt.IVa
 		
 		@Override
 		public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-			int slotSize = (width - 8) / BackpackSize.MAX.columns;
-			int offset   = (width - slotSize * BackpackSize.MAX.columns) / 2;
-			height = slotSize * BackpackSize.MAX.rows + (width - slotSize * BackpackSize.MAX.columns);
+			int slotSize = (width - 8) / BackpackSize.MAX.getColumns();
+			int offset   = (width - slotSize * BackpackSize.MAX.getColumns()) / 2;
+			height = slotSize * BackpackSize.MAX.getRows() + (width - slotSize * BackpackSize.MAX.getColumns());
 			
 			if (!visible) return;
 			if (_dragging) {
-				value.columns = Math.min(Math.max(1 + (mouseX - (xPosition + offset)) / slotSize, 1), BackpackSize.MAX.columns);
-				value.rows    = Math.min(Math.max(1 + (mouseY - (yPosition + offset)) / slotSize, 1), BackpackSize.MAX.rows);
+				value = new BackpackSize(
+					Math.min(Math.max(1 + (mouseX - (xPosition + offset)) / slotSize, 1), BackpackSize.MAX.getColumns()),
+					Math.min(Math.max(1 + (mouseY - (yPosition + offset)) / slotSize, 1), BackpackSize.MAX.getRows()));
 			}
 			
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -142,14 +144,14 @@ public class BackpackSizeEntry extends ListEntryBase implements GuiConfigExt.IVa
 			                                   width, height, 200, 20, 2, 3, 2, 2, zLevel);
 			
 			// Draw slots.
-			for (int column = 1; column <= BackpackSize.MAX.columns; column++)
-				for (int row = 1; row <= BackpackSize.MAX.rows; row++) {
+			for (int column = 1; column <= BackpackSize.MAX.getColumns(); column++)
+				for (int row = 1; row <= BackpackSize.MAX.getRows(); row++) {
 					int x = xPosition + offset + (column - 1) * slotSize;
 					int y = yPosition + offset + (row    - 1) * slotSize;
 					boolean hover = (mouseX >= x) && (mouseX < x + slotSize) &&
 					                (mouseY >= y) && (mouseY < y + slotSize);
-					boolean active = (column <= value.columns) && (row <= value.rows);
-					boolean selected = (column == value.columns) && (row == value.rows);
+					boolean active = (column <= value.getColumns()) && (row <= value.getRows());
+					boolean selected = (column == value.getColumns()) && (row == value.getRows());
 					if (!active && !hover) continue;
 					int texY = (hover ? 86 : 66);
 					int b    = (selected ? 0 : 1);

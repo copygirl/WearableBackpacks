@@ -21,7 +21,7 @@ public class BackpackDataItems implements IBackpackData {
 		this(new BackpackSize(columns, rows)); }
 	public BackpackDataItems(BackpackSize size) {
 		this.size = size;
-		items = new ItemStackHandler(size.columns * size.rows);
+		items = new ItemStackHandler(size.getColumns() * size.getRows());
 	}
 	
 	@Override
@@ -35,7 +35,7 @@ public class BackpackDataItems implements IBackpackData {
 	public void deserializeNBT(NBTBase nbt) {
 		NBTTagCompound compound = (NBTTagCompound)nbt;
 		if (compound.hasKey(TAG_SIZE)) {
-			size = new BackpackSize(compound.getTag(TAG_SIZE));
+			size = BackpackSize.parse(compound.getTag(TAG_SIZE));
 			items.deserializeNBT(compound.getCompoundTag(TAG_ITEMS));
 		} else {
 			// Backwards compatibility for 1.5.0 / 2.2.0 and before.
