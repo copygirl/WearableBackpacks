@@ -52,7 +52,7 @@ public class TileEntityBackpack extends TileEntity implements ITickable, IBackpa
 		_stack = NbtUtils.readItem(compound.getCompoundTag(TAG_STACK));
 		if ((_stack == null) || isClient) { _data = null; return; }
 		
-		_data = BackpackHelper.getBackpackType(_stack).createBackpackData();
+		_data = BackpackHelper.getBackpackType(_stack).createBackpackData(_stack);
 		NBTBase dataTag = compound.getTag(TAG_DATA);
 		if (dataTag != null) _data.deserializeNBT(dataTag);
 	}

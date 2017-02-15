@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagByte;
+import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagList;
 
 import net.minecraftforge.common.util.INBTSerializable;
@@ -37,7 +37,7 @@ public class BackpackSize implements INBTSerializable<NBTTagList> {
 		int columns = Integer.parseInt(matcher.group(1));
 		int rows    = Integer.parseInt(matcher.group(2));
 		if ((columns > MAX.getColumns()) || (rows > MAX.getRows())) throw new RuntimeException(
-			"Backpack size value '" + str + "' over maximum (" + BackpackSize.MAX + ")");
+			"Backpack size value " + str + " over maximum (" + BackpackSize.MAX + ")");
 		return new BackpackSize(columns, rows);
 	}
 	
@@ -55,8 +55,17 @@ public class BackpackSize implements INBTSerializable<NBTTagList> {
 	
 	@Override
 	public void deserializeNBT(NBTTagList nbt) {
-		_columns = ((NBTTagByte)nbt.get(0)).getByte();
-		_rows    = ((NBTTagByte)nbt.get(1)).getByte();
+		if (nbt.tagCount() != 2) throw new RuntimeException(
+			"Invalid number of tags in list (" + nbt.tagCount() + " given, 2 required");
+		// Cast to NBTPrimitive to allow list to be specified using [X,Y] instead of [Xb,Yb].
+		int columns = ((NBTPrimitive)nbt.get(0)).getInt();
+		int rows    = ((NBTPrimitive)nbt.get(1)).getInt();
+		if ((columns < MIN.getColumns()) || (rows < MIN.getRows())) throw new RuntimeException(
+			"Backpack size [" + columns + "x" + rows + "] under minimum (" + BackpackSize.MIN + ")");
+		if ((columns > MAX.getColumns()) || (rows > MAX.getRows())) throw new RuntimeException(
+			"Backpack size [" + columns + "x" + rows + "] over maximum (" + BackpackSize.MAX + ")");
+		_columns = columns;
+		_rows    = rows;
 	}
 	
 	

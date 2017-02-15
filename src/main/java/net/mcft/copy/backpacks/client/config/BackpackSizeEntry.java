@@ -132,11 +132,10 @@ public class BackpackSizeEntry extends ListEntryBase implements GuiConfigExt.IVa
 			height = slotSize * BackpackSize.MAX.getRows() + (width - slotSize * BackpackSize.MAX.getColumns());
 			
 			if (!visible) return;
-			if (_dragging) {
+			if (_dragging)
 				value = new BackpackSize(
 					Math.min(Math.max(1 + (mouseX - (xPosition + offset)) / slotSize, 1), BackpackSize.MAX.getColumns()),
 					Math.min(Math.max(1 + (mouseY - (yPosition + offset)) / slotSize, 1), BackpackSize.MAX.getRows()));
-			}
 			
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			// Draw background.

@@ -169,7 +169,7 @@ public final class BackpackHelper {
 			IBackpackData data = carrierBackpack.getData();
 			if ((data == null) && !world.isRemote) {
 				LOG.error("Backpack data was null when placing down equipped backpack");
-				data = type.createBackpackData();
+				data = type.createBackpackData(stack);
 			}
 			
 			placedBackpack.setData(data);
@@ -181,7 +181,7 @@ public final class BackpackHelper {
 		
 		// Otherwise create a fresh backpack data on the server.
 		} else if (!world.isRemote) placedBackpack.setData(
-			placedBackpack.getType().createBackpackData());
+			placedBackpack.getType().createBackpackData(stack));
 		
 		return true;
 		
