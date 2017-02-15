@@ -118,7 +118,7 @@ public class BackpacksConfig extends Configuration {
 		// Update config settings from old versions.
 		if (getCategory("backpack").containsKey("rows")) {
 			int rows = get("backpack", "rows", 4).getInt();
-			get("backpack", "size", "").set("[9," + rows +"]");
+			get("backpack", "size", "").set(new BackpackSize(9, rows).toString());
 			getCategory("backpack").remove("rows");
 		}
 		
