@@ -11,8 +11,6 @@ import net.minecraft.nbt.NBTTagList;
 
 import net.minecraftforge.common.util.INBTSerializable;
 
-import net.mcft.copy.backpacks.misc.util.NbtUtils;
-
 public class BackpackSize implements INBTSerializable<NBTTagByteArray> {
 	
 	private static final Pattern PATTERN = Pattern.compile("^\\[([1-9]\\d?)x([1-9])\\]$");

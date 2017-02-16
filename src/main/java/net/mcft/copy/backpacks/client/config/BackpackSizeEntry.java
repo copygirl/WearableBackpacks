@@ -158,7 +158,7 @@ public class BackpackSizeEntry extends ListEntryBase implements GuiConfigExt.IVa
 					                                   200 - b*2, 20 - b*2, 2-b, 3-b, 2-b, 2-b, zLevel);
 				}
 			
-			drawCenteredString(mc.fontRenderer, value.toString(), xPosition + width / 2, yPosition + (height - 8) / 2, 0xFFFFFF);
+			drawCenteredString(mc.fontRendererObj, value.toString(), xPosition + width / 2, yPosition + (height - 8) / 2, 0xFFFFFF);
 		}
 		
 	}
