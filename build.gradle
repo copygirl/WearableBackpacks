@@ -23,8 +23,12 @@ minecraft {
 	
 	replace "@VERSION@", project.version
 }
-
-dependencies {  }
+repositories {
+	maven { url "http://mvn.rx14.co.uk/repo" }
+}
+dependencies {
+	deobfCompile "inventorytweaks:InventoryTweaks:${invtweaks_version}"
+}
 
 processResources {
 	inputs.property "mod_version", project.version
