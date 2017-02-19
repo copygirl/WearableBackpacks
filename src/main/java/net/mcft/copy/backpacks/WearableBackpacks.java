@@ -16,6 +16,7 @@ import net.mcft.copy.backpacks.network.BackpacksChannel;
 
 @Mod(modid = WearableBackpacks.MOD_ID, name = WearableBackpacks.MOD_NAME,
      version = WearableBackpacks.VERSION,
+     dependencies = "required-after:forge@[12.18.3,)",
      guiFactory = "net.mcft.copy.backpacks.client.BackpacksGuiFactory")
 public class WearableBackpacks {
 	
