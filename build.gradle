@@ -1,7 +1,7 @@
 buildscript {
 	repositories {
 		jcenter()
-		maven { url = "http://files.minecraftforge.net/maven" }
+		maven { url "http://files.minecraftforge.net/maven" }
 	}
 	dependencies {
 		classpath "net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT"
@@ -9,22 +9,16 @@ buildscript {
 }
 apply plugin: "net.minecraftforge.gradle.forge"
 
-file "build.properties" withReader {
-	def prop = new Properties()
-	prop.load(it)
-	ext.config = new ConfigSlurper().parse prop
-}
-
-version = config.mod.version
+version = mod_version
 group   = "net.mcft.copy.backpacks"
-archivesBaseName = "${project.projectDir.name}-${config.minecraft.version}"
+archivesBaseName = "${project.projectDir.name}-${minecraft_version}"
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 compileJava { sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8 }
 
 minecraft {
-	version  = "${config.minecraft.version}-${config.forge.version}"
-	mappings = config.minecraft.mappings
+	version  = "${minecraft_version}-${forge_version}"
+	mappings = minecraft_mappings
 	runDir   = "run"
 	
 	replace "@VERSION@", project.version
