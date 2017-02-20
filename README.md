@@ -92,7 +92,7 @@ treated the same.
 
 **Authors:** copygirl, asiekierka  
 **Contributors:** -  
-**Localizations:** -  
+**Localizations:** [TDarkShadow](https://github.com/TDarkShadow) (nl_NL)  
 
 ### Special thanks to ...
 
