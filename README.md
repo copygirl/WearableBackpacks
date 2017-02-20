@@ -88,8 +88,8 @@ treated the same.
 ## Credits
 
 **Authors:** copygirl, asiekierka  
-**Contributers:** -  
-**Localizations:** -  
+**Contributors:** -  
+**Localizations:** [TDarkShadow](https://github.com/TDarkShadow) (nl_NL)  
 
 ### Special thanks to ...
 
