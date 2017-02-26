@@ -27,7 +27,7 @@ repositories {
 	maven { url "http://mvn.rx14.co.uk/repo" }
 }
 dependencies {
-	deobfCompile "inventorytweaks:InventoryTweaks:${invtweaks_version}"
+	deobfCompile "inventorytweaks:InventoryTweaks:${invtweaks_version}:api"
 }
 
 processResources {
