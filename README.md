@@ -95,7 +95,9 @@ treated the same.
 
 **Authors:** copygirl, asiekierka  
 **Contributors:** -  
-**Localizations:** [TDarkShadow](https://github.com/TDarkShadow) (nl_NL)  
+**Localizations:**
+  [TDarkShadow](https://github.com/TDarkShadow) (nl_NL) -
+  [kirill3345](https://github.com/kirill3345), [dangranos](https://github.com/dangranos) (ru_RU)  
 
 ### Special thanks to ...
 
