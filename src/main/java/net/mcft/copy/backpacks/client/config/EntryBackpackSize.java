@@ -7,100 +7,33 @@ import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.GuiUtils;
-import net.minecraftforge.fml.client.config.IConfigElement;
-import net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import net.mcft.copy.backpacks.config.Setting;
 import net.mcft.copy.backpacks.misc.BackpackSize;
 
 @SideOnly(Side.CLIENT)
-public class BackpackSizeEntry extends ListEntryBase implements GuiConfigExt.IVarHeightEntry {
+public class EntryBackpackSize extends EntryButton<BackpackSize> {
 	
-	private final Control _control;
-	private BackpackSize _beforeValue;
-	
-	public BackpackSizeEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement) {
-		super(owningScreen, owningEntryList, configElement);
-		BackpackSize value = BackpackSize.parse(configElement.get().toString());
-		_control = new Control(value);
-		_beforeValue = value;
+	public EntryBackpackSize(GuiConfig owningScreen, GuiConfigEntries owningEntryList, Setting<BackpackSize> setting) {
+		super(owningScreen, owningEntryList, setting, new Control());
+		((Control)button)._entry = this;
 	}
 	
 	@Override
-	public int getSlotHeight() { return _control.height + 2; }
-	
-	@Override
-	public void keyTyped(char eventChar, int eventKey) {  }
-	@Override
-	public void updateCursorCounter() {  }
-	@Override
-	public void mouseClicked(int x, int y, int mouseEvent) {  }
-	
-	@Override
-	public boolean mousePressed(int index, int x, int y, int mouseEvent, int relativeX, int relativeY) {
-		if (!_control.mousePressed(mc, x, y))
-			return super.mousePressed(index, x, y, mouseEvent, relativeX, relativeY);
-		
-		_control.playPressSound(mc.getSoundHandler());
-		//valueButtonPressed(index);
-		//updateValueButtonText();
-		return true;
-	}
-	@Override
-	public void mouseReleased(int index, int x, int y, int mouseEvent, int relativeX, int relativeY) {
-		super.mouseReleased(index, x, y, mouseEvent, relativeX, relativeY);
-		_control.mouseReleased(x, y);
-	}
-	
-	@Override
-	public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight,
-	                      int mouseX, int mouseY, boolean isSelected) {
-		super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
-		_control.width = owningEntryList.controlWidth;
-		_control.xPosition = owningScreen.entryList.controlX;
-		_control.yPosition = y;
-		_control.enabled = enabled();
-		_control.drawButton(mc, mouseX, mouseY);
-	}
-	
-	@Override
-	public boolean isDefault() {
-		return _control.value.toString().equals(configElement.getDefault().toString());
-	}
-	@Override
-	public void setToDefault() {
-		if (enabled()) _control.value = BackpackSize.parse(configElement.getDefault().toString());
-	}
-	
-	@Override
-	public boolean isChanged() { return !_control.value.equals(_beforeValue); }
-	@Override
-	public void undoChanges() { if (enabled()) _control.value = _beforeValue; }
-	
-	@Override
-	public boolean saveConfigElement() {
-		if (!enabled() || !isChanged()) return false;
-		configElement.set(_control.value.toString());
-		return configElement.requiresMcRestart();
-	}
-	
-	@Override
-	public Object getCurrentValue() { return _control.value.toString(); }
-	@Override
-	public Object[] getCurrentValues() { return new Object[] { getCurrentValue() }; }
+	public int getSlotHeight() { return button.height + 2; }
 	
 	
 	public static class Control extends GuiButtonExt {
 		
-		public BackpackSize value;
+		private boolean _dragging = false;
+		protected EntryBackpackSize _entry;
 		
-		public boolean _dragging = false;
-		
-		// X, Y and width are set in drawEntry anyway, height depends on width.
-		public Control(BackpackSize value) {
-			super(0, 0, 0, 0, 16, "");
-			this.value = value;
+		public Control() {
+			// All 0 because x, y and width are set in drawEntry anyway,
+			// and height depends on width and is set in drawButton.
+			super(0, 0, 0, 0, 0, "");
 		}
 		
 		@Override
@@ -115,7 +48,7 @@ public class BackpackSizeEntry extends ListEntryBase implements GuiConfigExt.IVa
 			
 			if (enabled && (mouseX >= x1) && (mouseY >= y1) &&
 			               (mouseX <  x2) && (mouseY <  y2)) {
-				value = new BackpackSize(
+				_entry.value = new BackpackSize(
 					Math.min(Math.max(1 + (mouseX - x1) / slotSize, 1), BackpackSize.MAX.getColumns()),
 					Math.min(Math.max(1 + (mouseY - y1) / slotSize, 1), BackpackSize.MAX.getRows()));
 				_dragging = true;
@@ -133,9 +66,10 @@ public class BackpackSizeEntry extends ListEntryBase implements GuiConfigExt.IVa
 			
 			if (!visible) return;
 			if (_dragging)
-				value = new BackpackSize(
+				_entry.value = new BackpackSize(
 					Math.min(Math.max(1 + (mouseX - (xPosition + offset)) / slotSize, 1), BackpackSize.MAX.getColumns()),
 					Math.min(Math.max(1 + (mouseY - (yPosition + offset)) / slotSize, 1), BackpackSize.MAX.getRows()));
+			BackpackSize value = _entry.value;
 			
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			// Draw background.

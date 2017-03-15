@@ -11,7 +11,7 @@ public class SettingBackpackSize extends Setting<BackpackSize> {
 	
 	public SettingBackpackSize(int defaultColumns, int defaultRows) {
 		super(new BackpackSize(defaultColumns, defaultRows));
-		setConfigEntryClass("net.mcft.copy.backpacks.client.config.BackpackSizeEntry");
+		setConfigEntryClass("net.mcft.copy.backpacks.client.config.EntryBackpackSize");
 	}
 	
 	@Override
@@ -21,7 +21,7 @@ public class SettingBackpackSize extends Setting<BackpackSize> {
 	}
 	
 	@Override
-	public BackpackSize getFromProperty() { return BackpackSize.parse(getProperty().getString()); }
+	public BackpackSize parse(String str) { return BackpackSize.parse(str); }
 	
 	@Override
 	public BackpackSize read(NBTBase tag) { return BackpackSize.parse(tag); }

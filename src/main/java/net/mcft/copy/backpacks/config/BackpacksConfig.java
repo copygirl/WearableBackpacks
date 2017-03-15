@@ -147,9 +147,7 @@ public class BackpacksConfig extends Configuration {
 	}
 	
 	/** Called once after content has been initialized to call setting update methods. */
-	public void init() {
-		getSettings().forEach(Setting::update);
-	}
+	public void init() { getSettings().forEach(Setting::update); }
 	
 	
 	// Event handling
@@ -157,7 +155,6 @@ public class BackpacksConfig extends Configuration {
 	@SubscribeEvent
 	public void onConfigChanged(OnConfigChangedEvent event) {
 		if (!event.getModID().equals(WearableBackpacks.MOD_ID)) return;
-		getSettings().forEach(Setting::onPropertyChanged);
 		// Resyncronize the settings to all players.
 		if (event.isWorldRunning())
 			WearableBackpacks.CHANNEL.sendToAll(MessageSyncSettings.create());
@@ -174,8 +171,6 @@ public class BackpacksConfig extends Configuration {
 	public void onDisconnectedFromServer(ClientDisconnectionFromServerEvent event) {
 		// Reset all synced values of the settings.
 		getSettings().forEach(Setting::resetSynced);
-		// Note that this will cause get() to return null. This is
-		// to make sure that only a properly synced value is used.
 	}
 	
 }

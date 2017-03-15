@@ -1,90 +1,96 @@
 package net.mcft.copy.backpacks.client.config;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
 
-import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.GuiConfigEntries;
-import net.minecraftforge.fml.client.config.IConfigElement;
-import net.minecraftforge.fml.client.config.DummyConfigElement.DummyCategoryElement;
-import net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry;
-import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
+import net.mcft.copy.backpacks.client.config.EntryCategory;
+import net.mcft.copy.backpacks.client.config.EntrySetting;
 import net.mcft.copy.backpacks.config.Setting;
 
 @SideOnly(Side.CLIENT)
 public class BackpacksGuiConfig extends GuiConfig {
 	
-	public BackpacksGuiConfig(GuiScreen parent) {
-		super(parent, getConfigElements(), WearableBackpacks.MOD_ID,
-		      false, false, WearableBackpacks.MOD_NAME);
+	public final String category;
+	
+	public BackpacksGuiConfig(GuiScreen parent)
+		{ this(parent, Configuration.CATEGORY_GENERAL, WearableBackpacks.MOD_ID,
+		       false, false, WearableBackpacks.MOD_NAME, ""); }
+	
+	public BackpacksGuiConfig(GuiScreen parentScreen, String category, String modID, 
+	                          boolean allRequireWorldRestart, boolean allRequireMcRestart,
+	                          String title, String titleLine2) {
+		super(parentScreen, Collections.emptyList(), modID,
+		      allRequireWorldRestart, allRequireMcRestart,
+		      title, titleLine2);
+		this.category = category;
+		initGui();
 	}
 	
-	/** Gets the root config elements for this config GUI. */
-	private static List<IConfigElement> getConfigElements() {
-		List<IConfigElement> list = new ArrayList<IConfigElement>();
-		// Add all config elements from the general category into the main config screen.
-		list.addAll(getElements(Configuration.CATEGORY_GENERAL));
-		// Add category elements leading to config sub-screens
-		// for all other categories (except the general category).
-		for (String category : WearableBackpacks.CONFIG.getCategoryNames()) {
-			if (category.equals(Configuration.CATEGORY_GENERAL)) continue;
-			String tooltipKey = "config." + WearableBackpacks.MOD_ID + ".category." + category;
-			list.add(new DummyCategoryElement(category, tooltipKey, getElements(category), BackpacksCategoryEntry.class));
-		}
-		return list;
+	@Override
+	public void initGui() {
+		super.initGui();
+		if (!(entryList instanceof Entries))
+			entryList = new Entries(this);
 	}
 	
-	/** Creates and returns config elements for the specified category. */
-	private static List<IConfigElement> getElements(String category) {
-		return WearableBackpacks.CONFIG.getSettings(category).stream()
-			.map((setting) -> new BackpacksConfigElement(setting))
-			.collect(Collectors.toList());
-	}
-	
-	
-	public static class BackpacksConfigElement extends ConfigElement {
-		private final Setting<?> _setting;
+	/** Custom GuiConfigEntries class which generates entries directly from the
+	 *  parent BackpacksGuiConfig category without going through IConfigElement.
+	 *  Also provides patches to allow for custom height entry slots. */
+	// TODO: Currently only works if there's only one custom sized entry at the end of the list.
+	private static class Entries extends GuiConfigEntries {
 		
-		@SuppressWarnings("unchecked")
-		public BackpacksConfigElement(Setting<?> setting) {
-			super(setting.getProperty());
-			_setting = setting;
-			// Set the property's entry class. We do this here because IConfigEntry is
-			// client-side only and so is this GUI but Setting also exists on the server.
-			String entryClass = setting.getConfigEntryClass();
-			if (entryClass != null)
-				try { setting.getProperty().setConfigEntryClass((Class<? extends IConfigEntry>)Class.forName(entryClass)); }
-				catch (ClassNotFoundException ex) { throw new RuntimeException(ex); }
+		public Entries(BackpacksGuiConfig parent) {
+			super(parent, parent.mc);
+			listEntries = new ArrayList<IConfigEntry>();
+			
+			for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings(parent.category))
+				listEntries.add(EntrySetting.Create(owningScreen, this, setting));
+			
+			// If this is the general category, add category elements
+			// leading to config sub-screens for all other categories.
+			if (parent.category.equals(Configuration.CATEGORY_GENERAL))
+				for (String cat : WearableBackpacks.CONFIG.getCategoryNames())
+					if (!cat.equals(Configuration.CATEGORY_GENERAL))
+						listEntries.add(new EntryCategory(owningScreen, this, cat));
+			
+			super.initGui();
 		}
 		
-		@Override public String getName() { return I18n.format(getLanguageKey()); }
-		@Override public String getComment() { return I18n.format(getLanguageKey() + ".tooltip"); }
-		@Override public String getLanguageKey() {
-			return "config." + WearableBackpacks.MOD_ID + "." +
-			       _setting.getCategory() + "." + _setting.getName();
+		private int getHeightForSlot(int slot) {
+			IConfigEntry entry = getListEntry(slot);
+			return ((entry instanceof EntrySetting) ?
+				((EntrySetting<?>)entry).getSlotHeight() : getSlotHeight());
 		}
-	}
-	
-	public static class BackpacksCategoryEntry extends CategoryEntry {
-		public BackpacksCategoryEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement) {
-			super(owningScreen, owningEntryList, configElement); }
+		
 		@Override
-		protected GuiScreen buildChildScreen() {
-			return new GuiConfigExt(owningScreen, configElement.getChildElements(), owningScreen.modID,
-			                        owningScreen.allRequireWorldRestart || configElement.requiresWorldRestart(),
-			                        owningScreen.allRequireMcRestart || configElement.requiresMcRestart(), owningScreen.title,
-			                        ((owningScreen.titleLine2 != null) ? owningScreen.titleLine2 : "") + " > " + this.name);
+		public int getSlotIndexFromScreenCoords(int posX, int posY) {
+			if ((posX < left + width / 2 - getListWidth() / 2) || (posX > getScrollBarX())) return -1;
+			int y = posY - top - headerPadding + (int)amountScrolled - 4;
+			for (int slot = 0; slot < getSize(); slot++) {
+				int slotHeight = getHeightForSlot(slot);
+				if (y < slotHeight) return slot;
+				y -= slotHeight;
+			}
+			return -1;
 		}
+		
+		@Override
+		protected int getContentHeight() {
+			int height = headerPadding;
+			for (int slot = 0; slot < getSize(); slot++)
+				height += getHeightForSlot(slot);
+			return height;
+		}
+		
 	}
 	
 }
