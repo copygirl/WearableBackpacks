@@ -11,6 +11,9 @@ public class SettingInteger extends Setting<Integer> {
 	private int _minValue = Integer.MIN_VALUE;
 	private int _maxValue = Integer.MAX_VALUE;
 	
+	public int getMinValue() { return _minValue; }
+	public int getMaxValue() { return _maxValue; }
+	
 	public SettingInteger(int defaultValue) {
 		super(defaultValue);
 		setConfigEntryClass("net.mcft.copy.backpacks.client.config.EntryField$Number");
