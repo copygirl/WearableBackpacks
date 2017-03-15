@@ -32,11 +32,11 @@ public class BackpackSize implements INBTSerializable<NBTTagByteArray> {
 	
 	public static BackpackSize parse(String str) {
 		Matcher matcher = PATTERN.matcher(str);
-		if (!matcher.matches()) throw new RuntimeException(
+		if (!matcher.matches()) throw new IllegalArgumentException(
 			"Invalid backpack size value '" + str + "'");
 		int columns = Integer.parseInt(matcher.group(1));
 		int rows    = Integer.parseInt(matcher.group(2));
-		if ((columns > MAX.getColumns()) || (rows > MAX.getRows())) throw new RuntimeException(
+		if ((columns > MAX.getColumns()) || (rows > MAX.getRows())) throw new IllegalArgumentException(
 			"Backpack size value " + str + " over maximum (" + BackpackSize.MAX + ")");
 		return new BackpackSize(columns, rows);
 	}

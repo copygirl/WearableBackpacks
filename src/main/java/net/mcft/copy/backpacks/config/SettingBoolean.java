@@ -8,7 +8,10 @@ import net.minecraftforge.common.config.Property;
 
 public class SettingBoolean extends Setting<Boolean> {
 	
-	public SettingBoolean(boolean defaultValue) { super(defaultValue); }
+	public SettingBoolean(boolean defaultValue) {
+		super(defaultValue);
+		setConfigEntryClass("net.mcft.copy.backpacks.client.config.EntryButton$Switch");
+	}
 	
 	@Override
 	protected Property getPropertyFromConfig(Configuration config) {
@@ -17,7 +20,15 @@ public class SettingBoolean extends Setting<Boolean> {
 	}
 	
 	@Override
-	public Boolean getFromProperty() { return getProperty().getBoolean(); }
+	public Boolean parse(String str) {
+		str = str.toLowerCase();
+		switch (str) {
+			case "true": return true;
+			case "false": return false;
+			default: throw new IllegalArgumentException(
+				"String '" + str + "' is not a valid boolean");
+		}
+	}
 	
 	@Override
 	public Boolean read(NBTBase tag) { return (((NBTTagByte)tag).getByte() != 0); }

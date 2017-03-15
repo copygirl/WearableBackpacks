@@ -103,6 +103,8 @@ public abstract class Setting<T> {
 	public T getDefault() { return _defaultValue; }
 	/** Returns the setting's current value. */
 	public T get() { return (_isSynced ? _syncedValue : _value); }
+	/** Sets the setting's current value. */
+	public void set(T value) { _value = value; _property.set(Objects.toString(value)); }
 	
 	/** Returns the setting required for this setting, or null if none. */
 	public Setting<?> getRequired() { return _requiredSetting; }
@@ -154,21 +156,13 @@ public abstract class Setting<T> {
 	}
 	
 	
-	/** Returns the value from the Forge Property. */
-	protected abstract T getFromProperty();
+	/** Attempts to parse the specified string as a value of this setting.
+	 *  Throws an exception if the specified string is not valid. */
+	public abstract T parse(String str);
 	
 	/** Called when the Configuration is loaded. */
 	protected void onPropertyLoaded() {
-		_value = getFromProperty();
-	}
-	
-	/** Called when the Property is changed,
-	 *  for example through the config GUI. */
-	protected void onPropertyChanged() {
-		if (_requiresMinecraftRestart) return;
-		T previous = _value;
-		_value = getFromProperty();
-		if (!Objects.equals(_value, previous)) update();
+		_value = parse(getProperty().getString());
 	}
 	
 	
