@@ -46,7 +46,8 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	public static final int DEFAULT_COLOR = 0xA06540;
 	
-	public static final String[] TAG_CUSTOM_SIZE = { "backpack", "size" };
+	public static final String[] TAG_CUSTOM_ARMOR = { "backpack", "armor" };
+	public static final String[] TAG_CUSTOM_SIZE  = { "backpack", "size" };
 	
 	
 	public ItemBackpack() {
@@ -56,7 +57,10 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	}
 	
 	/** Returns the damage reduction amount. Functions identically to the Vanilla ItemArmor value. */
-	public int getDamageReductionAmount(ItemStack stack) { return 3; }
+	public int getDamageReductionAmount(ItemStack stack) {
+		int defaultArmor = WearableBackpacks.CONFIG.backpack.armor.get();
+		return NbtUtils.get(stack, defaultArmor, TAG_CUSTOM_ARMOR);
+	}
 	
 	// Item properties
 	

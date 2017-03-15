@@ -1,6 +1,7 @@
 package net.mcft.copy.backpacks.config;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -27,8 +28,8 @@ public abstract class Setting<T> {
 	/** The setting name, for example "equipAsChestArmor". */
 	private String _name;
 	
-	/** Stores a different setting which is required for this one to function. */
-	private Setting<Boolean> _requiredSetting = null;
+	/** Stores settings which are required for this one to function. */
+	private List<Setting<Boolean>> _requiredSettings = null;
 	/** Whether changing the setting requires rejoining the current world. */
 	private boolean _requiresWorldRejoin = false;
 	/** Whether changing the setting requires restarting the Minecraft instance. */
@@ -67,7 +68,9 @@ public abstract class Setting<T> {
 	}
 	
 	/** Sets the specified setting to be required for this setting. */
-	public Setting<T> setRequired(Setting<Boolean> setting) { _requiredSetting = setting; return this; }
+	@SafeVarargs
+	public final Setting<T> setRequired(Setting<Boolean>... settings)
+		{ _requiredSettings = Arrays.asList(settings); return this; }
 	/** Sets the setting to require rejoining the world after being changed. */
 	public Setting<T> setRequiresWorldRejoin() { _requiresWorldRejoin = true; return this; }
 	/** Sets the setting to require restarting the game after being changed. */
@@ -106,10 +109,9 @@ public abstract class Setting<T> {
 	/** Sets the setting's current value. */
 	public void set(T value) { _value = value; _property.set(Objects.toString(value)); }
 	
-	/** Returns the setting required for this setting, or null if none. */
-	public Setting<?> getRequired() { return _requiredSetting; }
-	/** Returns if there's no required setting or it is enabled. */
-	public boolean isRequiredEnabled() { return ((_requiredSetting == null) || _requiredSetting.get()); }
+	/** Returns if there's all required settings are enabled. */
+	public boolean isRequiredEnabled() { return ((_requiredSettings == null) ||
+		_requiredSettings.stream().allMatch((setting) -> setting.get())); }
 	/** Returns whether changing the setting requires a world rejoin. */
 	public boolean requiresWorldRejoin() { return _requiresWorldRejoin; }
 	/** Returns whether changing the setting requires Minecraft to be restarted. */

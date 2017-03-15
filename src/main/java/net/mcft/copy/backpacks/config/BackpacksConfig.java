@@ -40,7 +40,7 @@ public class BackpacksConfig extends Configuration {
 	// ==[ BACKPACK ]==
 	
 	public final BackpackCategory backpack = new BackpackCategory();
-	public static class BackpackCategory {
+	public class BackpackCategory {
 		
 		public final Setting<Boolean> enabled = new SettingBoolean(true)
 			.setRequiresMinecraftRestart();
@@ -49,7 +49,13 @@ public class BackpacksConfig extends Configuration {
 			.setValidRange(0, Integer.MAX_VALUE).setRequired(enabled)
 			.setSynced((value) -> BackpacksContent.BACKPACK.setMaxDamage(value))
 			.setComment("Durability of a normal backpack. Set to 0 for unbreakable. Default: 214.\n" +
-			            "Lowering this (including setting to 0) can make damaged backpacks break.");
+			            "Lowering this (including setting to 0) can cause issues with already damaged backpacks.");
+		
+		public final Setting<Integer> armor = new SettingInteger(2)
+			.setValidRange(0, 20).setRequired(enabled, equipAsChestArmor)
+			.setConfigEntryClass("net.mcft.copy.backpacks.client.config.EntryArmor")
+			.setComment("Armor points of a normal backpack. Valid values are 0 to 20. Default: 2.\n" +
+			            "Has no effect if equipAsChestArmor is disabled.");
 		
 		public final Setting<BackpackSize> size = new SettingBackpackSize(9, 4).setRequired(enabled)
 			.setComment("Storage size of a normal backpack. Valid values are [1x1] to [17x6]. Default: [9x4].\n" +
