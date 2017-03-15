@@ -1,7 +1,6 @@
 package net.mcft.copy.backpacks;
 
 import java.util.Map;
-import com.google.common.base.Function;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -13,7 +12,6 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -94,12 +92,6 @@ public class ProxyClient extends ProxyCommon {
 	
 	// Model related
 	
-	private static final Function<ResourceLocation, TextureAtlasSprite> TEXTURE_GETTER =
-		new Function<ResourceLocation, TextureAtlasSprite>() {
-			public TextureAtlasSprite apply(ResourceLocation location) {
-				return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
-			}
-		};
 	@SubscribeEvent
 	public void onModelBake(ModelBakeEvent event) {
 		MODEL_BACKPACK = bakeBlockModel("wearablebackpacks:block/backpack");
@@ -111,8 +103,8 @@ public class ProxyClient extends ProxyCommon {
 	}
 	private static IBakedModel bakeBlockModel(String location) {
 		IModel model = getModel(new ResourceLocation(location));
-		return model.bake(model.getDefaultState(),
-			DefaultVertexFormats.BLOCK, TEXTURE_GETTER);
+		return model.bake(model.getDefaultState(), DefaultVertexFormats.BLOCK, loc ->
+			Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(loc.toString()));
 	}
 	private static IModel getModel(ResourceLocation location) {
 		try {
