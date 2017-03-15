@@ -1,7 +1,7 @@
 package net.mcft.copy.backpacks.client.config;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -61,10 +61,10 @@ public class BackpacksGuiConfig extends GuiConfig {
 		
 		public Entries(BackpacksGuiConfig parent) {
 			super(parent, parent.mc);
-			listEntries = new ArrayList<IConfigEntry>();
 			
-			for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings(parent.category))
-				listEntries.add(EntrySetting.Create(owningScreen, this, (SettingSingleValue<?>)setting));
+			listEntries = WearableBackpacks.CONFIG.getSettings(parent.category).stream()
+				.map(setting -> EntrySetting.Create(owningScreen, this, (SettingSingleValue<?>)setting))
+				.collect(Collectors.toList());
 			
 			// If this is the general category, add category elements
 			// leading to config sub-screens for all other categories.
