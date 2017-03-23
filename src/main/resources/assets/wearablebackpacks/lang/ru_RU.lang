@@ -30,5 +30,7 @@ config.wearablebackpacks.backpack.enabled=Разрешено
 config.wearablebackpacks.backpack.enabled.tooltip=Разрешает рюкзаки
 config.wearablebackpacks.backpack.durability=Прочность
 config.wearablebackpacks.backpack.durability.tooltip=Задаёт прочность рюкзака (0 - неразрушимый). Может вызывать проблемы с уже существующими повреждёнными рюкзаками.
+config.wearablebackpacks.backpack.armor=Защита
+config.wearablebackpacks.backpack.armor.tooltip=Очки защиты рюкзака
 config.wearablebackpacks.backpack.size=Вместимость
 config.wearablebackpacks.backpack.size.tooltip=Задаёт вместимость рюкзака. Не влияет на уже существующие поставленные или надетые рюкзаки.
