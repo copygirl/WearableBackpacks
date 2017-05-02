@@ -123,7 +123,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		
 		// Check if the side is solid and try to place the backpack.
 		return (state.isSideSolid(worldIn, pos, EnumFacing.UP) &&
-		        BackpackHelper.placeBackpack(worldIn, pos, stack, playerIn))
+		        BackpackHelper.placeBackpack(worldIn, pos, stack, playerIn, false))
 			? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
 	}
 	

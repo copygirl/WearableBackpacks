@@ -233,7 +233,7 @@ public class ProxyCommon {
 					BlockCoord coord = iter.next();
 					// Attempt to place and unequip the backpack at
 					// this coordinate. If successful, we're done here.
-					if (BackpackHelper.placeBackpack(world, coord, backpack.getStack(), entity))
+					if (BackpackHelper.placeBackpack(world, coord, backpack.getStack(), entity, true))
 						return;
 					boolean replacable = world.getBlockState(coord).getBlock().isReplaceable(world, coord);
 					coord.add(0, (replacable ? -1 : 1), 0);

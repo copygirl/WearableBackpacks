@@ -120,8 +120,8 @@ public final class BackpackHelper {
 	
 	/** Attempts to place down a backpack, unequipping it
 	 *  if the specified entity is currently wearing it. */
-	public static boolean placeBackpack(World world, BlockPos pos,
-	                                    ItemStack stack, EntityLivingBase entity) {
+	public static boolean placeBackpack(World world, BlockPos pos, ItemStack stack,
+	                                    EntityLivingBase entity, boolean ignoreEntities) {
 		
 		EntityPlayer player = ((entity instanceof EntityPlayer) ? (EntityPlayer)entity : null);
 		if ((player != null) && !player.canPlayerEdit(pos, EnumFacing.UP, stack))
@@ -133,7 +133,8 @@ public final class BackpackHelper {
 		// Would use this instead, but gotta avoid depending on the rest of WearableBackpacks.
 		//Block block = MiscUtils.getBlockFromItem(item);
 		Block block = Block.REGISTRY.getObject(item.getRegistryName());
-		if (!world.canBlockBePlaced(block, pos, false, EnumFacing.UP, null, stack))
+		if (ignoreEntities ? !block.canPlaceBlockAt(world, pos)
+		                   : !world.canBlockBePlaced(block, pos, false, EnumFacing.UP, null, stack))
 			return false;
 		
 		// Actually go ahead and try to set the block in the world.
