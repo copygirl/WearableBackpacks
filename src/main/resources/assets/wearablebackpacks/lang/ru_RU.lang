@@ -10,10 +10,9 @@ tooltip.wearablebackpacks.unequipHint=Присесть и правый клик 
 tooltip.wearablebackpacks.used=Уже используется другим игроком
 
 chat.wearablebackpacks.cantEquip=На вас уже надет другой рюкзак
-chat.wearablebackpacks.cantEquip.chestplate=Вы не можете надеть рюкзак вместе с бронёй.
+chat.wearablebackpacks.cantEquip.chestplate=Вы не можете надеть рюкзак одновременно с бронёй
 
 key.wearablebackpacks.open=Открыть рюкзак
-
 
 config.wearablebackpacks.general.equipAsChestArmor=Надевать как нагрудную броню
 config.wearablebackpacks.general.equipAsChestArmor.tooltip=Разрешает надевать рюкзак в слот для брони
@@ -29,10 +28,10 @@ config.wearablebackpacks.category.backpack.tooltip=Управляет настр
 config.wearablebackpacks.backpack.enabled=Разрешено
 config.wearablebackpacks.backpack.enabled.tooltip=Разрешает рюкзаки
 config.wearablebackpacks.backpack.durability=Прочность
-config.wearablebackpacks.backpack.durability.tooltip=Задаёт прочность рюкзака (0 - неразрушимый). Может вызывать проблемы с уже существующими повреждёнными рюкзаками.
-# config.wearablebackpacks.backpack.durability.hint=No effect if not equipped as armor
+config.wearablebackpacks.backpack.durability.tooltip=Задаёт прочность рюкзака (0 - неразрушимый). Может вызывать проблемы с уже существующими повреждёнными рюкзаками
+config.wearablebackpacks.backpack.durability.hint=Не действует если не надето в слот брони
 config.wearablebackpacks.backpack.armor=Защита
-config.wearablebackpacks.backpack.armor.tooltip=Очки защиты рюкзака
-# config.wearablebackpacks.backpack.armor.hint=No effect if not equipped as armor
+config.wearablebackpacks.backpack.armor.tooltip=Очки защиты рюкзака.
+config.wearablebackpacks.backpack.armor.hint=Не действует если не надето в слот брони
 config.wearablebackpacks.backpack.size=Вместимость
-config.wearablebackpacks.backpack.size.tooltip=Задаёт вместимость рюкзака. Не влияет на уже существующие поставленные или надетые рюкзаки.
+config.wearablebackpacks.backpack.size.tooltip=Задаёт вместимость рюкзака. Не влияет на уже существующие поставленные или надетые рюкзаки
