@@ -3,6 +3,7 @@ package net.mcft.copy.backpacks.client.config;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
 import net.minecraftforge.common.config.Configuration;
@@ -21,10 +22,10 @@ public class BackpacksGuiConfig extends GuiConfig {
 	
 	public final String category;
 	
-	public BackpacksGuiConfig(GuiScreen parent)
-		{ this(parent, Configuration.CATEGORY_GENERAL, WearableBackpacks.MOD_ID,
-		       false, false, WearableBackpacks.MOD_NAME, ""); }
-	
+	public BackpacksGuiConfig(GuiScreen parent) {
+		this(parent, Configuration.CATEGORY_GENERAL, WearableBackpacks.MOD_ID,
+		     false, false, WearableBackpacks.MOD_NAME, "");
+	}
 	public BackpacksGuiConfig(GuiScreen parentScreen, String category, String modID, 
 	                          boolean allRequireWorldRestart, boolean allRequireMcRestart,
 	                          String title, String titleLine2) {
@@ -40,6 +41,15 @@ public class BackpacksGuiConfig extends GuiConfig {
 		super.initGui();
 		if (!(entryList instanceof Entries))
 			entryList = new Entries(this);
+	}
+	
+	@Override
+	protected void actionPerformed(GuiButton button) {
+		super.actionPerformed(button);
+		// If the main backpacks config screen is closed,
+		// reset the entry fields on the setting instances.
+		if ((button.id == 2000) && !(this.parentScreen instanceof GuiConfig))
+			WearableBackpacks.CONFIG.getSettings().forEach(Setting::resetEntry);
 	}
 	
 	/** Custom GuiConfigEntries class which generates entries directly from the

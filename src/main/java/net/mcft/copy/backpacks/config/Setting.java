@@ -1,17 +1,30 @@
 package net.mcft.copy.backpacks.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTBase;
-
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import net.mcft.copy.backpacks.WearableBackpacks;
+import net.mcft.copy.backpacks.client.config.EntrySetting;
 
 /** Represents a single configuration setting. */
 public abstract class Setting<T> {
+	
+	/** Controls whether get() returns getEntryValue() or the setting's value. */
+	private static boolean _checkEntryValue = false;
+	
 	
 	/** Default value, used when no config file is present. */
 	private final T _defaultValue;
@@ -23,17 +36,24 @@ public abstract class Setting<T> {
 	/** Holds the setting's Forge Configuration Property. */
 	private Property _property = null;
 	
+	/** Holds the setting's current entry instance in the config GUI (if open). */
+	@SideOnly(Side.CLIENT)
+	private EntrySetting<T> _entry = null;
+	
 	/** The setting category, for example "general". */
 	private String _category;
 	/** The setting name, for example "equipAsChestArmor". */
 	private String _name;
 	
-	/** Stores settings which are required for this one to function. */
-	private List<Setting<Boolean>> _requiredSettings = null;
+	/** Stores a function which is called to determine if requirements are met. */
+	private BooleanSupplier _requireFunc = () -> true;
 	/** Whether changing the setting requires rejoining the current world. */
 	private boolean _requiresWorldRejoin = false;
 	/** Whether changing the setting requires restarting the Minecraft instance. */
 	private boolean _requiresMinecraftRestart = false;
+	
+	/** Stores a function which is called to determine if recommendations are met (returns hint). */
+	private Supplier<List<String>> _recommendFunc = () -> null;
 	
 	/** The setting's valid values as a string array, or null if none. */
 	private T[] _validValues = null;
@@ -67,14 +87,35 @@ public abstract class Setting<T> {
 		_name = name;
 	}
 	
-	/** Sets the specified setting to be required for this setting. */
+	/** Sets a function that determines if the setting's requirements are met. */
+	public final Setting<T> setRequirement(BooleanSupplier requireFunc)
+		{ _requireFunc = requireFunc; return this; }
+	/** Sets the specified settings to be required for this setting. */
 	@SafeVarargs
 	public final Setting<T> setRequired(Setting<Boolean>... settings)
-		{ _requiredSettings = Arrays.asList(settings); return this; }
+		{ return setRequirement(() -> Arrays.asList(settings).stream().allMatch(setting -> setting.get())); }
 	/** Sets the setting to require rejoining the world after being changed. */
 	public Setting<T> setRequiresWorldRejoin() { _requiresWorldRejoin = true; return this; }
 	/** Sets the setting to require restarting the game after being changed. */
 	public Setting<T> setRequiresMinecraftRestart() { _requiresMinecraftRestart = true; return this; }
+	
+	/** Sets a function that determines if the setting's recommendations are met. */
+	public final Setting<T> setRecommendation(Supplier<List<String>> recommendFunc)
+		{ _recommendFunc = recommendFunc; return this; }
+	/** Sets the specified setting to be recommended for this setting. */
+	@SafeVarargs
+	public final Setting<T> setRecommended(Setting<Boolean>... settings) {
+		// TODO: This should probably be moved somewhere else.
+		return setRecommendation(() -> {
+			if (Arrays.asList(settings).stream().allMatch(setting -> setting.get())) return null;
+			String key = "config." + WearableBackpacks.MOD_ID + "." + getFullName() + ".hint";
+			List<String> tooltip = new ArrayList<String>(Arrays.asList(
+				(TextFormatting.YELLOW + I18n.format(key)).split("\\\\n")));
+			for (Setting<Boolean> setting : settings) if (!setting.get())
+				tooltip.add(TextFormatting.AQUA + "[" + setting.getFullName() + " = false]");
+			return tooltip;
+		});
+	}
 	
 	/** Sets the valid values for this setting. */
 	@SafeVarargs
@@ -105,17 +146,35 @@ public abstract class Setting<T> {
 	/** Returns the setting's default value. */
 	public T getDefault() { return _defaultValue; }
 	/** Returns the setting's current value. */
-	public T get() { return (_isSynced ? _syncedValue : _value); }
+	public T get() { return (_checkEntryValue ? getEntryValue() : (_isSynced ? _syncedValue : _value)); }
 	/** Sets the setting's current value. */
 	public void set(T value) { _value = value; _property.set(Objects.toString(value)); }
 	
-	/** Returns if there's all required settings are enabled. */
-	public boolean isRequiredEnabled() { return ((_requiredSettings == null) ||
-		_requiredSettings.stream().allMatch((setting) -> setting.get())); }
+	/** Returns if this setting is enabled based on its requirements. */
+	public boolean isEnabled() { return _requireFunc.getAsBoolean(); }
+	/** Returns if this setting is enabled based on its requirements (uses config entry values). */
+	@SideOnly(Side.CLIENT)
+	public boolean isEnabledConfig() {
+		_checkEntryValue = true;
+		boolean enabled = isEnabled();
+		_checkEntryValue = false;
+		return enabled;
+	}
+	
 	/** Returns whether changing the setting requires a world rejoin. */
 	public boolean requiresWorldRejoin() { return _requiresWorldRejoin; }
 	/** Returns whether changing the setting requires Minecraft to be restarted. */
 	public boolean requiresMinecraftRestart() { return _requiresMinecraftRestart; }
+	
+	/** Returns a recommendation hint for this setting if
+	 *  not all recommendations are met, or null otherwise. */
+	@SideOnly(Side.CLIENT)
+	public List<String> getRecommendationHint() {
+		_checkEntryValue = true;
+		List<String> hintTooltip = _recommendFunc.get();
+		_checkEntryValue = false;
+		return hintTooltip;
+	}
 	
 	/** Returns if the setting is synced to players when they join a (multiplayer/LAN) world. */
 	public boolean doesSync() { return _doesSync; }
@@ -128,11 +187,21 @@ public abstract class Setting<T> {
 	/** Returns the setting's comment, as used in the config file. */
 	public String getComment() { return _comment; }
 	
+	/** Returns the setting's current entry value in the config GUI. */
+	private T getEntryValue() { return _entry.getValue(); }
+	/** Sets the setting's current config entry in the config GUI to the specified entry.
+	 *  Used for disabling config entries dynamically based on which settings they require. */
+	@SideOnly(Side.CLIENT)
+	public void setEntry(EntrySetting<T> entry) { _entry = entry; }
+	/** Resets the setting's current config entry in the config GUI. */
+	@SideOnly(Side.CLIENT)
+	public void resetEntry() { _entry = null; }
+	
 	
 	/** Calls the update action if present
 	 *  and any required setting is enabled. */
 	public void update() {
-		if ((_updateAction != null) && isRequiredEnabled())
+		if ((_updateAction != null) && isEnabled())
 			_updateAction.accept(_value);
 	}
 	
