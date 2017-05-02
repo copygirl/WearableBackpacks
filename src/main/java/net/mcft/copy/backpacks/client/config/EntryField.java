@@ -64,9 +64,9 @@ public abstract class EntryField<T> extends EntrySetting<T> {
 			String before = field.getText();
 			if (!validChars.contains(String.valueOf(eventChar)) &&
 			    (before.startsWith("-") || (field.getCursorPosition() > 0) || (eventChar != '-')) &&
-				(eventKey != Keyboard.KEY_BACK) && (eventKey != Keyboard.KEY_DELETE) &&
-				(eventKey != Keyboard.KEY_LEFT) && (eventKey != Keyboard.KEY_RIGHT) &&
-				(eventKey != Keyboard.KEY_HOME) && (eventKey != Keyboard.KEY_END)) return;
+			    (eventKey != Keyboard.KEY_BACK) && (eventKey != Keyboard.KEY_DELETE) &&
+			    (eventKey != Keyboard.KEY_LEFT) && (eventKey != Keyboard.KEY_RIGHT) &&
+			    (eventKey != Keyboard.KEY_HOME) && (eventKey != Keyboard.KEY_END)) return;
 			super.keyTyped(eventChar, eventKey);
 		}
 		

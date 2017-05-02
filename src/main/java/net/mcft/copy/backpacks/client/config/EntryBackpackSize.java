@@ -71,7 +71,7 @@ public class EntryBackpackSize extends EntryButton<BackpackSize> {
 					Math.min(Math.max(1 + (mouseY - (yPosition + offset)) / slotSize, 1), BackpackSize.MAX.getRows()));
 			BackpackSize value = _entry.value;
 			
-			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+			GlStateManager.color(1.0F, 1.0F, 1.0F);
 			// Draw background.
 			GuiUtils.drawContinuousTexturedBox(BUTTON_TEXTURES, xPosition, yPosition, 0, 46,
 			                                   width, height, 200, 20, 2, 3, 2, 2, zLevel);
@@ -85,14 +85,15 @@ public class EntryBackpackSize extends EntryButton<BackpackSize> {
 					                (mouseY >= y) && (mouseY < y + slotSize);
 					boolean active = (column <= value.getColumns()) && (row <= value.getRows());
 					boolean selected = (column == value.getColumns()) && (row == value.getRows());
-					if (!active && !hover) continue;
-					int texY = (hover ? 86 : 66);
-					int b    = (selected ? 0 : 1);
+					if (!active && (!enabled || !hover)) continue;
+					int texY = (enabled ? (hover ? 86 : 66) : 46);
+					int b    = ((selected || !enabled) ? 0 : 1);
 					GuiUtils.drawContinuousTexturedBox(x, y, b, texY + b, slotSize, slotSize,
 					                                   200 - b*2, 20 - b*2, 2-b, 3-b, 2-b, 2-b, zLevel);
 				}
 			
-			drawCenteredString(mc.fontRendererObj, value.toString(), xPosition + width / 2, yPosition + (height - 8) / 2, 0xFFFFFF);
+			int color = (enabled ? 0xFFFFFF : 0x707070);
+			drawCenteredString(mc.fontRendererObj, value.toString(), xPosition + width / 2, yPosition + (height - 8) / 2, color);
 		}
 		
 	}

@@ -23,7 +23,8 @@ public class EntryArmor extends EntrySlider {
 	                      int mouseX, int mouseY, boolean isSelected) {
 		super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
 		// Draw visual armor bar.
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		float v = (enabled() ? 1.0F : 0.5F);
+		GlStateManager.color(v, v, v);
 		mc.getTextureManager().bindTexture(Gui.ICONS);
 		int xx = slider.xPosition + slider.width / 2 - 5 * 8;
 		int yy = slider.yPosition + slider.height / 2 - 8 / 2;
