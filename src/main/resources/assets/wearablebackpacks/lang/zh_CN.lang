@@ -12,8 +12,8 @@ tooltip.wearablebackpacks.used=有玩家正在查看此背包
 chat.wearablebackpacks.cantEquip=你最多只能装备一个背包！
 chat.wearablebackpacks.cantEquip.chestplate=你不能在身着护甲时装备背包！
 
-#key.wearablebackpacks.category=Wearable Backpacks
 key.wearablebackpacks.open=打开背包
+
 
 config.wearablebackpacks.general.equipAsChestArmor=护甲式背包
 config.wearablebackpacks.general.equipAsChestArmor.tooltip=启用此选项后，背包可以当作普通护甲，并装备于玩家的护甲格。
@@ -30,5 +30,9 @@ config.wearablebackpacks.backpack.enabled=启用普通背包
 config.wearablebackpacks.backpack.enabled.tooltip=禁用此选项后可屏蔽所有形式的背包。
 config.wearablebackpacks.backpack.durability=背包耐久
 config.wearablebackpacks.backpack.durability.tooltip=本选项控制背包的耐久值，设定为0代表不毁，负值会直接导致损坏的背包直接消失。
-config.wearablebackpacks.backpack.rows=存储空间
-config.wearablebackpacks.backpack.rows.tooltip=本选项控制背包中格子的行数。本选项不影响已放置或已装备的背包。
+# config.wearablebackpacks.backpack.durability.hint=No effect if not equipped as armor
+# config.wearablebackpacks.backpack.armor=Armor
+# config.wearablebackpacks.backpack.armor.tooltip=Armor points of regular backpacks.
+# config.wearablebackpacks.backpack.armor.hint=No effect if not equipped as armor
+# config.wearablebackpacks.backpack.size=Storage Size
+# config.wearablebackpacks.backpack.size.tooltip=Controls the storage size of regular backpacks. Does not affect placed or equipped backpacks
