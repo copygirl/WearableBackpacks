@@ -95,10 +95,19 @@ treated the same.
 
 **Authors:** copygirl, asiekierka  
 **Contributors:** -  
-**Localizations:**
-  [tinywolf3](https://github.com/tinywolf3) (ko_KR) -
-  [TDarkShadow](https://github.com/TDarkShadow) (nl_NL) -
-  [kirill3345](https://github.com/kirill3345), [dangranos](https://github.com/dangranos) (ru_RU)  
+
+### Localization
+
+In the order of their [Pull Requests][PR] being submitted, here are the lovely people who
+provided their translation superpowers to make **WB** available in other languages:
+
+- **German** (de_DE): [Vexatos](https://github.com/Vexatos)
+- **Chinese** (zh_CN): [3TUSK](https://github.com/3TUSK)
+- **Dutch** (nl_NL): [TDarkShadow](https://github.com/TDarkShadow)
+- **Russian** (ru_RU): [kirill3345](https://github.com/kirill3345),
+                       [dangranos](https://github.com/dangranos),
+                       [raspopov](https://github.com/raspopov)
+- **Korean** (ko_KR): [tinywolf3](https://github.com/tinywolf3)
 
 ### Special thanks to ...
 
@@ -116,7 +125,8 @@ little community's IRC channel (#obsidian on Esper.net) and [Discord guild][DISC
 *In the event that this mod becomes self-aware, we are not responsible for any damage it causes.*
 
 
-[IT]: https://github.com/copygirl/WearableBackpacks/issues
+[IT]: https://github.com/copygirl/WearableBackpacks/issues?q=is%3Aissue
+[PR]: https://github.com/copygirl/WearableBackpacks/pulls?q=is%3Apr
 [DL]: https://github.com/copygirl/WearableBackpacks/releases
 [CF]: https://minecraft.curseforge.com/projects/wearable-backpacks
 
