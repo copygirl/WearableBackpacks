@@ -2,7 +2,7 @@ container.wearablebackpacks.backpack=背包
 
 item.wearablebackpacks.backpack.name=背包
 
-tooltip.wearablebackpacks.moreInfo=按下 %1$s 显示更多信息
+tooltip.wearablebackpacks.moreInfo=按住 %1$s 查看更多信息
 tooltip.wearablebackpacks.openHint=按下 %1$s 打开背包
 tooltip.wearablebackpacks.equipHint=潜行时放置并打掉即可装备。
 tooltip.wearablebackpacks.equipHint.extended=潜行时打掉即可装备。\n潜行时空手右击地面即可卸下。
@@ -17,9 +17,9 @@ key.wearablebackpacks.open=打开背包
 
 config.wearablebackpacks.general.equipAsChestArmor=护甲式背包
 config.wearablebackpacks.general.equipAsChestArmor.tooltip=启用此选项后，背包可以当作普通护甲，并装备于玩家的护甲格。
-#config.wearablebackpacks.general.enableEquippedInteraction=Enable Equipped Interaction
+config.wearablebackpacks.general.enableEquippedInteraction=玩家间可互相交互
 config.wearablebackpacks.general.enableEquippedInteraction.tooltip=启用此选项后，玩家可直接打开其他玩家或实体身上的背包。
-#config.wearablebackpacks.general.enableSelfInteraction=Enable Self Interaction
+config.wearablebackpacks.general.enableSelfInteraction=快速访问背包
 config.wearablebackpacks.general.enableSelfInteraction.tooltip=启用此选项后，玩家可利用快捷键打开自己身上的背包。
 config.wearablebackpacks.general.dropAsBlockOnDeath=玩家死亡时以方块形式出现
 config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=启用此选项后，背包会在玩家死亡时以方块形式出现，其中物品
