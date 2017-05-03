@@ -33,6 +33,7 @@ import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackType;
+import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
 import net.mcft.copy.backpacks.container.SlotArmorBackpack;
 import net.mcft.copy.backpacks.item.DyeWashingHandler;
 import net.mcft.copy.backpacks.misc.BackpackCapability;
@@ -235,8 +236,11 @@ public class ProxyCommon {
 					BlockCoord coord = iter.next();
 					// Attempt to place and unequip the backpack at
 					// this coordinate. If successful, we're done here.
-					if (BackpackHelper.placeBackpack(world, coord, backpack.getStack(), entity, true))
+					if (BackpackHelper.placeBackpack(world, coord, backpack.getStack(), entity, true)) {
+						// TODO: I'm aware that this is not the cleanest solution.
+						((TileEntityBackpack)world.getTileEntity(coord)).setPlacedOnDeath();
 						return;
+					}
 					boolean replacable = world.getBlockState(coord).getBlock().isReplaceable(world, coord);
 					coord.add(0, (replacable ? -1 : 1), 0);
 					coord.moved += (replacable ? 1 : 5);
