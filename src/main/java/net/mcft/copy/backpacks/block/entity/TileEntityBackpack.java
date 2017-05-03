@@ -14,15 +14,18 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
+import net.mcft.copy.backpacks.block.BlockBackpack;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 
 // TODO: Implement ItemStackHandler (only for bottom side)?
 public class TileEntityBackpack extends TileEntity implements ITickable, IBackpack {
 	
+	public static final String TAG_AGE    = "age";
 	public static final String TAG_STACK  = "stack";
 	public static final String TAG_DATA   = "data";
 	public static final String TAG_FACING = "facing";
 	
+	private int _age = 0;
 	private ItemStack _stack = null;
 	private IBackpackData _data = null;
 	private int _playersUsing = 0;
@@ -31,8 +34,12 @@ public class TileEntityBackpack extends TileEntity implements ITickable, IBackpa
 	
 	public EnumFacing facing = EnumFacing.NORTH;
 	
+	/** Returns the age of this backpack tile entity in ticks. */
+	public int getAge() { return _age; }
+	
 	@Override
 	public void update() {
+		_age++;
 		if (world.isRemote)
 			BackpackHelper.updateLidTicks(this,
 				pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
@@ -44,9 +51,17 @@ public class TileEntityBackpack extends TileEntity implements ITickable, IBackpa
 		return false;
 	}
 	
+	/** Called when the backpack is placed upon death. */
+	public void setPlacedOnDeath() {
+		// Set the age to a negative value - this prevents
+		// backpacks from exploding right after being dropped.
+		_age = -BlockBackpack.EXPLOSION_RESIST_TICKS;
+	}
+	
 	// Reading/writing, loading/saving, update packets
 	
 	public void readNBT(NBTTagCompound compound, boolean isClient) {
+		_age = (!isClient ? compound.getInteger(TAG_AGE) : 0);
 		facing = EnumFacing.getFront(NbtUtils.get(compound, (byte)0, TAG_FACING) + 2);
 		
 		_stack = NbtUtils.readItem(compound.getCompoundTag(TAG_STACK));
@@ -59,6 +74,7 @@ public class TileEntityBackpack extends TileEntity implements ITickable, IBackpa
 	
 	public NBTTagCompound writeNBT(NBTTagCompound compound, boolean isClient) {
 		NbtUtils.addToCompound(compound,
+			TAG_AGE, (!isClient ? _age : null),
 			TAG_FACING, (byte)(facing.ordinal() - 2),
 			TAG_STACK, ((_stack != null) ? _stack.serializeNBT() : null),
 			TAG_DATA, (((_data != null) && !isClient) ? _data.serializeNBT() : null));
