@@ -98,7 +98,7 @@ treated the same.
 
 ### Localization
 
-In the order of their [Pull Requests][PR] being submitted, here are the lovely people who
+In the order of their [pull requests][PR] being submitted, here are the lovely people who
 provided their translation superpowers to make **WB** available in other languages:
 
 - **German** (de_DE): [Vexatos](https://github.com/Vexatos)
@@ -108,6 +108,7 @@ provided their translation superpowers to make **WB** available in other languag
                        [dangranos](https://github.com/dangranos),
                        [raspopov](https://github.com/raspopov)
 - **Korean** (ko_KR): [tinywolf3](https://github.com/tinywolf3)
+- **Portuguese** (pt_BR): [wenlfs](https://github.com/wenlfs)
 
 ### Special thanks to ...
 
