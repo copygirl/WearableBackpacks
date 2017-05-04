@@ -38,7 +38,7 @@ public abstract class Setting<T> {
 	
 	/** Holds the setting's current entry instance in the config GUI (if open). */
 	@SideOnly(Side.CLIENT)
-	private EntrySetting<T> _entry = null;
+	private EntrySetting<T> _entry;
 	
 	/** The setting category, for example "general". */
 	private String _category;
