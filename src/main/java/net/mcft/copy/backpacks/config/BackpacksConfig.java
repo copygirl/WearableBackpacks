@@ -52,7 +52,7 @@ public class BackpacksConfig extends Configuration {
 			            "Lowering this (including setting to 0) can cause issues with already damaged backpacks.");
 		
 		public final Setting<Integer> armor = new SettingInteger(2).setValidRange(0, 20)
-			.setRequired(enabled).setRecommended(equipAsChestArmor)
+			.setRequired(enabled).setRecommended(equipAsChestArmor).setSynced()
 			.setConfigEntryClass("net.mcft.copy.backpacks.client.config.EntryArmor")
 			.setComment("Armor points of a normal backpack. Valid values are 0 to 20. Default: 2.\n" +
 			            "Has no effect if equipAsChestArmor is disabled.");
