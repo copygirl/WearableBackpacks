@@ -63,35 +63,28 @@ public class BackpackCapability implements IBackpack {
 	
 	@Override
 	public void setStack(ItemStack value) {
-		ItemStack lastStack = stack;
-		boolean chestArmorChanged = false;
+		boolean setChestArmor = (value != null)
+			// If backpack is being set, use equipAsChestArmor to
+			// determine whether the chest armor slot is set or not.
+			? BackpackHelper.equipAsChestArmor
+			// If being removed, use whether it actually is equipped there.
+			: isChestArmor();
 		
-		// Remove previous backpack from chest armor slot, if any.
-		if (isChestArmor()) {
-			entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, null);
-			chestArmorChanged = true;
-		}
-		
-		// Equip backpack to chest armor slot if config option is set to enabled.
-		if (BackpackHelper.equipAsChestArmor) {
+		if (setChestArmor) {
 			stack = null;
-			lastType = ((value != null) ? BackpackHelper.getBackpackType(value) : null);
+			lastType = BackpackHelper.getBackpackType(value);
 			entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, value);
-			chestArmorChanged = true;
-		// Otherwise store it inside the capability.
+			
+			// Send the updated equipment to all players.
+			if (entity instanceof EntityPlayer)
+				((EntityPlayer)entity).inventoryContainer.detectAndSendChanges();
 		} else {
 			stack = value;
 			lastType = null;
-		}
-		
-		if (!entity.world.isRemote) {
-			// If chest armor was changed and this is a player, send the updated stack.
-			if (chestArmorChanged && (entity instanceof EntityPlayer))
-				((EntityPlayer)entity).inventoryContainer.detectAndSendChanges();
-			// If backpack capability stack was changed, send it to everyone who can see the entity.
-			if (stack != lastStack)
-				WearableBackpacks.CHANNEL.sendToAllTracking(
-					MessageBackpackUpdate.stack(entity, stack), entity, true);
+			
+			// Send new value to everyone who can see the entity.
+			WearableBackpacks.CHANNEL.sendToAllTracking(
+				MessageBackpackUpdate.stack(entity, stack), entity, true);
 		}
 	}
 	
