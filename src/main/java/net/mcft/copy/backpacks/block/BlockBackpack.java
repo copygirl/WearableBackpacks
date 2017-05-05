@@ -156,7 +156,8 @@ public class BlockBackpack extends BlockContainer {
 	
 	@Override
 	public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player) {
-		if (!worldIn.isRemote && player.isSneaking())
+		if (!worldIn.isRemote && player.isSneaking() &&
+		    BackpackHelper.canEquipBackpack(player))
 			// On the server, try to equip the backpack
 			// if the player is sneaking while breaking it.
 			BackpackHelper.equipBackpack(player, worldIn.getTileEntity(pos));
