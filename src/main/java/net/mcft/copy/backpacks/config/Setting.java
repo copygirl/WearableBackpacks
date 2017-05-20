@@ -3,7 +3,6 @@ package net.mcft.copy.backpacks.config;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -148,7 +147,7 @@ public abstract class Setting<T> {
 	/** Returns the setting's current value. */
 	public T get() { return (_checkEntryValue ? getEntryValue() : (_isSynced ? _syncedValue : _value)); }
 	/** Sets the setting's current value. */
-	public void set(T value) { _value = value; _property.set(Objects.toString(value)); }
+	public void set(T value) { _value = value; _property.set(stringify(value)); }
 	
 	/** Returns if this setting is enabled based on its requirements. */
 	public boolean isEnabled() { return _requireFunc.getAsBoolean(); }
@@ -221,7 +220,7 @@ public abstract class Setting<T> {
 			if (_validValues != null)
 				_property.setValidValues(
 					(String[])Arrays.stream(_validValues)
-						.map(Object::toString).toArray());
+						.map(value -> stringify(value)).toArray());
 		}
 		return _property;
 	}
@@ -230,6 +229,11 @@ public abstract class Setting<T> {
 	/** Attempts to parse the specified string as a value of this setting.
 	 *  Throws an exception if the specified string is not valid. */
 	public abstract T parse(String str);
+	
+	/** Turns the value into a string to be saved to the config */
+	public String stringify(T value) {
+		return ((value != null) ? value.toString() : "null");
+	}
 	
 	/** Called when the Configuration is loaded. */
 	protected void onPropertyLoaded() {
