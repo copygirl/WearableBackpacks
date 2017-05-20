@@ -36,3 +36,8 @@ config.wearablebackpacks.backpack.armor.tooltip=Pontos de armadura da mochilas r
 config.wearablebackpacks.backpack.armor.hint=Sem efeito se não estiver equipada como armadura
 config.wearablebackpacks.backpack.size=Tamanho do Armazenamento
 config.wearablebackpacks.backpack.size.tooltip=Controla o tamanho do armazenamento das mochilas regulares. Não afeta mochilas colocas ou equipadas
+
+# config.wearablebackpacks.category.cosmetic=Cosmetic Settings
+# config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay
+# config.wearablebackpacks.cosmetic.enchantEffectOpacity=Enchant Effect Opacity
+# config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controls the opacity / visibility of the enchantment effect on equipped and placed backpacks, if present.

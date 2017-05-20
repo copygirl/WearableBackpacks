@@ -146,7 +146,7 @@ public final class RendererBackpack {
 	private static void renderEnchanted(IBackpack backpack, BlockModelRenderer renderer,
 	                                    float ticks, boolean renderStraps) {
 		
-		float glintStrength = 0.8F;
+		float glintStrength = WearableBackpacks.CONFIG.cosmetic.enchantEffectOpacity.get().floatValue();
 		if (glintStrength <= 0) return;
 		float glintScale = 0.5F;
 		float animProgress = ticks / 10;

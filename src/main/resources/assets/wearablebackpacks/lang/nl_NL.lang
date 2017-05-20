@@ -36,3 +36,8 @@ config.wearablebackpacks.backpack.durability.tooltip=Regelt de duurzaamheid van 
 # config.wearablebackpacks.backpack.armor.hint=No effect if not equipped as armor
 config.wearablebackpacks.backpack.size=Opslag Grootte
 config.wearablebackpacks.backpack.size.tooltip=Bepaalt de opslag grootte van normale rugzakken. Heeft geen invloed op geplaatste of uitgeruste rugzakken
+
+# config.wearablebackpacks.category.cosmetic=Cosmetic Settings
+# config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay
+# config.wearablebackpacks.cosmetic.enchantEffectOpacity=Enchant Effect Opacity
+# config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controls the opacity / visibility of the enchantment effect on equipped and placed backpacks, if present.

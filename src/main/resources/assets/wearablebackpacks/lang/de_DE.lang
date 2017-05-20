@@ -36,3 +36,8 @@ config.wearablebackpacks.backpack.armor.tooltip=Rüstungspunkte normaler Rucksä
 config.wearablebackpacks.backpack.armor.hint=Hat keinen Effekt, wenn er nicht als Rüstung verwendet wird.
 config.wearablebackpacks.backpack.size=Lagerraum
 config.wearablebackpacks.backpack.size.tooltip=Bestimmt die Menge an Items, die ein normaler Rucksack halten kann. Betrifft bereits platzierte oder ausgerüstete Rucksäcke nicht.
+
+# config.wearablebackpacks.category.cosmetic=Cosmetic Settings
+# config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay
+# config.wearablebackpacks.cosmetic.enchantEffectOpacity=Enchant Effect Opacity
+# config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controls the opacity / visibility of the enchantment effect on equipped and placed backpacks, if present.

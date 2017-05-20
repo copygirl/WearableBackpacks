@@ -36,3 +36,8 @@ config.wearablebackpacks.backpack.armor.tooltip=本选项控制当背包用作�
 config.wearablebackpacks.backpack.armor.hint=当禁用护甲式背包时，更改此选项没有任何效果。
 config.wearablebackpacks.backpack.size=存储空间
 config.wearablebackpacks.backpack.size.tooltip=本选项控制背包中格子的行数。本选项不影响已放置或已装备的背包。
+
+# config.wearablebackpacks.category.cosmetic=Cosmetic Settings
+# config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay
+# config.wearablebackpacks.cosmetic.enchantEffectOpacity=Enchant Effect Opacity
+# config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controls the opacity / visibility of the enchantment effect on equipped and placed backpacks, if present.

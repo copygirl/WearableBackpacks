@@ -35,3 +35,8 @@ config.wearablebackpacks.backpack.armor.tooltip=Очки защиты рюкза
 config.wearablebackpacks.backpack.armor.hint=Не действует если не надето в слот брони
 config.wearablebackpacks.backpack.size=Вместимость
 config.wearablebackpacks.backpack.size.tooltip=Задаёт вместимость рюкзака. Не влияет на уже существующие поставленные или надетые рюкзаки
+
+# config.wearablebackpacks.category.cosmetic=Cosmetic Settings
+# config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay
+# config.wearablebackpacks.cosmetic.enchantEffectOpacity=Enchant Effect Opacity
+# config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controls the opacity / visibility of the enchantment effect on equipped and placed backpacks, if present.

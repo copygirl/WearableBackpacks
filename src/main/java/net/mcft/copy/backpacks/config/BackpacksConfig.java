@@ -7,12 +7,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.BackpacksContent;
 import net.mcft.copy.backpacks.WearableBackpacks;
@@ -39,7 +42,7 @@ public class BackpacksConfig extends Configuration {
 	
 	// ==[ BACKPACK ]==
 	
-	public final BackpackCategory backpack = new BackpackCategory();
+	public BackpackCategory backpack;
 	public class BackpackCategory {
 		
 		public final Setting<Boolean> enabled = new SettingBoolean(true)
@@ -63,6 +66,19 @@ public class BackpacksConfig extends Configuration {
 		
 	}
 	
+	// ==[ COSMETIC ]==
+	
+	@SideOnly(Side.CLIENT)
+	public CosmeticCategory cosmetic;
+	@SideOnly(Side.CLIENT)
+	public class CosmeticCategory {
+		
+		public final Setting<Double> enchantEffectOpacity = new SettingPercent(0.80)
+			.setConfigEntryClass("net.mcft.copy.backpacks.client.config.EntryEffectOpacity")
+			.setComment("Controls the opacity / visibility of the enchantment effect on equipped and placed backpacks, if present. Default: 80%.");
+		
+	}
+	
 	
 	private Map<String, Setting<?>> _settings = new LinkedHashMap<String, Setting<?>>();
 	
@@ -76,8 +92,12 @@ public class BackpacksConfig extends Configuration {
 		for (Field field : getClass().getFields()) {
 			if ((field.getDeclaringClass() != getClass()) ||
 			    !field.getType().getName().endsWith("Category")) continue;
-			try { addSettingsFromClass(field.get(this), field.getName()); }
-			catch (IllegalAccessException ex) { throw new RuntimeException(ex); }
+			try {
+				field.set(this, field.getType().getConstructors()[0].newInstance(this));
+				addSettingsFromClass(field.get(this), field.getName());
+			} catch (InstantiationException |
+			         InvocationTargetException |
+			         IllegalAccessException ex) { throw new RuntimeException(ex); }
 		}
 	}
 	

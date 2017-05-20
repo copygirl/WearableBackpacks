@@ -36,3 +36,8 @@ config.wearablebackpacks.backpack.armor.tooltip=Armor points of regular backpack
 config.wearablebackpacks.backpack.armor.hint=No effect if not equipped as armor
 config.wearablebackpacks.backpack.size=Storage Size
 config.wearablebackpacks.backpack.size.tooltip=Controls the storage size of regular backpacks. Does not affect placed or equipped backpacks
+
+config.wearablebackpacks.category.cosmetic=Cosmetic Settings
+config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay
+config.wearablebackpacks.cosmetic.enchantEffectOpacity=Enchant Effect Opacity
+config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controls the opacity / visibility of the enchantment effect on equipped and placed backpacks, if present.

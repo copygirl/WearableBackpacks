@@ -72,4 +72,24 @@ public abstract class EntryField<T> extends EntrySetting<T> {
 		
 	}
 	
+	public static class Decimal extends EntryField<Double> {
+		
+		public Decimal(GuiConfig owningScreen, GuiConfigEntries owningEntryList, Setting<?> setting)
+			{ super(owningScreen, owningEntryList, setting); }
+		
+		@Override
+		public void keyTyped(char eventChar, int eventKey) {
+			String validChars = "0123456789";
+			String before = field.getText();
+			if (!validChars.contains(String.valueOf(eventChar)) &&
+			    (before.startsWith("-") || (field.getCursorPosition() > 0) || (eventChar != '-')) &&
+			    (before.contains(".") || (eventChar != '.')) &&
+			    (eventKey != Keyboard.KEY_BACK) && (eventKey != Keyboard.KEY_DELETE) &&
+			    (eventKey != Keyboard.KEY_LEFT) && (eventKey != Keyboard.KEY_RIGHT) &&
+			    (eventKey != Keyboard.KEY_HOME) && (eventKey != Keyboard.KEY_END)) return;
+			super.keyTyped(eventChar, eventKey);
+		}
+		
+	}
+	
 }
