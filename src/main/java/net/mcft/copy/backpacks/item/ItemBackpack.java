@@ -4,6 +4,8 @@ import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
@@ -35,7 +37,6 @@ import net.mcft.copy.backpacks.misc.util.LangUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 import net.mcft.copy.backpacks.misc.util.WorldUtils;
 
-// TODO: Support armor enchantments like on BetterStorage backpacks? (Delayed to 1.11 version due to lack of enchantment hooks.)
 // TODO: Implement additional enchantments?
 //       - Holding: Increases backpack size (dungeon loot only?)
 //       - Supply I: Automatically fills up stackable items from backpack
@@ -63,6 +64,18 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	}
 	
 	// Item properties
+	
+	@Override
+	public boolean isEnchantable(ItemStack stack) {
+		// Only enchantable if backpack is equipped as chest armor.
+		// Otherwise unbreaking and protection enchantments are useless.
+		return BackpackHelper.equipAsChestArmor;
+		// Also needs to be overridden because otherwise 0
+		// durability considers the backpack unenchantable.
+	}
+	
+	@Override
+	public int getItemEnchantability() { return 12; }
 	
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -124,6 +137,13 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		return (state.isSideSolid(worldIn, pos, EnumFacing.UP) &&
 		        BackpackHelper.placeBackpack(worldIn, pos, player.getHeldItem(hand), player, false))
 			? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
+	}
+	
+	@Override
+	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+		// Allow armor enchantments on top of anything supported by default.
+		return (super.canApplyAtEnchantingTable(stack, enchantment) ||
+		        ((enchantment.type == EnumEnchantmentType.ARMOR) && BackpackHelper.equipAsChestArmor));
 	}
 	
 	// IBackpackType implementation
