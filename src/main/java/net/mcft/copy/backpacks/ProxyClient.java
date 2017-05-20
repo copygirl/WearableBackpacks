@@ -38,6 +38,7 @@ import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.ProxyCommon;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
+import net.mcft.copy.backpacks.client.BakedModelDefaultTexture;
 import net.mcft.copy.backpacks.client.KeyBindingHandler;
 import net.mcft.copy.backpacks.client.RendererBackpack;
 import net.mcft.copy.backpacks.item.ItemBackpack;
@@ -51,6 +52,9 @@ public class ProxyClient extends ProxyCommon {
 	public static IBakedModel MODEL_BACKPACK;
 	public static IBakedModel MODEL_BACKPACK_TOP;
 	public static IBakedModel MODEL_BACKPACK_STRAPS;
+	
+	public static IBakedModel MODEL_BACKPACK_ENCH;
+	public static IBakedModel MODEL_BACKPACK_ENCH_TOP;
 	
 	@Override
 	public void preInit() {
@@ -131,6 +135,9 @@ public class ProxyClient extends ProxyCommon {
 		MODEL_BACKPACK = bakeBlockModel("wearablebackpacks:block/backpack");
 		MODEL_BACKPACK_TOP = bakeBlockModel("wearablebackpacks:block/backpack_top");
 		MODEL_BACKPACK_STRAPS = bakeBlockModel("wearablebackpacks:block/backpack_straps");
+		
+		MODEL_BACKPACK_ENCH = new BakedModelDefaultTexture(MODEL_BACKPACK);
+		MODEL_BACKPACK_ENCH_TOP = new BakedModelDefaultTexture(MODEL_BACKPACK_TOP);
 	}
 	
 	static IBakedModel bakeBlockModel(String location) {
