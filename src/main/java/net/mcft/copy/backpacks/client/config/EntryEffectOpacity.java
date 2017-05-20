@@ -44,7 +44,7 @@ public class EntryEffectOpacity extends EntrySliderPercent {
 		Minecraft mc = Minecraft.getMinecraft();
 		float animProgress = Minecraft.getSystemTime() / 400.0F;
 		
-		int color = 0x8040FF;
+		int color = 0xFF8040CC;
 		float r = (color >> 16 & 0xFF) / 255.0F;
 		float g = (color >> 8 & 0xFF) / 255.0F;
 		float b = (color & 0xFF) / 255.0F;

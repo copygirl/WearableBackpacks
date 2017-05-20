@@ -22,6 +22,7 @@ import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackType;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
+import net.mcft.copy.backpacks.misc.util.IntermodUtils;
 
 /** Contains methods and nested classes which handle rendering
     of backpacks as tile entity and layer on regular entities. */
@@ -151,7 +152,7 @@ public final class RendererBackpack {
 		float glintScale = 0.5F;
 		float animProgress = ticks / 10;
 		
-		int color = 0x8040FF; // TODO: Support Quark's colored runes.
+		int color = IntermodUtils.getRuneColor(backpack.getStack());
 		float r = (color >> 16 & 0xFF) / 255.0F * glintStrength;
 		float g = (color >> 8 & 0xFF) / 255.0F * glintStrength;
 		float b = (color & 0xFF) / 255.0F * glintStrength;
