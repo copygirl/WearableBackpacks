@@ -1,5 +1,7 @@
 package net.mcft.copy.backpacks.client.config;
 
+import java.text.DecimalFormat;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 
@@ -10,19 +12,21 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.config.Setting;
-import net.mcft.copy.backpacks.config.SettingInteger;
+import net.mcft.copy.backpacks.config.SettingDouble;
 
 @SideOnly(Side.CLIENT)
-public class EntrySlider extends EntryButton<Integer> {
+public class EntrySliderPercent extends EntryButton<Double> {
+	
+	private static final DecimalFormat _df = new DecimalFormat("0.##");
 	
 	public final Slider slider;
 	
-	public EntrySlider(GuiConfig owningScreen, GuiConfigEntries owningEntryList, Setting<Integer> setting) {
+	public EntrySliderPercent(GuiConfig owningScreen, GuiConfigEntries owningEntryList, Setting<Double> setting) {
 		this(owningScreen, owningEntryList, setting, new Slider(
-			((SettingInteger)setting).getMinValue(),
-			((SettingInteger)setting).getMaxValue()));
+			((SettingDouble)setting).getMinValue(),
+			((SettingDouble)setting).getMaxValue()));
 	}
-	public EntrySlider(GuiConfig owningScreen, GuiConfigEntries owningEntryList, Setting<Integer> setting, GuiSlider slider) {
+	public EntrySliderPercent(GuiConfig owningScreen, GuiConfigEntries owningEntryList, Setting<Double> setting, GuiSlider slider) {
 		super(owningScreen, owningEntryList, setting, slider);
 		this.slider = (Slider)slider;
 	}
@@ -33,16 +37,21 @@ public class EntrySlider extends EntryButton<Integer> {
 	@Override
 	public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight,
 	                      int mouseX, int mouseY, boolean isSelected) {
+		slider.displayString = _df.format(getValue() * 100) + "%";
 		super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
-		value = slider.getValueInt();
+		value = slider.getValue();
 	}
 	
-	/** Custom GuiSlider class which snaps to integer values. */
+	// TODO: Don't repeat yourself. Somehow merge with EntrySlider?
 	public static class Slider extends GuiSlider {
 		
-		public Slider(int min, int max) { super(0, 0, 0, 300, 18, "", "", min, max, min, false, false); }
+		public Slider(double min, double max) { super(0, 0, 0, 300, 18, "", "", min, max, min, false, false); }
 		
-		@Override public void updateSlider() { super.updateSlider(); setValue(getValueInt()); }
+		@Override
+		public void updateSlider() {
+			super.updateSlider();
+			setValue(Math.round(getValue() * 100) / 100.0F);
+		}
 		
 		@Override
 		protected void mouseDragged(Minecraft mc, int mouseX, int mouseY) {

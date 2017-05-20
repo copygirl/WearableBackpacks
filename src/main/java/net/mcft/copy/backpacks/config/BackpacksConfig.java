@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
@@ -39,7 +40,7 @@ public class BackpacksConfig extends Configuration {
 	
 	// ==[ BACKPACK ]==
 	
-	public final BackpackCategory backpack = new BackpackCategory();
+	public BackpackCategory backpack;
 	public class BackpackCategory {
 		
 		public final Setting<Boolean> enabled = new SettingBoolean(true)
@@ -76,8 +77,12 @@ public class BackpacksConfig extends Configuration {
 		for (Field field : getClass().getFields()) {
 			if ((field.getDeclaringClass() != getClass()) ||
 			    !field.getType().getName().endsWith("Category")) continue;
-			try { addSettingsFromClass(field.get(this), field.getName()); }
-			catch (IllegalAccessException ex) { throw new RuntimeException(ex); }
+			try {
+				field.set(this, field.getType().getConstructors()[0].newInstance(this));
+				addSettingsFromClass(field.get(this), field.getName());
+			} catch (InstantiationException |
+			         InvocationTargetException |
+			         IllegalAccessException ex) { throw new RuntimeException(ex); }
 		}
 	}
 	
