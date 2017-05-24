@@ -112,7 +112,7 @@ public final class RendererBackpack {
 	
 	private static void renderModel(IBackpack backpack, BlockModelRenderer renderer,
 	                                float ticks, boolean renderStraps,
-									float r, float g, float b, boolean useEnch) {
+	                                float r, float g, float b, boolean useEnch) {
 		
 		IBakedModel baseModel = (useEnch ? ProxyClient.MODEL_BACKPACK_ENCH : ProxyClient.MODEL_BACKPACK);
 		renderer.renderModelBrightnessColor(baseModel, 1.0F, r, g, b);
