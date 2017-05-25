@@ -1,6 +1,7 @@
 package net.mcft.copy.backpacks.item;
 
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -131,6 +132,14 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	@Override
 	public void onSpawnedWith(EntityLivingBase entity, IBackpack backpack) {
+		Random rnd = entity.world.rand;
+		if (rnd.nextDouble() < 0.15) { // 15% chance for backpack to be colored.
+			int g = rnd.nextInt(192) + 32;
+			int b = rnd.nextInt(192) + 32;
+			int r = rnd.nextInt(192) + 32;
+			int color = (r << 16) | (g << 8) | b;
+			NbtUtils.set(backpack.getStack(), color, "display", "color");
+		}
 		// TODO: Fill backpack with random items.
 	}
 	
