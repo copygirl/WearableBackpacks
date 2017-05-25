@@ -5,11 +5,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
@@ -20,6 +26,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent.SpecialSpawn;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -36,7 +43,9 @@ import net.mcft.copy.backpacks.api.IBackpackType;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
 import net.mcft.copy.backpacks.container.SlotArmorBackpack;
 import net.mcft.copy.backpacks.item.DyeWashingHandler;
+import net.mcft.copy.backpacks.item.ItemBackpack;
 import net.mcft.copy.backpacks.misc.BackpackCapability;
+import net.mcft.copy.backpacks.misc.util.NbtUtils;
 import net.mcft.copy.backpacks.misc.util.WorldUtils;
 import net.mcft.copy.backpacks.network.MessageBackpackUpdate;
 
@@ -87,8 +96,58 @@ public class ProxyCommon {
 	
 	// Backpack interactions / events
 	
-	private boolean cancelOffHand = false;
+	@SubscribeEvent
+	public void onSpecialSpawn(SpecialSpawn event) {
+		// When a mob spawns naturally, see if it has a chance to spawn with a backpack.
+		EntityLivingBase entity = event.getEntityLiving();
+		Map<Item, Double> spawnEntry = BackpackRegistry.entities.get(entity.getClass());
+		if (spawnEntry == null) return; // Doesn't have an entry.
+		
+		for (Map.Entry<Item, Double> itemEntry : spawnEntry.entrySet()) {
+			ItemBackpack item  = (ItemBackpack)itemEntry.getKey();
+			double probability = itemEntry.getValue();
+			if (entity.world.rand.nextDouble() >= probability) return;
+			BackpackCapability backpack = (BackpackCapability)entity.getCapability(IBackpack.CAPABILITY, null);
+			// Set the backpack capability of the entity to spawn with the specified backpack.
+			// This will be delayed until the first update tick to fire after armor has been generated.
+			backpack.spawnWith = item;
+		}
+	}
+	/** Called when a mob spawns with a backpack with a 1 tick delay. */
+	private void onSpawnedWith(EntityLivingBase entity, BackpackCapability backpack, ItemBackpack item) {
+		ItemStack stack = new ItemStack(item);
+		
+		// Set damage to a random amount (25% - 75%).
+		int maxDamage = stack.getMaxDamage();
+		int damage = maxDamage / 4 + ((maxDamage / 2 > 0)
+			? entity.world.rand.nextInt(maxDamage / 2) : 0);
+		stack.setItemDamage(damage);
+		
+		if (BackpackHelper.equipAsChestArmor) {
+			// If the entity spawned with enchanted armor,
+			// then move over all compatible enchantments.
+			ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+			if ((armor != null) && armor.isItemEnchanted()) {
+				NBTTagList enchList = armor.getEnchantmentTagList();
+				for (int i = 0; i < enchList.tagCount(); ++i) {
+					NBTTagCompound enchTag = enchList.getCompoundTagAt(i);
+					Enchantment enchantment = Enchantment.getEnchantmentByID(enchTag.getShort("id"));
+					// If the enchantment doesn't work with the backpack, remove it.
+					if (!enchantment.canApply(stack)) enchList.removeTag(i--);
+				}
+				if (enchList.tagCount() > 0)
+					NbtUtils.set(stack, enchList, "ench");
+			}
+		}
+		
+		IBackpackType type = (IBackpackType)item;
+		IBackpackData data = type.createBackpackData(stack);
+		BackpackHelper.setEquippedBackpack(entity, stack, data);
+		type.onSpawnedWith(entity, backpack);
+		backpack.spawnWith = null;
+	}
 	
+	private boolean cancelOffHand = false;
 	@SubscribeEvent
 	public void onPlayerInteractBlock(PlayerInteractEvent.RightClickBlock event) {
 		
@@ -184,7 +243,9 @@ public class ProxyCommon {
 			}
 		}
 		
-		if (!backpack.getStack().isEmpty()) {
+		if (backpack.spawnWith != null)
+			onSpawnedWith(entity, backpack, backpack.spawnWith);
+		else if (!backpack.getStack().isEmpty()) {
 			backpack.getType().onEquippedTick(entity, backpack);
 			
 			if (entity.world.isRemote)

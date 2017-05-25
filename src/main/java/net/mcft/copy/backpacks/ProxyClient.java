@@ -9,9 +9,13 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.IBlockColor;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderBiped;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.item.ItemStack;
@@ -35,6 +39,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mcft.copy.backpacks.BackpacksContent;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
+import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.ProxyCommon;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
@@ -70,7 +75,6 @@ public class ProxyClient extends ProxyCommon {
 	@Override
 	public void init() {
 		super.init();
-		
 		Minecraft mc = Minecraft.getMinecraft();
 		
 		if (BackpacksContent.BACKPACK != null) {
@@ -79,10 +83,16 @@ public class ProxyClient extends ProxyCommon {
 			ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBackpack.class, new RendererBackpack.TileEntity());
 		}
 		
-		Map<String, RenderPlayer> skinMap = mc.getRenderManager().getSkinMap();
+		RenderManager manager = mc.getRenderManager();
+		Map<String, RenderPlayer> skinMap = manager.getSkinMap();
 		skinMap.get("default").addLayer(new RendererBackpack.Layer());
 		skinMap.get("slim").addLayer(new RendererBackpack.Layer());
-		// TODO: Register layer renderers for supported entities.
+		
+		for (Class<? extends EntityLivingBase> entityClass : BackpackRegistry.entities.keySet()) {
+			Render<?> render = manager.getEntityClassRenderObject(entityClass);
+			if (!(render instanceof RenderBiped)) continue;
+			((RenderBiped<?>)render).addLayer(new RendererBackpack.Layer());
+		}
 	}
 	
 	
