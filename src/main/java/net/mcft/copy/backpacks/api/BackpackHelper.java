@@ -155,7 +155,7 @@ public final class BackpackHelper {
 		IBackpack placedBackpack = BackpackHelper.getBackpack(tileEntity);
 		if (placedBackpack == null) return true;
 		
-		IBackpack carrierBackpack = BackpackHelper.getBackpack(player);
+		IBackpack carrierBackpack = BackpackHelper.getBackpack(entity);
 		boolean isEquipped = ((carrierBackpack != null) && (carrierBackpack.getStack() == stack));
 		
 		// Create a copy of the stack with stackSize set to 1 and transfer it.

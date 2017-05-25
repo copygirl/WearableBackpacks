@@ -12,6 +12,8 @@ public final class BackpackRegistry {
 	
 	private BackpackRegistry() {  }
 	
+	// TODO: Make this a little easier to deal with using custom classes.
+	//       Inner data doesn't really need to be a Map, does it?
 	public static final Map<Class<? extends EntityLivingBase>, Map<Item, Double>> entities =
 			new HashMap<Class<? extends EntityLivingBase>, Map<Item, Double>>();
 	
@@ -29,8 +31,8 @@ public final class BackpackRegistry {
 		for (int i = 0; i < backpackChancePairs.length; i += 2) {
 			if (!(backpackChancePairs[i] instanceof Item))
 				throw new IllegalArgumentException("First argument in backpack chance pair is not an Item");
-			if (!(backpackChancePairs[i] instanceof IBackpack))
-				throw new IllegalArgumentException("First argument in backpack chance pair is not an IBackpack");
+			if (!(backpackChancePairs[i] instanceof IBackpackType))
+				throw new IllegalArgumentException("First argument in backpack chance pair is not an IBackpackType");
 			if (!(backpackChancePairs[i + 1] instanceof Double))
 				throw new IllegalArgumentException("Second argument in backpack chance pair is not a Double");
 			Item item = (Item)backpackChancePairs[i];

@@ -17,6 +17,7 @@ import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackType;
+import net.mcft.copy.backpacks.item.ItemBackpack;
 import net.mcft.copy.backpacks.misc.util.MiscUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils.NbtType;
@@ -41,7 +42,9 @@ public class BackpackCapability implements IBackpack {
 	public int lidTicks = 0;
 	public int prevLidTicks = 0;
 	
-	// This is also null if the backpack is not equipped to the chestplate slot.
+	/** Set to a backpack item if the entity is meant to be spawned with a backpack. */
+	public ItemBackpack spawnWith = null;
+	/** This is also null if the backpack is not equipped to the chestplate slot. */
 	public IBackpackType lastType = null;
 	
 	public BackpackCapability(EntityLivingBase entity) { this.entity = entity; }
