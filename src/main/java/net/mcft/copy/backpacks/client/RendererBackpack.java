@@ -83,8 +83,8 @@ public final class RendererBackpack {
 	public static class Layer implements LayerRenderer<EntityLivingBase> {
 		
 		// TODO: Allow this to be changed for backpack models that are visually bigger.
-		private static final float HEIGHT_OFFSET = 4.0F / 16.0F;
-		private static final float DEPTH_OFFSET = 10.5F / 16.0F;
+		private static final float HEIGHT_OFFSET = 12.0F;
+		private static final float DEPTH_OFFSET = 2.5F;
 		
 		public boolean shouldCombineTextures() { return false; }
 		
@@ -94,6 +94,11 @@ public final class RendererBackpack {
 			if (backpack == null) return;
 			
 			GlStateManager.pushMatrix();
+			
+			if (entity.isChild()) {
+				GlStateManager.scale(0.5F, 0.5F, 0.5F);
+				GlStateManager.translate(0.0F, 24.0F * scale, 0.0F);
+			}
 			
 			// Make backpack swing with body as players swing their arms.
 			float swingProgress = entity.getSwingProgress(partialTicks);
@@ -110,9 +115,8 @@ public final class RendererBackpack {
 			}
 			
 			GlStateManager.scale(0.8F, 0.8F, 0.8F);
-			GlStateManager.translate(0.5F, 0.5F, 0.5F);
+			GlStateManager.translate(8.0F * scale, HEIGHT_OFFSET * scale, -DEPTH_OFFSET * scale);
 			GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
-			GlStateManager.translate(0, -HEIGHT_OFFSET, -DEPTH_OFFSET);
 			
 			render(backpack, partialTicks, false);
 			
