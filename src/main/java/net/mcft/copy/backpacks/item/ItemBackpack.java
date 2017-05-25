@@ -1,5 +1,7 @@
 package net.mcft.copy.backpacks.item;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -15,12 +17,18 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootTable;
+import net.minecraft.world.storage.loot.LootTableManager;
 
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.ItemStackHandler;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
@@ -132,15 +140,40 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	@Override
 	public void onSpawnedWith(EntityLivingBase entity, IBackpack backpack) {
+		
 		Random rnd = entity.world.rand;
-		if (rnd.nextDouble() < 0.15) { // 15% chance for backpack to be colored.
+		double dyedChance = 0.15; // 15% chance for backpack to be colored.
+		if (canDye(backpack.getStack()) && (rnd.nextDouble() < dyedChance)) {
 			int g = rnd.nextInt(192) + 32;
 			int b = rnd.nextInt(192) + 32;
 			int r = rnd.nextInt(192) + 32;
 			int color = (r << 16) | (g << 8) | b;
 			NbtUtils.set(backpack.getStack(), color, "display", "color");
 		}
-		// TODO: Fill backpack with random items.
+		
+		// Fill backpack with random loot.
+		if (backpack.getData() instanceof BackpackDataItems) {
+			LootTableManager manager = entity.world.getLootTableManager();
+			ResourceLocation tableLoc = new ResourceLocation(WearableBackpacks.MOD_ID, "backpack/default");
+			LootTable table = manager.getLootTableFromLocation(tableLoc);
+			LootContext context = new LootContext(0, (WorldServer)entity.world, manager, entity, null, null);
+			List<ItemStack> loot = table.generateLootForPools(rnd, context);
+			
+			ItemStackHandler items = ((BackpackDataItems)backpack.getData()).items;
+			double maxFullness = (0.6 + rnd.nextDouble() * 0.2);
+			int maxOccupiedSlots = (int)Math.ceil(items.getSlots() * maxFullness);
+			
+			List<Integer> randomizedSlots = new ArrayList<Integer>(items.getSlots());
+			for (int i = 0; i < items.getSlots(); i++) randomizedSlots.add(i);
+			Collections.shuffle(loot);
+			Collections.shuffle(randomizedSlots);
+			for (int i = 0; (i < maxOccupiedSlots) && (i < loot.size()); i++) {
+				ItemStack stack = loot.get(i);
+				int slot = randomizedSlots.get(i);
+				items.setStackInSlot(slot, stack);
+			}
+		}
+		
 	}
 	
 	@Override
