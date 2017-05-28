@@ -146,9 +146,12 @@ public final class BackpackHelper {
 		    (world.getBlockState(pos).getBlock() != block)) return false;
 		block.onBlockPlacedBy(world, pos, state, entity, stack);
 		
-		SoundType sound = block.getSoundType(state, world, pos, player);
-		world.playSound(player, pos, sound.getPlaceSound(), SoundCategory.BLOCKS,
-		                (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
+		double x = pos.getX() + 0.5;
+		double y = pos.getY() + 0.5;
+		double z = pos.getZ() + 0.5;
+		SoundType sound = block.getSoundType(state, world, pos, entity);
+		world.playSound(x, y, z, sound.getPlaceSound(), SoundCategory.BLOCKS,
+		                (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F, false);
 		
 		TileEntity tileEntity = world.getTileEntity(pos);
 		if (tileEntity == null) return true;
