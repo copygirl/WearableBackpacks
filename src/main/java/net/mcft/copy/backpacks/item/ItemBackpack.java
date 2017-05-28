@@ -1,13 +1,13 @@
 package net.mcft.copy.backpacks.item;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,15 +20,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootTable;
-import net.minecraft.world.storage.loot.LootTableManager;
 
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.ItemStackHandler;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
@@ -54,6 +49,8 @@ import net.mcft.copy.backpacks.misc.util.WorldUtils;
 public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, ISpecialArmor {
 	
 	public static final int DEFAULT_COLOR = 0xA06540;
+	public static final ResourceLocation LOOT_TABLE =
+		new ResourceLocation(WearableBackpacks.MOD_ID, "backpack/default");
 	
 	public static final String[] TAG_CUSTOM_ARMOR = { "backpack", "armor" };
 	public static final String[] TAG_CUSTOM_SIZE  = { "backpack", "size" };
@@ -141,6 +138,11 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	@Override
 	public void onSpawnedWith(EntityLivingBase entity, IBackpack backpack) {
 		
+		// If backpack is equipped in chestplate slot, set drop chance to 100%.
+		if ((entity instanceof EntityLiving) &&
+		    (entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST) == backpack.getStack()))
+			((EntityLiving)entity).setDropChance(EntityEquipmentSlot.CHEST, 1.0F);
+		
 		Random rnd = entity.world.rand;
 		double dyedChance = 0.15; // 15% chance for backpack to be colored.
 		if (canDye(backpack.getStack()) && (rnd.nextDouble() < dyedChance)) {
@@ -151,28 +153,10 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 			NbtUtils.set(backpack.getStack(), color, "display", "color");
 		}
 		
-		// Fill backpack with random loot.
-		if (backpack.getData() instanceof BackpackDataItems) {
-			LootTableManager manager = entity.world.getLootTableManager();
-			ResourceLocation tableLoc = new ResourceLocation(WearableBackpacks.MOD_ID, "backpack/default");
-			LootTable table = manager.getLootTableFromLocation(tableLoc);
-			LootContext context = new LootContext(0, (WorldServer)entity.world, manager, entity, null, null);
-			List<ItemStack> loot = table.generateLootForPools(rnd, context);
-			
-			ItemStackHandler items = ((BackpackDataItems)backpack.getData()).items;
-			double maxFullness = (0.6 + rnd.nextDouble() * 0.2);
-			int maxOccupiedSlots = (int)Math.ceil(items.getSlots() * maxFullness);
-			
-			List<Integer> randomizedSlots = new ArrayList<Integer>(items.getSlots());
-			for (int i = 0; i < items.getSlots(); i++) randomizedSlots.add(i);
-			Collections.shuffle(loot);
-			Collections.shuffle(randomizedSlots);
-			for (int i = 0; (i < maxOccupiedSlots) && (i < loot.size()); i++) {
-				ItemStack stack = loot.get(i);
-				int slot = randomizedSlots.get(i);
-				items.setStackInSlot(slot, stack);
-			}
-		}
+		// Set backpack's loot table.
+		IBackpackData data = backpack.getData();
+		if (data instanceof BackpackDataItems)
+			((BackpackDataItems)data).setLootTable(LOOT_TABLE, rnd.nextLong());
 		
 	}
 	
@@ -211,7 +195,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	public void onDeath(EntityLivingBase entity, IBackpack backpack) {
 		if (!(backpack.getData() instanceof BackpackDataItems)) return;
 		BackpackDataItems dataItems = (BackpackDataItems)backpack.getData();
-		WorldUtils.dropStacksFromEntity(entity, dataItems.items, 4.0F);
+		WorldUtils.dropStacksFromEntity(entity, dataItems.getItems(entity.world, null), 4.0F);
 	}
 	
 	@Override
@@ -228,7 +212,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	public void onBlockBreak(TileEntity tileEntity, IBackpack backpack) {
 		if (!(backpack.getData() instanceof BackpackDataItems)) return;
 		BackpackDataItems dataItems = (BackpackDataItems)backpack.getData();
-		WorldUtils.dropStacksFromBlock(tileEntity, dataItems.items);
+		WorldUtils.dropStacksFromBlock(tileEntity, dataItems.getItems(tileEntity.getWorld(), null));
 	}
 	
 	@Override

@@ -29,6 +29,7 @@ public class BackpackCapability implements IBackpack {
 	public static final String TAG_STACK = "stack";
 	public static final String TAG_TYPE  = "type";
 	public static final String TAG_DATA  = "data";
+	public static final String TAG_MAY_DESPAWN = "mayDespawn";
 	
 	public static final ResourceLocation IDENTIFIER =
 		new ResourceLocation("wearablebackpacks:backpack");
@@ -42,10 +43,12 @@ public class BackpackCapability implements IBackpack {
 	public int lidTicks = 0;
 	public int prevLidTicks = 0;
 	
-	/** Set to a backpack item if the entity is meant to be spawned with a backpack. */
-	public ItemBackpack spawnWith = null;
 	/** This is also null if the backpack is not equipped to the chestplate slot. */
 	public IBackpackType lastType = null;
+	/** Set to a backpack item if the entity is meant to be spawned with a backpack. */
+	public ItemBackpack spawnWith = null;
+	/** Set to true if the backpack may despawn once placed down as a tile entity. */
+	public boolean mayDespawn = false;
 	
 	public BackpackCapability(EntityLivingBase entity) { this.entity = entity; }
 	
@@ -107,6 +110,7 @@ public class BackpackCapability implements IBackpack {
 			WearableBackpacks.CHANNEL.sendToAllTracking(
 				MessageBackpackUpdate.open(entity, (value > 0)), entity, true);
 		playersUsing = value;
+		mayDespawn = false;
 	}
 	
 	@Override
@@ -167,6 +171,8 @@ public class BackpackCapability implements IBackpack {
 			NBTBase dataTag = compound.getTag(TAG_DATA);
 			if ((backpack.data != null) && (dataTag != null))
 				backpack.data.deserializeNBT(dataTag);
+			
+			backpack.mayDespawn = compound.getBoolean(TAG_MAY_DESPAWN);
 		}
 		
 		@Override
@@ -175,7 +181,8 @@ public class BackpackCapability implements IBackpack {
 				TAG_STACK, ((backpack.stack != null) ? backpack.stack.serializeNBT() : null),
 				// If the backpack is stored in the chest armor slot, we need to save the item. See deserializeNBT.
 				TAG_TYPE, (backpack.isChestArmor() ? backpack.getStack().getItem().getRegistryName().toString() : null),
-				TAG_DATA, ((backpack.data != null) ? backpack.data.serializeNBT() : null));
+				TAG_DATA, ((backpack.data != null) ? backpack.data.serializeNBT() : null),
+				TAG_MAY_DESPAWN, (backpack.mayDespawn ? (byte)1 : null));
 		}
 		
 	}
@@ -188,7 +195,8 @@ public class BackpackCapability implements IBackpack {
 			return ((backpack.stack == null) && (backpack.data == null)) ? null
 				: NbtUtils.createCompound(
 					TAG_STACK, ((backpack.stack != null) ? backpack.stack.serializeNBT() : null),
-					TAG_DATA, ((backpack.data != null) ? backpack.data.serializeNBT() : null));
+					TAG_DATA, ((backpack.data != null) ? backpack.data.serializeNBT() : null),
+					TAG_MAY_DESPAWN, (backpack.mayDespawn ? (byte)1 : null));
 		}
 		
 		@Override
@@ -212,6 +220,8 @@ public class BackpackCapability implements IBackpack {
 			NBTBase dataTag = compound.getTag(TAG_DATA);
 			if (dataTag != null) data.deserializeNBT(dataTag);
 			backpack.setData(data);
+			
+			backpack.mayDespawn = compound.getBoolean(TAG_MAY_DESPAWN);
 		}
 		
 	}
