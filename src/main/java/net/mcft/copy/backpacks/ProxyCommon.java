@@ -144,7 +144,8 @@ public class ProxyCommon {
 		IBackpackData data = type.createBackpackData(stack);
 		BackpackHelper.setEquippedBackpack(entity, stack, data);
 		type.onSpawnedWith(entity, backpack);
-		backpack.spawnWith = null;
+		backpack.spawnWith  = null;
+		backpack.mayDespawn = true;
 	}
 	
 	private boolean cancelOffHand = false;
@@ -264,8 +265,9 @@ public class ProxyCommon {
 		World world = entity.world;
 		if (world.isRemote) return;
 		
-		IBackpack backpack = BackpackHelper.getBackpack(entity);
-		if (backpack == null) return;
+		BackpackCapability backpack = (BackpackCapability)entity
+			.getCapability(IBackpack.CAPABILITY, null);
+		if ((backpack == null) || backpack.getStack().isEmpty()) return;
 		
 		// If keep inventory is on, keep the backpack capability so we
 		// can copy it over to the new player entity in onPlayerClone.
@@ -299,7 +301,7 @@ public class ProxyCommon {
 					// this coordinate. If successful, we're done here.
 					if (BackpackHelper.placeBackpack(world, coord, backpack.getStack(), entity, true)) {
 						// TODO: I'm aware that this is not the cleanest solution.
-						((TileEntityBackpack)world.getTileEntity(coord)).setPlacedOnDeath();
+						((TileEntityBackpack)world.getTileEntity(coord)).setPlacedOnDeath(backpack.mayDespawn);
 						return;
 					}
 					boolean replacable = world.getBlockState(coord).getBlock().isReplaceable(world, coord);

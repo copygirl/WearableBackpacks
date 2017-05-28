@@ -44,8 +44,8 @@ public abstract class ContainerBackpack extends Container {
 		this.backpack = backpack;
 		this.data     = ((BackpackDataItems)backpack.getData());
 		
-		size  = data.size;
-		items = data.items;
+		size  = data.getSize();
+		items = data.getItems(player.world, player);
 		
 		ItemStack stack = backpack.getStack();
 		title = (stack.hasDisplayName() ? stack.getDisplayName()
