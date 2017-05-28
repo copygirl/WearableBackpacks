@@ -1,5 +1,6 @@
 package net.mcft.copy.backpacks;
 
+import java.util.List;
 import java.util.Map;
 import com.google.common.base.Function;
 
@@ -13,6 +14,8 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.renderer.entity.RenderZombie;
+import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
@@ -88,7 +91,13 @@ public class ProxyClient extends ProxyCommon {
 		for (Class<? extends EntityLivingBase> entityClass : BackpackRegistry.entities.keySet()) {
 			Render<?> render = manager.getEntityClassRenderObject(entityClass);
 			if (!(render instanceof RenderBiped)) continue;
-			((RenderBiped<?>)render).addLayer(new RendererBackpack.Layer());
+			if (render instanceof RenderZombie) {
+				// Patching Zombie renderer directly, since swapArmor
+				// seems to cause custom layer renderers to be ignored.
+				List<LayerRenderer<?>> defaultLayers = ReflectUtils.get(
+					RenderZombie.class, render, "defaultLayers", "field_177122_o");
+				defaultLayers.add(new RendererBackpack.Layer());
+			} else ((RenderBiped<?>)render).addLayer(new RendererBackpack.Layer());
 		}
 	}
 	
