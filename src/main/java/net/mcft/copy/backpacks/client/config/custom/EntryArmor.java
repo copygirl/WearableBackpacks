@@ -1,4 +1,4 @@
-package net.mcft.copy.backpacks.client.config;
+package net.mcft.copy.backpacks.client.config.custom;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -8,6 +8,7 @@ import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import net.mcft.copy.backpacks.client.config.EntrySlider;
 import net.mcft.copy.backpacks.config.Setting;
 
 @SideOnly(Side.CLIENT)

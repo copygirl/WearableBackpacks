@@ -1,4 +1,4 @@
-package net.mcft.copy.backpacks.client.config;
+package net.mcft.copy.backpacks.client.config.custom;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -10,6 +10,7 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import net.mcft.copy.backpacks.client.config.EntryButton;
 import net.mcft.copy.backpacks.config.Setting;
 import net.mcft.copy.backpacks.misc.BackpackSize;
 

@@ -1,17 +1,18 @@
-package net.mcft.copy.backpacks.config;
+package net.mcft.copy.backpacks.config.custom;
 
 import net.minecraft.nbt.NBTBase;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
+import net.mcft.copy.backpacks.config.Setting;
 import net.mcft.copy.backpacks.misc.BackpackSize;
 
 public class SettingBackpackSize extends Setting<BackpackSize> {
 	
 	public SettingBackpackSize(int defaultColumns, int defaultRows) {
 		super(new BackpackSize(defaultColumns, defaultRows));
-		setConfigEntryClass("net.mcft.copy.backpacks.client.config.EntryBackpackSize");
+		setConfigEntryClass("net.mcft.copy.backpacks.client.config.custom.EntryBackpackSize");
 	}
 	
 	@Override

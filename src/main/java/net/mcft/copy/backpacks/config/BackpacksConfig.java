@@ -20,6 +20,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mcft.copy.backpacks.BackpacksContent;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
+import net.mcft.copy.backpacks.config.custom.SettingBackpackSize;
+import net.mcft.copy.backpacks.config.custom.SettingPercent;
 import net.mcft.copy.backpacks.misc.BackpackSize;
 import net.mcft.copy.backpacks.network.MessageSyncSettings;
 
@@ -56,7 +58,7 @@ public class BackpacksConfig extends Configuration {
 		
 		public final Setting<Integer> armor = new SettingInteger(2).setValidRange(0, 20)
 			.setRequired(enabled).setRecommended(equipAsChestArmor).setSynced()
-			.setConfigEntryClass("net.mcft.copy.backpacks.client.config.EntryArmor")
+			.setConfigEntryClass("net.mcft.copy.backpacks.client.config.custom.EntryArmor")
 			.setComment("Armor points of a normal backpack. Valid values are 0 to 20. Default: 2.\n" +
 			            "Has no effect if equipAsChestArmor is disabled.");
 		
@@ -74,7 +76,7 @@ public class BackpacksConfig extends Configuration {
 	public class CosmeticCategory {
 		
 		public final Setting<Double> enchantEffectOpacity = new SettingPercent(0.80)
-			.setConfigEntryClass("net.mcft.copy.backpacks.client.config.EntryEffectOpacity")
+			.setConfigEntryClass("net.mcft.copy.backpacks.client.config.custom.EntryEffectOpacity")
 			.setComment("Controls the opacity / visibility of the enchantment effect on equipped and placed backpacks, if present. Default: 80%.");
 		
 	}

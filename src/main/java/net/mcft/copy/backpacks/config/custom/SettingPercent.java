@@ -1,7 +1,9 @@
-package net.mcft.copy.backpacks.config;
+package net.mcft.copy.backpacks.config.custom;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
+import net.mcft.copy.backpacks.config.SettingDouble;
 
 public class SettingPercent extends SettingDouble {
 	
