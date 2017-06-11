@@ -1,7 +1,16 @@
 package net.mcft.copy.backpacks.misc.util;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+import java.util.stream.Collector.Characteristics;
+
+import com.google.common.collect.Iterables;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
@@ -280,6 +289,69 @@ public final class NbtUtils {
 		if (value instanceof byte[])  return new NBTTagByteArray((byte[])value);
 		if (value instanceof int[])   return new NBTTagIntArray((int[])value);
 		throw new IllegalArgumentException("Can't create an NBT tag of value: " + value);
+	}
+	
+	
+	// Iterable / Stream related functions
+	
+	/** Returns an iterable of NBT tags in the specified NBT list. */
+	@SuppressWarnings("unchecked")
+	public static <T extends NBTBase> Iterable<T> iterate(NBTTagList list) {
+		return new Iterable<T>() {
+			@Override public Iterator<T> iterator() {
+				return new Iterator<T>() {
+					private int _index = 0;
+					@Override public boolean hasNext() { return (_index < list.tagCount()); }
+					@Override public T next() { return (T)list.get(_index++); }
+				};
+			}
+		};
+	}
+	/** Returns an iterable of entries in the specified NBT compound. */
+	public static Iterable<CompoundEntry> iterate(NBTTagCompound compound) {
+		return Iterables.transform(compound.getKeySet(),
+			key -> new CompoundEntry(key, compound.getTag(key)));
+	}
+	
+	/** Returns a stream of NBT tags in the specified NBT list. */
+	public static <T extends NBTBase> Stream<T> stream(NBTTagList list) {
+		return StreamSupport.stream(NbtUtils.<T>iterate(list).spliterator(), false);
+	}
+	/** Returns a stream of entries in the specified NBT compound. */
+	public static Stream<CompoundEntry> stream(NBTTagCompound compound) {
+		return StreamSupport.stream(NbtUtils.iterate(compound).spliterator(), false);
+	}
+	
+	/** Returns a collector that accumulates the the input elements into a new NBT list. */
+	public static <T> Collector<T, NBTTagList, NBTTagList> toList() {
+		return Collector.of(NBTTagList::new,
+			(list, element) ->
+				list.appendTag(createTag(element)),
+			(left, right) -> {
+				for (NBTBase tag : iterate(right))
+					left.appendTag(tag);
+				return left;
+			}, Characteristics.IDENTITY_FINISH);
+	}
+	
+	/** Returns a collector that accumulates the the input NBT tags into a new NBT list. */
+	public static <T> Collector<T, NBTTagCompound, NBTTagCompound> toCompound(
+		Function<T, String> keyMapper, Function<T, NBTBase> tagMapper) {
+		return Collector.of(NBTTagCompound::new,
+			(compound, element) ->
+				compound.setTag(keyMapper.apply(element), tagMapper.apply(element)),
+			(left, right) -> {
+				for (String key : right.getKeySet())
+					left.setTag(key, right.getTag(key));
+				return left;
+			}, Characteristics.IDENTITY_FINISH);
+	}
+	
+	public static class CompoundEntry {
+		public final String key;
+		public final NBTBase tag;
+		public CompoundEntry(String key, NBTBase tag)
+			{ this.key = key; this.tag = tag; }
 	}
 	
 }
