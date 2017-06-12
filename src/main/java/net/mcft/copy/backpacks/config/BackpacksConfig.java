@@ -113,7 +113,7 @@ public class BackpacksConfig extends Configuration {
 			try { setting = (Setting<?>)field.get(instance); }
 			catch (IllegalAccessException ex) { throw new RuntimeException(ex); }
 			
-			setting.init(this, category, field.getName());
+			setting.init(category, field.getName());
 			_settings.put(setting.getFullName(), setting);
 		}
 	}
@@ -150,7 +150,7 @@ public class BackpacksConfig extends Configuration {
 			getCategory("backpack").remove("rows");
 		}
 		
-		getSettings().forEach(Setting::onPropertyLoaded);
+		getSettings().forEach(setting -> setting.loadFromConfiguration(this));
 	}
 	
 	@Override
@@ -170,6 +170,8 @@ public class BackpacksConfig extends Configuration {
 		
 		// Remove old config properties.
 		getCategory(Configuration.CATEGORY_GENERAL).remove("enableHelpTooltips");
+		
+		getSettings().forEach(setting -> setting.saveToConfiguration(this));
 		
 		super.save();
 	}

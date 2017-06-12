@@ -3,15 +3,22 @@ package net.mcft.copy.backpacks.config;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.text.TextFormatting;
+
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.config.ConfigGuiType;
+import net.minecraftforge.fml.client.config.IConfigElement;
+import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
+import net.minecraftforge.fml.client.config.GuiEditArrayEntries.IArrayEntry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -29,11 +36,6 @@ public abstract class Setting<T> {
 	private final T _defaultValue;
 	/** Loaded "own" value, directly from the config file (or using the default). */
 	private T _value;
-	
-	/** Holds the setting's Forge Configuration. */
-	private Configuration _config;
-	/** Holds the setting's Forge Configuration Property. */
-	private Property _property = null;
 	
 	/** Holds the setting's current entry instance in the config GUI (if open). */
 	@SideOnly(Side.CLIENT)
@@ -54,9 +56,6 @@ public abstract class Setting<T> {
 	/** Stores a function which is called to determine if recommendations are met (returns hint). */
 	private Supplier<List<String>> _recommendFunc = () -> null;
 	
-	/** The setting's valid values as a string array, or null if none. */
-	private T[] _validValues = null;
-	
 	/** Stores whether the setting will be synced to players joining a world. */
 	private boolean _doesSync = false;
 	/** Stores whether the setting is currently synced (_syncedValue stores current value). */
@@ -68,7 +67,7 @@ public abstract class Setting<T> {
 	private Consumer<T> _updateAction = null;
 	
 	/** Holds the setting's custom config entry class to use in place of the default, if any. */
-	private String _entryClass = null;
+	private String _configEntryClass = null;
 	/** The setting's comment used in the config file, if any. */
 	private String _comment = null;
 	
@@ -77,11 +76,10 @@ public abstract class Setting<T> {
 		_defaultValue = defaultValue;
 	}
 	
-	/** Set the setting's configuration, category and name.
+	/** Set the setting's category and name.
 	 *  This is called automatically. Category and name are taken from
 	 *  reflected field names. Keeps the constructor short and simple. */
-	protected void init(Configuration config, String category, String name) {
-		_config = config;
+	protected void init(String category, String name) {
 		_category = category;
 		_name = name;
 	}
@@ -116,10 +114,6 @@ public abstract class Setting<T> {
 		});
 	}
 	
-	/** Sets the valid values for this setting. */
-	@SafeVarargs
-	public final Setting<T> setValidValues(T... values) { _validValues = values; return this; }
-	
 	/** Sets the setting to be synchronized to players joining a world. */
 	public Setting<T> setSynced() { _doesSync = true; return this; }
 	/** Sets the setting to be synchronized to players joining a world.
@@ -130,7 +124,7 @@ public abstract class Setting<T> {
 	public Setting<T> setUpdate(Consumer<T> action) { _updateAction = action; return this; }
 	
 	/** Sets the setting's config entry class, to be used in place of the default. */
-	public Setting<T> setConfigEntryClass(String entryClass) { _entryClass = entryClass; return this; }
+	public Setting<T> setConfigEntryClass(String entryClass) { _configEntryClass = entryClass; return this; }
 	/** Sets the setting's comment, to be used in the config file. */
 	public Setting<T> setComment(String comment) { _comment = comment; return this; }
 	
@@ -147,7 +141,7 @@ public abstract class Setting<T> {
 	/** Returns the setting's current value. */
 	public T get() { return (_checkEntryValue ? getEntryValue() : (_isSynced ? _syncedValue : _value)); }
 	/** Sets the setting's current value. */
-	public void set(T value) { _value = value; _property.set(stringify(value)); }
+	public void set(T value) { _value = value; }
 	
 	/** Returns if this setting is enabled based on its requirements. */
 	public boolean isEnabled() { return _requireFunc.getAsBoolean(); }
@@ -182,7 +176,7 @@ public abstract class Setting<T> {
 	public boolean isSynced() { return _isSynced; }
 	
 	/** Sets the setting's config entry class, to be used in place of the default. */
-	public String getConfigEntryClass() { return _entryClass; }
+	public String getConfigEntryClass() { return _configEntryClass; }
 	/** Returns the setting's comment, as used in the config file. */
 	public String getComment() { return _comment; }
 	
@@ -207,22 +201,19 @@ public abstract class Setting<T> {
 	
 	// Forge Configuration related
 	
+	public IConfigElement getConfigElement() { return new ConfigElement(); }
+	
+	
 	/** Grabs the Property object from the Forge Configuration object. */
 	protected abstract Property getPropertyFromConfig(Configuration config);
 	
-	/** Returns the Forge config Property associated with this setting. */
-	public Property getProperty() {
-		if (_property == null) {
-			// Initialize the property if it hasn't been already.
-			_property = getPropertyFromConfig(_config);
-			_property.setRequiresWorldRestart(_requiresWorldRejoin);
-			_property.setRequiresMcRestart(_requiresMinecraftRestart);
-			if (_validValues != null)
-				_property.setValidValues(
-					(String[])Arrays.stream(_validValues)
-						.map(value -> stringify(value)).toArray());
-		}
-		return _property;
+	/** Called when the Configuration is loaded. */
+	protected void loadFromConfiguration(Configuration config) {
+		set(parse(getPropertyFromConfig(config).getString()));
+	}
+	/** Called when the setting needs to save its value to the Configuration. */
+	protected void saveToConfiguration(Configuration config) {
+		getPropertyFromConfig(config).set(stringify(get()));
 	}
 	
 	
@@ -233,11 +224,6 @@ public abstract class Setting<T> {
 	/** Turns the value into a string to be saved to the config */
 	public String stringify(T value) {
 		return ((value != null) ? value.toString() : "null");
-	}
-	
-	/** Called when the Configuration is loaded. */
-	protected void onPropertyLoaded() {
-		_value = parse(getProperty().getString());
 	}
 	
 	
@@ -258,5 +244,50 @@ public abstract class Setting<T> {
 	
 	public abstract T read(NBTBase tag);
 	public abstract NBTBase write(T value);
+	
+	
+	public class ConfigElement implements IConfigElement {
+		
+		public boolean isProperty() { return true; }
+		
+		public Class<? extends IConfigEntry> getConfigEntryClass() { return null; }
+		public Class<? extends IArrayEntry> getArrayEntryClass() { return null; }
+		
+		public String getName() { return Setting.this.getName(); }
+		public String getQualifiedName() { return Setting.this.getFullName(); }
+		public String getLanguageKey() { return "config." + WearableBackpacks.MOD_ID + "." + Setting.this.getFullName(); }
+		public String getComment() { return Setting.this.getComment(); }
+		
+		public List<IConfigElement> getChildElements() { return null; }
+		
+		public ConfigGuiType getType() { return null; }
+		
+		public boolean isList() { return false; }
+		public boolean isListLengthFixed() { return false; }
+		public int getMaxListLength() { return 0; }
+		
+		public boolean isDefault() { return Objects.equals(Setting.this.get(), Setting.this.getDefault()); }
+		public Object getDefault() { return Setting.this.getDefault(); }
+		public Object[] getDefaults() { return null; }
+		public void setToDefault() { set(Setting.this.getDefault()); }
+		
+		public boolean requiresWorldRestart() { return Setting.this.requiresWorldRejoin(); }
+		public boolean requiresMcRestart() { return Setting.this.requiresMinecraftRestart(); }
+		
+		public boolean showInGui() { return true; }
+		
+		public Object get() { return Setting.this.get(); }
+		public Object[] getList() { return null; }
+		
+		@SuppressWarnings("unchecked")
+		public void set(Object value) { Setting.this.set((T)value); }
+		public void set(Object[] aVal) {  }
+		
+		public String[] getValidValues() { return null; }
+		public Object getMinValue() { return null; }
+		public Object getMaxValue() { return null; }
+		public Pattern getValidationPattern() { return null; }
+		
+	}
 	
 }

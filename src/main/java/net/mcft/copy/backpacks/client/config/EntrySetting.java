@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import net.minecraft.client.renderer.GlStateManager;
 
-import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.HoverChecker;
@@ -13,7 +12,6 @@ import net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.GuiTextureResource;
 import net.mcft.copy.backpacks.config.Setting;
 
@@ -32,8 +30,7 @@ public abstract class EntrySetting<T> extends ListEntryBase {
 	
 	@SuppressWarnings("unchecked")
 	public EntrySetting(GuiConfig owningScreen, GuiConfigEntries owningEntryList, Setting<?> setting) {
-		super(owningScreen, owningEntryList, new ConfigElement(setting.getProperty().setLanguageKey(
-			"config." + WearableBackpacks.MOD_ID + "." + setting.getFullName())));
+		super(owningScreen, owningEntryList, setting.getConfigElement());
 		this.setting = (Setting<T>)setting;
 		this.setting.setEntry(this);
 		value = this.setting.get();
