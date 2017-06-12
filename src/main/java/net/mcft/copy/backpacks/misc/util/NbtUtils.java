@@ -1,9 +1,11 @@
 package net.mcft.copy.backpacks.misc.util;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -14,6 +16,7 @@ import com.google.common.collect.Iterables;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
+import net.minecraftforge.common.util.INBTSerializable;
 
 /** Contains NBT related methods for manipulating NBT tags and item stacks. */
 public final class NbtUtils {
@@ -259,8 +262,8 @@ public final class NbtUtils {
 	/** Returns the primitive value of a tag, casted to the return type. */
 	@SuppressWarnings("unchecked")
 	public static <T> T getTagValue(NBTBase tag) {
-		if (tag == null)
-			throw new IllegalArgumentException("tag is null");
+		if (tag == null) throw new IllegalArgumentException("tag is null");
+		
 		if (tag instanceof NBTTagByte)      return (T)(Object)((NBTTagByte)tag).getByte();
 		if (tag instanceof NBTTagShort)     return (T)(Object)((NBTTagShort)tag).getShort();
 		if (tag instanceof NBTTagInt)       return (T)(Object)((NBTTagInt)tag).getInt();
@@ -270,6 +273,7 @@ public final class NbtUtils {
 		if (tag instanceof NBTTagString)    return (T)(Object)((NBTTagString)tag).getString();
 		if (tag instanceof NBTTagByteArray) return (T)((NBTTagByteArray)tag).getByteArray();
 		if (tag instanceof NBTTagIntArray)  return (T)((NBTTagIntArray)tag).getIntArray();
+		
 		throw new IllegalArgumentException(NBTBase.NBT_TYPES[tag.getId()] + " isn't a primitive NBT tag");
 	}
 	
@@ -278,7 +282,13 @@ public final class NbtUtils {
 	public static NBTBase createTag(Object value) {
 		if (value == null)
 			throw new IllegalArgumentException("value is null");
+		
 		if (value instanceof NBTBase) return (NBTBase)value;
+		if (value instanceof INBTSerializable)
+			return ((INBTSerializable<?>)value).serializeNBT();
+		if (value instanceof Collection) return ((Collection<?>)value).stream()
+			.map(NbtUtils::createTag).collect(toList());
+		
 		if (value instanceof Byte)    return new NBTTagByte((Byte)value);
 		if (value instanceof Short)   return new NBTTagShort((Short)value);
 		if (value instanceof Integer) return new NBTTagInt((Integer)value);
@@ -288,7 +298,28 @@ public final class NbtUtils {
 		if (value instanceof String)  return new NBTTagString((String)value);
 		if (value instanceof byte[])  return new NBTTagByteArray((byte[])value);
 		if (value instanceof int[])   return new NBTTagIntArray((int[])value);
+		
 		throw new IllegalArgumentException("Can't create an NBT tag of value: " + value);
+	}
+	
+	
+	/** Returns the specified NBT serializable value
+	 *  instance deserialized from the specified NBT tag. */
+	public static <N extends NBTBase, T extends INBTSerializable<N>> T getTagValue(N tag, T value) {
+		if (tag == null) throw new IllegalArgumentException("tag is null");
+		if (value == null) throw new IllegalArgumentException("value is null");
+		value.deserializeNBT(tag);
+		return value;
+	}
+	
+	/** Returns a list of NBT serializable values instantiated
+	 *  using the value supplier from the specified NBT list. */
+	@SuppressWarnings("unchecked")
+	public static <N extends NBTBase, T extends INBTSerializable<N>> List<T> getTagList(
+		NBTTagList list, Supplier<T> valueSupplier) {
+		return stream(list)
+			.map(tag -> getTagValue((N)tag, valueSupplier.get()))
+			.collect(Collectors.toList());
 	}
 	
 	
