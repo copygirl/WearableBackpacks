@@ -12,7 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mcft.copy.backpacks.config.Setting;
 
 @SideOnly(Side.CLIENT)
-public abstract class EntryField<T> extends EntrySetting<T> {
+public class EntryField<T> extends EntrySetting<T> {
 	
 	public final GuiTextField field;
 	
