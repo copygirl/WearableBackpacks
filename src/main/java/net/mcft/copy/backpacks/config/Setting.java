@@ -13,7 +13,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.text.TextFormatting;
 
-import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.config.ConfigGuiType;
 import net.minecraftforge.fml.client.config.IConfigElement;
@@ -203,28 +202,10 @@ public abstract class Setting<T> {
 	
 	public IConfigElement getConfigElement() { return new ConfigElement(); }
 	
-	
-	/** Grabs the Property object from the Forge Configuration object. */
-	protected abstract Property getPropertyFromConfig(Configuration config);
-	
-	/** Called when the Configuration is loaded. */
-	protected void loadFromConfiguration(Configuration config) {
-		set(parse(getPropertyFromConfig(config).getString()));
-	}
-	/** Called when the setting needs to save its value to the Configuration. */
-	protected void saveToConfiguration(Configuration config) {
-		getPropertyFromConfig(config).set(stringify(get()));
-	}
-	
-	
-	/** Attempts to parse the specified string as a value of this setting.
-	 *  Throws an exception if the specified string is not valid. */
-	public abstract T parse(String str);
-	
-	/** Turns the value into a string to be saved to the config */
-	public String stringify(T value) {
-		return ((value != null) ? value.toString() : "null");
-	}
+	/** Loads the setting's value from the specified Configuration. */
+	protected abstract void loadFromConfiguration(Configuration config);
+	/** Saves the setting's value to the specified Configuration. */
+	protected abstract void saveToConfiguration(Configuration config);
 	
 	
 	// Synchronization

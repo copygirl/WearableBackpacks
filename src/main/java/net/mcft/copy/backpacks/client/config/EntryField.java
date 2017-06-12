@@ -10,6 +10,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.config.Setting;
+import net.mcft.copy.backpacks.config.SettingSingleValue;
 
 @SideOnly(Side.CLIENT)
 public class EntryField<T> extends EntrySetting<T> {
@@ -33,7 +34,7 @@ public class EntryField<T> extends EntrySetting<T> {
 		                  (eventKey != Keyboard.KEY_HOME) && (eventKey != Keyboard.KEY_END)) return;
 		
 		field.textboxKeyTyped((enabled() ? eventChar : Keyboard.CHAR_NONE), eventKey);
-		try { value = setting.parse(field.getText().trim()); isValidValue = true; }
+		try { value = ((SettingSingleValue<T>)setting).parse(field.getText().trim()); isValidValue = true; }
 		catch (Throwable ex) { isValidValue = false; }
 	}
 	

@@ -3,10 +3,9 @@ package net.mcft.copy.backpacks.config;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagDouble;
 
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
-public class SettingDouble extends Setting<Double> {
+public class SettingDouble extends SettingSingleValue<Double> {
 	
 	private double _minValue = Double.NEGATIVE_INFINITY;
 	private double _maxValue = Double.POSITIVE_INFINITY;
@@ -23,13 +22,7 @@ public class SettingDouble extends Setting<Double> {
 	public SettingDouble setValidRange(double min, double max) { _minValue = min; _maxValue = max; return this; }
 	
 	@Override
-	protected Property getPropertyFromConfig(Configuration config) {
-		Property property = config.get(getCategory(), getName(),
-			String.valueOf(getDefault()), getComment(), Property.Type.DOUBLE);
-		property.setMinValue(_minValue);
-		property.setMaxValue(_maxValue);
-		return property;
-	}
+	protected Property.Type getPropertyType() { return Property.Type.DOUBLE; }
 	
 	@Override
 	public Double parse(String str) {

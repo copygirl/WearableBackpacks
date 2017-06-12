@@ -16,6 +16,7 @@ import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.config.EntryCategory;
 import net.mcft.copy.backpacks.client.config.EntrySetting;
 import net.mcft.copy.backpacks.config.Setting;
+import net.mcft.copy.backpacks.config.SettingSingleValue;
 
 @SideOnly(Side.CLIENT)
 public class BackpacksGuiConfig extends GuiConfig {
@@ -63,7 +64,7 @@ public class BackpacksGuiConfig extends GuiConfig {
 			listEntries = new ArrayList<IConfigEntry>();
 			
 			for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings(parent.category))
-				listEntries.add(EntrySetting.Create(owningScreen, this, setting));
+				listEntries.add(EntrySetting.Create(owningScreen, this, (SettingSingleValue<?>)setting));
 			
 			// If this is the general category, add category elements
 			// leading to config sub-screens for all other categories.

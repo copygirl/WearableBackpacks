@@ -2,23 +2,14 @@ package net.mcft.copy.backpacks.config.custom;
 
 import net.minecraft.nbt.NBTBase;
 
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
-
-import net.mcft.copy.backpacks.config.Setting;
+import net.mcft.copy.backpacks.config.SettingSingleValue;
 import net.mcft.copy.backpacks.misc.BackpackSize;
 
-public class SettingBackpackSize extends Setting<BackpackSize> {
+public class SettingBackpackSize extends SettingSingleValue<BackpackSize> {
 	
 	public SettingBackpackSize(int defaultColumns, int defaultRows) {
 		super(new BackpackSize(defaultColumns, defaultRows));
 		setConfigEntryClass("net.mcft.copy.backpacks.client.config.custom.EntryBackpackSize");
-	}
-	
-	@Override
-	protected Property getPropertyFromConfig(Configuration config) {
-		return config.get(getCategory(), getName(),
-			String.valueOf(getDefault()), getComment(), Property.Type.STRING);
 	}
 	
 	@Override

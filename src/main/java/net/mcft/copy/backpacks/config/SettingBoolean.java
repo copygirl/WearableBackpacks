@@ -3,10 +3,9 @@ package net.mcft.copy.backpacks.config;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagByte;
 
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
-public class SettingBoolean extends Setting<Boolean> {
+public class SettingBoolean extends SettingSingleValue<Boolean> {
 	
 	public SettingBoolean(boolean defaultValue) {
 		super(defaultValue);
@@ -14,10 +13,7 @@ public class SettingBoolean extends Setting<Boolean> {
 	}
 	
 	@Override
-	protected Property getPropertyFromConfig(Configuration config) {
-		return config.get(getCategory(), getName(),
-			String.valueOf(getDefault()), getComment(), Property.Type.BOOLEAN);
-	}
+	protected Property.Type getPropertyType() { return Property.Type.BOOLEAN; }
 	
 	@Override
 	public Boolean parse(String str) {
