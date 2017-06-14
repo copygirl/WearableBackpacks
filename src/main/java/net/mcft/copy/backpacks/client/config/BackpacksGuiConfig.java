@@ -78,8 +78,8 @@ public class BackpacksGuiConfig extends GuiConfig {
 		
 		private int getHeightForSlot(int slot) {
 			IConfigEntry entry = getListEntry(slot);
-			return ((entry instanceof EntrySetting) ?
-				((EntrySetting<?>)entry).getSlotHeight() : getSlotHeight());
+			return ((entry instanceof ISlotCustomHeight) ?
+				((ISlotCustomHeight)entry).getSlotHeight() : getSlotHeight());
 		}
 		
 		@Override

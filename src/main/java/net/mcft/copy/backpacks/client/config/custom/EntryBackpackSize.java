@@ -11,11 +11,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.client.config.EntryButton;
+import net.mcft.copy.backpacks.client.config.ISlotCustomHeight;
 import net.mcft.copy.backpacks.config.Setting;
 import net.mcft.copy.backpacks.misc.BackpackSize;
 
 @SideOnly(Side.CLIENT)
-public class EntryBackpackSize extends EntryButton<BackpackSize> {
+public class EntryBackpackSize extends EntryButton<BackpackSize> implements ISlotCustomHeight {
 	
 	public EntryBackpackSize(GuiConfig owningScreen, GuiConfigEntries owningEntryList, Setting<BackpackSize> setting) {
 		super(owningScreen, owningEntryList, setting, new Control());

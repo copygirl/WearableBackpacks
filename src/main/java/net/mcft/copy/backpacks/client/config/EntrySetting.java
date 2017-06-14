@@ -83,9 +83,6 @@ public abstract class EntrySetting<T> extends ListEntryBase {
 			owningScreen.drawToolTip(_hintTooltip, mouseX, mouseY);
 	}
 	
-	/** Returns the height used for this list entry. */
-	public int getSlotHeight() { return 20; }
-	
 	/** Gets the entry's current internal value. */
 	public T getValue() { return value; }
 	/** Sets the entry's current internal value and calls onValueUpdated. */
