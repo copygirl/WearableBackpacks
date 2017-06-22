@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
@@ -85,9 +87,9 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		
-		IBackpack backpack = BackpackHelper.getBackpack(playerIn);
+		IBackpack backpack = BackpackHelper.getBackpack(Minecraft.getMinecraft().player);
 		boolean isEquipped = ((backpack != null) && (backpack.getStack() == stack));
 		
 		// If the shift key is held down, display equip / unequip hints,
@@ -115,7 +117,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		
 		
 		// Only display the following information if advanced tooltips are enabled.
-		if (!advanced) return;
+		if (!flagIn.isAdvanced()) return;
 		
 		NBTBase customSize = NbtUtils.get(stack, TAG_CUSTOM_SIZE);
 		if (customSize != null)

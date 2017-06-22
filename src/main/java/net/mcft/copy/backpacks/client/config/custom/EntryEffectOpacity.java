@@ -31,7 +31,7 @@ public class EntryEffectOpacity extends EntrySliderPercent {
 		
 		@Override
 		protected void mouseDragged(Minecraft mc, int mouseX, int mouseY) {
-			renderEffect(xPosition + 1, yPosition + 1, width - 2, height - 2, (float)getValue());
+			renderEffect(x + 1, y + 1, width - 2, height - 2, (float)getValue());
 			mc.getTextureManager().bindTexture(BUTTON_TEXTURES);
 			super.mouseDragged(mc, mouseX, mouseY);
 		}

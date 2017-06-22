@@ -43,8 +43,8 @@ public class EntryBackpackSize extends EntryButton<BackpackSize> implements ISlo
 			int slotSize = (width - 8) / BackpackSize.MAX.getColumns();
 			int offset   = (width - slotSize * BackpackSize.MAX.getColumns()) / 2;
 			
-			int x1 = xPosition + offset;
-			int y1 = yPosition + offset;
+			int x1 = x + offset;
+			int y1 = y + offset;
 			int x2 = x1 + BackpackSize.MAX.getColumns() * slotSize;
 			int y2 = y1 + BackpackSize.MAX.getRows()    * slotSize;
 			
@@ -61,7 +61,7 @@ public class EntryBackpackSize extends EntryButton<BackpackSize> implements ISlo
 		public void mouseReleased(int mouseX, int mouseY) { _dragging = false; }
 		
 		@Override
-		public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+		public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 			int slotSize = (width - 8) / BackpackSize.MAX.getColumns();
 			int offset   = (width - slotSize * BackpackSize.MAX.getColumns()) / 2;
 			height = slotSize * BackpackSize.MAX.getRows() + (width - slotSize * BackpackSize.MAX.getColumns());
@@ -69,33 +69,33 @@ public class EntryBackpackSize extends EntryButton<BackpackSize> implements ISlo
 			if (!visible) return;
 			if (_dragging)
 				_entry.value = new BackpackSize(
-					Math.min(Math.max(1 + (mouseX - (xPosition + offset)) / slotSize, 1), BackpackSize.MAX.getColumns()),
-					Math.min(Math.max(1 + (mouseY - (yPosition + offset)) / slotSize, 1), BackpackSize.MAX.getRows()));
+					Math.min(Math.max(1 + (mouseX - (x + offset)) / slotSize, 1), BackpackSize.MAX.getColumns()),
+					Math.min(Math.max(1 + (mouseY - (y + offset)) / slotSize, 1), BackpackSize.MAX.getRows()));
 			BackpackSize value = _entry.value;
 			
 			GlStateManager.color(1.0F, 1.0F, 1.0F);
 			// Draw background.
-			GuiUtils.drawContinuousTexturedBox(BUTTON_TEXTURES, xPosition, yPosition, 0, 46,
-			                                   width, height, 200, 20, 2, 3, 2, 2, zLevel);
+			GuiUtils.drawContinuousTexturedBox(BUTTON_TEXTURES,
+				x, y, 0, 46, width, height, 200, 20, 2, 3, 2, 2, zLevel);
 			
 			// Draw slots.
 			for (int column = 1; column <= BackpackSize.MAX.getColumns(); column++)
 				for (int row = 1; row <= BackpackSize.MAX.getRows(); row++) {
-					int x = xPosition + offset + (column - 1) * slotSize;
-					int y = yPosition + offset + (row    - 1) * slotSize;
-					boolean hover = (mouseX >= x) && (mouseX < x + slotSize) &&
-					                (mouseY >= y) && (mouseY < y + slotSize);
+					int xx = x + offset + (column - 1) * slotSize;
+					int yy = y + offset + (row    - 1) * slotSize;
+					boolean hover = (mouseX >= xx) && (mouseX < xx + slotSize) &&
+					                (mouseY >= yy) && (mouseY < yy + slotSize);
 					boolean active = (column <= value.getColumns()) && (row <= value.getRows());
 					boolean selected = (column == value.getColumns()) && (row == value.getRows());
 					if (!active && (!enabled || !hover)) continue;
 					int texY = (enabled ? (hover ? 86 : 66) : 46);
 					int b    = ((selected || !enabled) ? 0 : 1);
-					GuiUtils.drawContinuousTexturedBox(x, y, b, texY + b, slotSize, slotSize,
+					GuiUtils.drawContinuousTexturedBox(xx, yy, b, texY + b, slotSize, slotSize,
 					                                   200 - b*2, 20 - b*2, 2-b, 3-b, 2-b, 2-b, zLevel);
 				}
 			
 			int color = (enabled ? 0xFFFFFF : 0x707070);
-			drawCenteredString(mc.fontRenderer, value.toString(), xPosition + width / 2, yPosition + (height - 8) / 2, color);
+			drawCenteredString(mc.fontRenderer, value.toString(), x + width / 2, y + (height - 8) / 2, color);
 		}
 		
 	}

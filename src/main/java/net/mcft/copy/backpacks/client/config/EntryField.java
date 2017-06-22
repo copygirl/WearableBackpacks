@@ -45,11 +45,12 @@ public class EntryField<T> extends EntrySetting<T> {
 	public void mouseClicked(int x, int y, int mouseEvent) { field.mouseClicked(x, y, mouseEvent); }
 	
 	@Override
-	public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected) {
-		super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+	public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight,
+	                      int mouseX, int mouseY, boolean isSelected, float partialTicks) {
+		super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partialTicks);
 		field.width = owningEntryList.controlWidth - 4;
-		field.xPosition = owningScreen.entryList.controlX + 2;
-		field.yPosition = y + 1;
+		field.x = owningScreen.entryList.controlX + 2;
+		field.y = y + 1;
 		field.setEnabled(enabled());
 		field.drawTextBox();
 	}

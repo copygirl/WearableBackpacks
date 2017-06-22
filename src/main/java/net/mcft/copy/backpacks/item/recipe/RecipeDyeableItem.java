@@ -1,3 +1,4 @@
+/*
 package net.mcft.copy.backpacks.item.recipe;
 
 import java.util.ArrayList;
@@ -15,7 +16,8 @@ import net.mcft.copy.backpacks.item.IDyeableItem;
 import net.mcft.copy.backpacks.misc.util.DyeUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 
-/** Recipe which handled coloring of dyeable items which implement IDyeableItem. */
+/** Recipe which handled coloring of dyeable items which implement IDyeableItem. *\/
+ * // FIXME: Reimplement dyeing recipe.
 public class RecipeDyeableItem implements IRecipe {
 	
 	@Override
@@ -78,3 +80,4 @@ public class RecipeDyeableItem implements IRecipe {
 		return list;
 	}
 }
+*/

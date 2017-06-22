@@ -51,7 +51,6 @@ public class WearableBackpacks {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		PROXY.init();
-		BackpacksContent.initRecipes();
 	}
 	
 }

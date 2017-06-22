@@ -30,7 +30,7 @@ public final class RendererBackpack {
 	
 	private RendererBackpack() {  }
 	
-	private static void render(IBackpack backpack, float ticks, boolean renderStraps) {
+	private static void renderBackpack(IBackpack backpack, float ticks, boolean renderStraps) {
 		ItemStack stack = backpack.getStack();
 		int color = ProxyClient.ITEM_COLOR.getColorFromItemstack(stack, 0);
 		
@@ -51,8 +51,8 @@ public final class RendererBackpack {
 	public static class TileEntity extends TileEntitySpecialRenderer<TileEntityBackpack> {
 		
 		@Override
-		public void renderTileEntityAt(TileEntityBackpack entity, double x, double y, double z,
-		                               float partialTicks, int breakStage) {
+		public void render(TileEntityBackpack entity, double x, double y, double z,
+		                   float partialTicks, int destroyStage, float alpha) {
 			IBackpack backpack = BackpackHelper.getBackpack(entity);
 			if (backpack == null) return;
 			float angle = entity.facing.getHorizontalAngle();
@@ -61,7 +61,7 @@ public final class RendererBackpack {
 			GlStateManager.translate(x + 0.5, y + 0.5, z + 0.5);
 			GlStateManager.rotate(angle, 0.0F, -1.0F, 0.0F);
 			GlStateManager.translate(-0.5, -0.5, -0.5);
-			render(backpack, entity.getAge() + partialTicks, true);
+			renderBackpack(backpack, entity.getAge() + partialTicks, true);
 			GlStateManager.popMatrix();
 		}
 		
@@ -106,7 +106,7 @@ public final class RendererBackpack {
 			GlStateManager.translate(8.0F * scale, HEIGHT_OFFSET * scale, -DEPTH_OFFSET * scale);
 			GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
 			
-			render(backpack, entity.ticksExisted + partialTicks, false);
+			renderBackpack(backpack, entity.ticksExisted + partialTicks, false);
 			
 			GlStateManager.popMatrix();
 			
@@ -151,6 +151,7 @@ public final class RendererBackpack {
 	private static void renderEnchanted(IBackpack backpack, BlockModelRenderer renderer,
 	                                    float ticks, boolean renderStraps) {
 		
+		Minecraft mc = Minecraft.getMinecraft();
 		float glintStrength = WearableBackpacks.CONFIG.cosmetic.enchantEffectOpacity.get().floatValue();
 		if (glintStrength <= 0) return;
 		float glintScale = 0.5F;
@@ -161,8 +162,8 @@ public final class RendererBackpack {
 		float g = (color >> 8 & 0xFF) / 255.0F * glintStrength;
 		float b = (color & 0xFF) / 255.0F * glintStrength;
 		
-		Minecraft.getMinecraft().getTextureManager().bindTexture(ENCHANTED_ITEM_GLINT);
-		Minecraft.getMinecraft().entityRenderer.func_191514_d(true); // Disables fog?
+		mc.getTextureManager().bindTexture(ENCHANTED_ITEM_GLINT);
+		mc.entityRenderer.setupFogColor(true);
 		
 		GlStateManager.disableLighting();
 		GlStateManager.depthMask(false);
@@ -190,7 +191,7 @@ public final class RendererBackpack {
 		GlStateManager.depthMask(true);
 		GlStateManager.enableLighting();
 		
-		Minecraft.getMinecraft().entityRenderer.func_191514_d(false); // Enables fog?
+		mc.entityRenderer.setupFogColor(false);
 		
 	}
 	

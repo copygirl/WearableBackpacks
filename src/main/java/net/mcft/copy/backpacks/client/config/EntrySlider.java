@@ -32,8 +32,8 @@ public class EntrySlider extends EntryButton<Integer> {
 	
 	@Override
 	public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight,
-	                      int mouseX, int mouseY, boolean isSelected) {
-		super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+	                      int mouseX, int mouseY, boolean isSelected, float partialTicks) {
+		super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partialTicks);
 		value = slider.getValueInt();
 	}
 	
@@ -47,15 +47,15 @@ public class EntrySlider extends EntryButton<Integer> {
 		@Override
 		protected void mouseDragged(Minecraft mc, int mouseX, int mouseY) {
 			if (dragging) {
-				sliderValue = (mouseX - (xPosition + 4)) / (float)(width - 8);
+				sliderValue = (mouseX - (x + 4)) / (float)(width - 8);
 				updateSlider();
 			}
 			
-			int x = xPosition + (int)(sliderValue * (width - 8));
+			int xx = x + (int)(sliderValue * (width - 8));
 			float v = (enabled ? 1.0F : 0.5F);
 			GlStateManager.color(v, v, v);
-			drawTexturedModalRect(x, yPosition, 0, 66, 4, 20);
-			drawTexturedModalRect(x + 4, yPosition, 196, 66, 4, 20);
+			drawTexturedModalRect(xx, y, 0, 66, 4, 20);
+			drawTexturedModalRect(xx + 4, y, 196, 66, 4, 20);
 		}
 		
 	}

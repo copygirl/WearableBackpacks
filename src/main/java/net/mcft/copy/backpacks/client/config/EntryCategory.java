@@ -44,12 +44,12 @@ public class EntryCategory extends ListEntryBase {
 	
 	@Override
 	public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight,
-	                      int mouseX, int mouseY, boolean isSelected) {
-		_button.xPosition = listWidth / 2 - 150;
-		_button.yPosition = y;
+	                      int mouseX, int mouseY, boolean isSelected, float partialTicks) {
+		_button.x = listWidth / 2 - 150;
+		_button.y = y;
 		_button.enabled = enabled();
-		_button.drawButton(mc, mouseX, mouseY);
-		super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+		_button.drawButton(mc, mouseX, mouseY, partialTicks);
+		super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partialTicks);
 	}
 	
 	@Override

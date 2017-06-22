@@ -21,14 +21,14 @@ public class EntryArmor extends EntrySlider {
 	
 	@Override
 	public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight,
-	                      int mouseX, int mouseY, boolean isSelected) {
-		super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+	                      int mouseX, int mouseY, boolean isSelected, float partialTicks) {
+		super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partialTicks);
 		// Draw visual armor bar.
 		float v = (enabled() ? 1.0F : 0.5F);
 		GlStateManager.color(v, v, v);
 		mc.getTextureManager().bindTexture(Gui.ICONS);
-		int xx = slider.xPosition + slider.width / 2 - 5 * 8;
-		int yy = slider.yPosition + slider.height / 2 - 8 / 2;
+		int xx = slider.x + slider.width / 2 - 5 * 8;
+		int yy = slider.y + slider.height / 2 - 8 / 2;
 		for (int i = 0; i < 10; i++, xx += 8) {
 			if (i * 2 + 1 < value) slider.drawTexturedModalRect(xx, yy, 34, 9, 9, 9);
 			else if (i * 2 + 1 == value) slider.drawTexturedModalRect(xx, yy, 25, 9, 9, 9);

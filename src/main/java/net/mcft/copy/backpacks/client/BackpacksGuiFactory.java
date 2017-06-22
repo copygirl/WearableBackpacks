@@ -17,7 +17,11 @@ public class BackpacksGuiFactory implements IModGuiFactory {
 	public void initialize(Minecraft minecraftInstance) {  }
 	
 	@Override
-	public Class<? extends GuiScreen> mainConfigGuiClass() { return BackpacksGuiConfig.class; }
+	public boolean hasConfigGui() { return true; }
+	@Override
+	public GuiScreen createConfigGui(GuiScreen parentScreen) { return new BackpacksGuiConfig(parentScreen); }
+	@Override
+	public Class<? extends GuiScreen> mainConfigGuiClass() { throw new UnsupportedOperationException(); }
 	
 	@Override
 	public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() { return null; }

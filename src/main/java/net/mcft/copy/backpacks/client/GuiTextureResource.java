@@ -1,8 +1,8 @@
 package net.mcft.copy.backpacks.client;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
@@ -32,7 +32,7 @@ public class GuiTextureResource extends ResourceLocation {
 		float scaleX = 1.0F / defaultWidth;
 		float scaleY = 1.0F / defaultHeight;
 		Tessellator tess = Tessellator.getInstance();
-		VertexBuffer vb = tess.getBuffer();
+		BufferBuilder vb = tess.getBuffer();
 		vb.begin(7, DefaultVertexFormats.POSITION_TEX);
 		vb.pos(x + 0, y + h, zLevel).tex((u + 0) * scaleX, (v + h) * scaleY).endVertex();
 		vb.pos(x + w, y + h, zLevel).tex((u + w) * scaleX, (v + h) * scaleY).endVertex();

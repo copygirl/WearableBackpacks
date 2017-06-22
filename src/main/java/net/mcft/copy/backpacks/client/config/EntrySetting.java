@@ -55,8 +55,8 @@ public abstract class EntrySetting<T> extends ListEntryBase {
 	
 	@Override
 	public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight,
-	                      int mouseX, int mouseY, boolean isSelected) {
-		super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected);
+	                      int mouseX, int mouseY, boolean isSelected, float partialTicks) {
+		super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partialTicks);
 		
 		// Update the tooltip bounds slighty to not include the space left of the label ...
 		tooltipHoverChecker.updateBounds(y, y + slotHeight,
