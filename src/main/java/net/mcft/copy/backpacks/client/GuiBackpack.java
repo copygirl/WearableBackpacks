@@ -22,6 +22,13 @@ public class GuiBackpack extends GuiContainer {
 	}
 	
 	@Override
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		this.drawDefaultBackground();
+		super.drawScreen(mouseX, mouseY, partialTicks);
+		this.renderHoveredToolTip(mouseX, mouseY);
+	}
+	
+	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		String title = (_container.titleLocalized ? _container.title : I18n.format(_container.title));
 		fontRenderer.drawString(title, _container.getBorderSide() + 1, 6, 0x404040);
