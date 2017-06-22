@@ -1,7 +1,10 @@
 package net.mcft.copy.backpacks.item;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -28,6 +31,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
@@ -72,6 +76,14 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	}
 	
 	// Item properties
+	
+	@Override
+	public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+		// Returns is the specified repair item is
+		// registered in the ore dictionary as leather.
+		int leatherOreID = OreDictionary.getOreID("leather");
+		return ArrayUtils.contains(OreDictionary.getOreIDs(repair), leatherOreID);
+	}
 	
 	@Override
 	public boolean isEnchantable(ItemStack stack) {
