@@ -42,6 +42,4 @@ public final class BackpacksContent {
 		
 	}
 	
-	// FIXME: Add JSON recipe.
-	
 }
