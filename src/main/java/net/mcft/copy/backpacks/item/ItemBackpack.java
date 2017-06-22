@@ -1,6 +1,5 @@
 package net.mcft.copy.backpacks.item;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -33,6 +32,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
+import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackType;
@@ -139,7 +139,8 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	// Item events
 	
 	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand,
+	                                  EnumFacing facing, float hitX, float hitY, float hitZ) {
 		IBlockState state = worldIn.getBlockState(pos);
 		// If the block is replaceable, keep the placing position
 		// the same but check the block below for solidity.
@@ -155,6 +156,29 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		return (state.isSideSolid(worldIn, pos, EnumFacing.UP) &&
 		        BackpackHelper.placeBackpack(worldIn, pos, player.getHeldItem(hand), player, false))
 			? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
+	}
+	
+	@Override
+	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn,
+	                                        EntityLivingBase target, EnumHand hand) {
+		// When right clicking a non-player entity with a backpack in
+		// creative, make the target entity equip the held backpack.
+		if (playerIn.world.isRemote || !playerIn.isCreative() ||
+		    !BackpackRegistry.canEntityWearBackpacks(target) ||
+		    (target instanceof EntityPlayer)) return false;
+		
+		// If the target entity is already wearing a backpack, call
+		// onFaultyRemoval, which may for example drop the backpack's items.
+		IBackpack backpack = BackpackHelper.getBackpack(target);
+		if (backpack != null) backpack.getType().onFaultyRemoval(target, backpack);
+		
+		stack = stack.splitStack(1); // This reduces the held stack's size while
+		                             // giving us a copy with a stack size of 1.
+		// (Not necessary since in creative, but this is the right way to do things!)
+		IBackpackData data = BackpackHelper.getBackpackType(stack).createBackpackData(stack);
+		BackpackHelper.setEquippedBackpack(target, stack, data);
+		
+		return true;
 	}
 	
 	@Override
