@@ -93,8 +93,9 @@ treated the same.
 
 ## Credits
 
-**Authors:** copygirl, asiekierka  
-**Contributors:** -  
+**Authors:** [copygirl](https://github.com/copygirl),
+             [asiekierka](https://github.com/asiekierka)  
+**Contributors:** [InsomniaKitten](https://github.com/InsomniaKitten) ([#33](https://github.com/copygirl/WearableBackpacks/pull/33))  
 
 ### Localization
 
