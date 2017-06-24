@@ -35,7 +35,7 @@ config.wearablebackpacks.backpack.armor=Armadura
 config.wearablebackpacks.backpack.armor.tooltip=Pontos de armadura da mochila normal.
 config.wearablebackpacks.backpack.armor.hint=Sem efeito se não estiver equipada como armadura
 config.wearablebackpacks.backpack.size=Tamanho do Armazenamento
-config.wearablebackpacks.backpack.size.tooltip=Controla o tamanho do armazenamento da mochila normal. Não afeta mochilas normais já colocadas no chão ou equipadas. Quebre a mochila para retornar como ítem e equipe novamente para aplicar.
+config.wearablebackpacks.backpack.size.tooltip=Controla o tamanho do armazenamento da mochila normal. Não afeta mochilas normais já colocadas no chão ou equipadas. Quebre a mochila para retornar como ítem e aplicar as modificações.
 
 config.wearablebackpacks.category.cosmetic=Configurar aparencia
 config.wearablebackpacks.category.cosmetic.tooltip=Configurações de aparencia (apenas cliente) não afeta a jogabilidade
