@@ -2,12 +2,12 @@ container.wearablebackpacks.backpack=背包
 
 item.wearablebackpacks.backpack.name=背包
 
-tooltip.wearablebackpacks.moreInfo=按住 %1$s 查看更多信息
-tooltip.wearablebackpacks.openHint=按下 %1$s 打开背包
+tooltip.wearablebackpacks.moreInfo=按住 %1$s 查看更多信息。
+tooltip.wearablebackpacks.openHint=按下 %1$s 打开背包。
 tooltip.wearablebackpacks.equipHint=潜行时放置并打掉即可装备。
 tooltip.wearablebackpacks.equipHint.extended=潜行时打掉即可装备。\n潜行时空手右击地面即可卸下。
 tooltip.wearablebackpacks.unequipHint=潜行时空手右击地面即可卸下。
-tooltip.wearablebackpacks.used=有玩家正在查看此背包
+tooltip.wearablebackpacks.used=有玩家正在查看此背包。
 
 chat.wearablebackpacks.cantEquip=你最多只能装备一个背包！
 chat.wearablebackpacks.cantEquip.chestplate=你不能在身着护甲时装备背包！
@@ -22,7 +22,7 @@ config.wearablebackpacks.general.enableEquippedInteraction.tooltip=启用此选�
 config.wearablebackpacks.general.enableSelfInteraction=快速访问背包
 config.wearablebackpacks.general.enableSelfInteraction.tooltip=启用此选项后，玩家可利用快捷键打开自己身上的背包。
 config.wearablebackpacks.general.dropAsBlockOnDeath=玩家死亡时以方块形式出现
-config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=启用此选项后，背包会在玩家死亡时以方块形式出现，其中物品
+config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=启用此选项后，背包会在玩家死亡时以方块形式出现，其中物品。
 
 config.wearablebackpacks.category.backpack=背包设定
 config.wearablebackpacks.category.backpack.tooltip=普通背包的各项设定。
@@ -38,6 +38,6 @@ config.wearablebackpacks.backpack.size=存储空间
 config.wearablebackpacks.backpack.size.tooltip=本选项控制背包中格子的行数。本选项不影响已放置或已装备的背包。
 
 # config.wearablebackpacks.category.cosmetic=Cosmetic Settings
-# config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay
+# config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay.
 # config.wearablebackpacks.cosmetic.enchantEffectOpacity=Enchant Effect Opacity
 # config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controls the opacity / visibility of the enchantment effect on equipped and placed backpacks, if present.

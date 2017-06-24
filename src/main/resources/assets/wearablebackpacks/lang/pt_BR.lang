@@ -2,42 +2,42 @@ container.wearablebackpacks.backpack=Mochila
 
 item.wearablebackpacks.backpack.name=Mochila
 
-tooltip.wearablebackpacks.moreInfo=Segure %1$s para mais informações
-tooltip.wearablebackpacks.openHint=Pressione %1$s para abrir a mochila equipada
+tooltip.wearablebackpacks.moreInfo=Segure %1$s para mais informações.
+tooltip.wearablebackpacks.openHint=Pressione %1$s para abrir a mochila equipada.
 tooltip.wearablebackpacks.equipHint=Coloque no chão e quebre\nesgueirando-se para equipar.
 tooltip.wearablebackpacks.equipHint.extended=Quebre esgueirando-se para equipar\nClique com o botão direito no chão esgueirando-se\ncom a mão vazia para desequipar.
 tooltip.wearablebackpacks.unequipHint=Clique com o botão direito no chão esgueirando-se\ncom a mão vazia para desequipar.
-tooltip.wearablebackpacks.used=Atualmente sendo usado por um jogador
+tooltip.wearablebackpacks.used=Atualmente sendo usado por um jogador.
 
-chat.wearablebackpacks.cantEquip=Você já tem uma mochila equipada
-chat.wearablebackpacks.cantEquip.chestplate=Você não pode equipar uma mochila usando um peitoral
+chat.wearablebackpacks.cantEquip=Você já tem uma mochila equipada.
+chat.wearablebackpacks.cantEquip.chestplate=Você não pode equipar uma mochila usando um peitoral.
 
 key.wearablebackpacks.open=Abrir Mochila
 
 
 config.wearablebackpacks.general.equipAsChestArmor=Equipar como peitoral
-config.wearablebackpacks.general.equipAsChestArmor.tooltip=Controla se mochilas equipadas ocupam o slot do peitoral como armadura
+config.wearablebackpacks.general.equipAsChestArmor.tooltip=Controla se mochilas equipadas ocupam o slot do peitoral como armadura.
 config.wearablebackpacks.general.enableEquippedInteraction=Habilitar Interação quando Equipada
-config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Controla se jogadores podem acessar mochilas equipadas em outros jogadores (e entidades)
+config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Controla se jogadores podem acessar mochilas equipadas em outros jogadores (e entidades).
 config.wearablebackpacks.general.enableSelfInteraction=Habilitar tecla de atalho
 config.wearablebackpacks.general.enableSelfInteraction.tooltip=Controla se jogadores podem acessar a mochila equipada usando a tecla de atalho.
 config.wearablebackpacks.general.dropAsBlockOnDeath=Soltar como bloco na Morte
 config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Controla se mochilas colocam-se no chão após a morte, em vez de espalhar os ítens.
 
 config.wearablebackpacks.category.backpack=Configurações da Mochila
-config.wearablebackpacks.category.backpack.tooltip=Controla configurações da mochila normal
+config.wearablebackpacks.category.backpack.tooltip=Controla configurações da mochila normal.
 config.wearablebackpacks.backpack.enabled=Habilitado
-config.wearablebackpacks.backpack.enabled.tooltip=Controla se a mochila normal está habilitada
+config.wearablebackpacks.backpack.enabled.tooltip=Controla se a mochila normal está habilitada.
 config.wearablebackpacks.backpack.durability=Durabilidade
 config.wearablebackpacks.backpack.durability.tooltip=Controla a durabilidade da mochila normal (0 para inquebrável). Diminuir (incluindo configurar para 0) poderá causar problemas com mochilas já danificadas.
-config.wearablebackpacks.backpack.durability.hint=Sem efeito se não estiver equipada como armadura
+config.wearablebackpacks.backpack.durability.hint=Sem efeito se não estiver equipada como armadura.
 config.wearablebackpacks.backpack.armor=Armadura
 config.wearablebackpacks.backpack.armor.tooltip=Pontos de armadura da mochila normal.
-config.wearablebackpacks.backpack.armor.hint=Sem efeito se não estiver equipada como armadura
+config.wearablebackpacks.backpack.armor.hint=Sem efeito se não estiver equipada como armadura.
 config.wearablebackpacks.backpack.size=Tamanho do Armazenamento
 config.wearablebackpacks.backpack.size.tooltip=Controla o tamanho do armazenamento da mochila normal. Não afeta mochilas normais já colocadas no chão ou equipadas. Quebre a mochila para retornar como ítem e aplicar as modificações.
 
 config.wearablebackpacks.category.cosmetic=Configurar aparencia
-config.wearablebackpacks.category.cosmetic.tooltip=Configurações de aparencia (apenas cliente) não afeta a jogabilidade
+config.wearablebackpacks.category.cosmetic.tooltip=Configurações de aparencia (apenas cliente) não afeta a jogabilidade.
 config.wearablebackpacks.cosmetic.enchantEffectOpacity=Transparência do encantamento
-config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controla a transparência / visibilidade do efeito do encantamento em mochilas equipadas ou colocadas no chão, quando houver
+config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controla a transparência / visibilidade do efeito do encantamento em mochilas equipadas ou colocadas no chão, quando houver.

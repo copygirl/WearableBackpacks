@@ -2,7 +2,7 @@ container.wearablebackpacks.backpack=가방
 
 item.wearablebackpacks.backpack.name=가방
 
-tooltip.wearablebackpacks.moreInfo=%1$s키를 누르면 설명보기
+tooltip.wearablebackpacks.moreInfo=%1$s키를 누르면 설명보기.
 tooltip.wearablebackpacks.openHint=가방을 매고 있을 때 %1$s키를 누르면 열어 봅니다.
 tooltip.wearablebackpacks.equipHint=가방을 바닥에 놓고\n살금살금 자세로 부수면 등에 맵니다.
 tooltip.wearablebackpacks.equipHint.extended=살금살금 자세로 부수면 등에 맵니다.\n등에 매고 있을 때 빈손으로 살금살금\n자세로 바닥에 놓으면 가방을 벗습니다.
@@ -16,28 +16,28 @@ key.wearablebackpacks.open=가방 열기
 
 
 # config.wearablebackpacks.general.equipAsChestArmor=Equip as Chest Armor
-# config.wearablebackpacks.general.equipAsChestArmor.tooltip=Controls whether equipped backpacks take up the chest armor equipment slot
+# config.wearablebackpacks.general.equipAsChestArmor.tooltip=Controls whether equipped backpacks take up the chest armor equipment slot.
 # config.wearablebackpacks.general.enableEquippedInteraction=Enable Equipped Interaction
-# config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Controls whether players can access equipped backpacks on other players (and entities)
+# config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Controls whether players can access equipped backpacks on other players (and entities).
 # config.wearablebackpacks.general.enableSelfInteraction=Enable Self Interaction
-# config.wearablebackpacks.general.enableSelfInteraction.tooltip=Controls whether players can access their own equipped backpack using a keybind
+# config.wearablebackpacks.general.enableSelfInteraction.tooltip=Controls whether players can access their own equipped backpack using a keybind.
 # config.wearablebackpacks.general.dropAsBlockOnDeath=Drop as Block on Death
-# config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Controls whether backpacks place themselves down upon death, instead of scattering their contents
+# config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Controls whether backpacks place themselves down upon death, instead of scattering their contents.
 
 config.wearablebackpacks.category.backpack=가방 설정
-# config.wearablebackpacks.category.backpack.tooltip=Controls settings regarding regular backpacks
+# config.wearablebackpacks.category.backpack.tooltip=Controls settings regarding regular backpacks.
 # config.wearablebackpacks.backpack.enabled=Enabled
-# config.wearablebackpacks.backpack.enabled.tooltip=Controls whether the regular backpack is enabled
+# config.wearablebackpacks.backpack.enabled.tooltip=Controls whether the regular backpack is enabled.
 # config.wearablebackpacks.backpack.durability=Durability
-# config.wearablebackpacks.backpack.durability.tooltip=Controls the durability of the regular backpack (0 for unbreakable). Lowering this (including setting to 0) can cause issues with already damaged backpacks
-# config.wearablebackpacks.backpack.durability.hint=No effect if not equipped as armor
+# config.wearablebackpacks.backpack.durability.tooltip=Controls the durability of the regular backpack (0 for unbreakable). Lowering this (including setting to 0) can cause issues with already damaged backpacks.
+# config.wearablebackpacks.backpack.durability.hint=No effect if not equipped as armor.
 # config.wearablebackpacks.backpack.armor=Armor
 # config.wearablebackpacks.backpack.armor.tooltip=Armor points of regular backpacks.
-# config.wearablebackpacks.backpack.armor.hint=No effect if not equipped as armor
+# config.wearablebackpacks.backpack.armor.hint=No effect if not equipped as armor.
 # config.wearablebackpacks.backpack.size=Storage Size
-# config.wearablebackpacks.backpack.size.tooltip=Controls the storage size of regular backpacks. Does not affect placed or equipped backpacks
+# config.wearablebackpacks.backpack.size.tooltip=Controls the storage size of regular backpacks. Does not affect currently placed or equipped backpacks, turn them back into an item to apply changes.
 
 # config.wearablebackpacks.category.cosmetic=Cosmetic Settings
-# config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay
+# config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay.
 # config.wearablebackpacks.cosmetic.enchantEffectOpacity=Enchant Effect Opacity
 # config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controls the opacity / visibility of the enchantment effect on equipped and placed backpacks, if present.

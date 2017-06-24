@@ -2,42 +2,42 @@ container.wearablebackpacks.backpack=Rugzak
 
 item.wearablebackpacks.backpack.name=Rugzak
 
-tooltip.wearablebackpacks.moreInfo=Houd %1$s ingedrukt voor meer info
-tooltip.wearablebackpacks.openHint=Druk %1$s om te openen terwijl je het draagt
+tooltip.wearablebackpacks.moreInfo=Houd %1$s ingedrukt voor meer info.
+tooltip.wearablebackpacks.openHint=Druk %1$s om te openen terwijl je het draagt.
 tooltip.wearablebackpacks.equipHint=Plaats neer en breek het\nterwijl je sluipt om het te dragen.
 tooltip.wearablebackpacks.equipHint.extended=Sluip en breek om te dragen.\nSluip en rechtsklik de grond\nmet een lege hand, om het uit te doen.
 tooltip.wearablebackpacks.unequipHint=Sluit en rechtsklik de grond\nmet een lege hand om het uit te doen.
-tooltip.wearablebackpacks.used=Momenteel in gebruik door een speler
+tooltip.wearablebackpacks.used=Momenteel in gebruik door een speler.
 
-chat.wearablebackpacks.cantEquip=Je bent al uitgerust met een rugzak
-chat.wearablebackpacks.cantEquip.chestplate=Je kunt een rugzak niet aandoen terwijl je al een borsplaat draagt
+chat.wearablebackpacks.cantEquip=Je bent al uitgerust met een rugzak.
+chat.wearablebackpacks.cantEquip.chestplate=Je kunt een rugzak niet aandoen terwijl je al een borsplaat draagt.
 
 key.wearablebackpacks.open=Open Rugzak
 
 
 config.wearablebackpacks.general.equipAsChestArmor=Draag het als een Borstplaat
-config.wearablebackpacks.general.equipAsChestArmor.tooltip=Bepaald of gedragen rugzakken de lichaam harnas slot inneemt of niet
+config.wearablebackpacks.general.equipAsChestArmor.tooltip=Bepaald of gedragen rugzakken de lichaam harnas slot inneemt of niet.
 config.wearablebackpacks.general.enableEquippedInteraction=Schakel Uitgeruste Interactie in
-config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Bepaald of spelers toegang hebben op de uitgeruste rugzakken van andere spelers (en entiteiten)
+config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Bepaald of spelers toegang hebben op de uitgeruste rugzakken van andere spelers (en entiteiten).
 config.wearablebackpacks.general.enableSelfInteraction=Schakel Zelf Interactie in
-config.wearablebackpacks.general.enableSelfInteraction.tooltip=Bepaalt of spelers toegang kunnen hebben tot hun eigen uitgeruste rugzak met behulp van een sneltoets
+config.wearablebackpacks.general.enableSelfInteraction.tooltip=Bepaalt of spelers toegang kunnen hebben tot hun eigen uitgeruste rugzak met behulp van een sneltoets.
 config.wearablebackpacks.general.dropAsBlockOnDeath=Laat vallen als Blok op Overlijden
-config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Bepaalt of rugzakken zichzelf neerplaatsen in geval van overlijden, in plaats van hun inhoud te verstrooiingen
+config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Bepaalt of rugzakken zichzelf neerplaatsen in geval van overlijden, in plaats van hun inhoud te verstrooiingen.
 
 config.wearablebackpacks.category.backpack=Rugzak Instellingen
-config.wearablebackpacks.category.backpack.tooltip=Bepaalt de instellingen van normale rugzakken
+config.wearablebackpacks.category.backpack.tooltip=Bepaalt de instellingen van normale rugzakken.
 config.wearablebackpacks.backpack.enabled=Ingeschakeld
-config.wearablebackpacks.backpack.enabled.tooltip=Bepaalt of de normale rugzak is ingeschakeld
+config.wearablebackpacks.backpack.enabled.tooltip=Bepaalt of de normale rugzak is ingeschakeld.
 config.wearablebackpacks.backpack.durability=Duurzaamheid
-config.wearablebackpacks.backpack.durability.tooltip=Regelt de duurzaamheid van de normale rugzak (0 voor onbreekbaar). Het verlagen van deze (inclusief het instellen naar 0) kan problemen veroorzaken met reeds beschadigde rugzakken
-# config.wearablebackpacks.backpack.durability.hint=No effect if not equipped as armor
+config.wearablebackpacks.backpack.durability.tooltip=Regelt de duurzaamheid van de normale rugzak (0 voor onbreekbaar). Het verlagen van deze (inclusief het instellen naar 0) kan problemen veroorzaken met reeds beschadigde rugzakken.
+# config.wearablebackpacks.backpack.durability.hint=No effect if not equipped as armor.
 # config.wearablebackpacks.backpack.armor=Armor
 # config.wearablebackpacks.backpack.armor.tooltip=Armor points of regular backpacks.
-# config.wearablebackpacks.backpack.armor.hint=No effect if not equipped as armor
+# config.wearablebackpacks.backpack.armor.hint=No effect if not equipped as armor.
 config.wearablebackpacks.backpack.size=Opslag Grootte
-config.wearablebackpacks.backpack.size.tooltip=Bepaalt de opslag grootte van normale rugzakken. Heeft geen invloed op geplaatste of uitgeruste rugzakken
+config.wearablebackpacks.backpack.size.tooltip=Bepaalt de opslag grootte van normale rugzakken. Heeft geen invloed op geplaatste of uitgeruste rugzakken.
 
 # config.wearablebackpacks.category.cosmetic=Cosmetic Settings
-# config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay
+# config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay.
 # config.wearablebackpacks.cosmetic.enchantEffectOpacity=Enchant Effect Opacity
 # config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controls the opacity / visibility of the enchantment effect on equipped and placed backpacks, if present.
