@@ -13,23 +13,24 @@ option unlike any other!
 ## What's so great?
 
 - **There can be only one!**  
-  Where other mods store the contents of a backpack on the item itself, **WB** doesn't.
-  When a backpack is equipped, its contents are actually kept with the player itself.
-  This also means it's impossible to carry around multiple backpacks that contain items.
+  Other mods allow you to carry multiple backpacks in your inventory. **WB** doesn't.
+  This design, as well as the resulting implementation has been carried over from its
+  predecessor. But what the mod is lacking in convenience, it's trying to make up in
+  charm and configurability.
   
   ![](docs/picture_1.png)
 
 - **Armor up, or storage up?**  
   With the default settings, backpacks will function as armor, taking up the chest armor
   equipment slot, protecting from as well as taking damage just like leather armor. This
-  way, you have to *choose* between more protection or more storage. This is fully
-  configurable, though, in case you don't like it.
+  way, you have to *choose* between more protection or more storage. This can be turned
+  off though, in case you don't like it.
 
 - **Play with friends, share backpacks!**  
   Having a backpack on your back looks cool and all, but if only you could do something
   with that beauty. Well, lucky you! Other players (hopefully, without ill intentions)
-  can open your backpack and borrow a pick and some torches on a mining trip. This only
-  works as long as your back is facing towards them, though.
+  can open your backpack and borrow a pick and some torches on a mining trip. This of
+  course only works as long as your back is facing towards them.
   
   ![](docs/picture_2.png)
 
@@ -76,6 +77,15 @@ which you can find in the controls menu (default: `B`).
 
 ![Backpack Recipe](docs/recipe_backpack.png)
 
+### Additional Features
+
+- As already mentioned above, this mod has many, easy to use configuration options.
+  Simply click **Mods** in the main menu or **Mod Options** ingame, search for
+  "Wearable Backpacks" and click the **Config** button.
+- When backpacks are equipped as armor, they may also be enchanted just like armor.
+  (This feature is missing from 1.10 due to missing enchantment hooks in Forge.)
+- Some mobs may rarely spawn with backpacks equipped, containing random loot.
+
 ## Download
 
 Available right here through [GitHub Releases][DL] or on [CurseForge][CF].  
@@ -90,6 +100,12 @@ of this mod as much as you'd like.
 
 If you contribute to this repository, do keep in mind that your contributions will be
 treated the same.
+
+## For Modpack / Map Creators
+
+- Custom backpack size can be set using NBT tag `backpack:{size:[x,y]}`.
+- Custom armor value can be set using NBT tag `backpack:{armor:x}`.
+- Default backpack loot table `wearablebackpacks:backpack/default` can be overridden.
 
 ## Credits
 
