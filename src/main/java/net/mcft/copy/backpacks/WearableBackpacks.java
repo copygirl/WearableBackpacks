@@ -15,7 +15,7 @@ import net.mcft.copy.backpacks.network.BackpacksChannel;
 // TODO: Add achievement(s)! <3
 
 @Mod(modid = WearableBackpacks.MOD_ID, name = WearableBackpacks.MOD_NAME,
-     version = WearableBackpacks.VERSION,
+     version = WearableBackpacks.VERSION, dependencies = "required-after:forge@[14.21.0.2375,)",
      guiFactory = "net.mcft.copy.backpacks.client.BackpacksGuiFactory")
 public class WearableBackpacks {
 	
@@ -33,6 +33,7 @@ public class WearableBackpacks {
 	public static Logger LOG;
 	public static BackpacksChannel CHANNEL;
 	public static BackpacksConfig CONFIG;
+	public static BackpacksContent CONTENT;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -43,13 +44,14 @@ public class WearableBackpacks {
 		CONFIG.load();
 		CONFIG.save();
 		
-		BackpacksContent.init();
-		CONFIG.init();
+		CONTENT = new BackpacksContent();
+		
 		PROXY.preInit();
 	}
 	
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
+		CONFIG.init();
 		PROXY.init();
 	}
 	

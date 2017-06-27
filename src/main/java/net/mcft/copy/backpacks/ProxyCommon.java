@@ -54,6 +54,7 @@ public class ProxyCommon {
 	public void preInit() {
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(WearableBackpacks.CONFIG);
+		MinecraftForge.EVENT_BUS.register(WearableBackpacks.CONTENT);
 		MinecraftForge.EVENT_BUS.register(new DyeWashingHandler());
 		
 		CapabilityManager.INSTANCE.register(IBackpack.class,
