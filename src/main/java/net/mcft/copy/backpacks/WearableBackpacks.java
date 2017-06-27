@@ -45,6 +45,7 @@ public class WearableBackpacks {
 		CONFIG.save();
 		
 		CONTENT = new BackpacksContent();
+		CONTENT.registerRecipes();
 		
 		PROXY.preInit();
 	}

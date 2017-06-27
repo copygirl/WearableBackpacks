@@ -9,12 +9,14 @@ import net.minecraft.world.storage.loot.LootTableList;
 
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.block.BlockBackpack;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
 import net.mcft.copy.backpacks.item.ItemBackpack;
+import net.mcft.copy.backpacks.item.recipe.RecipeDyeableItem;
 
 public class BackpacksContent {
 	
@@ -48,6 +50,11 @@ public class BackpacksContent {
 		}
 		
 		// BackpackRegistry.registerBackpackEntity(EntityEnderman.class, ENDER_BACKPACK, 1.0 / 80);
+	}
+	
+	public void registerRecipes() {
+		ForgeRegistries.RECIPES.register(new RecipeDyeableItem()
+			.setRegistryName(WearableBackpacks.MOD_ID, "dyeable_item"));
 	}
 	
 }
