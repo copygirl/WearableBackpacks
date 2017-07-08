@@ -17,12 +17,13 @@ import net.mcft.copy.backpacks.client.gui.control.GuiLabel;
 public class GuiTestScreen extends GuiContainerScreen {
 	
 	public GuiTestScreen(GuiScreen parentScreen) {
-		
+		container.setPadding(8);
 		container.add(new GuiLayout(Direction.VERTICAL) {{
+			setHorizontalCentered();
+			setVerticalFill();
 			setSpacing(4);
-			setFill(8);
 			
-			addFixed(new GuiButton("Show Config GUI") {{
+			addFixed(new GuiButton("Show old Config GUI") {{
 				setHorizontalCentered();
 				setAction(() -> display(new BackpacksGuiConfig(GuiTestScreen.this)));
 			}});
@@ -48,12 +49,10 @@ public class GuiTestScreen extends GuiContainerScreen {
 				setAction(() -> display(parentScreen));
 			}});
 		}});
-		
 	}
 	
 	public class AlignmentScreen extends GuiContainerScreen {
 		public AlignmentScreen() {
-			
 			for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++) {
 				int x = i, y = j;
@@ -99,20 +98,19 @@ public class GuiTestScreen extends GuiContainerScreen {
 					setAction(() -> display(GuiTestScreen.this));
 				}});
 			}
-			
 		}
 	}
 	
 	public class LayoutScreen1 extends GuiContainerScreen {
 		public LayoutScreen1() {
-			
+			container.setPadding(8);
 			container.add(new GuiLayout(Direction.VERTICAL) {{
-				setFill(8);
+				setFill();
 				
 				for (int i = 1; i <= 4; i++) {
 					int weight = i * 10;
 					addWeighted(new GuiLayout(Direction.HORIZONTAL) {{
-						setLeftRight(0);
+						setHorizontalFill();
 						addFixed(new GuiLabel(weight + "%") {{ setVerticalCentered(); }});
 						addFixed(new GuiButton("<") {{ setVerticalCentered(); setSize(18, 18); }});
 						for (int j = 1; j <= 3; j++)
@@ -126,20 +124,19 @@ public class GuiTestScreen extends GuiContainerScreen {
 					setAction(() -> display(GuiTestScreen.this));
 				}});
 			}});
-			
 		}
 	}
 	
 	public class LayoutScreen2 extends GuiContainerScreen {
-		GuiLayout resizable = null;
+		private GuiLayout resizable;
 		public LayoutScreen2() {
-			
+			container.setPadding(8);
 			container.add(new GuiLayout(Direction.VERTICAL) {{
 				setHorizontalCentered();
-				setTopBottom(8);
+				setVerticalFill();
 				
 				addFixed(new GuiLayout(Direction.HORIZONTAL) {{
-					setLeftRight(0);
+					setHorizontalFill();
 					addWeighted(new GuiLabel(" Adjust width: ") {{ setVerticalCentered(); }});
 					addFixed(new GuiButton(20, "-") {{ setAction(() -> resizable.setWidth(resizable.getWidth() - 40)); }});
 					addFixed(new GuiButton(20, "+") {{ setAction(() -> resizable.setWidth(resizable.getWidth() + 40)); }});
@@ -157,7 +154,7 @@ public class GuiTestScreen extends GuiContainerScreen {
 				}});
 				
 				addFixed(new GuiLayout(Direction.HORIZONTAL) {{
-					setLeftRight(0);
+					setHorizontalFill();
 					addFixed(new GuiLabel(" Fixed Height: ") {{ setVerticalCentered(); }});
 					addWeighted(new GuiButton());
 				}});
@@ -169,7 +166,6 @@ public class GuiTestScreen extends GuiContainerScreen {
 					setAction(() -> display(GuiTestScreen.this));
 				}});
 			}});
-			
 		}
 	}
 	

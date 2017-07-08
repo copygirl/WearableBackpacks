@@ -69,7 +69,7 @@ public class GuiLayout extends GuiContainer {
 	@Override
 	public int getChildPos(GuiElementBase element, Direction direction) {
 		return (direction == this.direction)
-			? ((LayoutAlignment)element.getAlign(direction))._childPos
+			? getPaddingMin(direction) + ((LayoutAlignment)element.getAlign(direction))._childPos
 			: super.getChildPos(element, direction);
 	}
 	
@@ -77,7 +77,7 @@ public class GuiLayout extends GuiContainer {
 	private void updateOwnSize() {
 		Direction direction = this.direction.perpendicular();
 		if (_fixedSize || (getAlign(direction) instanceof LayoutAlignment.Weighted)) return;
-		setSize(direction, children.stream()
+		setSize(direction, getPadding(direction) + children.stream()
 			.filter(child -> !(child.getAlign(direction) instanceof Alignment.Both))
 			.mapToInt(child -> child.getSize(direction))
 			.max().orElse(0));
@@ -90,7 +90,7 @@ public class GuiLayout extends GuiContainer {
 			return;
 		}
 		double remainingWeight = 0.0;
-		int availableSize = getSize(direction);
+		int availableSize = getSize(direction) - getPadding(direction);
 		availableSize -= (children.size() - 1) * _spacing;
 		for (GuiElementBase child : children) {
 			Alignment align = child.getAlign(direction);

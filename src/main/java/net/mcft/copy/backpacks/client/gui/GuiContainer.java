@@ -13,9 +13,43 @@ public class GuiContainer extends GuiElementBase {
 	
 	protected List<GuiElementBase> children = new ArrayList<GuiElementBase>();
 	
+	private int _padLeft, _padTop, _padRight, _padBottom;
+	
 	
 	public GuiContainer() {  }
 	public GuiContainer(GuiContext context) { setContext(context); }
+	
+	
+	// Padding related
+	
+	public int getPaddingMin(Direction direction)
+		{ return (direction == Direction.HORIZONTAL) ? _padLeft : _padTop; }
+	public int getPaddingMax(Direction direction)
+		{ return (direction == Direction.HORIZONTAL) ? _padRight : _padBottom; }
+	public int getPadding(Direction direction)
+		{ return getPaddingMin(direction) + getPaddingMax(direction); }
+	
+	public final int getPaddingLeft() { return getPaddingMin(Direction.HORIZONTAL); }
+	public final int getPaddingTop() { return getPaddingMin(Direction.VERTICAL); }
+	public final int getPaddingRight() { return getPaddingMax(Direction.HORIZONTAL); }
+	public final int getPaddingBottom() { return getPaddingMax(Direction.VERTICAL); }
+	
+	public void setPadding(Direction direction, int min, int max) {
+		if (direction == Direction.HORIZONTAL) { _padLeft = min; _padRight = max; }
+		else { _padTop = min; _padBottom = max; }
+		updateChildSizes(direction);
+	}
+	
+	public final void setPaddingHorizontal(int left, int right) { setPadding(Direction.HORIZONTAL, left, right); }
+	public final void setPaddingHorizontal(int value) { setPaddingHorizontal(value); }
+	public final void setPaddingVertical(int top, int bottom) { setPadding(Direction.VERTICAL, top, bottom); }
+	public final void setPaddingVertical(int value) { setPaddingVertical(value); }
+	
+	public final void setPadding(int left, int top, int right, int bottom)
+		{ setPaddingHorizontal(left, right); setPaddingVertical(top, bottom); }
+	public final void setPadding(int horizontal, int vertical)
+		{ setPadding(horizontal, vertical, horizontal, vertical); }
+	public final void setPadding(int value) { setPadding(value, value); }
 	
 	
 	/** Called when a child element is added. */
@@ -40,11 +74,11 @@ public class GuiContainer extends GuiElementBase {
 	public int getChildPos(GuiElementBase element, Direction direction) {
 		Alignment align = element.getAlign(direction);
 		if (align instanceof Alignment.Min)
-			return ((Alignment.Min)align).min;
+			return getPaddingMin(direction) + ((Alignment.Min)align).min;
 		else if (align instanceof Alignment.Max)
-			return getSize(direction) - element.getSize(direction) - ((Alignment.Max)align).max;
+			return getSize(direction) - element.getSize(direction) - getPaddingMax(direction) - ((Alignment.Max)align).max;
 		else if (align instanceof Alignment.Both)
-			return ((Alignment.Both)align).min;
+			return getPaddingMin(direction) + ((Alignment.Both)align).min;
 		else if (align instanceof Alignment.Center)
 			return (getSize(direction) - element.getSize(direction)) / 2;
 		else throw new UnsupportedOperationException("Unsupported Alignment '" + align.getClass() + "'");
@@ -59,12 +93,10 @@ public class GuiContainer extends GuiElementBase {
 	public void add(GuiElementBase element) {
 		if (element.getContext() != null)
 			throw new UnsupportedOperationException("The specified element already has a context set");
-		
 		if (getContext() != null)
 			element.setContext(getContext());
 		element.setParent(this);
 		children.add(element);
-		
 		onChildAdded(element);
 	}
 	/** Adds all of the specified elements to this container. */
@@ -97,7 +129,7 @@ public class GuiContainer extends GuiElementBase {
 			Alignment align = child.getAlign(direction);
 			if (align instanceof Alignment.Both) {
 				Alignment.Both both = (Alignment.Both)align;
-				child.setSize(direction, getSize(direction) - both.min - both.max);
+				child.setSize(direction, getSize(direction) - getPadding(direction) - both.min - both.max);
 			}
 		}
 	}

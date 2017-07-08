@@ -86,13 +86,9 @@ public abstract class GuiElementBase {
 	public final void setVerticalCentered() { setVerticalAlign(new Alignment.Center()); }
 	public final void setVerticalCentered(int height) { setVerticalCentered(); setHeight(height); }
 	
-	public final void setFill() { setFill(0); }
-	public final void setFill(int padding) { setFill(padding, padding); }
-	public final void setFill(int paddingHorizontal, int paddingVertical)
-		{ setFill(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical); }
-	public final void setFill(int paddingLeft, int paddingTop, int paddingRight, int paddingBottom)
-		{ setAlign(new Alignment.Both(paddingLeft, paddingRight),
-		           new Alignment.Both(paddingTop, paddingBottom)); }
+	public final void setHorizontalFill() { setLeftRight(0); }
+	public final void setVerticalFill() { setTopBottom(0); }
+	public final void setFill() { setHorizontalFill(); setVerticalFill(); }
 	
 	// Element focus
 	
@@ -175,7 +171,7 @@ public abstract class GuiElementBase {
 	/** Returns whether the specified relative
 	 *  position is within the element's region. */
 	public boolean contains(int x, int y)
-		{ return regionContains(0, 0, _width, _height, x, y); }
+		{ return regionContains(0, 0, getWidth(), getHeight(), x, y); }
 	
 	public static Minecraft getMC() { return Minecraft.getMinecraft(); }
 	public static FontRenderer getFontRenderer() { return getMC().fontRenderer; }
