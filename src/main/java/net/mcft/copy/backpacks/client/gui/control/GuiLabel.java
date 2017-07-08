@@ -6,6 +6,7 @@ import net.minecraft.client.gui.FontRenderer;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import net.mcft.copy.backpacks.client.gui.Direction;
 import net.mcft.copy.backpacks.client.gui.GuiElementBase;
 

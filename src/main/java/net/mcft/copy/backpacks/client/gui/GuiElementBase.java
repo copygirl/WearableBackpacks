@@ -94,46 +94,43 @@ public abstract class GuiElementBase {
 		{ setAlign(new Alignment.Both(paddingLeft, paddingRight),
 		           new Alignment.Both(paddingTop, paddingBottom)); }
 	
-	// Control focus
+	// Element focus
 	
-	/** Returns if this control can be focused. */
+	/** Returns if this element can be focused. */
 	public boolean canFocus() { return false; }
 	
-	/** Returns if this control is currently focused. */
+	/** Returns if this element is currently focused. */
 	public boolean isFocused() { return (getContext().getFocused() == this); }
 	
-	/** Makes this control the currently focused control. */
+	/** Makes this element the currently focused element. */
 	public void setFocused() { setFocused(true); }
-	/** Sets whether this control is the currently focused control. */
+	/** Sets whether this element is the currently focused element. */
 	public void setFocused(boolean value) {
 		if (value && !canFocus())
-			throw new UnsupportedOperationException("This control can't be focused");
+			throw new UnsupportedOperationException("This element can't be focused");
 		getContext().setFocused(value ? this : null);
 	}
 	
 	// Drag related
 	
-	/** Returns if this control can be dragged. */
+	/** Returns if this element can be dragged. */
 	public boolean canDrag() { return false; }
 	
-	/** Returns if this control is currently being pressed down. */
+	/** Returns if this element is currently being pressed down. */
 	public boolean isPressed() { return (getContext().getPressed() == this); }
 	
-	/** Returns if this control is currently being dragged. */
+	/** Returns if this element is currently being dragged. */
 	public boolean isDragged() { return (canDrag() && isPressed()); }
 	
 	// Basic events
 	
-	/** Called when this control is added to a container. */
-	public void onControlAdded() {  }
-	
-	/** Called when this control is resized. */
+	/** Called when this element is resized. */
 	public void onSizeChanged(Direction direction) {  }
 	
 	// Mouse events
 	
-	/** Called when the mouse is clicked in this control.
-	 *  Mouse position is relative to the control's position.
+	/** Called when the mouse is clicked in this element.
+	 *  Mouse position is relative to the element's position.
 	 *  Returns if the mouse action was handled. */
 	public boolean onMouseDown(int mouseButton, int mouseX, int mouseY) {
 		if (mouseButton == MouseButton.LEFT)
@@ -144,8 +141,8 @@ public abstract class GuiElementBase {
 		} else return false;
 	}
 	
-	/** Called when the mouse is moved over this control or being dragged.
-	 *  Mouse position is relative to the control's position. */
+	/** Called when the mouse is moved over this element or being dragged.
+	 *  Mouse position is relative to the element's position. */
 	public void onMouseMove(int mouseX, int mouseY) {  }
 	
 	public void onMouseUp(int mouseButton, int mouseX, int mouseY) {  }
@@ -156,13 +153,13 @@ public abstract class GuiElementBase {
 	
 	// Draw events
 	
-	/** Draws this control on the screen. Rendered relative to its position.
-	 *  Mouse position is relative to the control's position. */
+	/** Draws this element on the screen. Rendered relative to its position.
+	 *  Mouse position is relative to the element's position. */
 	public void draw(int mouseX, int mouseY, float partialTicks) {  }
 	
-	/** Draws this control's tooltip on the screen.
-	 *  Tooltip is rendered relative to this control's position.
-	 *  Mouse position is relative to the control's position. */
+	/** Draws this element's tooltip on the screen.
+	 *  Tooltip is rendered relative to this element's position.
+	 *  Mouse position is relative to the element's position. */
 	public void drawTooltip(int mouseX, int mouseY, float partialTicks) {  }
 	
 	
@@ -176,8 +173,8 @@ public abstract class GuiElementBase {
 		       (testY >= y) && (testY < y + height);
 	}
 	/** Returns whether the specified relative
-	 *  position is within the control's region. */
-	public boolean controlContains(int x, int y)
+	 *  position is within the element's region. */
+	public boolean contains(int x, int y)
 		{ return regionContains(0, 0, _width, _height, x, y); }
 	
 	public static Minecraft getMC() { return Minecraft.getMinecraft(); }

@@ -18,74 +18,73 @@ public class GuiContainer extends GuiElementBase {
 	public GuiContainer(GuiContext context) { setContext(context); }
 	
 	
-	/** Called when a child control is added. */
-	public void onChildAdded(GuiElementBase control) {
+	/** Called when a child element is added. */
+	public void onChildAdded(GuiElementBase element) {
 		for (Direction direction : Direction.values())
 			updateChildSizes(direction);
 	}
 	
-	/** Called when a child control is added. */
-	public void onChildRemoved(GuiElementBase control) {
+	/** Called when a child element is added. */
+	public void onChildRemoved(GuiElementBase element) {
 		for (Direction direction : Direction.values())
 			updateChildSizes(direction);
 	}
 	
-	/** Called when a child control is resized. */
-	public void onChildSizeChanged(GuiElementBase control, Direction direction) {  }
+	/** Called when a child element is resized. */
+	public void onChildSizeChanged(GuiElementBase element, Direction direction) {  }
 	
-	/** Called when a child control's alignment changes. */
-	public void onChildAlignChanged(GuiElementBase control, Direction direction) {  }
+	/** Called when a child element's alignment changes. */
+	public void onChildAlignChanged(GuiElementBase element, Direction direction) {  }
 	
 	
-	public int getChildPos(GuiElementBase control, Direction direction) {
-		Alignment align = control.getAlign(direction);
+	public int getChildPos(GuiElementBase element, Direction direction) {
+		Alignment align = element.getAlign(direction);
 		if (align instanceof Alignment.Min)
 			return ((Alignment.Min)align).min;
 		else if (align instanceof Alignment.Max)
-			return getSize(direction) - control.getSize(direction) - ((Alignment.Max)align).max;
+			return getSize(direction) - element.getSize(direction) - ((Alignment.Max)align).max;
 		else if (align instanceof Alignment.Both)
 			return ((Alignment.Both)align).min;
 		else if (align instanceof Alignment.Center)
-			return (getSize(direction) - control.getSize(direction)) / 2;
+			return (getSize(direction) - element.getSize(direction)) / 2;
 		else throw new UnsupportedOperationException("Unsupported Alignment '" + align.getClass() + "'");
 	}
-	public final int getChildX(GuiElementBase control)
-		{ return getChildPos(control, Direction.HORIZONTAL); }
-	public final int getChildY(GuiElementBase control)
-		{ return getChildPos(control, Direction.VERTICAL); }
+	public final int getChildX(GuiElementBase element)
+		{ return getChildPos(element, Direction.HORIZONTAL); }
+	public final int getChildY(GuiElementBase element)
+		{ return getChildPos(element, Direction.VERTICAL); }
 	
 	
-	/** Adds the specified control to this container. */
-	public void add(GuiElementBase control) {
-		if (control.getContext() != null)
+	/** Adds the specified element to this container. */
+	public void add(GuiElementBase element) {
+		if (element.getContext() != null)
 			throw new UnsupportedOperationException("The specified element already has a context set");
 		
 		if (getContext() != null)
-			control.setContext(getContext());
-		control.setParent(this);
-		children.add(control);
+			element.setContext(getContext());
+		element.setParent(this);
+		children.add(element);
 		
-		control.onControlAdded();
-		onChildAdded(control);
+		onChildAdded(element);
 	}
-	/** Adds all of the specified controls to this container. */
-	public void addAll(GuiElementBase... controls)
-		{ for (GuiElementBase control : controls) add(control); }
+	/** Adds all of the specified elements to this container. */
+	public void addAll(GuiElementBase... elements)
+		{ for (GuiElementBase element : elements) add(element); }
 	
-	/** Removes the specified control from this container. */
-	public void remove(GuiElementBase control) {
-		if (!children.remove(control))
+	/** Removes the specified element from this container. */
+	public void remove(GuiElementBase element) {
+		if (!children.remove(element))
 			throw new UnsupportedOperationException("The specified element is not a child of this container");
-		control.setContext(null);
-		control.setParent(null);
-		onChildRemoved(control);
+		element.setContext(null);
+		element.setParent(null);
+		onChildRemoved(element);
 	}
 	
 	
 	@Override
-	void setContext(GuiContext context) {
-		super.setContext(context);
-		children.forEach(child -> child.setContext(context));
+	void setContext(GuiContext element) {
+		super.setContext(element);
+		children.forEach(child -> child.setContext(element));
 	}
 	
 	@Override
@@ -108,7 +107,7 @@ public class GuiContainer extends GuiElementBase {
 		for (GuiElementBase child : children) {
 			int mx = mouseX - getChildX(child);
 			int my = mouseY - getChildY(child);
-			if (!child.controlContains(mx, my)) continue;
+			if (!child.contains(mx, my)) continue;
 			if (child.onMouseDown(mouseButton, mx, my)) return true;
 		}
 		return false;

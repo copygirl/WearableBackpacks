@@ -1,5 +1,9 @@
 package net.mcft.copy.backpacks.client.gui;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public abstract class Alignment {
 	
 	public static class Min extends Alignment {

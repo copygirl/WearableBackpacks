@@ -2,6 +2,9 @@ package net.mcft.copy.backpacks.client.gui.test;
 
 import net.minecraft.client.gui.GuiScreen;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import net.mcft.copy.backpacks.client.config.BackpacksGuiConfig;
 import net.mcft.copy.backpacks.client.gui.Direction;
 import net.mcft.copy.backpacks.client.gui.GuiContainer;
@@ -10,6 +13,7 @@ import net.mcft.copy.backpacks.client.gui.GuiLayout;
 import net.mcft.copy.backpacks.client.gui.control.GuiButton;
 import net.mcft.copy.backpacks.client.gui.control.GuiLabel;
 
+@SideOnly(Side.CLIENT)
 public class GuiTestScreen extends GuiContainerScreen {
 	
 	public GuiTestScreen(GuiScreen parentScreen) {

@@ -62,7 +62,7 @@ public class GuiButton extends GuiElementBase {
 	
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
-		boolean isHighlighted = (isPressed() || controlContains(mouseX, mouseY));
+		boolean isHighlighted = (isPressed() || contains(mouseX, mouseY));
 		
 		int ty = 46 + (isHighlighted ? 2 : 1) * 20;
 		GuiUtils.drawContinuousTexturedBox(BUTTON_TEX, 0, 0, 0, ty, getWidth(), getHeight(), 200, 20, 2, 3, 2, 2, 0);
@@ -76,7 +76,7 @@ public class GuiButton extends GuiElementBase {
 		if (text.isEmpty()) return;
 		
 		FontRenderer fontRenderer = getFontRenderer();
-		boolean isHighlighted = (isPressed() || controlContains(mouseX, mouseY));
+		boolean isHighlighted = (isPressed() || contains(mouseX, mouseY));
 		
 		String buttonText = text;
 		int buttonTextWidth = fontRenderer.getStringWidth(buttonText);

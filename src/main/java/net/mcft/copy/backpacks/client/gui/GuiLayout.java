@@ -19,61 +19,61 @@ public class GuiLayout extends GuiContainer {
 	
 	// Adding / removing elements
 	
-	public void addFixed(GuiElementBase control, int size)
-		{ control.setSize(direction, size); addFixed(control); }
-	public void addFixed(GuiElementBase control)
-		{ addInternal(control, new LayoutAlignment.Fixed()); }
+	public void addFixed(GuiElementBase element, int size)
+		{ element.setSize(direction, size); addFixed(element); }
+	public void addFixed(GuiElementBase element)
+		{ addInternal(element, new LayoutAlignment.Fixed()); }
 	
 	@Override
-	public void add(GuiElementBase control)
-		{ addWeighted(control); }
-	public void addWeighted(GuiElementBase control)
-		{ addWeighted(control, 1.0); }
-	public void addWeighted(GuiElementBase control, double weight)
-		{ addWeighted(control, weight, 0); }
-	public void addWeighted(GuiElementBase control, double weight, int minSize)
-		{ addInternal(control, new LayoutAlignment.Weighted(weight, minSize)); }
+	public void add(GuiElementBase element)
+		{ addWeighted(element); }
+	public void addWeighted(GuiElementBase element)
+		{ addWeighted(element, 1.0); }
+	public void addWeighted(GuiElementBase element, double weight)
+		{ addWeighted(element, weight, 0); }
+	public void addWeighted(GuiElementBase element, double weight, int minSize)
+		{ addInternal(element, new LayoutAlignment.Weighted(weight, minSize)); }
 	
-	private void addInternal(GuiElementBase control, LayoutAlignment alignment) {
-		control.setAlign(direction, alignment);
-		super.add(control);
+	private void addInternal(GuiElementBase element, LayoutAlignment alignment) {
+		element.setAlign(direction, alignment);
+		super.add(element);
 	}
 	
 	
 	@Override
-	public void onChildAdded(GuiElementBase control) {
+	public void onChildAdded(GuiElementBase element) {
 		// If this was the first child being added, make layout
 		// fixed sized dependant on wether a size was already set.
 		if (children.size() == 1) _fixedSize =
 			(getSize(direction.perpendicular()) > 0) ||
 			(getAlign(direction.perpendicular()) instanceof Alignment.Both);
 		
-		super.onChildAdded(control);
+		super.onChildAdded(element);
 		updateOwnSize();
 	}
 	
 	@Override
-	public void onChildSizeChanged(GuiElementBase control, Direction direction) {
-		super.onChildSizeChanged(control, direction);
+	public void onChildSizeChanged(GuiElementBase element, Direction direction) {
+		super.onChildSizeChanged(element, direction);
 		if (direction == this.direction) updateChildSizes(direction);
 		else updateOwnSize();
 	}
 	
 	@Override
-	public void onChildAlignChanged(GuiElementBase control, Direction direction) {
+	public void onChildAlignChanged(GuiElementBase element, Direction direction) {
 		if ((direction == this.direction) && !(getAlign(direction) instanceof LayoutAlignment))
 			throw new UnsupportedOperationException(
 				"Unsupported Alignment '" + getAlign(direction).getClass() + "' in GuiLayout");
 	}
 	
 	@Override
-	public int getChildPos(GuiElementBase control, Direction direction) {
+	public int getChildPos(GuiElementBase element, Direction direction) {
 		return (direction == this.direction)
-			? ((LayoutAlignment)control.getAlign(direction))._childPos
-			: super.getChildPos(control, direction);
+			? ((LayoutAlignment)element.getAlign(direction))._childPos
+			: super.getChildPos(element, direction);
 	}
 	
-	/** Updates this layout control's size (perpendicular to its direction). */
+	/** Updates this layout element's size (perpendicular to its direction). */
 	private void updateOwnSize() {
 		Direction direction = this.direction.perpendicular();
 		if (_fixedSize || (getAlign(direction) instanceof LayoutAlignment.Weighted)) return;
@@ -83,7 +83,6 @@ public class GuiLayout extends GuiContainer {
 			.max().orElse(0));
 	}
 	
-	/** Updates the position and size of this control's child elements. */
 	@Override
 	protected void updateChildSizes(Direction direction) {
 		if (direction != this.direction) {
