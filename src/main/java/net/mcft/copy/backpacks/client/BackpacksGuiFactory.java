@@ -9,7 +9,7 @@ import net.minecraftforge.fml.client.IModGuiFactory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.mcft.copy.backpacks.client.config.BackpacksGuiConfig;
+import net.mcft.copy.backpacks.client.gui.test.GuiTestScreen;
 
 @SideOnly(Side.CLIENT)
 public class BackpacksGuiFactory implements IModGuiFactory {
@@ -21,7 +21,7 @@ public class BackpacksGuiFactory implements IModGuiFactory {
 	public boolean hasConfigGui() { return true; }
 	
 	@Override
-	public GuiScreen createConfigGui(GuiScreen parentScreen) { return new BackpacksGuiConfig(parentScreen); }
+	public GuiScreen createConfigGui(GuiScreen parentScreen) { return new GuiTestScreen(parentScreen); }
 	
 	@Override
 	public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() { return null; }

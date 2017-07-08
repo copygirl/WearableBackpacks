@@ -16,18 +16,35 @@ public class GuiButton extends GuiElementBase {
 	
 	public static final ResourceLocation BUTTON_TEX = new ResourceLocation("textures/gui/widgets.png");
 	
-	public String text = "";
+	private String _text = "";
+	private Runnable _action = null;
 	
 	public GuiButton() { this(0, 0, 200, 20, ""); }
 	public GuiButton(String text) { this(0, 0, 200, 20, text); }
+	public GuiButton(int width, String text) { this(width, 20, text); }
+	public GuiButton(int width, int height, String text)
+		{ this(0, 0, width, height, text); }
 	public GuiButton(int x, int y, int width, int height, String text) {
 		setPosition(x, y);
 		setSize(width, height);
-		this.text = text;
+		setText(text);
 	}
 	
+	public String getText() { return _text; }
+	public void setText(String value) {
+		if (value == null) throw new NullPointerException("Argument can't be null");
+		_text = value;
+	}
+	public final void addText(String value) {
+		if (value == null) throw new NullPointerException("Argument can't be null");
+		setText(getText() + value);
+	}
+	
+	public void setAction(Runnable value) { _action = value; }
+	
 	/** Called when this button is pressed. */
-	public void onButtonPressed() {  }
+	public void onButtonClicked()
+		{ if (_action != null) _action.run(); }
 	
 	public void playPressSound() {
 		getMC().getSoundHandler().playSound(
@@ -38,7 +55,7 @@ public class GuiButton extends GuiElementBase {
 	public boolean onMouseDown(int mouseButton, int mouseX, int mouseY) {
 		if (mouseButton == MouseButton.LEFT) {
 			playPressSound();
-			onButtonPressed();
+			onButtonClicked();
 			return true;
 		} else return false;
 	}
@@ -55,16 +72,16 @@ public class GuiButton extends GuiElementBase {
 	
 	/** Draws whatever is on the button. Yay. */
 	public void drawWhateverIsOnTheButton(int mouseX, int mouseY, float partialTicks) {
-		if ((text == null) || text.isEmpty()) return;
+		String text = getText();
+		if (text.isEmpty()) return;
 		
 		FontRenderer fontRenderer = getFontRenderer();
 		boolean isHighlighted = (isPressed() || controlContains(mouseX, mouseY));
 		
 		String buttonText = text;
 		int buttonTextWidth = fontRenderer.getStringWidth(buttonText);
-		int ellipsisWidth   = fontRenderer.getStringWidth("...");
-		if ((buttonTextWidth > getWidth() - 6) && (buttonTextWidth > ellipsisWidth)) {
-			buttonText = fontRenderer.trimStringToWidth(buttonText, getWidth() - 6 - ellipsisWidth).trim() + "...";
+		if ((buttonTextWidth > getWidth() - 6) && (buttonTextWidth > ELLIPSIS_WIDTH)) {
+			buttonText = fontRenderer.trimStringToWidth(buttonText, getWidth() - 6 - ELLIPSIS_WIDTH).trim() + ELLIPSIS;
 			buttonTextWidth = fontRenderer.getStringWidth(buttonText);
 		}
 		

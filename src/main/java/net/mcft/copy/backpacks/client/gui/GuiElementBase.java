@@ -2,6 +2,7 @@ package net.mcft.copy.backpacks.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiScreen;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -9,119 +10,89 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public abstract class GuiElementBase {
 	
+	public static final String ELLIPSIS = "...";
+	public static final int ELLIPSIS_WIDTH = getFontRenderer().getStringWidth(ELLIPSIS);
+	public static final int LINE_HEIGHT = getFontRenderer().FONT_HEIGHT;
+	
+	
 	private GuiContext _context;
 	private GuiContainer _parent;
-	private int _x, _y, _width, _height;
-	private boolean _leftAlign = true, _topAlign = true;
-	private boolean _rightAlign = false, _bottomAlign = false;
+	private int _width, _height;
+	private Alignment _horizontalAlign = new Alignment.Min(0);
+	private Alignment _verticalAlign = new Alignment.Min(0);
 	
 	
-	void setContext(GuiContext context) { _context = context; }
-	void setParent(GuiContainer parent) { _parent = parent; }
+	void setContext(GuiContext value) { _context = value; }
+	void setParent(GuiContainer value) { _parent = value; }
 	
 	public final GuiContext getContext() { return _context; }
 	public final GuiContainer getParent() { return _parent; }
 	
+	// Size related
 	
-	// Position related
+	public int getSize(Direction direction)
+		{ return (direction == Direction.HORIZONTAL) ? _width : _height; }
+	public final int getWidth() { return getSize(Direction.HORIZONTAL); }
+	public final int getHeight() { return getSize(Direction.VERTICAL); }
 	
-	public int getX() { return _x; }
-	public int getY() { return _y; }
-	
-	/** Sets the control's X position relative to the parent control. */
-	public void setX(int x) { setPosition(x, _y); }
-	/** Sets the control's Y position relative to the parent control. */
-	public void setY(int y) { setPosition(_x, y); }
-	
-	/** Sets the control's position relative to the parent control. */
-	public void setPosition(int x, int y) { _x = x; _y = y; }
-	
-	public int getWidth() { return _width; }
-	public int getHeight() { return _height; }
-	
-	public void setWidth(int width) { setSize(width, _height); }
-	public void setHeight(int height) { setSize(_width, height); }
-	
-	public void setSize(int width, int height) {
-		if ((width == _width) && (height == _height)) return;
-		int prevWidth  = _width;
-		int prevHeight = _height;
-		if (_rightAlign) _x += (_width - width) / (_leftAlign ? 2 : 1);
-		else if (!_leftAlign) _x = (getParentWidth() - width) / 2;
-		if (_bottomAlign) _y += (_height - height) / (_topAlign ? 2 : 1);
-		else if (!_topAlign) _y = (getParentHeight() - height) / 2;
-		_width  = width;
-		_height = height;
-		onResized(prevWidth, prevHeight);
+	public void setSize(Direction direction, int value) {
+		if (value == getSize(direction)) return;
+		if (direction == Direction.HORIZONTAL) _width = value;
+		else _height = value;
+		onSizeChanged(direction);
+		if (_parent != null) _parent.onChildSizeChanged(this, direction);
 	}
+	public final void setWidth(int value) { setSize(Direction.HORIZONTAL, value); }
+	public final void setHeight(int value) { setSize(Direction.VERTICAL, value); }
+	public final void setSize(int width, int height) { setWidth(width); setHeight(height); }
 	
 	// Alignment related
 	
-	/** Returns the width of this control's parent, or 0 if none. */
-	public int getParentWidth() { return (_parent != null) ? _parent.getWidth() : 0; }
-	/** Returns the height of this control's parent, or 0 if none. */
-	public int getParentHeight() { return (_parent != null) ? _parent.getHeight() : 0; }
+	public Alignment getAlign(Direction direction)
+		{ return (direction == Direction.HORIZONTAL) ? _horizontalAlign : _verticalAlign; }
+	public final Alignment getHorizontalAlign() { return getAlign(Direction.HORIZONTAL); }
+	public final Alignment getVerticalAlign() { return getAlign(Direction.VERTICAL); }
 	
-	public int getLeft() { return _x; }
-	public int getRight() { return getParentWidth() - _width - _x; }
+	public void setAlign(Direction direction, Alignment value) {
+		if (value == null) throw new NullPointerException("Argument must be non-null");
+		if (direction == Direction.HORIZONTAL) _horizontalAlign = value;
+		else _verticalAlign = value;
+		if (_parent != null) _parent.onChildAlignChanged(this, direction);
+	}
+	public final void setHorizontalAlign(Alignment value) { setAlign(Direction.HORIZONTAL, value); }
+	public final void setVerticalAlign(Alignment value) { setAlign(Direction.VERTICAL, value); }
+	public final void setAlign(Alignment horizontal, Alignment vertical)
+		{ setHorizontalAlign(horizontal); setVerticalAlign(vertical); }
 	
-	public int getTop() { return _y; }
-	public int getBottom() { return getParentHeight() - _height - _y; }
+	// Useful alignment shortcuts
 	
-	public void setLeftAligned(int left) { setLeftAligned(left, _width); }
-	public void setLeftAligned(int left, int width) {
-		_leftAlign = true; _rightAlign = false;
-		setXAndWidthInternal(left, width);
-	}
-	public void setRightAligned(int right) { setRightAligned(right, _width); }
-	public void setRightAligned(int right, int width) {
-		_leftAlign = false; _rightAlign = true;
-		setXAndWidthInternal(getParentWidth() - width - right, width);
-	}
-	public void setLeftRightAligned(int left, int right) {
-		_leftAlign = true; _rightAlign = true;
-		setXAndWidthInternal(left, getParentWidth() - left - right);
-	}
-	public void setHorizontalCentered() { setHorizontalCentered(_width); }
-	public void setHorizontalCentered(int width) {
-		_leftAlign = false; _rightAlign = false;
-		setXAndWidthInternal((getParentWidth() - width) / 2, width);
-	}
+	public final void setPosition(int left, int top)
+		{ setAlign(new Alignment.Min(left), new Alignment.Min(top)); }
 	
-	public void setTopAligned(int top) { setTopAligned(top, _height); }
-	public void setTopAligned(int top, int height) {
-		_topAlign = true; _bottomAlign = false;
-		setYAndHeightInternal(top, height);
-	}
-	public void setBottomAligned(int bottom) { setBottomAligned(bottom, _height); }
-	public void setBottomAligned(int bottom, int height) {
-		_topAlign = false; _bottomAlign = true;
-		setYAndHeightInternal(getParentHeight() - height - bottom, height);
-	}
-	public void setTopBottomAligned(int top, int bottom) {
-		_topAlign = true; _bottomAlign = true;
-		setYAndHeightInternal(top, getParentHeight() - top - bottom);
-	}
-	public void setVerticalCentered() { setVerticalCentered(_height); }
-	public void setVerticalCentered(int height) {
-		_topAlign = false; _bottomAlign = false;
-		setYAndHeightInternal((getParentHeight() - height) / 2, height);
-	}
+	public final void setLeft(int value) { setHorizontalAlign(new Alignment.Min(value)); }
+	public final void setRight(int value) { setHorizontalAlign(new Alignment.Max(value)); }
+	public final void setTop(int value) { setVerticalAlign(new Alignment.Min(value)); }
+	public final void setBottom(int value) { setVerticalAlign(new Alignment.Max(value)); }
 	
-	private void setXAndWidthInternal(int x, int width) {
-		_x = x;
-		if (width == _width) return;
-		int prevWidth = _width;
-		_width = width;
-		onResized(prevWidth, _height);
-	}
-	private void setYAndHeightInternal(int y, int height) {
-		_y = y;
-		if (height == _height) return;
-		int prevHeight = _height;
-		_height = height;
-		onResized(_width, prevHeight);
-	}
+	public final void setLeftRight(int value) { setLeftRight(value, value); }
+	public final void setLeftRight(int left, int right)
+		{ setHorizontalAlign(new Alignment.Both(left, right)); }
+	public final void setTopBottom(int value) { setTopBottom(value, value); }
+	public final void setTopBottom(int top, int bottom)
+		{ setVerticalAlign(new Alignment.Both(top, bottom)); }
+	
+	public final void setHorizontalCentered() { setHorizontalAlign(new Alignment.Center()); }
+	public final void setHorizontalCentered(int width) { setHorizontalCentered(); setWidth(width); }
+	public final void setVerticalCentered() { setVerticalAlign(new Alignment.Center()); }
+	public final void setVerticalCentered(int height) { setVerticalCentered(); setHeight(height); }
+	
+	public final void setFill() { setFill(0); }
+	public final void setFill(int padding) { setFill(padding, padding); }
+	public final void setFill(int paddingHorizontal, int paddingVertical)
+		{ setFill(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical); }
+	public final void setFill(int paddingLeft, int paddingTop, int paddingRight, int paddingBottom)
+		{ setAlign(new Alignment.Both(paddingLeft, paddingRight),
+		           new Alignment.Both(paddingTop, paddingBottom)); }
 	
 	// Control focus
 	
@@ -133,7 +104,6 @@ public abstract class GuiElementBase {
 	
 	/** Makes this control the currently focused control. */
 	public void setFocused() { setFocused(true); }
-	
 	/** Sets whether this control is the currently focused control. */
 	public void setFocused(boolean value) {
 		if (value && !canFocus())
@@ -158,30 +128,7 @@ public abstract class GuiElementBase {
 	public void onControlAdded() {  }
 	
 	/** Called when this control is resized. */
-	public void onResized(int prevWidth, int prevHeight) {  }
-	
-	/** Called when the parent control is resized. */
-	public void onParentResized(int prevWidth, int prevHeight) {
-		int ownPrevWidth  = _width;
-		int ownPrevHeight = _height;
-		
-		if (_rightAlign) {
-			int widthDelta = getParentWidth() - prevWidth;
-			if (_leftAlign) _width += widthDelta;
-			else _x += widthDelta;
-		} else if (!_leftAlign)
-			_x = (getParentWidth() - _width) / 2;
-		
-		if (_bottomAlign) {
-			int heightDelta = getParentHeight() - prevHeight;
-			if (_topAlign) _height += heightDelta;
-			else _y += heightDelta;
-		} else if (!_topAlign)
-			_y = (getParentHeight() - _height) / 2;
-		
-		if ((_width != ownPrevWidth) || (_height != ownPrevHeight))
-			onResized(ownPrevWidth, ownPrevHeight);
-	}
+	public void onSizeChanged(Direction direction) {  }
 	
 	// Mouse events
 	
@@ -235,6 +182,7 @@ public abstract class GuiElementBase {
 	
 	public static Minecraft getMC() { return Minecraft.getMinecraft(); }
 	public static FontRenderer getFontRenderer() { return getMC().fontRenderer; }
+	public static void display(GuiScreen screen) { getMC().displayGuiScreen(screen); }
 	
 	// Utility classes
 	
