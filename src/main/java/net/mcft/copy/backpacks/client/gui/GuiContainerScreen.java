@@ -1,6 +1,11 @@
 package net.mcft.copy.backpacks.client.gui;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+
+import org.lwjgl.input.Keyboard;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -42,7 +47,12 @@ public class GuiContainerScreen extends GuiScreen {
 		// TODO: Handle onMouseUp.
 	}
 	
-	// TODO: Handle keyboard input.
+	@Override
+	protected void keyTyped(char typedChar, int keyCode) throws IOException {
+		super.keyTyped(typedChar, keyCode);
+		if (keyCode == Keyboard.KEY_F3) DEBUG = !DEBUG;
+		// TODO: Handle keyboard input.
+	}
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
@@ -52,53 +62,88 @@ public class GuiContainerScreen extends GuiScreen {
 		
 		if (DEBUG) {
 			String debugText = "";
-			LinkedList<ElementDebugInfo> hierarchy = getHierarchy(mouseX, mouseY);
-			int color = 0x80000000;
+			LinkedList<ElementDebugInfo> hierarchy =
+				new ElementDebugInfo(container).getHierarchy(mouseX, mouseY);
+			int color = 0x40000000;
 			for (ElementDebugInfo info : hierarchy) {
 				Gui.drawRect(info.x, info.y, info.x + info.width, info.y + info.height, color);
-				debugText += String.format("(%d,%d : %d,%d) %s\n", info.x, info.y, info.width, info.height,
-				                                                   info.element.getClass().getSimpleName());
+				debugText += info.toString() + "\n";
 				color ^= 0xFFFFFF;
 			}
-			// if (!hierarchy.isEmpty()) {
-			// 	ElementDebugInfo info = hierarchy.getLast();
-			// }
+			ElementDebugInfo last = hierarchy.getLast();
+			if (last.element instanceof GuiContainer) {
+				GuiContainer container = (GuiContainer)last.element;
+				Gui.drawRect(last.x,                                            last.y,
+				             last.x + container.getPaddingLeft(),               last.y + last.height,               0x400000FF);
+				Gui.drawRect(last.x + last.width - container.getPaddingRight(), last.y,
+				             last.x + last.width,                               last.y + last.height,               0x400000FF);
+				Gui.drawRect(last.x + container.getPaddingLeft(),               last.y,
+				             last.x + last.width - container.getPaddingRight(), last.y + container.getPaddingTop(), 0x400000FF);
+				Gui.drawRect(last.x + container.getPaddingLeft(),               last.y + last.height - container.getPaddingBottom(),
+				             last.x + last.width - container.getPaddingRight(), last.y + last.height,               0x400000FF);
+				debugText += "\nChildren:\n";
+				for (ElementDebugInfo child : last.getChildElements()) {
+					Gui.drawRect(child.x, child.y, child.x + child.width, child.y + child.height, 0x40FF0000);
+					debugText += "  " + child.toString() + "\n";
+				}
+			}
 			int y = 4;
 			for (String line : debugText.split("\n")) {
-				GuiContainer.getFontRenderer().drawString(line, 4, y, 0xFFFFFF);
-				y += GuiContainer.LINE_HEIGHT;
+				GuiContainer.getFontRenderer().drawStringWithShadow(line, 4 + 1, y + 1, 0xFFFFFF);
+				y += GuiElementBase.LINE_HEIGHT;
 			}
 		}
 	}
 	
 	
-	private LinkedList<ElementDebugInfo> getHierarchy(int x, int y) {
-		LinkedList<ElementDebugInfo> info = new LinkedList<ElementDebugInfo>();
-		getHierarchy(info, container, x, y, 0, 0);
-		return info;
-	}
-	private void getHierarchy(LinkedList<ElementDebugInfo> info, GuiContainer container,
-	                          int x, int y, int globalX, int globalY) {
-		for (GuiElementBase child : container.children) {
-			int childX = container.getChildX(child);
-			int childY = container.getChildY(child);
-			int relX = x - childX;
-			int relY = y - childY;
-			if (!child.contains(relX, relY)) continue;
-			
-			globalX += childX; globalY += childY;
-			info.add(new ElementDebugInfo(child, globalX, globalY, child.getWidth(), child.getHeight()));
-			if (child instanceof GuiContainer)
-				getHierarchy(info, (GuiContainer)child, relX, relY, globalX, globalY);
-			return;
-		}
-	}
-	
 	private static final class ElementDebugInfo {
+		
 		public final GuiElementBase element;
 		public final int x, y, width, height;
+		
+		public ElementDebugInfo(GuiElementBase element)
+			{ this(element, 0, 0); }
+		public ElementDebugInfo(GuiElementBase element, int x, int y)
+			{ this(element, x, y, element.getWidth(), element.getHeight()); }
 		public ElementDebugInfo(GuiElementBase element, int x, int y, int width, int height)
 			{ this.element = element; this.x = x; this.y = y; this.width = width; this.height = height; }
+		
+		public LinkedList<ElementDebugInfo> getHierarchy(int x, int y) {
+			LinkedList<ElementDebugInfo> info = new LinkedList<ElementDebugInfo>();
+			addToHierarchy(info, x, y);
+			return info;
+		}
+		private void addToHierarchy(List<ElementDebugInfo> list, int x, int y) {
+			list.add(this);
+			if (!(element instanceof GuiContainer)) return;
+			GuiContainer container = (GuiContainer)element;
+			for (GuiElementBase child : container.children) {
+				int childX = this.x + container.getChildX(child);
+				int childY = this.y + container.getChildY(child);
+				if (!child.contains(x - childX, y - childY)) continue;
+				new ElementDebugInfo(child, childX, childY).addToHierarchy(list, x, y);
+				return;
+			}
+		}
+		
+		public List<ElementDebugInfo> getChildElements() {
+			ArrayList<ElementDebugInfo> children = new ArrayList<ElementDebugInfo>();
+			if (element instanceof GuiContainer) {
+				GuiContainer container = (GuiContainer)element;
+				for (GuiElementBase child : container.children)
+					children.add(new ElementDebugInfo(child, x + container.getChildX(child),
+					                                         y + container.getChildY(child)));
+			}
+			return children;
+		}
+		
+		@Override
+		public String toString() {
+			String name = element.getClass().getSimpleName();
+			if (name.isEmpty()) name = element.getClass().getSuperclass().getSimpleName();
+			return String.format("(%d,%d : %d,%d) %s", x, y, width, height, name);
+		}
+		
 	}
 	
 }
