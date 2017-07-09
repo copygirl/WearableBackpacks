@@ -20,6 +20,7 @@ public class GuiContainerScreen extends GuiScreen {
 	public GuiContainerScreen() {
 		context   = new GuiContext();
 		container = new GuiContainer(context);
+		container.setFill();
 	}
 	
 	@Override

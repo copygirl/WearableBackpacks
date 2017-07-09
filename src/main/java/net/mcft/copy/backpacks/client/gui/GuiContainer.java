@@ -13,12 +13,25 @@ public class GuiContainer extends GuiElementBase {
 	
 	protected List<GuiElementBase> children = new ArrayList<GuiElementBase>();
 	
+	private boolean _expandHorizontal = true, _expandVertical = true;
 	private int _padLeft, _padTop, _padRight, _padBottom;
 	
 	
 	public GuiContainer() {  }
 	public GuiContainer(GuiContext context) { setContext(context); }
 	
+	// Expand related
+	
+	/** Returns whether this container will expand its size for its child elements. */
+	public boolean doesExpand(Direction direction) {
+		return getAlign(direction).canExpand() &&
+			((direction == Direction.HORIZONTAL) ? _expandHorizontal : _expandVertical);
+	}
+	
+	public void setExpand(Direction direction, boolean value) {
+		if (direction == Direction.HORIZONTAL) _expandHorizontal = value;
+		else _expandVertical = value;
+	}
 	
 	// Padding related
 	
@@ -37,13 +50,13 @@ public class GuiContainer extends GuiElementBase {
 	public void setPadding(Direction direction, int min, int max) {
 		if (direction == Direction.HORIZONTAL) { _padLeft = min; _padRight = max; }
 		else { _padTop = min; _padBottom = max; }
-		updateChildSizes(direction);
+		expandToFitChildren(direction);
 	}
 	
 	public final void setPaddingHorizontal(int left, int right) { setPadding(Direction.HORIZONTAL, left, right); }
-	public final void setPaddingHorizontal(int value) { setPaddingHorizontal(value); }
+	public final void setPaddingHorizontal(int value) { setPaddingHorizontal(value, value); }
 	public final void setPaddingVertical(int top, int bottom) { setPadding(Direction.VERTICAL, top, bottom); }
-	public final void setPaddingVertical(int value) { setPaddingVertical(value); }
+	public final void setPaddingVertical(int value) { setPaddingVertical(value, value); }
 	
 	public final void setPadding(int left, int top, int right, int bottom)
 		{ setPaddingHorizontal(left, right); setPaddingVertical(top, bottom); }
@@ -52,23 +65,13 @@ public class GuiContainer extends GuiElementBase {
 	public final void setPadding(int value) { setPadding(value, value); }
 	
 	
-	/** Called when a child element is added. */
-	public void onChildAdded(GuiElementBase element) {
-		for (Direction direction : Direction.values())
-			updateChildSizes(direction);
-	}
-	
-	/** Called when a child element is added. */
-	public void onChildRemoved(GuiElementBase element) {
-		for (Direction direction : Direction.values())
-			updateChildSizes(direction);
-	}
-	
 	/** Called when a child element is resized. */
-	public void onChildSizeChanged(GuiElementBase element, Direction direction) {  }
+	public void onChildSizeChanged(GuiElementBase element, Direction direction)
+		{ expandToFitChildren(direction); }
 	
 	/** Called when a child element's alignment changes. */
-	public void onChildAlignChanged(GuiElementBase element, Direction direction) {  }
+	public void onChildAlignChanged(GuiElementBase element, Direction direction)
+		{ expandToFitChildren(direction); }
 	
 	
 	public int getChildPos(GuiElementBase element, Direction direction) {
@@ -87,6 +90,23 @@ public class GuiContainer extends GuiElementBase {
 		{ return getChildPos(element, Direction.HORIZONTAL); }
 	public final int getChildY(GuiElementBase element)
 		{ return getChildPos(element, Direction.VERTICAL); }
+	
+	
+	/** Called when a child element is added. */
+	public void onChildAdded(GuiElementBase element) {
+		for (Direction direction : Direction.values()) {
+			updateChildSizes(direction);
+			expandToFitChildren(direction);
+		}
+	}
+	
+	/** Called when a child element is added. */
+	public void onChildRemoved(GuiElementBase element) {
+		for (Direction direction : Direction.values()) {
+			updateChildSizes(direction);
+			expandToFitChildren(direction);
+		}
+	}
 	
 	
 	/** Adds the specified element to this container. */
@@ -121,6 +141,7 @@ public class GuiContainer extends GuiElementBase {
 	
 	@Override
 	public void onSizeChanged(Direction direction) {
+		if (children.isEmpty()) setExpand(direction, false);
 		updateChildSizes(direction);
 	}
 	
@@ -132,6 +153,17 @@ public class GuiContainer extends GuiElementBase {
 				child.setSize(direction, getSize(direction) - getPadding(direction) - both.min - both.max);
 			}
 		}
+	}
+	
+	protected void expandToFitChildren(Direction direction) {
+		if (children.isEmpty() || !doesExpand(direction)) return;
+		setSize(direction, getPadding(direction) + children.stream()
+			.mapToInt(child -> {
+				Alignment align = child.getAlign(direction);
+				return (align instanceof Alignment.Both) ? 0
+					: (align instanceof Alignment.Center) ? child.getSize(direction)
+					: getChildPos(child, direction) - getPaddingMin(direction) + child.getSize(direction);
+			}).max().orElse(0));
 	}
 	
 	@Override

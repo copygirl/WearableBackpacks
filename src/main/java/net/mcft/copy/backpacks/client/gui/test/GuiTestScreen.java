@@ -17,24 +17,24 @@ import net.mcft.copy.backpacks.client.gui.control.GuiLabel;
 public class GuiTestScreen extends GuiContainerScreen {
 	
 	public GuiTestScreen(GuiScreen parentScreen) {
-		container.setPadding(8);
 		container.add(new GuiLayout(Direction.VERTICAL) {{
 			setHorizontalCentered();
 			setVerticalFill();
+			setPaddingVertical(8);
 			setSpacing(4);
 			
-			addFixed(new GuiButton("Show old Config GUI") {{
+			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Show old Config GUI") {{
 				setHorizontalCentered();
 				setAction(() -> display(new BackpacksGuiConfig(GuiTestScreen.this)));
 			}});
 			
-			addFixed(new GuiButton("Test Alignment") {{
+			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Test Alignment") {{
 				setHorizontalCentered();
 				setAction(() -> display(new AlignmentScreen()));
 			}});
 			
 			addFixed(new GuiLayout(Direction.HORIZONTAL) {{
-				setHorizontalCentered(200);
+				setHorizontalCentered(GuiButton.DEFAULT_WIDTH);
 				addFixed(new GuiLabel(" Layout: ") {{ setVerticalCentered(); }});
 				addWeighted(new GuiButton("Test 1")
 					{{ setAction(() -> display(new LayoutScreen1())); }});
@@ -44,7 +44,7 @@ public class GuiTestScreen extends GuiContainerScreen {
 			
 			addWeighted(new GuiContainer()); // Filler space!
 			
-			addFixed(new GuiButton("Close") {{
+			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Close") {{
 				setHorizontalCentered();
 				setAction(() -> display(parentScreen));
 			}});
@@ -65,8 +65,7 @@ public class GuiTestScreen extends GuiContainerScreen {
 				// because the loops would have finished.
 				
 				if ((x == 1) && (y == 1)) continue;
-				container.add(new GuiButton() {{
-					setSize(12, 12);
+				container.add(new GuiButton(12, 12) {{
 					switch (x) {
 						case 0: setLeft(4); break;
 						case 1: setLeftRight(20); break;
@@ -83,8 +82,7 @@ public class GuiTestScreen extends GuiContainerScreen {
 			for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++) {
 				int x = i, y = j; // Same as above.
-				container.add(new GuiButton() {{
-					setSize(100, 20);
+				container.add(new GuiButton(100, 20) {{
 					switch (x) {
 						case 0: setLeft(20); setText("Left"); break;
 						case 1: setHorizontalCentered(); setText("Center"); break;
@@ -119,7 +117,7 @@ public class GuiTestScreen extends GuiContainerScreen {
 					}}, weight);
 				}
 				
-				addFixed(new GuiButton("Back") {{
+				addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Back") {{
 					setHorizontalCentered();
 					setAction(() -> display(GuiTestScreen.this));
 				}});
@@ -130,10 +128,10 @@ public class GuiTestScreen extends GuiContainerScreen {
 	public class LayoutScreen2 extends GuiContainerScreen {
 		private GuiLayout resizable;
 		public LayoutScreen2() {
-			container.setPadding(8);
 			container.add(new GuiLayout(Direction.VERTICAL) {{
 				setHorizontalCentered();
 				setVerticalFill();
+				setPaddingVertical(8);
 				
 				addFixed(new GuiLayout(Direction.HORIZONTAL) {{
 					setHorizontalFill();
@@ -161,7 +159,7 @@ public class GuiTestScreen extends GuiContainerScreen {
 				
 				addWeighted(new GuiContainer()); // Filler space!
 				
-				addFixed(new GuiButton("Back") {{
+				addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Back") {{
 					setHorizontalCentered();
 					setAction(() -> display(GuiTestScreen.this));
 				}});

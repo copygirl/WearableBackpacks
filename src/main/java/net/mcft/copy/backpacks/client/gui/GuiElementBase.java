@@ -11,7 +11,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public abstract class GuiElementBase {
 	
 	public static final String ELLIPSIS = "...";
-	public static final int ELLIPSIS_WIDTH = getFontRenderer().getStringWidth(ELLIPSIS);
+	public static final int ELLIPSIS_WIDTH = getStringWidth(ELLIPSIS);
 	public static final int LINE_HEIGHT = getFontRenderer().FONT_HEIGHT;
 	
 	
@@ -175,6 +175,7 @@ public abstract class GuiElementBase {
 	
 	public static Minecraft getMC() { return Minecraft.getMinecraft(); }
 	public static FontRenderer getFontRenderer() { return getMC().fontRenderer; }
+	public static int getStringWidth(String text) { return getFontRenderer().getStringWidth(text); }
 	public static void display(GuiScreen screen) { getMC().displayGuiScreen(screen); }
 	
 	// Utility classes

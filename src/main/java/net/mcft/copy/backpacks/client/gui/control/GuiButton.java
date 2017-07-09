@@ -15,20 +15,32 @@ import net.mcft.copy.backpacks.client.gui.GuiElementBase;
 public class GuiButton extends GuiElementBase {
 	
 	public static final ResourceLocation BUTTON_TEX = new ResourceLocation("textures/gui/widgets.png");
-	
+	public static final int DEFAULT_WIDTH  = 200;
+	public static final int DEFAULT_HEIGHT = 20;
+	public static final int MIN_TEXT_PADDING = 6;
+	public static final int DEFAULT_TEXT_PADDING = 20;
+
 	private String _text = "";
 	private Runnable _action = null;
 	
-	public GuiButton() { this(0, 0, 200, 20, ""); }
-	public GuiButton(String text) { this(0, 0, 200, 20, text); }
-	public GuiButton(int width, String text) { this(width, 20, text); }
+	
+	public GuiButton() { this(DEFAULT_WIDTH); }
+	public GuiButton(int width) { this(width, DEFAULT_HEIGHT); }
+	public GuiButton(int width, int height) { this(width, height, ""); }
+	
+	public GuiButton(String text)
+		{ this(getStringWidth(text) + DEFAULT_TEXT_PADDING, text); }
+	public GuiButton(int width, String text)
+		{ this(width, DEFAULT_HEIGHT, text); }
 	public GuiButton(int width, int height, String text)
 		{ this(0, 0, width, height, text); }
+	
 	public GuiButton(int x, int y, int width, int height, String text) {
 		setPosition(x, y);
 		setSize(width, height);
 		setText(text);
 	}
+	
 	
 	public String getText() { return _text; }
 	public void setText(String value) {
@@ -78,15 +90,15 @@ public class GuiButton extends GuiElementBase {
 		FontRenderer fontRenderer = getFontRenderer();
 		boolean isHighlighted = (isPressed() || contains(mouseX, mouseY));
 		
-		String buttonText = text;
-		int buttonTextWidth = fontRenderer.getStringWidth(buttonText);
-		if ((buttonTextWidth > getWidth() - 6) && (buttonTextWidth > ELLIPSIS_WIDTH)) {
-			buttonText = fontRenderer.trimStringToWidth(buttonText, getWidth() - 6 - ELLIPSIS_WIDTH).trim() + ELLIPSIS;
-			buttonTextWidth = fontRenderer.getStringWidth(buttonText);
+		int textWidth = fontRenderer.getStringWidth(text);
+		int maxTextWidth = getWidth() - MIN_TEXT_PADDING;
+		if ((textWidth > maxTextWidth) && (textWidth > ELLIPSIS_WIDTH)) {
+			text = fontRenderer.trimStringToWidth(text, maxTextWidth - ELLIPSIS_WIDTH).trim() + ELLIPSIS;
+			textWidth = fontRenderer.getStringWidth(text);
 		}
 		
 		int textColor = (isHighlighted ? 0xFFFFA0 : 0xE0E0E0); // Disabled color: 0xA0A0A0
-		fontRenderer.drawStringWithShadow(buttonText, getWidth() / 2 - buttonTextWidth / 2, (getHeight() - 8) / 2, textColor);
+		fontRenderer.drawStringWithShadow(text, getWidth() / 2 - textWidth / 2, (getHeight() - 8) / 2, textColor);
 	}
 	
 }

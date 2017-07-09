@@ -9,13 +9,13 @@ public class GuiLayout extends GuiContainer {
 	public final Direction direction;
 	
 	private int _spacing = 2;
-	private boolean _fixedSize = false;
 	
 	public GuiLayout(Direction direction)
 		{ this.direction = direction; }
 	
 	public int getSpacing() { return _spacing; }
 	public void setSpacing(int value) { _spacing = value; }
+	
 	
 	// Adding / removing elements
 	
@@ -41,22 +41,9 @@ public class GuiLayout extends GuiContainer {
 	
 	
 	@Override
-	public void onChildAdded(GuiElementBase element) {
-		// If this was the first child being added, make layout
-		// fixed sized dependant on wether a size was already set.
-		if (children.size() == 1) _fixedSize =
-			(getSize(direction.perpendicular()) > 0) ||
-			(getAlign(direction.perpendicular()) instanceof Alignment.Both);
-		
-		super.onChildAdded(element);
-		updateOwnSize();
-	}
-	
-	@Override
 	public void onChildSizeChanged(GuiElementBase element, Direction direction) {
 		super.onChildSizeChanged(element, direction);
 		if (direction == this.direction) updateChildSizes(direction);
-		else updateOwnSize();
 	}
 	
 	@Override
@@ -64,6 +51,7 @@ public class GuiLayout extends GuiContainer {
 		if ((direction == this.direction) && !(getAlign(direction) instanceof LayoutAlignment))
 			throw new UnsupportedOperationException(
 				"Unsupported Alignment '" + getAlign(direction).getClass() + "' in GuiLayout");
+		super.onChildAlignChanged(element, direction);
 	}
 	
 	@Override
@@ -73,25 +61,17 @@ public class GuiLayout extends GuiContainer {
 			: super.getChildPos(element, direction);
 	}
 	
-	/** Updates this layout element's size (perpendicular to its direction). */
-	private void updateOwnSize() {
-		Direction direction = this.direction.perpendicular();
-		if (_fixedSize || (getAlign(direction) instanceof LayoutAlignment.Weighted)) return;
-		setSize(direction, getPadding(direction) + children.stream()
-			.filter(child -> !(child.getAlign(direction) instanceof Alignment.Both))
-			.mapToInt(child -> child.getSize(direction))
-			.max().orElse(0));
-	}
 	
 	@Override
 	protected void updateChildSizes(Direction direction) {
-		if (direction != this.direction) {
-			super.updateChildSizes(direction);
-			return;
-		}
+		if (children.isEmpty()) return;
+		if (direction != this.direction)
+			{ super.updateChildSizes(direction); return; }
+		
 		double remainingWeight = 0.0;
-		int availableSize = getSize(direction) - getPadding(direction);
-		availableSize -= (children.size() - 1) * _spacing;
+		int availableSize = getSize(direction)
+			- getPadding(direction)
+			- (children.size() - 1) * getSpacing();
 		for (GuiElementBase child : children) {
 			Alignment align = child.getAlign(direction);
 			if (align instanceof LayoutAlignment.Weighted) {
@@ -113,10 +93,9 @@ public class GuiLayout extends GuiContainer {
 				child.setSize(direction, size);
 			} else size = child.getSize(direction);
 			align._childPos = currentPos;
-			currentPos += size + _spacing;
+			currentPos += size + getSpacing();
 		}
-		//if (availableSize != 0)
-		//	direction.setSize(this, direction.getSize(this) - availableSize);
+		if (doesExpand(direction)) setSize(direction, currentPos + getPadding(direction) - getSpacing());
 	}
 	
 	
@@ -132,6 +111,7 @@ public class GuiLayout extends GuiContainer {
 			public final int minSize;
 			public Weighted(double weight, int minSize)
 				{ this.weight = weight; this.minSize = minSize; }
+			@Override public boolean canExpand() { return false; }
 		}
 		
 	}
