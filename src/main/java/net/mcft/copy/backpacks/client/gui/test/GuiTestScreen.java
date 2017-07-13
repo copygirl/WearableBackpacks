@@ -19,24 +19,23 @@ public class GuiTestScreen extends GuiContainerScreen {
 	
 	public GuiTestScreen(GuiScreen parentScreen) {
 		container.add(new GuiLayout(Direction.VERTICAL) {{
-			setHorizontalCentered();
-			setVerticalFill();
-			setPaddingVertical(8);
+			setCenteredHorizontal();
+			setFillVertical(8);
 			setSpacing(4);
 			
 			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Show old Config GUI") {{
-				setHorizontalCentered();
+				setCenteredHorizontal();
 				setAction(() -> display(new BackpacksGuiConfig(GuiTestScreen.this)));
 			}});
 			
 			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Test Alignment") {{
-				setHorizontalCentered();
+				setCenteredHorizontal();
 				setAction(() -> display(new AlignmentScreen()));
 			}});
 			
 			addFixed(new GuiLayout(Direction.HORIZONTAL) {{
-				setHorizontalCentered(GuiButton.DEFAULT_WIDTH);
-				addFixed(new GuiLabel(" Layout: ") {{ setVerticalCentered(); }});
+				setCenteredHorizontal(GuiButton.DEFAULT_WIDTH);
+				addFixed(new GuiLabel(" Layout: ") {{ setCenteredVertical(); }});
 				addWeighted(new GuiButton("Test 1")
 					{{ setAction(() -> display(new LayoutScreen1())); }});
 				addWeighted(new GuiButton("Test 2")
@@ -44,14 +43,14 @@ public class GuiTestScreen extends GuiContainerScreen {
 			}});
 			
 			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Test Visibility / Enabled") {{
-				setHorizontalCentered();
+				setCenteredHorizontal();
 				setAction(() -> display(new VisibilityEnabledScreen()));
 			}});
 			
 			addWeighted(new GuiContainer()); // Filler space!
 			
 			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Close") {{
-				setHorizontalCentered();
+				setCenteredHorizontal();
 				setAction(() -> display(parentScreen));
 			}});
 		}});
@@ -91,12 +90,12 @@ public class GuiTestScreen extends GuiContainerScreen {
 				container.add(new GuiButton(100, 20) {{
 					switch (x) {
 						case 0: setLeft(20); setText("Left"); break;
-						case 1: setHorizontalCentered(); setText("Center"); break;
+						case 1: setCenteredHorizontal(); setText("Center"); break;
 						case 2: setRight(20); setText("Right"); break;
 					}
 					switch (y) {
 						case 0: setTop(20); addText(" + Top"); break;
-						case 1: setVerticalCentered(); addText(" + Middle"); break;
+						case 1: setCenteredVertical(); addText(" + Middle"); break;
 						case 2: setBottom(20); addText(" + Bottom"); break;
 					}
 					setAction(() -> display(GuiTestScreen.this));
@@ -107,24 +106,23 @@ public class GuiTestScreen extends GuiContainerScreen {
 	
 	public class LayoutScreen1 extends GuiContainerScreen {
 		public LayoutScreen1() {
-			container.setPadding(8);
 			container.add(new GuiLayout(Direction.VERTICAL) {{
-				setFill();
+				setFill(8);
 				
 				for (int i = 1; i <= 4; i++) {
 					int weight = i * 10;
 					addWeighted(new GuiLayout(Direction.HORIZONTAL) {{
-						setHorizontalFill();
-						addFixed(new GuiLabel(weight + "%") {{ setVerticalCentered(); }});
-						addFixed(new GuiButton("<") {{ setVerticalCentered(); setSize(18, 18); }});
+						setFillHorizontal();
+						addFixed(new GuiLabel(weight + "%") {{ setCenteredVertical(); }});
+						addFixed(new GuiButton("<") {{ setCenteredVertical(); setSize(18, 18); }});
 						for (int j = 1; j <= 3; j++)
 							add(new GuiButton("Option " + j) {{ setTopBottom(0); }});
-						addFixed(new GuiButton(">") {{ setVerticalCentered(); setSize(18, 18); }});
+						addFixed(new GuiButton(">") {{ setCenteredVertical(); setSize(18, 18); }});
 					}}, weight);
 				}
 				
 				addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Back") {{
-					setHorizontalCentered();
+					setCenteredHorizontal();
 					setAction(() -> display(GuiTestScreen.this));
 				}});
 			}});
@@ -135,13 +133,12 @@ public class GuiTestScreen extends GuiContainerScreen {
 		private GuiLayout resizable;
 		public LayoutScreen2() {
 			container.add(new GuiLayout(Direction.VERTICAL) {{
-				setHorizontalCentered();
-				setVerticalFill();
-				setPaddingVertical(8);
+				setCenteredHorizontal();
+				setFillVertical(8);
 				
 				addFixed(new GuiLayout(Direction.HORIZONTAL) {{
-					setHorizontalFill();
-					addWeighted(new GuiLabel(" Adjust width: ") {{ setVerticalCentered(); }});
+					setFillHorizontal();
+					addWeighted(new GuiLabel(" Adjust width: ") {{ setCenteredVertical(); }});
 					addFixed(new GuiButton(20, "-") {{ setAction(() -> resizable.setWidth(resizable.getWidth() - 40)); }});
 					addFixed(new GuiButton(20, "+") {{ setAction(() -> resizable.setWidth(resizable.getWidth() + 40)); }});
 				}});
@@ -149,24 +146,24 @@ public class GuiTestScreen extends GuiContainerScreen {
 				addFixed(new GuiLayout(Direction.HORIZONTAL) {{
 					resizable = this;
 					setWidth(240);
-					addFixed(new GuiLabel(" Variable Height: ") {{ setVerticalCentered(); }});
+					addFixed(new GuiLabel(" Variable Height: ") {{ setCenteredVertical(); }});
 					for (int i = 1; i <= 3; i++)
 						addWeighted(new GuiButton() {
-							{ setVerticalCentered(); }
+							{ setCenteredVertical(); }
 							@Override public void onSizeChanged(Direction direction)
 								{ if (direction == Direction.HORIZONTAL) setHeight(getWidth()); } }, i);
 				}});
 				
 				addFixed(new GuiLayout(Direction.HORIZONTAL) {{
-					setHorizontalFill();
-					addFixed(new GuiLabel(" Fixed Height: ") {{ setVerticalCentered(); }});
+					setFillHorizontal();
+					addFixed(new GuiLabel(" Fixed Height: ") {{ setCenteredVertical(); }});
 					addWeighted(new GuiButton());
 				}});
 				
 				addWeighted(new GuiContainer()); // Filler space!
 				
 				addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Back") {{
-					setHorizontalCentered();
+					setCenteredHorizontal();
 					setAction(() -> display(GuiTestScreen.this));
 				}});
 			}});
@@ -175,25 +172,25 @@ public class GuiTestScreen extends GuiContainerScreen {
 	public class VisibilityEnabledScreen extends GuiContainerScreen {
 		public VisibilityEnabledScreen() {
 			container.add(new GuiLayout(Direction.VERTICAL) {{
-				setHorizontalCentered();
-				setVerticalFill(8);
+				setCenteredHorizontal();
+				setFillVertical(8);
 				
 				addVisibilityEnabledControls(this, new GuiLayout(Direction.VERTICAL) {{
-					setHorizontalFill(8);
-					addFixed(new GuiButton("Filler") {{ setHorizontalFill(); }});
+					setFillHorizontal(8);
+					addFixed(new GuiButton("Filler") {{ setFillHorizontal(); }});
 					addVisibilityEnabledControls(this, new GuiLayout(Direction.VERTICAL) {{
-						setHorizontalFill(8);
-						addFixed(new GuiButton("Filler") {{ setHorizontalFill(); }});
-						addVisibilityEnabledControls(this, new GuiButton("Another Element") {{ setHorizontalFill(); }});
-						addFixed(new GuiButton("Filler") {{ setHorizontalFill(); }});
+						setFillHorizontal(8);
+						addFixed(new GuiButton("Filler") {{ setFillHorizontal(); }});
+						addVisibilityEnabledControls(this, new GuiButton("Another Element") {{ setFillHorizontal(); }});
+						addFixed(new GuiButton("Filler") {{ setFillHorizontal(); }});
 					}});
-					addFixed(new GuiButton("Filler") {{ setHorizontalFill(); }});
+					addFixed(new GuiButton("Filler") {{ setFillHorizontal(); }});
 				}});
 				
 				addWeighted(new GuiContainer()); // Filler space!
 				
 				addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Back") {{
-					setHorizontalCentered();
+					setCenteredHorizontal();
 					setAction(() -> display(GuiTestScreen.this));
 				}});
 			}});
@@ -201,11 +198,11 @@ public class GuiTestScreen extends GuiContainerScreen {
 		
 		private void addVisibilityEnabledControls(GuiLayout layout, GuiElementBase element) {
 			layout.addFixed(new GuiLayout(Direction.HORIZONTAL) {{
-				setHorizontalFill();
-				addFixed(new GuiLabel(" Visible: ") {{ setVerticalCentered(); }});
+				setFillHorizontal();
+				addFixed(new GuiLabel(" Visible: ") {{ setCenteredVertical(); }});
 				addWeighted(new GuiButton("y") {{ setAction(() -> element.setVisible(true)); }});
 				addWeighted(new GuiButton("n") {{ setAction(() -> element.setVisible(false)); }});
-				addFixed(new GuiLabel(" Enabled: ") {{ setVerticalCentered(); }});
+				addFixed(new GuiLabel(" Enabled: ") {{ setCenteredVertical(); }});
 				addWeighted(new GuiButton("y") {{ setAction(() -> element.setEnabled(true)); }});
 				addWeighted(new GuiButton("n") {{ setAction(() -> element.setEnabled(false)); }});
 			}});

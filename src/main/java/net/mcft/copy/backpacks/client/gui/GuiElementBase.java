@@ -71,36 +71,36 @@ public abstract class GuiElementBase {
 		else _verticalAlign = value;
 		if (_parent != null) _parent.onChildAlignChanged(this, direction);
 	}
-	public final void setHorizontalAlign(Alignment value) { setAlign(Direction.HORIZONTAL, value); }
-	public final void setVerticalAlign(Alignment value) { setAlign(Direction.VERTICAL, value); }
+	public final void setAlignHorizontal(Alignment value) { setAlign(Direction.HORIZONTAL, value); }
+	public final void setAlignVertical(Alignment value) { setAlign(Direction.VERTICAL, value); }
 	public final void setAlign(Alignment horizontal, Alignment vertical)
-		{ setHorizontalAlign(horizontal); setVerticalAlign(vertical); }
+		{ setAlignHorizontal(horizontal); setAlignVertical(vertical); }
 	
 	// Useful alignment shortcuts
 	
 	public final void setPosition(int left, int top)
 		{ setAlign(new Alignment.Min(left), new Alignment.Min(top)); }
 	
-	public final void setLeft(int value) { setHorizontalAlign(new Alignment.Min(value)); }
-	public final void setRight(int value) { setHorizontalAlign(new Alignment.Max(value)); }
-	public final void setTop(int value) { setVerticalAlign(new Alignment.Min(value)); }
-	public final void setBottom(int value) { setVerticalAlign(new Alignment.Max(value)); }
+	public final void setLeft(int value) { setAlignHorizontal(new Alignment.Min(value)); }
+	public final void setRight(int value) { setAlignHorizontal(new Alignment.Max(value)); }
+	public final void setTop(int value) { setAlignVertical(new Alignment.Min(value)); }
+	public final void setBottom(int value) { setAlignVertical(new Alignment.Max(value)); }
 	
 	public final void setLeftRight(int value) { setLeftRight(value, value); }
 	public final void setLeftRight(int left, int right)
-		{ setHorizontalAlign(new Alignment.Both(left, right)); }
+		{ setAlignHorizontal(new Alignment.Both(left, right)); }
 	public final void setTopBottom(int value) { setTopBottom(value, value); }
 	public final void setTopBottom(int top, int bottom)
-		{ setVerticalAlign(new Alignment.Both(top, bottom)); }
+		{ setAlignVertical(new Alignment.Both(top, bottom)); }
 	
-	public final void setHorizontalCentered() { setHorizontalAlign(new Alignment.Center()); }
-	public final void setHorizontalCentered(int width) { setHorizontalCentered(); setWidth(width); }
-	public final void setVerticalCentered() { setVerticalAlign(new Alignment.Center()); }
-	public final void setVerticalCentered(int height) { setVerticalCentered(); setHeight(height); }
+	public final void setCenteredHorizontal() { setAlignHorizontal(new Alignment.Center()); }
+	public final void setCenteredHorizontal(int width) { setCenteredHorizontal(); setWidth(width); }
+	public final void setCenteredVertical() { setAlignVertical(new Alignment.Center()); }
+	public final void setCenteredVertical(int height) { setCenteredVertical(); setHeight(height); }
 	
-	public final void setHorizontalFill() { setLeftRight(0); }
-	public final void setVerticalFill() { setTopBottom(0); }
-	public final void setFill() { setHorizontalFill(); setVerticalFill(); }
+	public final void setFillHorizontal() { setLeftRight(0); }
+	public final void setFillVertical() { setTopBottom(0); }
+	public final void setFill() { setFillHorizontal(); setFillVertical(); }
 	
 	// Element focus
 	

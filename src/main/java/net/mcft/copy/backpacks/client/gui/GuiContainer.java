@@ -64,6 +64,10 @@ public class GuiContainer extends GuiElementBase {
 		{ setPadding(horizontal, vertical, horizontal, vertical); }
 	public final void setPadding(int value) { setPadding(value, value); }
 	
+	public final void setFillHorizontal(int padding) { setFillHorizontal(); setPaddingHorizontal(padding); }
+	public final void setFillVertical(int padding) { setFillVertical(); setPaddingVertical(padding); }
+	public final void setFill(int padding) { setFillHorizontal(padding); setFillVertical(padding); }
+	
 	
 	/** Called when a child element is resized. */
 	public void onChildSizeChanged(GuiElementBase element, Direction direction)
