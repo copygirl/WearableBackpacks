@@ -14,10 +14,15 @@ public abstract class GuiElementBase {
 	public static final int ELLIPSIS_WIDTH = getStringWidth(ELLIPSIS);
 	public static final int LINE_HEIGHT = getFontRenderer().FONT_HEIGHT;
 	
+	public static final int COLOR_CONTROL = 0xFFE0E0E0;
+	public static final int COLOR_CONTROL_HIGHLIGHT = 0xFFFFFFA0;
+	public static final int COLOR_CONTROL_DISABLED = 0xFFA0A0A0;
+	
 	
 	private GuiContext _context;
 	private GuiContainer _parent;
 	private int _width, _height;
+	private boolean _visible = true, _enabled = true;
 	private Alignment _horizontalAlign = new Alignment.Min(0);
 	private Alignment _verticalAlign = new Alignment.Min(0);
 	
@@ -27,6 +32,13 @@ public abstract class GuiElementBase {
 	
 	public final GuiContext getContext() { return _context; }
 	public final GuiContainer getParent() { return _parent; }
+	
+	public final boolean isVisible() { return _visible; }
+	public final void setVisible(boolean value) { _visible = value; }
+	
+	public boolean isEnabled() { return _enabled &&
+		((getParent() != null) ? getParent().isEnabled() : true); }
+	public void setEnabled(boolean value) { _enabled = value; }
 	
 	// Size related
 	
@@ -104,6 +116,7 @@ public abstract class GuiElementBase {
 	public void setFocused(boolean value) {
 		if (value && !canFocus())
 			throw new UnsupportedOperationException("This element can't be focused");
+		if (!isVisible() || !isEnabled()) return;
 		getContext().setFocused(value ? this : null);
 	}
 	
@@ -129,6 +142,7 @@ public abstract class GuiElementBase {
 	 *  Mouse position is relative to the element's position.
 	 *  Returns if the mouse action was handled. */
 	public boolean onMouseDown(int mouseButton, int mouseX, int mouseY) {
+		if (!isVisible()) return false;
 		if (mouseButton == MouseButton.LEFT)
 			getContext().setPressed(this);
 		if (canFocus()) {

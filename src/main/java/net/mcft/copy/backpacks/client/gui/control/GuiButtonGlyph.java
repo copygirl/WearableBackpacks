@@ -46,11 +46,9 @@ public class GuiButtonGlyph extends GuiButton {
 	
 	
 	@Override
-	public void drawWhateverIsOnTheButton(int mouseX, int mouseY, float partialTicks) {
+	protected void drawWhateverIsOnTheButton(int mouseX, int mouseY, boolean isHighlighted, float partialTicks) {
 		String text = getText();
-		
 		FontRenderer fontRenderer = getFontRenderer();
-		boolean isHighlighted = (isPressed() || contains(mouseX, mouseY));
 		
 		int contentWidth = getGlyphWidth();
 		if (!text.isEmpty()) {
@@ -63,19 +61,17 @@ public class GuiButtonGlyph extends GuiButton {
 			contentWidth += GLYPH_SPACING + textWidth;
 		}
 		
-		int textColor = (isHighlighted ? 0xFFFFA0 : 0xE0E0E0); // Disabled color: 0xA0A0A0
-		
 		GlStateManager.pushMatrix();
 		GlStateManager.scale(getGlyphScale(), getGlyphScale(), 1.0F);
 		fontRenderer.drawStringWithShadow(getGlyph(),
-			(getWidth() - contentWidth) / 2 / getGlyphScale(),
-			(((getHeight() - 8) / getGlyphScale() / 2) - 1) / getGlyphScale(), textColor);
+			(int)((getWidth() - contentWidth) / 2 / getGlyphScale()),
+			(int)((((getHeight() - 8) / getGlyphScale() / 2) - 1) / getGlyphScale()), getTextColor(isHighlighted));
 		GlStateManager.popMatrix();
 		
 		if (!text.isEmpty())
 			fontRenderer.drawStringWithShadow(text,
 				(getWidth() - contentWidth) / 2 + getGlyphWidth() + GLYPH_SPACING,
-				(getHeight() - 8) / 2, textColor);
+				(getHeight() - 8) / 2, getTextColor(isHighlighted));
 	}
 	
 }

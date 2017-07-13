@@ -168,6 +168,7 @@ public class GuiContainer extends GuiElementBase {
 	
 	@Override
 	public boolean onMouseDown(int mouseButton, int mouseX, int mouseY) {
+		if (!isVisible() || !isEnabled()) return false;
 		for (GuiElementBase child : children) {
 			int mx = mouseX - getChildX(child);
 			int my = mouseY - getChildY(child);
@@ -179,6 +180,7 @@ public class GuiContainer extends GuiElementBase {
 	
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
+		if (!isVisible()) return;
 		for (GuiElementBase child : children) {
 			int x = getChildX(child);
 			int y = getChildY(child);

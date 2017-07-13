@@ -9,6 +9,7 @@ import net.mcft.copy.backpacks.client.config.BackpacksGuiConfig;
 import net.mcft.copy.backpacks.client.gui.Direction;
 import net.mcft.copy.backpacks.client.gui.GuiContainer;
 import net.mcft.copy.backpacks.client.gui.GuiContainerScreen;
+import net.mcft.copy.backpacks.client.gui.GuiElementBase;
 import net.mcft.copy.backpacks.client.gui.GuiLayout;
 import net.mcft.copy.backpacks.client.gui.control.GuiButton;
 import net.mcft.copy.backpacks.client.gui.control.GuiLabel;
@@ -40,6 +41,11 @@ public class GuiTestScreen extends GuiContainerScreen {
 					{{ setAction(() -> display(new LayoutScreen1())); }});
 				addWeighted(new GuiButton("Test 2")
 					{{ setAction(() -> display(new LayoutScreen2())); }});
+			}});
+			
+			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Test Visibility / Enabled") {{
+				setHorizontalCentered();
+				setAction(() -> display(new VisibilityEnabledScreen()));
 			}});
 			
 			addWeighted(new GuiContainer()); // Filler space!
@@ -164,6 +170,46 @@ public class GuiTestScreen extends GuiContainerScreen {
 					setAction(() -> display(GuiTestScreen.this));
 				}});
 			}});
+		}
+	}
+	public class VisibilityEnabledScreen extends GuiContainerScreen {
+		public VisibilityEnabledScreen() {
+			container.add(new GuiLayout(Direction.VERTICAL) {{
+				setHorizontalCentered();
+				setVerticalFill(8);
+				
+				addVisibilityEnabledControls(this, new GuiLayout(Direction.VERTICAL) {{
+					setHorizontalFill(8);
+					addFixed(new GuiButton("Filler") {{ setHorizontalFill(); }});
+					addVisibilityEnabledControls(this, new GuiLayout(Direction.VERTICAL) {{
+						setHorizontalFill(8);
+						addFixed(new GuiButton("Filler") {{ setHorizontalFill(); }});
+						addVisibilityEnabledControls(this, new GuiButton("Another Element") {{ setHorizontalFill(); }});
+						addFixed(new GuiButton("Filler") {{ setHorizontalFill(); }});
+					}});
+					addFixed(new GuiButton("Filler") {{ setHorizontalFill(); }});
+				}});
+				
+				addWeighted(new GuiContainer()); // Filler space!
+				
+				addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Back") {{
+					setHorizontalCentered();
+					setAction(() -> display(GuiTestScreen.this));
+				}});
+			}});
+		}
+		
+		private void addVisibilityEnabledControls(GuiLayout layout, GuiElementBase element) {
+			layout.addFixed(new GuiLayout(Direction.HORIZONTAL) {{
+				setHorizontalFill();
+				addFixed(new GuiLabel(" Visible: ") {{ setVerticalCentered(); }});
+				addWeighted(new GuiButton("y") {{ setAction(() -> element.setVisible(true)); }});
+				addWeighted(new GuiButton("n") {{ setAction(() -> element.setVisible(false)); }});
+				addFixed(new GuiLabel(" Enabled: ") {{ setVerticalCentered(); }});
+				addWeighted(new GuiButton("y") {{ setAction(() -> element.setEnabled(true)); }});
+				addWeighted(new GuiButton("n") {{ setAction(() -> element.setEnabled(false)); }});
+			}});
+			layout.addFixed(element);
 		}
 	}
 	

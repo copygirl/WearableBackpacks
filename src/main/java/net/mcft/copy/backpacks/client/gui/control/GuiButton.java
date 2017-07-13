@@ -21,6 +21,7 @@ public class GuiButton extends GuiElementBase {
 	public static final int DEFAULT_TEXT_PADDING = 20;
 
 	private String _text = "";
+	private int _textColor = -1;
 	private Runnable _action = null;
 	
 	
@@ -52,6 +53,16 @@ public class GuiButton extends GuiElementBase {
 		setText(getText() + value);
 	}
 	
+	public int getTextColor() { return getTextColor(false); }
+	public int getTextColor(boolean isHighlighted) {
+		return (_textColor >= 0) ? _textColor
+			: !isEnabled() ? COLOR_CONTROL_DISABLED
+			: (isHighlighted) ? COLOR_CONTROL_HIGHLIGHT
+			: COLOR_CONTROL;
+	}
+	public final void unsetTextColor() { setTextColor(-1); }
+	public void setTextColor(int value) { _textColor = value; }
+	
 	public void setAction(Runnable value) { _action = value; }
 	
 	/** Called when this button is pressed. */
@@ -65,6 +76,7 @@ public class GuiButton extends GuiElementBase {
 	
 	@Override
 	public boolean onMouseDown(int mouseButton, int mouseX, int mouseY) {
+		if (!isEnabled()) return false;
 		if (mouseButton == MouseButton.LEFT) {
 			playPressSound();
 			onButtonClicked();
@@ -74,21 +86,23 @@ public class GuiButton extends GuiElementBase {
 	
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
+		if (!isVisible()) return;
 		boolean isHighlighted = (isPressed() || contains(mouseX, mouseY));
 		
-		int ty = 46 + (isHighlighted ? 2 : 1) * 20;
+		int buttonIndex = !isEnabled() ? 0
+		                : !isHighlighted ? 1
+		                : 2;
+		int ty = 46 + buttonIndex * 20;
 		GuiUtils.drawContinuousTexturedBox(BUTTON_TEX, 0, 0, 0, ty, getWidth(), getHeight(), 200, 20, 2, 3, 2, 2, 0);
 		
-		drawWhateverIsOnTheButton(mouseX, mouseY, partialTicks);
+		drawWhateverIsOnTheButton(mouseX, mouseY, isHighlighted, partialTicks);
 	}
 	
 	/** Draws whatever is on the button. Yay. */
-	public void drawWhateverIsOnTheButton(int mouseX, int mouseY, float partialTicks) {
+	protected void drawWhateverIsOnTheButton(int mouseX, int mouseY, boolean isHighlighted, float partialTicks) {
 		String text = getText();
 		if (text.isEmpty()) return;
-		
 		FontRenderer fontRenderer = getFontRenderer();
-		boolean isHighlighted = (isPressed() || contains(mouseX, mouseY));
 		
 		int textWidth = fontRenderer.getStringWidth(text);
 		int maxTextWidth = getWidth() - MIN_TEXT_PADDING;
@@ -97,8 +111,8 @@ public class GuiButton extends GuiElementBase {
 			textWidth = fontRenderer.getStringWidth(text);
 		}
 		
-		int textColor = (isHighlighted ? 0xFFFFA0 : 0xE0E0E0); // Disabled color: 0xA0A0A0
-		fontRenderer.drawStringWithShadow(text, getWidth() / 2 - textWidth / 2, (getHeight() - 8) / 2, textColor);
+		fontRenderer.drawStringWithShadow(text, getWidth() / 2 - textWidth / 2,
+		                                        (getHeight() - 8) / 2, getTextColor(isHighlighted));
 	}
 	
 }

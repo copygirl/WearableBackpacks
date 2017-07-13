@@ -14,10 +14,11 @@ import net.mcft.copy.backpacks.client.gui.GuiElementBase;
 public class GuiLabel extends GuiElementBase {
 	
 	private String _text = "";
+	private TextAlign _align = TextAlign.LEFT;
+	private boolean _expands;
+	
 	private int _color = 0xFFFFFF;
 	private int _shadowColor = -1;
-	private boolean _expands;
-	private TextAlign _align = TextAlign.LEFT;
 	
 	
 	public GuiLabel(String text)
@@ -44,7 +45,6 @@ public class GuiLabel extends GuiElementBase {
 	public GuiLabel(int x, int y, int width, int height, String text)
 		{ this(x, y, width, height, text, TextAlign.LEFT); }
 	public GuiLabel(int x, int y, int width, int height, String text, TextAlign align) {
-		_expands = false;
 		setPosition(x, y);
 		setSize(width, height);
 		setText(text);
@@ -86,6 +86,7 @@ public class GuiLabel extends GuiElementBase {
 	
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
+		if (!isVisible()) return;
 		FontRenderer fontRenderer = getFontRenderer();
 		List<String> lines = fontRenderer.listFormattedStringToWidth(_text, Integer.MAX_VALUE);
 		int yPos = 1;
