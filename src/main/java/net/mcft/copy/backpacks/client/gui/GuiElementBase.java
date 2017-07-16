@@ -1,9 +1,14 @@
 package net.mcft.copy.backpacks.client.gui;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -12,13 +17,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public abstract class GuiElementBase {
 	
-	public static final String ELLIPSIS = "...";
+	public static final String ELLIPSIS    = "...";
 	public static final int ELLIPSIS_WIDTH = getStringWidth(ELLIPSIS);
-	public static final int LINE_HEIGHT = getFontRenderer().FONT_HEIGHT;
+	public static final int LINE_HEIGHT    = getFontRenderer().FONT_HEIGHT;
 	
-	public static final int COLOR_CONTROL = 0xFFE0E0E0;
+	public static final int COLOR_CONTROL           = 0xFFE0E0E0;
 	public static final int COLOR_CONTROL_HIGHLIGHT = 0xFFFFFFA0;
-	public static final int COLOR_CONTROL_DISABLED = 0xFFA0A0A0;
+	public static final int COLOR_CONTROL_DISABLED  = 0xFFA0A0A0;
 	
 	
 	private GuiContext _context;
@@ -211,6 +216,20 @@ public abstract class GuiElementBase {
 		               (color >> 8 & 0xFF) / 255.0f,
 		               (color & 0xFF) / 255.0f,
 		               (color >> 24 & 0xFF) / 255.0f); }
+	
+	public static void drawRect(int x, int y, int u, int v, int width, int height)
+		{ drawRect(x, y, width, height, u, v, u + width, v + height); }
+	public static void drawRect(int x, int y, int width, int height,
+	                            float u1, float v1, float u2, float v2) {
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder buffer = tessellator.getBuffer();
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		buffer.pos(x        , y + height, 0).tex(u1, v2).endVertex();
+		buffer.pos(x + width, y + height, 0).tex(u2, v2).endVertex();
+		buffer.pos(x + width, y         , 0).tex(u2, v1).endVertex();
+		buffer.pos(x        , y         , 0).tex(u1, v1).endVertex();
+		tessellator.draw();
+	}
 	
 	// Utility classes
 	
