@@ -8,13 +8,13 @@ public class GuiLayout extends GuiContainer {
 	
 	public final Direction direction;
 	
-	private int _spacing = 2;
+	private int[] _spacing = { 2 };
 	
 	public GuiLayout(Direction direction)
 		{ this.direction = direction; }
 	
-	public int getSpacing() { return _spacing; }
-	public void setSpacing(int value) { _spacing = value; }
+	public int[] getSpacing() { return _spacing; }
+	public void setSpacing(int... value) { _spacing = value; }
 	
 	
 	// Adding / removing elements
@@ -68,22 +68,29 @@ public class GuiLayout extends GuiContainer {
 		if (direction != this.direction)
 			{ super.updateChildSizes(direction); return; }
 		
+		int[] spacing = getSpacing();
 		double remainingWeight = 0.0;
-		int availableSize = getSize(direction)
-			- getPadding(direction)
-			- (children.size() - 1) * getSpacing();
-		for (GuiElementBase child : children) {
+		int availableSize = getSize(direction) - getPadding(direction);
+		for (int i = 0; i < children.size(); i++) {
+			GuiElementBase child = children.get(i);
+			
 			Alignment align = child.getAlign(direction);
 			if (align instanceof LayoutAlignment.Weighted) {
 				LayoutAlignment.Weighted weighted = (LayoutAlignment.Weighted)align;
 				remainingWeight += weighted.weight;
 				availableSize   -= weighted.minSize;
 			} else availableSize -= child.getSize(direction);
+			
+			if (i < children.size() - 1)
+				availableSize -= spacing[Math.min(spacing.length - 1, i)];
 		}
+		
 		int currentPos = 0;
-		for (GuiElementBase child : children) {
-			LayoutAlignment align = (LayoutAlignment)child.getAlign(direction);
+		for (int i = 0; i < children.size(); i++) {
+			GuiElementBase child = children.get(i);
+			
 			int size = 0;
+			LayoutAlignment align = (LayoutAlignment)child.getAlign(direction);
 			if (align instanceof LayoutAlignment.Weighted) {
 				LayoutAlignment.Weighted weighted = (LayoutAlignment.Weighted)align;
 				size = Math.max(0, (int)(availableSize * weighted.weight / remainingWeight));
@@ -93,9 +100,14 @@ public class GuiLayout extends GuiContainer {
 				child.setSize(direction, size);
 			} else size = child.getSize(direction);
 			align._childPos = currentPos;
-			currentPos += size + getSpacing();
+			currentPos += size;
+			
+			if (i < children.size() - 1)
+				currentPos += spacing[Math.min(spacing.length - 1, i)];
 		}
-		if (doesExpand(direction)) setSize(direction, currentPos + getPadding(direction) - getSpacing());
+		
+		if (doesExpand(direction))
+			setSize(direction, currentPos + getPadding(direction));
 	}
 	
 	
