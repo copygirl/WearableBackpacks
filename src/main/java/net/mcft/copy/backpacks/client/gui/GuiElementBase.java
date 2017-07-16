@@ -3,6 +3,8 @@ package net.mcft.copy.backpacks.client.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -187,21 +189,45 @@ public abstract class GuiElementBase {
 	public boolean contains(int x, int y)
 		{ return regionContains(0, 0, getWidth(), getHeight(), x, y); }
 	
+		
 	public static Minecraft getMC() { return Minecraft.getMinecraft(); }
+	public static void display(GuiScreen screen) { getMC().displayGuiScreen(screen); }
+	
 	public static FontRenderer getFontRenderer() { return getMC().fontRenderer; }
 	public static int getStringWidth(String text) { return getFontRenderer().getStringWidth(text); }
-	public static void display(GuiScreen screen) { getMC().displayGuiScreen(screen); }
+	
+	public static void bindTexture(ResourceLocation resource)
+		{ getMC().getTextureManager().bindTexture(resource); }
+	
+	public static void setRenderColor(float red, float green, float blue)
+		{ setRenderColor(red, green, blue, 1.0F); }
+	public static void setRenderColor(float red, float green, float blue, float alpha)
+		{ GlStateManager.color(red, green, blue, alpha); }
+	
+	public static void setRenderColorRGB(int color)
+		{ setRenderColorARGB(color | 0xFF000000); }
+	public static void setRenderColorARGB(int color) {
+		setRenderColor((color >> 16 & 0xFF) / 255.0f,
+		               (color >> 8 & 0xFF) / 255.0f,
+		               (color & 0xFF) / 255.0f,
+		               (color >> 24 & 0xFF) / 255.0f); }
 	
 	// Utility classes
 	
 	public static final class MouseButton {
-		
 		private MouseButton() {  }
 		
-		public static int LEFT = 0;
-		public static int RIGHT = 1;
+		public static int LEFT   = 0;
+		public static int RIGHT  = 1;
 		public static int MIDDLE = 2;
+	}
+	
+	public static final class Color {
+		private Color() {  }
 		
+		public static int WHITE       = 0xFFFFFFFF;
+		public static int BLACK       = 0xFF000000;
+		public static int TRANSPARENT = 0x00000000;
 	}
 	
 }
