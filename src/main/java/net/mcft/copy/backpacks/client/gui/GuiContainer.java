@@ -172,29 +172,60 @@ public class GuiContainer extends GuiElementBase {
 	
 	@Override
 	public boolean onMouseDown(int mouseButton, int mouseX, int mouseY) {
-		if (!isVisible() || !isEnabled()) return false;
-		for (GuiElementBase child : children) {
-			int mx = mouseX - getChildX(child);
-			int my = mouseY - getChildY(child);
-			if (!child.contains(mx, my)) continue;
-			if (child.onMouseDown(mouseButton, mx, my)) return true;
-		}
-		return false;
+		return (isVisible() && isEnabled() &&
+		        foreachFindChildMousePos(mouseX, mouseY, (child, x, y, mx, my) ->
+			(child.contains(mx, my) && child.onMouseDown(mouseButton, mx, my))) != null);
 	}
 	
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
 		if (!isVisible()) return;
+		foreachChildMousePos(mouseX, mouseY, (child, x, y, mx, my) -> {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(x, y, 0);
+			child.draw(mx, my, partialTicks);
+			GlStateManager.popMatrix();
+		});
+	}
+	
+	// Utility methods
+	
+	protected void foreachChildPos(ChildPosConsumer consumer) {
+		for (GuiElementBase child : children)
+			consumer.apply(child, getChildX(child), getChildY(child));
+	}
+	
+	protected void foreachChildMousePos(int mouseX, int mouseY, ChildPosMouseConsumer consumer) {
 		for (GuiElementBase child : children) {
 			int x = getChildX(child);
 			int y = getChildY(child);
 			int mx = mouseX - x;
 			int my = mouseY - y;
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(x, y, 0);
-			child.draw(mx, my, partialTicks);
-			GlStateManager.popMatrix();
+			consumer.apply(child, x, y, mx, my);
 		}
 	}
+	
+	protected GuiElementBase foreachFindChildMousePos(
+		int mouseX, int mouseY, ChildPosMousePredicate consumer) {
+		for (GuiElementBase child : children) {
+			int x = getChildX(child);
+			int y = getChildY(child);
+			int mx = mouseX - x;
+			int my = mouseY - y;
+			if (consumer.apply(child, x, y, mx, my)) return child;
+		}
+		return null;
+	}
+	
+	@FunctionalInterface
+	protected interface ChildPosConsumer
+		{ void apply(GuiElementBase element, int childX, int childY); }
+	
+	@FunctionalInterface
+	protected interface ChildPosMouseConsumer
+		{ void apply(GuiElementBase element, int childX, int childY, int mouseX, int mouseY); }
+	@FunctionalInterface
+	protected interface ChildPosMousePredicate
+		{ boolean apply(GuiElementBase element, int childX, int childY, int mouseX, int mouseY); }
 	
 }
