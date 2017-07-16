@@ -13,12 +13,16 @@ import net.mcft.copy.backpacks.client.gui.GuiElementBase;
 @SideOnly(Side.CLIENT)
 public class GuiLabel extends GuiElementBase {
 	
+	public static final int SHADOW_DISABLED = -1;
+	public static final int SHADOW_AUTOMATIC = -2;
+	
+	
 	private String _text = "";
 	private TextAlign _align = TextAlign.LEFT;
 	private boolean _expands;
 	
 	private int _color = 0xFFFFFF;
-	private int _shadowColor = -1;
+	private int _shadowColor = SHADOW_AUTOMATIC;
 	
 	
 	public GuiLabel(String text)
@@ -75,7 +79,12 @@ public class GuiLabel extends GuiElementBase {
 	public void setColor(int value) { _color = value; }
 	
 	public int getShadowColor() { return _shadowColor; }
-	public void setShadowColor(int value) { _shadowColor = value; }
+	public void setShadowColor(int value) {
+		if (value < SHADOW_AUTOMATIC) throw new IllegalArgumentException(
+			String.format("'%d' is not a valid special shadow value", value));
+		_shadowColor = value;
+	}
+	public void setShadowDisabled() { setShadowColor(SHADOW_DISABLED); }
 	
 	
 	@Override
@@ -102,9 +111,15 @@ public class GuiLabel extends GuiElementBase {
 				case RIGHT:  xPos = getWidth() - lineWidth; break;
 				case CENTER: xPos = (getWidth() - lineWidth) / 2; break;
 			}
-			if (_shadowColor >= 0)
-				fontRenderer.drawString(line, xPos + 1, yPos + 1, _shadowColor);
-			fontRenderer.drawString(line, xPos, yPos, _color);
+			
+			int color = getColor();
+			int shadowColor = getShadowColor();
+			if (shadowColor >= 0)
+				fontRenderer.drawString(line, xPos + 1, yPos + 1, shadowColor);
+			if (shadowColor == SHADOW_AUTOMATIC)
+				fontRenderer.drawStringWithShadow(line, xPos, yPos, color);
+			else fontRenderer.drawString(line, xPos, yPos, color);
+			
 			yPos += LINE_HEIGHT;
 		}
 	}
