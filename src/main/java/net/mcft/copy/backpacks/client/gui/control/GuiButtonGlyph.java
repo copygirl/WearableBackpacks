@@ -20,15 +20,23 @@ public class GuiButtonGlyph extends GuiButton {
 	public GuiButtonGlyph(String glyph)
 		{ this(glyph, DEFAULT_GLYPH_SCALE); }
 	public GuiButtonGlyph(String glyph, float glyphScale)
-		{ this(DEFAULT_WIDTH, glyph, glyphScale, ""); }
+		{ this(DEFAULT_WIDTH, glyph, glyphScale); }
+	public GuiButtonGlyph(int width, String glyph, float glyphScale)
+		{ this(width, DEFAULT_HEIGHT, glyph, glyphScale); }
+	public GuiButtonGlyph(int width, int height, String glyph, float glyphScale)
+		{ this(width, height, glyph, glyphScale, ""); }
 	
 	public GuiButtonGlyph(String glyph, String text)
 		{ this((int)(getStringWidth(glyph) * 2.0f) + GLYPH_SPACING + getStringWidth(text) + DEFAULT_TEXT_PADDING, glyph, text); }
 	public GuiButtonGlyph(int width, String glyph, String text)
-		{ this(width, glyph, DEFAULT_GLYPH_SCALE, text); }
+		{ this(width, DEFAULT_HEIGHT, glyph, text); }
+	public GuiButtonGlyph(int width, int height, String glyph, String text)
+		{ this(width, height, glyph, DEFAULT_GLYPH_SCALE, text); }
 		
 	public GuiButtonGlyph(int width, String glyph, float glyphScale, String text)
-		{ this(0, 0, width, DEFAULT_HEIGHT, glyph, glyphScale, text); }
+		{ this(width, DEFAULT_HEIGHT, glyph, glyphScale, text); }
+	public GuiButtonGlyph(int width, int height, String glyph, float glyphScale, String text)
+		{ this(0, 0, width, height, glyph, glyphScale, text); }
 	public GuiButtonGlyph(int x, int y, int width, int height, String glyph, float glyphScale, String text)
 		{ super(x, y, width, height, text); setGlyph(glyph, glyphScale); }
 	
@@ -61,11 +69,12 @@ public class GuiButtonGlyph extends GuiButton {
 			contentWidth += GLYPH_SPACING + textWidth;
 		}
 		
+		float scale = getGlyphScale();
 		GlStateManager.pushMatrix();
-		GlStateManager.scale(getGlyphScale(), getGlyphScale(), 1.0F);
+		GlStateManager.scale(scale, scale, 1.0F);
 		fontRenderer.drawStringWithShadow(getGlyph(),
-			(int)((getWidth() - contentWidth) / 2 / getGlyphScale()),
-			(int)((((getHeight() - 8) / getGlyphScale() / 2) - 1) / getGlyphScale()), getTextColor(isHighlighted));
+			(int)((getWidth() - contentWidth) / 2 / scale),
+			(int)((((getHeight() - 8) / scale / 2) - 1) / scale), getTextColor(isHighlighted));
 		GlStateManager.popMatrix();
 		
 		if (!text.isEmpty())
