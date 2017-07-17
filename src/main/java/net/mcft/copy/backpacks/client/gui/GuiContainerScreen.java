@@ -20,6 +20,9 @@ public class GuiContainerScreen extends GuiScreen {
 	
 	private static boolean DEBUG = false;
 	
+	private int _lastMouseX = -1;
+	private int _lastMouseY = -1;
+	
 	public final GuiContext context;
 	public final GuiContainer container;
 	
@@ -52,11 +55,32 @@ public class GuiContainerScreen extends GuiScreen {
 		if (scroll != 0) container.onMouseScroll(scroll, mouseX, mouseY);
 	}
 	
+	@Override
+	public void updateScreen() {
+		int mouseX = Mouse.getX() * width / mc.displayWidth;
+		int mouseY = height - Mouse.getY() * height / mc.displayHeight - 1;
+		if ((mouseX != _lastMouseX) || (mouseY != _lastMouseY)) {
+			GuiElementBase pressed = context.getPressed();
+			if (pressed != null) {
+				int mx = mouseX;
+				int my = mouseY;
+				for (GuiElementBase element = pressed; element.getParent() != null; element = element.getParent()) {
+					mx -= element.getParent().getChildX(element);
+					my -= element.getParent().getChildY(element);
+				}
+				pressed.onMouseMove(mx, my);
+			} else if (container.contains(mouseX, mouseY))
+				container.onMouseMove(mouseX, mouseY);
+			_lastMouseX = mouseX;
+			_lastMouseY = mouseY;
+		}
+	}
+	
 	// TODO: Handle onMouseMove.
 	
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
-		context.setPressed(null);
+		context.setPressed(null, mouseX, mouseY);
 		// TODO: Handle onMouseUp.
 	}
 	

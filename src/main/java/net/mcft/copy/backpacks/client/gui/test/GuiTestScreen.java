@@ -54,6 +54,12 @@ public class GuiTestScreen extends GuiContainerScreen {
 				setAction(() -> display(parentScreen));
 			}});
 		}});
+		
+		container.add(new GuiButton(8, 8, 100, 20, "Drag me!") {
+			@Override public boolean canDrag() { return true; }
+			@Override public void onDragged(int mouseX, int mouseY, int startX, int startY)
+				{ setPosition(mouseX - startX, mouseY - startY); }
+		});
 	}
 	
 	public class AlignmentScreen extends GuiContainerScreen {
@@ -200,11 +206,15 @@ public class GuiTestScreen extends GuiContainerScreen {
 			layout.addFixed(new GuiLayout(Direction.HORIZONTAL) {{
 				setFillHorizontal();
 				addFixed(new GuiLabel(" Visible: ") {{ setCenteredVertical(); }});
-				addWeighted(new GuiButton("y") {{ setAction(() -> element.setVisible(true)); }});
-				addWeighted(new GuiButton("n") {{ setAction(() -> element.setVisible(false)); }});
+				addWeighted(new GuiButton("yes") {{ setAction(() -> {
+					element.setVisible(!element.isVisible());
+					setText(element.isVisible() ? "yes" : "no");
+				}); }});
 				addFixed(new GuiLabel(" Enabled: ") {{ setCenteredVertical(); }});
-				addWeighted(new GuiButton("y") {{ setAction(() -> element.setEnabled(true)); }});
-				addWeighted(new GuiButton("n") {{ setAction(() -> element.setEnabled(false)); }});
+				addWeighted(new GuiButton("yes") {{ setAction(() -> {
+					element.setEnabled(!element.isEnabled());
+					setText(element.isEnabled() ? "yes" : "no");
+				}); }});
 			}});
 			layout.addFixed(element);
 		}

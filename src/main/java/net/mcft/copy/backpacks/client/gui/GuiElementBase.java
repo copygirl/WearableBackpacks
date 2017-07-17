@@ -113,7 +113,6 @@ public abstract class GuiElementBase {
 	
 	/** Returns if this element can be focused. */
 	public boolean canFocus() { return false; }
-	
 	/** Returns if this element is currently focused. */
 	public boolean isFocused() { return (getContext().getFocused() == this); }
 	
@@ -127,16 +126,23 @@ public abstract class GuiElementBase {
 		getContext().setFocused(value ? this : null);
 	}
 	
-	// Drag related
+	// Press / drag related
+	
+	/** Returns if this element can be pressed. */
+	public boolean canPress() { return canDrag(); }
+	/** Returns if this element is currently being pressed down. */
+	public boolean isPressed() { return (getContext().getPressed() == this); }
+	/** Called when this element is pressed with the left mouse button.
+	 *  Mouse position is relative to the element's position. */
+	public void onPressed(int mouseX, int mouseY) {  }
 	
 	/** Returns if this element can be dragged. */
 	public boolean canDrag() { return false; }
-	
-	/** Returns if this element is currently being pressed down. */
-	public boolean isPressed() { return (getContext().getPressed() == this); }
-	
 	/** Returns if this element is currently being dragged. */
 	public boolean isDragged() { return (canDrag() && isPressed()); }
+	/** Called when the mouse moves while this element is being dragged.
+	 *  Mouse and start position are relative to the element's position. */
+	public void onDragged(int mouseX, int mouseY, int startX, int startY) {  }
 	
 	// Basic events
 	
@@ -149,18 +155,21 @@ public abstract class GuiElementBase {
 	 *  Mouse position is relative to the element's position.
 	 *  Returns if the mouse action was handled. */
 	public boolean onMouseDown(int mouseButton, int mouseX, int mouseY) {
-		if (!isVisible()) return false;
-		if (mouseButton == MouseButton.LEFT)
-			getContext().setPressed(this);
-		if (canFocus()) {
-			setFocused();
+		if (!isVisible() || !isEnabled()) return false;
+		if ((mouseButton == MouseButton.LEFT) && canPress()) {
+			getContext().setPressed(this, mouseX, mouseY);
+			if (canFocus()) setFocused();
+			onPressed(mouseX, mouseY);
 			return true;
 		} else return false;
 	}
 	
 	/** Called when the mouse is moved over this element or being dragged.
 	 *  Mouse position is relative to the element's position. */
-	public void onMouseMove(int mouseX, int mouseY) {  }
+	public void onMouseMove(int mouseX, int mouseY) {
+		if (isVisible() && isDragged()) onDragged(mouseX, mouseY,
+			getContext().getDragStartX(), getContext().getDragStartY());
+	}
 	
 	public void onMouseUp(int mouseButton, int mouseX, int mouseY) {  }
 	

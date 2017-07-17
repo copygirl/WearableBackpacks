@@ -65,29 +65,21 @@ public class GuiButton extends GuiElementBase {
 	
 	public void setAction(Runnable value) { _action = value; }
 	
-	/** Called when this button is pressed. */
-	public void onButtonClicked()
-		{ if (_action != null) _action.run(); }
-	
 	public void playPressSound() {
 		getMC().getSoundHandler().playSound(
 			PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 	}
 	
 	@Override
-	public boolean onMouseDown(int mouseButton, int mouseX, int mouseY) {
-		if (!isEnabled()) return false;
-		if (mouseButton == MouseButton.LEFT) {
-			playPressSound();
-			onButtonClicked();
-			return true;
-		} else return false;
-	}
+	public boolean canPress() { return true; }
+	@Override
+	public void onPressed(int mouseX, int mouseY)
+		{ playPressSound(); if (_action != null) _action.run(); }
 	
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
 		if (!isVisible()) return;
-		boolean isHighlighted = (isPressed() || contains(mouseX, mouseY));
+		boolean isHighlighted = (isDragged() || contains(mouseX, mouseY));
 		
 		int buttonIndex = !isEnabled() ? 0
 		                : !isHighlighted ? 1

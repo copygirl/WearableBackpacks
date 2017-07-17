@@ -147,6 +147,7 @@ public class GuiContainer extends GuiElementBase {
 	public void onSizeChanged(Direction direction) {
 		if (children.isEmpty()) setExpand(direction, false);
 		updateChildSizes(direction);
+		expandToFitChildren(direction);
 	}
 	
 	protected void updateChildSizes(Direction direction) {
@@ -174,15 +175,25 @@ public class GuiContainer extends GuiElementBase {
 	@Override
 	public boolean onMouseDown(int mouseButton, int mouseX, int mouseY) {
 		return (isVisible() && isEnabled() &&
-		        foreachFindChildMousePos(mouseX, mouseY, (child, x, y, mx, my) ->
-			(child.contains(mx, my) && child.onMouseDown(mouseButton, mx, my))) != null);
+		        (foreachFindChildMousePos(mouseX, mouseY, (child, x, y, mx, my) ->
+		             (child.contains(mx, my) && child.onMouseDown(mouseButton, mx, my))) != null) ||
+		         super.onMouseDown(mouseButton, mouseX, mouseY));
+	}
+	
+	@Override
+	public void onMouseMove(int mouseX, int mouseY) {
+		if (!isVisible()) return;
+		foreachChildMousePos(mouseX, mouseY, (child, x, y, mx, my) ->
+			{ if (child.contains(mx, my)) child.onMouseMove(mx, my); });
+		super.onMouseMove(mouseX, mouseY);
 	}
 	
 	@Override
 	public boolean onMouseScroll(int scroll, int mouseX, int mouseY) {
 		return (isVisible() && isEnabled() &&
-		        foreachFindChildMousePos(mouseX, mouseY, (child, x, y, mx, my) ->
-			(child.contains(mx, my) && child.onMouseScroll(scroll, mx, my))) != null);
+		        (foreachFindChildMousePos(mouseX, mouseY, (child, x, y, mx, my) ->
+		             (child.contains(mx, my) && child.onMouseScroll(scroll, mx, my))) != null) ||
+		         super.onMouseScroll(scroll, mouseX, mouseY));
 	}
 	
 	
