@@ -170,12 +170,21 @@ public class GuiContainer extends GuiElementBase {
 			}).max().orElse(0));
 	}
 	
+	
 	@Override
 	public boolean onMouseDown(int mouseButton, int mouseX, int mouseY) {
 		return (isVisible() && isEnabled() &&
 		        foreachFindChildMousePos(mouseX, mouseY, (child, x, y, mx, my) ->
 			(child.contains(mx, my) && child.onMouseDown(mouseButton, mx, my))) != null);
 	}
+	
+	@Override
+	public boolean onMouseScroll(int scroll, int mouseX, int mouseY) {
+		return (isVisible() && isEnabled() &&
+		        foreachFindChildMousePos(mouseX, mouseY, (child, x, y, mx, my) ->
+			(child.contains(mx, my) && child.onMouseScroll(scroll, mx, my))) != null);
+	}
+	
 	
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {

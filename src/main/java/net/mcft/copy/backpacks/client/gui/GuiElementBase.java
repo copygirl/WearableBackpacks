@@ -164,6 +164,11 @@ public abstract class GuiElementBase {
 	
 	public void onMouseUp(int mouseButton, int mouseX, int mouseY) {  }
 	
+	/** Called when the mouse wheel is being scrolled over this element.
+	 *  Scroll is either 1 (down) or -1 (up) depending on the scroll direction.
+	 *  Mouse position is relative to the element's position. */
+	public boolean onMouseScroll(int scroll, int mouseX, int mouseY) { return false; }
+	
 	// Keyboard events
 	
 	

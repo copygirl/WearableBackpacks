@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -34,9 +35,21 @@ public class GuiContainerScreen extends GuiScreen {
 		container.setSize(width, height);
 	}
 	
+	
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		container.onMouseDown(mouseButton, mouseX, mouseY);
+	}
+	
+	@Override
+	public void handleMouseInput() throws IOException {
+		super.handleMouseInput();
+		
+		int mouseX = Mouse.getEventX() * width / mc.displayWidth;
+		int mouseY = height - Mouse.getEventY() * height / mc.displayHeight - 1;
+		
+		int scroll = Integer.signum(Mouse.getEventDWheel());
+		if (scroll != 0) container.onMouseScroll(scroll, mouseX, mouseY);
 	}
 	
 	// TODO: Handle onMouseMove.
@@ -47,12 +60,14 @@ public class GuiContainerScreen extends GuiScreen {
 		// TODO: Handle onMouseUp.
 	}
 	
+	
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		super.keyTyped(typedChar, keyCode);
 		if (keyCode == Keyboard.KEY_F3) DEBUG = !DEBUG;
 		// TODO: Handle keyboard input.
 	}
+	
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
