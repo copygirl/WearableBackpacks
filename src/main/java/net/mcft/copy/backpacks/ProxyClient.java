@@ -2,7 +2,6 @@ package net.mcft.copy.backpacks;
 
 import java.util.Map;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -19,8 +18,6 @@ import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -124,26 +121,19 @@ public class ProxyClient extends ProxyCommon {
 	}
 	
 	
-	// IBlockColor and IItemColor implementations
+	// IItemColor and IBlockColor implementations
 	
-	public static final IBlockColor BLOCK_COLOR = new IBlockColor() {
-		@Override
-		public int colorMultiplier(IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) {
-			ItemStack stack = null;
-			if ((worldIn != null) && (pos != null)) {
-				IBackpack backpack = BackpackHelper.getBackpack(worldIn.getTileEntity(pos));
-				if (backpack != null) stack = backpack.getStack();
-			}
-			return ITEM_COLOR.getColorFromItemstack(stack, tintIndex);
-		}
-	};
+	// TODO: Make this work for different default colors / non-dyeable backpacks.
+	public static final IItemColor ITEM_COLOR = (stack, tintIndex) ->
+		NbtUtils.get(stack, ItemBackpack.DEFAULT_COLOR, "display", "color");
 	
-	public static final IItemColor ITEM_COLOR = new IItemColor() {
-		@Override
-		public int getColorFromItemstack(ItemStack stack, int tintIndex) {
-			// TODO: Make this work for different default colors / non-dyeable backpacks.
-			return NbtUtils.get(stack, ItemBackpack.DEFAULT_COLOR, "display", "color");
+	public static final IBlockColor BLOCK_COLOR = (state, world, pos, tintIndex) -> {
+		ItemStack stack = null;
+		if ((world != null) && (pos != null)) {
+			IBackpack backpack = BackpackHelper.getBackpack(world.getTileEntity(pos));
+			if (backpack != null) stack = backpack.getStack();
 		}
+		return ITEM_COLOR.getColorFromItemstack(stack, tintIndex);
 	};
 	
 	
