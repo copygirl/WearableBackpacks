@@ -18,8 +18,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class GuiContainerScreen extends GuiScreen {
 	
-	private static boolean DEBUG = false;
-	
 	private int _lastMouseX = -1;
 	private int _lastMouseY = -1;
 	
@@ -88,7 +86,8 @@ public class GuiContainerScreen extends GuiScreen {
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		super.keyTyped(typedChar, keyCode);
-		if (keyCode == Keyboard.KEY_F3) DEBUG = !DEBUG;
+		if (keyCode == Keyboard.KEY_F3)
+			GuiContext.DEBUG = !GuiContext.DEBUG;
 		// TODO: Handle keyboard input.
 	}
 	
@@ -99,7 +98,7 @@ public class GuiContainerScreen extends GuiScreen {
 		container.draw(mouseX, mouseY, partialTicks);
 		// TODO: Render tooltips.
 		
-		if (DEBUG) {
+		if (GuiContext.DEBUG) {
 			String debugText = "";
 			LinkedList<ElementDebugInfo> hierarchy =
 				new ElementDebugInfo(container).getHierarchy(mouseX, mouseY);
@@ -178,8 +177,14 @@ public class GuiContainerScreen extends GuiScreen {
 		
 		@Override
 		public String toString() {
-			String name = element.getClass().getSimpleName();
-			if (name.isEmpty()) name = element.getClass().getSuperclass().getSimpleName();
+			Class<?> elementClass = element.getClass();
+			
+			String name = elementClass.getSimpleName();
+			if (name.isEmpty()) name = elementClass.getSuperclass().getSimpleName();
+			
+			Class<?> enclosingClass = elementClass.getEnclosingClass();
+			if (enclosingClass != null) name = enclosingClass.getSimpleName() + "." + name;
+			
 			return String.format("(%d,%d : %d,%d) %s", x, y, width, height, name);
 		}
 		

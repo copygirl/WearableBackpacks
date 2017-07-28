@@ -40,8 +40,8 @@ public abstract class GuiElementBase {
 	public final GuiContext getContext() { return _context; }
 	public final GuiContainer getParent() { return _parent; }
 	
-	public final boolean isVisible() { return _visible; }
-	public final void setVisible(boolean value) { _visible = value; }
+	public boolean isVisible() { return _visible; }
+	public void setVisible(boolean value) { _visible = value; }
 	
 	public boolean isEnabled() { return _enabled &&
 		((getParent() != null) ? getParent().isEnabled() : true); }
