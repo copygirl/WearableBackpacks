@@ -5,14 +5,10 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.mcft.copy.backpacks.client.config.BackpacksGuiConfig;
-import net.mcft.copy.backpacks.client.gui.Direction;
-import net.mcft.copy.backpacks.client.gui.GuiContainer;
-import net.mcft.copy.backpacks.client.gui.GuiContainerScreen;
-import net.mcft.copy.backpacks.client.gui.GuiElementBase;
-import net.mcft.copy.backpacks.client.gui.GuiLayout;
-import net.mcft.copy.backpacks.client.gui.control.GuiButton;
-import net.mcft.copy.backpacks.client.gui.control.GuiLabel;
+import java.util.EnumSet;
+
+import net.mcft.copy.backpacks.client.gui.*;
+import net.mcft.copy.backpacks.client.gui.control.*;
 
 @SideOnly(Side.CLIENT)
 public class GuiTestScreen extends GuiContainerScreen {
@@ -23,10 +19,8 @@ public class GuiTestScreen extends GuiContainerScreen {
 			setFillVertical(8);
 			setSpacing(4);
 			
-			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Show old Config GUI") {{
-				setCenteredHorizontal();
-				setAction(() -> display(new BackpacksGuiConfig(GuiTestScreen.this)));
-			}});
+			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Test Alignment")
+				{{ setAction(() -> display(new AlignmentScreen())); }});
 			
 			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Test Alignment") {{
 				setCenteredHorizontal();
@@ -42,24 +36,17 @@ public class GuiTestScreen extends GuiContainerScreen {
 					{{ setAction(() -> display(new LayoutScreen2())); }});
 			}});
 			
-			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Test Visibility / Enabled") {{
-				setCenteredHorizontal();
-				setAction(() -> display(new VisibilityEnabledScreen()));
-			}});
+			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Test Visibility / Enabled")
+				{{ setAction(() -> display(new VisibilityEnabledScreen())); }});
+			
+			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Test Controls")
+				{{ setAction(() -> display(new ControlsScreen())); }});
 			
 			addWeighted(new GuiContainer()); // Filler space!
 			
-			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Close") {{
-				setCenteredHorizontal();
-				setAction(() -> display(parentScreen));
-			}});
+			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Close")
+				{{ setAction(() -> display(parentScreen)); }});
 		}});
-		
-		container.add(new GuiButton(8, 8, 100, 20, "Drag me!") {
-			@Override public boolean canDrag() { return true; }
-			@Override public void onDragged(int mouseX, int mouseY, int startX, int startY)
-				{ setPosition(mouseX - startX, mouseY - startY); }
-		});
 	}
 	
 	public class AlignmentScreen extends GuiContainerScreen {
@@ -175,6 +162,7 @@ public class GuiTestScreen extends GuiContainerScreen {
 			}});
 		}
 	}
+	
 	public class VisibilityEnabledScreen extends GuiContainerScreen {
 		public VisibilityEnabledScreen() {
 			container.add(new GuiLayout(Direction.VERTICAL) {{
@@ -217,6 +205,51 @@ public class GuiTestScreen extends GuiContainerScreen {
 				}); }});
 			}});
 			layout.addFixed(element);
+		}
+	}
+	
+	public class ControlsScreen extends GuiContainerScreen {
+		public ControlsScreen() {
+			container.add(new GuiLayout(Direction.VERTICAL) {{
+				setCenteredHorizontal();
+				setFillVertical(8);
+				
+				addFixed(new GuiContainer() {{
+					setFillHorizontal();
+					add(new GuiSlider(Direction.HORIZONTAL)
+						{{ setLeftRight(24, 0); }});
+					add(new GuiSlider(Direction.VERTICAL)
+						{{ setTopBottom(24, 0); }});
+					add(new GuiSlider(0, 60, EnumSet.allOf(Direction.class)) {{
+						setLeftRight(24, 0);
+						setTop(24);
+						setSliderSize(16);
+					}});
+				}});
+				
+				addFixed(new GuiScrollable() {{
+					setFillHorizontal();
+					setHeight(100);
+					setPadding(8);
+					add(new GuiButton("Scroll!") {{ setPosition(0, 0); }});
+					add(new GuiButton("You found me!") {{ setPosition(300, 200); }});
+				}});
+				
+				addWeighted(new GuiContainer()); // Filler space!
+				
+				addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Back") {{
+					setCenteredHorizontal();
+					setAction(() -> display(GuiTestScreen.this));
+				}});
+			}});
+			
+			container.add(new GuiButton(8, 8, 100, 20, "Drag me!") {
+				@Override public boolean canDrag() { return true; }
+				@Override public void onDragged(int mouseX, int mouseY, int startX, int startY) {
+					setPosition(((Alignment.Min)getHorizontalAlign()).min + mouseX - startX,
+								((Alignment.Min)getVerticalAlign()).min   + mouseY - startY);
+				}
+			});
 		}
 	}
 	
