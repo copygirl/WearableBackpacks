@@ -231,6 +231,7 @@ public abstract class GuiElementBase {
 		               (color & 0xFF) / 255.0f,
 		               (color >> 24 & 0xFF) / 255.0f); }
 	
+	
 	public static void drawRect(int x, int y, int u, int v, int width, int height)
 		{ drawRect(x, y, width, height, u, v, u + width, v + height); }
 	public static void drawRect(int x, int y, int width, int height,
@@ -238,10 +239,45 @@ public abstract class GuiElementBase {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuffer();
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		buffer.pos(x        , y         , 0).tex(u1, v1).endVertex();
 		buffer.pos(x        , y + height, 0).tex(u1, v2).endVertex();
 		buffer.pos(x + width, y + height, 0).tex(u2, v2).endVertex();
 		buffer.pos(x + width, y         , 0).tex(u2, v1).endVertex();
-		buffer.pos(x        , y         , 0).tex(u1, v1).endVertex();
+		tessellator.draw();
+	}
+	
+	public static void drawColoredRectRGB(int x, int y, int width, int height, int color)
+		{ drawColoredRectARGB(x, y, width, height, color | 0xFF000000); }
+	public static void drawColoredRectARGB(int x, int y, int width, int height, int color)
+		{ drawColoredRectARGB(x, y, width, height, color, color, color, color); }
+	public static void drawColoredRectARGB(int x, int y, int width, int height,
+		                                   int colorTL, int colorTR, int colorBL, int colorBR) {
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder buffer = tessellator.getBuffer();
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+		buffer.pos(x        , y         , 0).color(colorTL >> 16 & 0xFF, colorTL >> 8 & 0xFF, colorTL & 0xFF, colorTL >> 24 & 0xFF).endVertex();
+		buffer.pos(x        , y + height, 0).color(colorBL >> 16 & 0xFF, colorBL >> 8 & 0xFF, colorBL & 0xFF, colorBL >> 24 & 0xFF).endVertex();
+		buffer.pos(x + width, y + height, 0).color(colorBR >> 16 & 0xFF, colorBR >> 8 & 0xFF, colorBR & 0xFF, colorBR >> 24 & 0xFF).endVertex();
+		buffer.pos(x + width, y         , 0).color(colorTR >> 16 & 0xFF, colorTR >> 8 & 0xFF, colorTR & 0xFF, colorTR >> 24 & 0xFF).endVertex();
+		tessellator.draw();
+	}
+	
+	public static void drawColoredRectRGB(int x, int y, int width, int height,
+	                                      float u1, float v1, float u2, float v2, int color)
+		{ drawColoredRectARGB(x, y, width, height, u1, v1, u2, v2, color | 0xFF000000); }
+	public static void drawColoredRectARGB(int x, int y, int width, int height,
+	                                       float u1, float v1, float u2, float v2, int color)
+		{ drawColoredRectARGB(x, y, width, height, u1, v1, u2, v2, color, color, color, color); }
+	public static void drawColoredRectARGB(int x, int y, int width, int height,
+	                                       float u1, float v1, float u2, float v2,
+		                                   int colorTL, int colorTR, int colorBL, int colorBR) {
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder buffer = tessellator.getBuffer();
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+		buffer.pos(x        , y         , 0).tex(u1, v1).color(colorTL >> 16 & 0xFF, colorTL >> 8 & 0xFF, colorTL & 0xFF, colorTL >> 24 & 0xFF).endVertex();
+		buffer.pos(x        , y + height, 0).tex(u1, v2).color(colorBL >> 16 & 0xFF, colorBL >> 8 & 0xFF, colorBL & 0xFF, colorBL >> 24 & 0xFF).endVertex();
+		buffer.pos(x + width, y + height, 0).tex(u2, v2).color(colorBR >> 16 & 0xFF, colorBR >> 8 & 0xFF, colorBR & 0xFF, colorBR >> 24 & 0xFF).endVertex();
+		buffer.pos(x + width, y         , 0).tex(u2, v1).color(colorTR >> 16 & 0xFF, colorTR >> 8 & 0xFF, colorTR & 0xFF, colorTR >> 24 & 0xFF).endVertex();
 		tessellator.draw();
 	}
 	
