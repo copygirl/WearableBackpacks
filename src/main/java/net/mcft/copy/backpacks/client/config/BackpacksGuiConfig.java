@@ -25,7 +25,7 @@ public class BackpacksGuiConfig extends GuiConfig {
 	
 	public BackpacksGuiConfig(GuiScreen parent) {
 		this(parent, Configuration.CATEGORY_GENERAL, WearableBackpacks.MOD_ID,
-		     false, false, WearableBackpacks.MOD_NAME, "");
+		     false, false, WearableBackpacks.MOD_NAME, null);
 	}
 	public BackpacksGuiConfig(GuiScreen parentScreen, String category, String modID, 
 	                          boolean allRequireWorldRestart, boolean allRequireMcRestart,

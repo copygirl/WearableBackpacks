@@ -22,11 +22,6 @@ public class GuiTestScreen extends GuiContainerScreen {
 			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Test Alignment")
 				{{ setAction(() -> display(new AlignmentScreen())); }});
 			
-			addFixed(new GuiButton(GuiButton.DEFAULT_WIDTH, "Test Alignment") {{
-				setCenteredHorizontal();
-				setAction(() -> display(new AlignmentScreen()));
-			}});
-			
 			addFixed(new GuiLayout(Direction.HORIZONTAL) {{
 				setCenteredHorizontal(GuiButton.DEFAULT_WIDTH);
 				addFixed(new GuiLabel(" Layout: ") {{ setCenteredVertical(); }});

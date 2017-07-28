@@ -6,6 +6,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public abstract class Alignment {
 	
+	// TODO: Move some getChildPos / Size logic in here?
+	
 	/** Returns whether an element with this alignment can
 	 *  set its size depending on its child elements. */
 	public boolean canExpand() { return true; }
