@@ -1,0 +1,44 @@
+//Translate by: Dorzar / VeryHardChamp
+//Act.: 30/07/2017
+container.wearablebackpacks.backpack=Mochila
+
+item.wearablebackpacks.backpack.name=Mochila
+
+tooltip.wearablebackpacks.moreInfo=Presiona %1$s para más información.
+tooltip.wearablebackpacks.openHint=Presiona %1$s para abrir la mochila teniéndola equipada.
+tooltip.wearablebackpacks.equipHint=Equipar mochila: SHIFT + rómperla.
+tooltip.wearablebackpacks.equipHint.extended=Equipar mochila: SHIFT + rómperla.\nDesequipar mochila: SHIFT + clic derecho en el suelo con la mano vacia.
+tooltip.wearablebackpacks.unequipHint=Desequipar mochila: SHIFT + clic derecho en el suelo con la\nmano vacia.
+tooltip.wearablebackpacks.used=Actualmente está siendo utilizada por un jugador.
+
+chat.wearablebackpacks.cantEquip=Ya tienes una mochila equipada.
+chat.wearablebackpacks.cantEquip.chestplate=No puedes equiparte una mochila mientras llevas una pechera.
+
+key.wearablebackpacks.open=Abrir mochila
+
+config.wearablebackpacks.general.equipAsChestArmor=Equipar como pechera
+config.wearablebackpacks.general.equipAsChestArmor.tooltip=Controla si las mochilas equipadas ocupan la ranura de la pechera
+config.wearablebackpacks.general.enableEquippedInteraction=Habilitar la interacción con la mochila equipada
+config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Controla si los jugadores pueden acceder a mochilas equipadas de otros jugadores (y entidades)
+config.wearablebackpacks.general.enableSelfInteraction=Habilitar la interacción de uno mismo
+config.wearablebackpacks.general.enableSelfInteraction.tooltip=Controla si los jugadores pueden acceder a su propia mochila equipada usando una tecla
+config.wearablebackpacks.general.dropAsBlockOnDeath=Soltar como un bloque al morir
+config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Controla si las mochilas se colocan en el lugar de la muerte, en vez de dispersar su contenido
+
+# config.wearablebackpacks.category.backpack=Backpack Settings
+# config.wearablebackpacks.category.backpack.tooltip=Controls settings regarding regular backpacks
+# config.wearablebackpacks.backpack.enabled=Enabled
+# config.wearablebackpacks.backpack.enabled.tooltip=Controls whether the regular backpack is enabled
+# config.wearablebackpacks.backpack.durability=Durability
+# config.wearablebackpacks.backpack.durability.tooltip=Controls the durability of the regular backpack (0 for unbreakable). Lowering this (including setting to 0) can cause issues with already damaged backpacks
+# config.wearablebackpacks.backpack.durability.hint=No effect if not equipped as armor
+# config.wearablebackpacks.backpack.armor=Armor
+# config.wearablebackpacks.backpack.armor.tooltip=Armor points of regular backpacks.
+# config.wearablebackpacks.backpack.armor.hint=No effect if not equipped as armor
+# config.wearablebackpacks.backpack.size=Storage Size
+# config.wearablebackpacks.backpack.size.tooltip=Controls the storage size of regular backpacks. Does not affect placed or equipped backpacks
+
+# config.wearablebackpacks.category.cosmetic=Cosmetic Settings
+# config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay
+# config.wearablebackpacks.cosmetic.enchantEffectOpacity=Enchant Effect Opacity
+# config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controls the opacity / visibility of the enchantment effect on equipped and placed backpacks, if present.
