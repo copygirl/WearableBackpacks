@@ -7,6 +7,7 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 
 import net.mcft.copy.backpacks.client.gui.*;
 import net.mcft.copy.backpacks.client.gui.control.*;
+import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
 public abstract class BaseEntry extends GuiLayout {
 	
@@ -59,7 +60,7 @@ public abstract class BaseEntry extends GuiLayout {
 	
 	protected String getFormatting() {
 		String formatting = (
-					!isValid()  ? TextFormatting.RED
+				  !isValid()  ? TextFormatting.RED
 				: isChanged() ? TextFormatting.WHITE
 				: TextFormatting.GRAY
 			).toString();
@@ -86,5 +87,9 @@ public abstract class BaseEntry extends GuiLayout {
 		buttonReset.setEnabled(!isDefault());
 		owningScreen.onChanged();
 	}
+	
+	/** Applies the changes made to this entry globally.
+	 *  Called when clicking "Done" on the main config screen. */
+	public abstract ChangeRequiredAction applyChanges();
 	
 }

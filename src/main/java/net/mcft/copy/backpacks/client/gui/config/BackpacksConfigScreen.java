@@ -16,16 +16,18 @@ import net.mcft.copy.backpacks.client.gui.*;
 import net.mcft.copy.backpacks.client.gui.config.EntryButton;
 import net.mcft.copy.backpacks.client.gui.control.*;
 import net.mcft.copy.backpacks.client.gui.test.GuiTestScreen;
+import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
 @SideOnly(Side.CLIENT)
 public class BackpacksConfigScreen extends GuiContainerScreen {
+	
+	private final GuiScreen _parentScreen;
+	private EntryCategory _owningCategoryEntry = null;
 	
 	protected GuiButton buttonDone;
 	protected GuiButton buttonReset;
 	protected GuiButton buttonUndo;
 	protected EntryList entryList;
-	
-	private EntryCategory _owningCategoryEntry = null;
 	
 	public BackpacksConfigScreen(GuiScreen parentScreen) {
 		this(parentScreen, (EntryCategory)null);
@@ -48,6 +50,7 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 	}
 	
 	public BackpacksConfigScreen(GuiScreen parentScreen, String title) {
+		_parentScreen = parentScreen;
 		
 		container.add(new DebugButton("T") {{
 			setPosition(3, 3);
@@ -80,7 +83,7 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 				
 				addFixed(buttonDone = new GuiButton(I18n.format("gui.done")));
 				if (buttonDone.getWidth() < 100) buttonDone.setWidth(100);
-				buttonDone.setAction(() -> display(parentScreen));
+				buttonDone.setAction(() -> doneClicked());
 				
 				addFixed(buttonUndo = new GuiButtonGlyph(GuiUtils.UNDO_CHAR, I18n.format("fml.configgui.tooltip.undoChanges")));
 				addFixed(buttonReset = new GuiButtonGlyph(GuiUtils.RESET_CHAR, I18n.format("fml.configgui.tooltip.resetToDefault")));
@@ -111,6 +114,23 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 		buttonReset.setEnabled(!isDefault());
 		if (_owningCategoryEntry != null)
 			_owningCategoryEntry.onChanged();
+	}
+	
+	/** Applies changes made to this screen's entries.
+	 *  Called when clicking "Done" on the main config screen. */
+	public ChangeRequiredAction applyChanges() {
+		return entryList.getEntries()
+			.map(e -> e.applyChanges())
+			.max(ChangeRequiredAction::compareTo)
+			.orElse(ChangeRequiredAction.None);
+	}
+	
+	/** Called when the "Done" buttons is clicked. */
+	protected void doneClicked() {
+		// If this is the root config screen, apply the changes!
+		if (!(_parentScreen instanceof BackpacksConfigScreen))
+			applyChanges();
+		GuiElementBase.display(_parentScreen);
 	}
 	
 	/** Adds an entry to this screen's entry list. */

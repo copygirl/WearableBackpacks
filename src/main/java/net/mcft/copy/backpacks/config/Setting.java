@@ -47,10 +47,8 @@ public abstract class Setting<T> {
 	
 	/** Stores a function which is called to determine if requirements are met. */
 	private BooleanSupplier _requireFunc = () -> true;
-	/** Whether changing the setting requires rejoining the current world. */
-	private boolean _requiresWorldRejoin = false;
-	/** Whether changing the setting requires restarting the Minecraft instance. */
-	private boolean _requiresMinecraftRestart = false;
+	/** Stores the action required after changing this setting. */
+	private ChangeRequiredAction _changeRequiredAction = ChangeRequiredAction.None;
 	
 	/** Stores a function which is called to determine if recommendations are met (returns hint). */
 	private Supplier<List<String>> _recommendFunc = () -> null;
@@ -91,9 +89,11 @@ public abstract class Setting<T> {
 	public final Setting<T> setRequired(Setting<Boolean>... settings)
 		{ return setRequirement(() -> Arrays.asList(settings).stream().allMatch(setting -> setting.get())); }
 	/** Sets the setting to require rejoining the world after being changed. */
-	public Setting<T> setRequiresWorldRejoin() { _requiresWorldRejoin = true; return this; }
+	public Setting<T> setRequiresWorldRejoin()
+		{ _changeRequiredAction = ChangeRequiredAction.RejoinWorld; return this; }
 	/** Sets the setting to require restarting the game after being changed. */
-	public Setting<T> setRequiresMinecraftRestart() { _requiresMinecraftRestart = true; return this; }
+	public Setting<T> setRequiresMinecraftRestart()
+		{ _changeRequiredAction = ChangeRequiredAction.RestartMinecraft; return this; }
 	
 	/** Sets a function that determines if the setting's recommendations are met. */
 	public final Setting<T> setRecommendation(Supplier<List<String>> recommendFunc)
@@ -153,10 +153,15 @@ public abstract class Setting<T> {
 		return enabled;
 	}
 	
+	/** Returns the required action after changing this
+	 *  setting (such as world rejoin or Minecraft restart). */
+	public ChangeRequiredAction getChangeRequiredAction() { return _changeRequiredAction; }
 	/** Returns whether changing the setting requires a world rejoin. */
-	public boolean requiresWorldRejoin() { return _requiresWorldRejoin; }
+	public boolean requiresWorldRejoin()
+		{ return (getChangeRequiredAction() != ChangeRequiredAction.None); }
 	/** Returns whether changing the setting requires Minecraft to be restarted. */
-	public boolean requiresMinecraftRestart() { return _requiresMinecraftRestart; }
+	public boolean requiresMinecraftRestart()
+		{ return (getChangeRequiredAction() == ChangeRequiredAction.RestartMinecraft); }
 	
 	/** Returns a recommendation hint for this setting if
 	 *  not all recommendations are met, or null otherwise. */
@@ -225,6 +230,13 @@ public abstract class Setting<T> {
 	
 	public abstract T read(NBTBase tag);
 	public abstract NBTBase write(T value);
+	
+	
+	public enum ChangeRequiredAction {
+		None,
+		RejoinWorld,
+		RestartMinecraft
+	}
 	
 	
 	public class ConfigElement implements IConfigElement {

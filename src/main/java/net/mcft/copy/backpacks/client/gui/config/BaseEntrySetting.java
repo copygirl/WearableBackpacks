@@ -5,6 +5,7 @@ import java.util.Objects;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.gui.GuiElementBase;
 import net.mcft.copy.backpacks.config.Setting;
+import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
 public abstract class BaseEntrySetting<T> extends BaseEntry {
 	
@@ -43,5 +44,13 @@ public abstract class BaseEntrySetting<T> extends BaseEntry {
 	public void undoChanges() { setValue(_previousValue); }
 	@Override
 	public void setToDefault() { setValue(_defaultValue); }
+	
+	@Override
+	public ChangeRequiredAction applyChanges() {
+		if (!isChanged()) return ChangeRequiredAction.None;
+		setting.set(getValue());
+		if (setting.requiresMinecraftRestart()) setting.update();
+		return setting.getChangeRequiredAction();
+	}
 	
 }
