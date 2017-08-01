@@ -1,5 +1,3 @@
-//Translate by: Dorzar / VeryHardChamp
-//Act.: 30/07/2017
 container.wearablebackpacks.backpack=Mochila
 
 item.wearablebackpacks.backpack.name=Mochila
@@ -7,8 +5,8 @@ item.wearablebackpacks.backpack.name=Mochila
 tooltip.wearablebackpacks.moreInfo=Presiona %1$s para más información.
 tooltip.wearablebackpacks.openHint=Presiona %1$s para abrir la mochila teniéndola equipada.
 tooltip.wearablebackpacks.equipHint=Equipar mochila: SHIFT + rómperla.
-tooltip.wearablebackpacks.equipHint.extended=Equipar mochila: SHIFT + rómperla.\nDesequipar mochila: SHIFT + clic derecho en el suelo con la mano vacia.
-tooltip.wearablebackpacks.unequipHint=Desequipar mochila: SHIFT + clic derecho en el suelo con la\nmano vacia.
+tooltip.wearablebackpacks.equipHint.extended=Equipar mochila: SHIFT + rómperla.\nDesequipar mochila: SHIFT + clic\nderecho en el suelo con la mano vacia.
+tooltip.wearablebackpacks.unequipHint=Desequipar mochila: SHIFT + clic\nderecho en el suelo con la mano vacia.
 tooltip.wearablebackpacks.used=Actualmente está siendo utilizada por un jugador.
 
 chat.wearablebackpacks.cantEquip=Ya tienes una mochila equipada.
