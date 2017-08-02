@@ -1,0 +1,42 @@
+container.wearablebackpacks.backpack=Mochila
+
+item.wearablebackpacks.backpack.name=Mochila
+
+tooltip.wearablebackpacks.moreInfo=Presiona %1$s para más información.
+tooltip.wearablebackpacks.openHint=Presiona %1$s para abrir la mochila teniéndola equipada.
+tooltip.wearablebackpacks.equipHint=Equipar mochila: agácharse y rómperla.
+tooltip.wearablebackpacks.equipHint.extended=Equipar mochila: agácharse y rómperla.\nDesequipar mochila: agácharse y clic\nderecho en el suelo con la mano vacia.
+tooltip.wearablebackpacks.unequipHint=Desequipar mochila: agácharse y clic\nderecho en el suelo con la mano vacia.
+tooltip.wearablebackpacks.used=Actualmente está siendo utilizada por un jugador.
+
+chat.wearablebackpacks.cantEquip=Ya tienes una mochila equipada.
+chat.wearablebackpacks.cantEquip.chestplate=No puedes equiparte una mochila mientras llevas una pechera.
+
+key.wearablebackpacks.open=Abrir mochila
+
+config.wearablebackpacks.general.equipAsChestArmor=Equipar como pechera
+config.wearablebackpacks.general.equipAsChestArmor.tooltip=Controla si las mochilas equipadas ocupan la ranura de la pechera.
+config.wearablebackpacks.general.enableEquippedInteraction=Acceso a otras mochilas
+config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Controla si los jugadores pueden acceder a la mochilas de otros jugadores (y entidades) si estos la tienen equipada.
+config.wearablebackpacks.general.enableSelfInteraction=Interacción propia
+config.wearablebackpacks.general.enableSelfInteraction.tooltip=Controla si los jugadores pueden acceder a su mochila usando una tecla específica.
+config.wearablebackpacks.general.dropAsBlockOnDeath=Soltar al morir
+config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Controla si las mochilas se colocan en el lugar de la muerte, en vez de dispersar su contenido.
+
+config.wearablebackpacks.category.backpack=Ajustes de la mochila
+config.wearablebackpacks.category.backpack.tooltip=Controla la configuración de las mochilas.
+config.wearablebackpacks.backpack.enabled=Activar mochila
+config.wearablebackpacks.backpack.enabled.tooltip=Controla si la mochila está habilitada.
+config.wearablebackpacks.backpack.durability=Durabilidad
+config.wearablebackpacks.backpack.durability.tooltip=Controla la durabilidad de la mochila (0 para irrompible). Bajar el número actual (aún si lo coloca en 0) puede causar problemas con mochilas ya elaboradas.
+config.wearablebackpacks.backpack.durability.hint=No tiene efecto si "Equipar como pechera" no está activado.
+config.wearablebackpacks.backpack.armor=Armadura
+config.wearablebackpacks.backpack.armor.tooltip=Controla los puntos de armaduras que te dará una mochila al equipartela como pechera.
+config.wearablebackpacks.backpack.armor.hint=No tiene efecto si "Equipar como pechera" no está activado.
+config.wearablebackpacks.backpack.size=Capacidad de almacenaje
+config.wearablebackpacks.backpack.size.tooltip=Controla el tamaño de almacenamiento de las mochilas (no afecta a las mochilas ya elaboradas).
+
+config.wearablebackpacks.category.cosmetic=Ajuste cosmético
+config.wearablebackpacks.category.cosmetic.tooltip=Controla los ajustes cosméticos (sólo para el cliente). Esto no afecta la jugabilidad.
+config.wearablebackpacks.cosmetic.enchantEffectOpacity=Opacidad de encantamiento
+config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controla la opacidad / visibilidad del efecto de encantamiento en las mochilas equipadas o colocadas, si es que tienen.
