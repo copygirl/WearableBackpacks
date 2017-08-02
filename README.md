@@ -127,6 +127,7 @@ provided their translation superpowers to make **WB** available in other languag
 - **Korean** (ko_KR): [tinywolf3](https://github.com/tinywolf3)
 - **Portuguese** (pt_BR): [wenlfs](https://github.com/wenlfs),
                           [eduardogomesv](https://github.com/eduardogomesv)
+- **Spanish** (es_MX): [Dorzar](https://github.com/Dorzar)
 
 ### Special thanks to ...
 
