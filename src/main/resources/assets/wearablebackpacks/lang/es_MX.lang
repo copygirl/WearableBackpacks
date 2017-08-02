@@ -37,6 +37,6 @@ config.wearablebackpacks.backpack.size=Capacidad de almacenaje
 config.wearablebackpacks.backpack.size.tooltip=Controla el tamaño de almacenamiento de las mochilas (no afecta a las mochilas ya elaboradas).
 
 config.wearablebackpacks.category.cosmetic=Ajuste cosmético
-config.wearablebackpacks.category.cosmetic.tooltip=Controla los ajustes cosméticos (sólo para el cliente). Esto no afecta a la jugabilidad.
+config.wearablebackpacks.category.cosmetic.tooltip=Controla los ajustes cosméticos (sólo para el cliente). Esto no afecta la jugabilidad.
 config.wearablebackpacks.cosmetic.enchantEffectOpacity=Opacidad de encantamiento
 config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controla la opacidad / visibilidad del efecto de encantamiento en las mochilas equipadas o colocadas, si es que tienen.
