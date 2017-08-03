@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.config.BackpacksGuiConfig;
 import net.mcft.copy.backpacks.client.gui.*;
-import net.mcft.copy.backpacks.client.gui.config.EntryButton;
+import net.mcft.copy.backpacks.client.gui.config.*;
 import net.mcft.copy.backpacks.client.gui.control.*;
 import net.mcft.copy.backpacks.client.gui.test.GuiTestScreen;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
@@ -36,6 +36,8 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 		addEntry(new EntryButton.Switch(this, WearableBackpacks.CONFIG.enableEquippedInteraction));
 		addEntry(new EntryButton.Switch(this, WearableBackpacks.CONFIG.enableSelfInteraction));
 		addEntry(new EntryButton.Switch(this, WearableBackpacks.CONFIG.dropAsBlockOnDeath));
+		addEntry(new EntryField.Number(this, WearableBackpacks.CONFIG.backpack.durability));
+		addEntry(new EntryField.Number(this, WearableBackpacks.CONFIG.backpack.armor));
 		
 		for (String cat : WearableBackpacks.CONFIG.getCategoryNames())
 			if (!cat.equals(Configuration.CATEGORY_GENERAL))

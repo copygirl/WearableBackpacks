@@ -13,7 +13,7 @@ public abstract class EntryButton<T> extends BaseEntrySetting<T> {
 		{ this(owningScreen, setting, new GuiButton()); }
 	public EntryButton(BackpacksConfigScreen owningScreen, Setting<T> setting, GuiButton button) {
 		super(owningScreen, setting, button);
-		button.setAction(() -> onButtonPressed());
+		button.setAction(this::onButtonPressed);
 	}
 	
 	public GuiButton getButton() { return (GuiButton)control; }
@@ -28,19 +28,15 @@ public abstract class EntryButton<T> extends BaseEntrySetting<T> {
 	
 	
 	public static class Switch extends EntryButton<Boolean> {
-		
 		public Switch(BackpacksConfigScreen owningScreen, Setting<Boolean> setting)
 			{ super(owningScreen, setting); }
-		
 		@Override
 		protected void onChanged() {
 			super.onChanged();
 			getButton().setTextColor(GuiUtils.getColorCode(getValue() ? '2' : '4', true));
 		}
-		
 		@Override
 		protected void onButtonPressed() { setValue(!getValue()); }
-		
 	}
 	
 }
