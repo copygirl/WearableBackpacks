@@ -15,6 +15,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import net.mcft.copy.backpacks.client.gui.GuiElementBase.MouseButton;
+
 @SideOnly(Side.CLIENT)
 public class GuiContainerScreen extends GuiScreen {
 	
@@ -39,7 +41,8 @@ public class GuiContainerScreen extends GuiScreen {
 	
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		context.setFocused(null); // TODO: Handle this more nicely.
+		if (mouseButton == MouseButton.LEFT)
+			context.setFocused(null); // TODO: Handle this more nicely.
 		container.onMouseDown(mouseButton, mouseX, mouseY);
 	}
 	
@@ -76,9 +79,12 @@ public class GuiContainerScreen extends GuiScreen {
 	}
 	
 	@Override
-	protected void mouseReleased(int mouseX, int mouseY, int state) {
+	protected void mouseReleased(int mouseX, int mouseY, int mouseButton) {
+		if (mouseButton != MouseButton.LEFT) return; // TODO: Support other mouse buttons?
+		GuiElementBase pressed = context.getPressed();
+		if (pressed == null) return;
+		pressed.onMouseUp(mouseButton, mouseX, mouseY);
 		context.setPressed(null, mouseX, mouseY);
-		// TODO: Handle onMouseUp.
 	}
 	
 	
