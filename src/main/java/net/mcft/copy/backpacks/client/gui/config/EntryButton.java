@@ -20,8 +20,8 @@ public abstract class EntryButton<T> extends BaseEntrySetting<T> {
 	
 	@Override
 	protected void onChanged() {
-		super.onChanged();
 		getButton().setText(Objects.toString(getValue()));
+		super.onChanged();
 	}
 	
 	protected void onButtonPressed() {  }

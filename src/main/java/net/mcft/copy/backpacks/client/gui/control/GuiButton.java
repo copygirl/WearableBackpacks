@@ -71,8 +71,10 @@ public class GuiButton extends GuiElementBase {
 			PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 	}
 	
+	
 	@Override
 	public boolean canPress() { return true; }
+	
 	@Override
 	public void onPressed(int mouseX, int mouseY) {
 		if (!isEnabled()) return;
@@ -80,23 +82,29 @@ public class GuiButton extends GuiElementBase {
 		if (_action != null) _action.run();
 	}
 	
+	
+	// Drawing
+	
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
 		if (!isVisible()) return;
 		boolean isHighlighted = (isEnabled() && isDragged() || contains(mouseX, mouseY));
-		
+		drawButtonBackground(isHighlighted, partialTicks);
+		drawButtonForeground(isHighlighted, partialTicks);
+	}
+	
+	/** Draws the actual button texture. */
+	protected void drawButtonBackground(boolean isHighlighted, float partialTicks) {
 		int buttonIndex = !isEnabled() ? 0
 		                : !isHighlighted ? 1
 		                : 2;
 		int ty = 46 + buttonIndex * 20;
 		GuiUtils.drawContinuousTexturedBox(BUTTON_TEX, 0, 0, 0, ty, getWidth(), getHeight(),
 		                                   DEFAULT_WIDTH, DEFAULT_HEIGHT, 2, 3, 2, 2, 0);
-		
-		drawWhateverIsOnTheButton(mouseX, mouseY, isHighlighted, partialTicks);
 	}
 	
-	/** Draws whatever is on the button. Yay. */
-	protected void drawWhateverIsOnTheButton(int mouseX, int mouseY, boolean isHighlighted, float partialTicks) {
+	/** Draws the content on the button, such as text. */
+	protected void drawButtonForeground(boolean isHighlighted, float partialTicks) {
 		String text = getText();
 		if (text.isEmpty()) return;
 		FontRenderer fontRenderer = getFontRenderer();

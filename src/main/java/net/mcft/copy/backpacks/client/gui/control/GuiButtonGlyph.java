@@ -54,7 +54,7 @@ public class GuiButtonGlyph extends GuiButton {
 	
 	
 	@Override
-	protected void drawWhateverIsOnTheButton(int mouseX, int mouseY, boolean isHighlighted, float partialTicks) {
+	protected void drawButtonForeground(boolean isHighlighted, float partialTicks) {
 		String text = getText();
 		FontRenderer fontRenderer = getFontRenderer();
 		

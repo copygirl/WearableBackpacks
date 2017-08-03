@@ -253,18 +253,14 @@ public class GuiScrollable extends GuiContainer {
 		}
 		
 		@Override
-		public void playPressSound() {  }
-		
-		@Override
 		public int getSliderSize() {
 			return MathHelper.clamp((int)Math.pow(GuiScrollable.this.getSize(direction), 2)
 				/ getContentSize(direction), 32, getSize(direction) - 8);
 		}
 		
 		@Override
-		public float getAmount(Direction direction) {
-			return (float)getScroll(direction) / getMaxScroll(direction);
-		}
+		public double getAmount(Direction direction)
+			{ return (double)getScroll(direction) / getMaxScroll(direction); }
 		
 		@Override
 		public void onPressed(int mouseX, int mouseY) {
@@ -274,9 +270,12 @@ public class GuiScrollable extends GuiContainer {
 		@Override
 		public void onDragged(int mouseX, int mouseY, int startX, int startY) {
 			int diff = (direction == Direction.HORIZONTAL) ? (mouseX - startX) : (mouseY - startY);
-			float scrollFactor = (float)(getSize(direction) - getSliderSize()) / Math.max(1, getMaxScroll(direction));
+			double scrollFactor = (double)(getSize(direction) - getSliderSize()) / Math.max(1, getMaxScroll(direction));
 			setScroll(direction, _scrollStart + (int)(diff / scrollFactor));
 		}
+		
+		@Override
+		public String getValueText() { return ""; }
 		
 		@Override
 		public void draw(int mouseX, int mouseY, float partialTicks) {

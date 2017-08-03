@@ -207,7 +207,11 @@ public class GuiTestScreen extends GuiContainerScreen {
 				setCenteredHorizontal();
 				setFillVertical(8);
 				
-				addFixed(new GuiSlider(Direction.HORIZONTAL) {{ setFillHorizontal(); }});
+				addFixed(new GuiSlider(Direction.HORIZONTAL) {{
+					setFillHorizontal();
+					setRange(0, 10);
+					setStepSize(1);
+				}});
 				
 				addFixed(new GuiField() {{ setFillHorizontal(); }});
 				

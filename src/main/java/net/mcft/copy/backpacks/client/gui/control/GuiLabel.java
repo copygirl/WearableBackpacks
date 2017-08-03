@@ -65,7 +65,7 @@ public class GuiLabel extends GuiElementBase {
 	
 	public String getText() { return _text; }
 	public void setText(String text) {
-		if (text == null) throw new NullPointerException("Argument text may not be null");
+		if (text == null) throw new NullPointerException("Argument text can't be null");
 		_text = text;
 		if (_expands) {
 			FontRenderer fontRenderer = getFontRenderer();
