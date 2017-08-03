@@ -17,11 +17,12 @@ public class GuiButton extends GuiElementBase {
 	public static final ResourceLocation BUTTON_TEX = new ResourceLocation("textures/gui/widgets.png");
 	public static final int DEFAULT_WIDTH  = 200;
 	public static final int DEFAULT_HEIGHT = 20;
-	public static final int MIN_TEXT_PADDING = 6;
+	public static final int MIN_TEXT_PADDING     = 6;
 	public static final int DEFAULT_TEXT_PADDING = 20;
-
-	private String _text = "";
-	private int _textColor = -1;
+	
+	
+	private String _text     = "";
+	private int _textColor   = -1;
 	private Runnable _action = null;
 	
 	
@@ -73,8 +74,11 @@ public class GuiButton extends GuiElementBase {
 	@Override
 	public boolean canPress() { return true; }
 	@Override
-	public void onPressed(int mouseX, int mouseY)
-		{ playPressSound(); if (_action != null) _action.run(); }
+	public void onPressed(int mouseX, int mouseY) {
+		if (!isEnabled()) return;
+		playPressSound();
+		if (_action != null) _action.run();
+	}
 	
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {

@@ -39,6 +39,7 @@ public class GuiContainerScreen extends GuiScreen {
 	
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+		context.setFocused(null); // TODO: Handle this more nicely.
 		container.onMouseDown(mouseButton, mouseX, mouseY);
 	}
 	
@@ -74,8 +75,6 @@ public class GuiContainerScreen extends GuiScreen {
 		}
 	}
 	
-	// TODO: Handle onMouseMove.
-	
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
 		context.setPressed(null, mouseX, mouseY);
@@ -86,9 +85,12 @@ public class GuiContainerScreen extends GuiScreen {
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		super.keyTyped(typedChar, keyCode);
-		if (keyCode == Keyboard.KEY_F3)
+		if (isShiftKeyDown() && (keyCode == Keyboard.KEY_F3))
 			GuiContext.DEBUG = !GuiContext.DEBUG;
-		// TODO: Handle keyboard input.
+		
+		GuiElementBase focused = context.getFocused();
+		if (focused != null) focused.onKey(keyCode, typedChar);
+		// TODO: Implement tabbing?
 	}
 	
 	

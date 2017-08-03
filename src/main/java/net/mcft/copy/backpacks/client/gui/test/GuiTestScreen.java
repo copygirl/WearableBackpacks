@@ -5,8 +5,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.EnumSet;
-
 import net.mcft.copy.backpacks.client.gui.*;
 import net.mcft.copy.backpacks.client.gui.control.*;
 
@@ -209,18 +207,9 @@ public class GuiTestScreen extends GuiContainerScreen {
 				setCenteredHorizontal();
 				setFillVertical(8);
 				
-				addFixed(new GuiContainer() {{
-					setFillHorizontal();
-					add(new GuiSlider(Direction.HORIZONTAL)
-						{{ setLeftRight(24, 0); }});
-					add(new GuiSlider(Direction.VERTICAL)
-						{{ setTopBottom(24, 0); }});
-					add(new GuiSlider(0, 60, EnumSet.allOf(Direction.class)) {{
-						setLeftRight(24, 0);
-						setTop(24);
-						setSliderSize(16);
-					}});
-				}});
+				addFixed(new GuiSlider(Direction.HORIZONTAL) {{ setFillHorizontal(); }});
+				
+				addFixed(new GuiField() {{ setFillHorizontal(); }});
 				
 				addFixed(new GuiScrollable() {{
 					setFillHorizontal();

@@ -213,7 +213,6 @@ public class GuiScrollable extends GuiContainer {
 	
 	public void drawForeground(int mouseX, int mouseY, float partialTicks) {
 		GlStateManager.disableTexture2D();
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		if (directions.contains(Direction.VERTICAL)) {
 			drawColoredRectARGB(0, 0, getWidth(), GRADIENT_SIZE, Color.BLACK, Color.BLACK, Color.TRANSPARENT, Color.TRANSPARENT);
 			drawColoredRectARGB(0, getHeight() - GRADIENT_SIZE, getWidth(), GRADIENT_SIZE, Color.TRANSPARENT, Color.TRANSPARENT, Color.BLACK, Color.BLACK);
@@ -222,7 +221,6 @@ public class GuiScrollable extends GuiContainer {
 			drawColoredRectARGB(0, 0, GRADIENT_SIZE, getHeight(), Color.BLACK, Color.TRANSPARENT, Color.BLACK, Color.TRANSPARENT);
 			drawColoredRectARGB(getWidth() - GRADIENT_SIZE, 0, GRADIENT_SIZE, getHeight(), Color.BLACK, Color.TRANSPARENT, Color.BLACK, Color.TRANSPARENT);
 		}
-		GlStateManager.shadeModel(GL11.GL_FLAT);
 		GlStateManager.enableTexture2D();
 		
 		// Draw only the scrollbars.
