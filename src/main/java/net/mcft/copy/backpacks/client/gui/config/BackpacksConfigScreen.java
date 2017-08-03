@@ -16,6 +16,8 @@ import net.mcft.copy.backpacks.client.gui.*;
 import net.mcft.copy.backpacks.client.gui.config.*;
 import net.mcft.copy.backpacks.client.gui.control.*;
 import net.mcft.copy.backpacks.client.gui.test.GuiTestScreen;
+import net.mcft.copy.backpacks.config.SettingDouble;
+import net.mcft.copy.backpacks.config.SettingInteger;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
 @SideOnly(Side.CLIENT)
@@ -37,7 +39,8 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 		addEntry(new EntryButton.Switch(this, WearableBackpacks.CONFIG.enableSelfInteraction));
 		addEntry(new EntryButton.Switch(this, WearableBackpacks.CONFIG.dropAsBlockOnDeath));
 		addEntry(new EntryField.Number(this, WearableBackpacks.CONFIG.backpack.durability));
-		addEntry(new EntryField.Number(this, WearableBackpacks.CONFIG.backpack.armor));
+		addEntry(new EntrySlider.RangeInteger(this, (SettingInteger)WearableBackpacks.CONFIG.backpack.armor));
+		addEntry(new EntrySlider.Percentage(this, (SettingDouble)WearableBackpacks.CONFIG.cosmetic.enchantEffectOpacity));
 		
 		for (String cat : WearableBackpacks.CONFIG.getCategoryNames())
 			if (!cat.equals(Configuration.CATEGORY_GENERAL))

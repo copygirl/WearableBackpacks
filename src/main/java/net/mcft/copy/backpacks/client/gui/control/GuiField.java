@@ -82,6 +82,7 @@ public class GuiField extends GuiElementBase {
 	}
 	
 	
+	// TODO: Select all text if focused for the first time. (Requires focus changes.)
 	@Override
 	public void onPressed(int mouseX, int mouseY)
 		{ _field.mouseClicked(mouseX, mouseY, MouseButton.LEFT); }

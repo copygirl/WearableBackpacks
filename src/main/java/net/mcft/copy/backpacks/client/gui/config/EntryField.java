@@ -20,7 +20,7 @@ public abstract class EntryField<T> extends BaseEntrySetting<T> {
 	public GuiField getField() { return (GuiField)control; }
 	public String getFieldText() { return getField().getText().trim(); }
 	public Optional<T> getFieldValue() {
-		try { return Optional.of(((SettingSingleValue<T>)setting).parse(getFieldText())); }
+		try { return Optional.ofNullable(((SettingSingleValue<T>)setting).parse(getFieldText())); }
 		catch (Throwable ex) { return Optional.empty(); }
 	}
 	
@@ -29,7 +29,8 @@ public abstract class EntryField<T> extends BaseEntrySetting<T> {
 	
 	@Override
 	protected void onChanged() {
-		getField().setText(Objects.toString(getValue()));
+		if (!Optional.ofNullable(getValue()).equals(getFieldValue()))
+			getField().setText(Objects.toString(getValue()));
 		super.onChanged();
 	}
 	

@@ -34,6 +34,9 @@ public abstract class BaseEntrySetting<T> extends BaseEntry {
 		onChanged();
 	}
 	
+	// TODO: Continue working on this.
+	// @Override
+	// public boolean isEnabled() { return (super.isEnabled() && setting.isEnabledConfig()); }
 	
 	@Override
 	public boolean isChanged() { return !Objects.equals(value, _previousValue); }

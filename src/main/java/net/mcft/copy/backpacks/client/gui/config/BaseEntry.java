@@ -1,5 +1,6 @@
 package net.mcft.copy.backpacks.client.gui.config;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 
@@ -12,6 +13,7 @@ import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 public abstract class BaseEntry extends GuiLayout {
 	
 	public static final int DEFAULT_HEIGHT = 18;
+	public static final int BACKGROUND_INVALID = 0x40D00000;
 	
 	protected final BackpacksConfigScreen owningScreen;
 	
@@ -91,5 +93,15 @@ public abstract class BaseEntry extends GuiLayout {
 	/** Applies the changes made to this entry globally.
 	 *  Called when clicking "Done" on the main config screen. */
 	public abstract ChangeRequiredAction applyChanges();
+	
+	@Override
+	public void draw(int mouseX, int mouseY, float partialTicks) {
+		if (!isValid()) {
+			GlStateManager.disableTexture2D();
+			drawColoredRectARGB(-4, -1, getWidth() + 8, getHeight() + 2, BACKGROUND_INVALID);
+			GlStateManager.enableTexture2D();
+		}
+		super.draw(mouseX, mouseY, partialTicks);
+	}
 	
 }
