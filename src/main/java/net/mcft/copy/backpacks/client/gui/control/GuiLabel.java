@@ -21,8 +21,9 @@ public class GuiLabel extends GuiElementBase {
 	private TextAlign _align = TextAlign.LEFT;
 	private boolean _expands;
 	
-	private int _color = 0xFFFFFF;
-	private int _shadowColor = SHADOW_AUTOMATIC;
+	private int _color         = Color.WHITE;
+	private int _disabledColor = COLOR_CONTROL_DISABLED;
+	private int _shadowColor   = SHADOW_AUTOMATIC;
 	
 	
 	public GuiLabel(String text)
@@ -78,6 +79,9 @@ public class GuiLabel extends GuiElementBase {
 	public int getColor() { return _color; }
 	public void setColor(int value) { _color = value; }
 	
+	public int getDisabledColor() { return _disabledColor; }
+	public void setDisabledColor(int value) { _disabledColor = value; }
+	
 	public int getShadowColor() { return _shadowColor; }
 	public void setShadowColor(int value) {
 		if (value < SHADOW_AUTOMATIC) throw new IllegalArgumentException(
@@ -112,7 +116,7 @@ public class GuiLabel extends GuiElementBase {
 				case CENTER: xPos = (getWidth() - lineWidth) / 2; break;
 			}
 			
-			int color = getColor();
+			int color = isEnabled() ? getColor() : getDisabledColor();
 			int shadowColor = getShadowColor();
 			if (shadowColor >= 0)
 				fontRenderer.drawString(line, xPos + 1, yPos + 1, shadowColor);
