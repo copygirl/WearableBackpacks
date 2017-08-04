@@ -22,7 +22,6 @@ public class EntryCategory extends BaseEntry {
 		button.setAction(() -> onButtonPressed());
 		
 		childScreen = new BackpacksConfigScreen(owningScreen, this);
-		super.onChanged();
 	}
 	
 	public String getLanguageKey()
@@ -39,12 +38,6 @@ public class EntryCategory extends BaseEntry {
 	public void undoChanges() { childScreen.undoChanges(); }
 	@Override
 	public void setToDefault() { childScreen.setToDefault(); }
-	
-	@Override
-	protected void onChanged() {
-		super.onChanged();
-		owningScreen.onChanged();
-	}
 	
 	@Override
 	public ChangeRequiredAction applyChanges()

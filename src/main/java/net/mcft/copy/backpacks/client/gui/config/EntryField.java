@@ -1,6 +1,5 @@
 package net.mcft.copy.backpacks.client.gui.config;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import net.mcft.copy.backpacks.client.gui.control.GuiField;
@@ -20,23 +19,18 @@ public abstract class EntryField<T> extends BaseEntrySetting<T> {
 	public GuiField getField() { return (GuiField)control; }
 	public String getFieldText() { return getField().getText().trim(); }
 	public Optional<T> getFieldValue() {
-		try { return Optional.ofNullable(((SettingSingleValue<T>)setting).parse(getFieldText())); }
+		try { return Optional.of(((SettingSingleValue<T>)setting).parse(getFieldText())); }
 		catch (Throwable ex) { return Optional.empty(); }
 	}
 	
 	@Override
-	public boolean isValid() { return getFieldValue().isPresent(); }
-	
-	@Override
 	protected void onChanged() {
-		if (!Optional.ofNullable(getValue()).equals(getFieldValue()))
-			getField().setText(Objects.toString(getValue()));
-		super.onChanged();
+		if (!getValue().equals(getFieldValue()))
+			getField().setText(getValue().map(Object::toString).orElse(""));
 	}
 	
 	/** Called when the field's value changes from player input. */
-	protected void onFieldChanged()
-		{ getFieldValue().ifPresent(this::setValue); }
+	protected void onFieldChanged() { setValue(getFieldValue()); }
 	
 	protected boolean isCharValid(String text, int cursorPosition, char chr)
 		{ return true; }

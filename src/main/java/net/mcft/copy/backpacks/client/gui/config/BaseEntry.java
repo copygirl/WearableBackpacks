@@ -28,32 +28,35 @@ public abstract class BaseEntry extends GuiLayout {
 	public BaseEntry(BackpacksConfigScreen owningScreen, String labelText, GuiElementBase control) {
 		super(Direction.HORIZONTAL);
 		this.owningScreen = owningScreen;
-		setFillHorizontal();
+		this.labelText = (labelText != null) ? I18n.format(labelText) : null;
+		this.control = control;
 		control.setHeight(DEFAULT_HEIGHT);
+		setFillHorizontal();
 		
 		if (labelText != null) {
-			setSpacing(8, 6, 4);
-			
-			this.labelText = I18n.format(labelText);
-			addFixed(label = new GuiLabel(this.labelText));
+			label = new GuiLabel(this.labelText);
 			label.setCenteredVertical();
 			label.setShadowDisabled();
 			
-			addWeighted(this.control = control);
+			setSpacing(8, 6, 4);
+			addFixed(label);
+			addWeighted(control);
 		} else {
+			label = null;
 			setSpacing(0, 6, 4);
-			
-			this.labelText = null;
-			this.label = null;
-			
 			addWeighted(new GuiContainer()); // Filler
-			addFixed(this.control = control);
+			addFixed(control);
 		}
 		
-		addFixed(buttonUndo = new GuiButtonGlyph(DEFAULT_HEIGHT, DEFAULT_HEIGHT, GuiUtils.UNDO_CHAR, 1.0f));
-		addFixed(buttonReset = new GuiButtonGlyph(DEFAULT_HEIGHT, DEFAULT_HEIGHT, GuiUtils.RESET_CHAR, 1.0f));
+		buttonUndo = new GuiButtonGlyph(DEFAULT_HEIGHT, DEFAULT_HEIGHT, GuiUtils.UNDO_CHAR, 1.0f);
+		buttonUndo.setCenteredVertical();
 		buttonUndo.setAction(() -> undoChanges());
+		addFixed(buttonUndo);
+		
+		buttonReset = new GuiButtonGlyph(DEFAULT_HEIGHT, DEFAULT_HEIGHT, GuiUtils.RESET_CHAR, 1.0f);
+		buttonReset.setCenteredVertical();
 		buttonReset.setAction(() -> setToDefault());
+		addFixed(buttonReset);
 	}
 	
 	public boolean hasLabel() { return (label != null); }
@@ -61,13 +64,11 @@ public abstract class BaseEntry extends GuiLayout {
 	public void setLabelWidth(int value) { if (hasLabel()) label.setWidth(value); }
 	
 	protected String getFormatting() {
-		String formatting = (
-				  !isValid()  ? TextFormatting.RED
-				: isChanged() ? TextFormatting.WHITE
-				: TextFormatting.GRAY
-			).toString();
-		if (isChanged()) formatting += TextFormatting.ITALIC;
-		return formatting;
+		return (!isEnabled() ? TextFormatting.DARK_GRAY
+		      : !isValid()   ? TextFormatting.RED
+		      : isChanged()  ? TextFormatting.WHITE
+		                     : TextFormatting.GRAY).toString()
+			+ (isChanged() ? TextFormatting.ITALIC.toString() : "");
 	}
 	
 	/** Returns whether this entry was changed from its previous value. */
@@ -82,13 +83,8 @@ public abstract class BaseEntry extends GuiLayout {
 	/** Sets this enrtry's value to its default value. */
 	public abstract void setToDefault();
 	
-	/** Called when this entry changes, updating its state. */
-	protected void onChanged() {
-		if (label != null) label.setText(getFormatting() + labelText);
-		buttonUndo.setEnabled(isChanged());
-		buttonReset.setEnabled(!isDefault());
-		owningScreen.onChanged();
-	}
+	/** Called when this entry's value changes, updating its control's state. */
+	protected void onChanged() {  }
 	
 	/** Applies the changes made to this entry globally.
 	 *  Called when clicking "Done" on the main config screen. */
@@ -96,11 +92,16 @@ public abstract class BaseEntry extends GuiLayout {
 	
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
+		if (label != null) label.setText(getFormatting() + labelText);
+		buttonUndo.setEnabled(isChanged());
+		buttonReset.setEnabled(!isDefault());
+		
 		if (!isValid()) {
 			GlStateManager.disableTexture2D();
 			drawColoredRectARGB(-4, -1, getWidth() + 8, getHeight() + 2, BACKGROUND_INVALID);
 			GlStateManager.enableTexture2D();
 		}
+		
 		super.draw(mouseX, mouseY, partialTicks);
 	}
 	

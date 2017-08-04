@@ -70,7 +70,9 @@ public class GuiSlider extends GuiElementBase {
 	public final double getAmountY() { return getAmount(Direction.VERTICAL); }
 	public final double getAmount() { return getAmount(getOnlyDirection()); }
 	
-	public void setAmount(Direction direction, double value) {
+	public void setAmount(Direction direction, double value)
+		{ setAmountInternal(direction, value, true); }
+	private boolean setAmountInternal(Direction direction, double value, boolean fireChanged) {
 		ensureValidDirection(direction);
 		value = MathHelper.clamp(value, 0, 1);
 		
@@ -84,21 +86,27 @@ public class GuiSlider extends GuiElementBase {
 		}
 		
 		if (direction == Direction.HORIZONTAL) {
-			if (value == _amountX) return;
+			if (value == _amountX) return false;
 			_amountX = value;
 		} else {
-			if (value == _amountY) return;
+			if (value == _amountY) return false;
 			_amountY = value;
 		}
-		onChanged(direction);
+		if (fireChanged) onChanged();
+		return true;
 	}
 	public final void setAmountX(double value) { setAmount(Direction.HORIZONTAL, value); }
 	public final void setAmountY(double value) { setAmount(Direction.VERTICAL, value); }
 	public final void setAmount(double value) { setAmount(getOnlyDirection(), value); }
+	public final void setAmount(double hor, double vert) {
+		if (setAmountInternal(Direction.HORIZONTAL, hor, false) |
+			setAmountInternal(Direction.VERTICAL, vert, false))
+			onChanged();
+	}
 	
 	public void setChangedAction(Runnable value) { _changedAction = value; }
 	/** Called when the slider amount / value changes. */
-	protected void onChanged(Direction direction)
+	protected void onChanged()
 		{ if (_changedAction != null) _changedAction.run(); }
 	
 	
@@ -133,7 +141,7 @@ public class GuiSlider extends GuiElementBase {
 		if (value < 0) throw new IllegalArgumentException("value must be positive");
 		if (direction == Direction.HORIZONTAL) _stepX = value; else _stepY = value;
 	}
-	public final void setStepSize(double value) { setStepSize(getOnlyDirection(), value); }
+	public final void setStepSize(double value) { _stepX = _stepY = value; }
 	
 	
 	public double getValue(Direction direction) {
@@ -150,7 +158,14 @@ public class GuiSlider extends GuiElementBase {
 	public void setValue(Direction direction, double value) {
 		double min = getMin(direction);
 		double max = getMax(direction);
-		setAmount((value - min) / (max - min));
+		setAmount(direction, (value - min) / (max - min));
+	}
+	public final void setValue(double hor, double vert) {
+		double hMin = getMin(Direction.HORIZONTAL);
+		double hMax = getMax(Direction.HORIZONTAL);
+		double vMin = getMin(Direction.VERTICAL);
+		double vMax = getMax(Direction.VERTICAL);
+		setAmount((hor - hMin) / (hMax - hMin), (vert - vMin) / (vMax - vMin));
 	}
 	public final void setValueX(double value) { setValue(Direction.HORIZONTAL, value); }
 	public final void setValueY(double value) { setValue(Direction.VERTICAL, value); }
@@ -208,8 +223,8 @@ public class GuiSlider extends GuiElementBase {
 		int y = slideVertical   ? (int)((getHeight() - sliderSize) * getAmountY()) : 0;
 		int w = slideHorizontal ? sliderSize : getWidth();
 		int h = slideVertical   ? sliderSize : getHeight();
-		
-		GuiUtils.drawContinuousTexturedBox(GuiButton.BUTTON_TEX, x, y, 0, 66, w, h,
+		int ty = isEnabled() ? 66 : 46;
+		GuiUtils.drawContinuousTexturedBox(GuiButton.BUTTON_TEX, x, y, 0, ty, w, h,
 		                                   DEFAULT_WIDTH, DEFAULT_HEIGHT, 2, 3, 2, 2, 0);
 	}
 	
@@ -219,7 +234,9 @@ public class GuiSlider extends GuiElementBase {
 		if (text.isEmpty()) return;
 		FontRenderer fontRenderer = getFontRenderer();
 		int textWidth = fontRenderer.getStringWidth(text);
-		int textColor = isHighlighted ? COLOR_CONTROL_HIGHLIGHT : COLOR_CONTROL;
+		int textColor = !isEnabled()  ? COLOR_CONTROL_DISABLED
+		              : isHighlighted ? COLOR_CONTROL_HIGHLIGHT
+		                              : COLOR_CONTROL;
 		fontRenderer.drawStringWithShadow(text,
 			getWidth() / 2 - textWidth / 2,
 			(getHeight() - 8) / 2, textColor);

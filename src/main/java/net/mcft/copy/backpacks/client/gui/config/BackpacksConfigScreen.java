@@ -11,60 +11,57 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
-import net.mcft.copy.backpacks.client.config.BackpacksGuiConfig;
 import net.mcft.copy.backpacks.client.gui.*;
-import net.mcft.copy.backpacks.client.gui.config.*;
 import net.mcft.copy.backpacks.client.gui.control.*;
 import net.mcft.copy.backpacks.client.gui.test.GuiTestScreen;
-import net.mcft.copy.backpacks.config.SettingDouble;
-import net.mcft.copy.backpacks.config.SettingInteger;
+import net.mcft.copy.backpacks.config.Setting;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
 @SideOnly(Side.CLIENT)
 public class BackpacksConfigScreen extends GuiContainerScreen {
 	
 	private final GuiScreen _parentScreen;
-	private EntryCategory _owningCategoryEntry = null;
 	
 	protected GuiButton buttonDone;
 	protected GuiButton buttonReset;
 	protected GuiButton buttonUndo;
 	protected EntryList entryList;
 	
+	/** Creates a config GUI screen for Wearable Backpacks (and its GENERAL category). */
 	public BackpacksConfigScreen(GuiScreen parentScreen) {
-		this(parentScreen, (EntryCategory)null);
+		this(parentScreen, (String)null);
 		
-		addEntry(new EntryButton.Switch(this, WearableBackpacks.CONFIG.equipAsChestArmor));
-		addEntry(new EntryButton.Switch(this, WearableBackpacks.CONFIG.enableEquippedInteraction));
-		addEntry(new EntryButton.Switch(this, WearableBackpacks.CONFIG.enableSelfInteraction));
-		addEntry(new EntryButton.Switch(this, WearableBackpacks.CONFIG.dropAsBlockOnDeath));
-		addEntry(new EntryField.Number(this, WearableBackpacks.CONFIG.backpack.durability));
-		addEntry(new EntrySlider.RangeInteger(this, (SettingInteger)WearableBackpacks.CONFIG.backpack.armor));
-		addEntry(new EntrySlider.Percentage(this, (SettingDouble)WearableBackpacks.CONFIG.cosmetic.enchantEffectOpacity));
+		// Add all settings from the GENERAL category to the entry list.
+		for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings(Configuration.CATEGORY_GENERAL))
+			addEntry(BaseEntrySetting.Create(this, setting));
 		
+		// After adding all settings from the GENERAL category, add its sub-categories.
 		for (String cat : WearableBackpacks.CONFIG.getCategoryNames())
 			if (!cat.equals(Configuration.CATEGORY_GENERAL))
 				addEntry(new EntryCategory(this, cat));
 	}
+	
+	/** Creates a config GUI screen for a sub-category. */
 	public BackpacksConfigScreen(GuiScreen parentScreen, EntryCategory category) {
-		this(parentScreen, (category != null) ? category.getLanguageKey() : null);
-		_owningCategoryEntry = category;
+		this(parentScreen, category.getLanguageKey());
 		
-		// for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings(category))
-		// 	addEntry(...);
+		// Add all settings for this category to the entry list.
+		String cat = (category != null) ? category.category : Configuration.CATEGORY_GENERAL;
+		for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings(cat))
+			addEntry(BaseEntrySetting.Create(this, setting));
 	}
 	
 	public BackpacksConfigScreen(GuiScreen parentScreen, String title) {
 		_parentScreen = parentScreen;
 		
-		container.add(new DebugButton("T") {{
-			setPosition(3, 3);
-			setAction(() -> display(new GuiTestScreen(BackpacksConfigScreen.this)));
-		}});
-		container.add(new DebugButton("C") {{
-			setRight(3); setTop(3);
-			setAction(() -> display(new BackpacksGuiConfig(BackpacksConfigScreen.this)));
-		}});
+		container.add(new GuiButton(18, 18, "T") {
+			{
+				setRight(3); setTop(3);
+				setAction(() -> display(new GuiTestScreen(BackpacksConfigScreen.this)));
+			}
+			@Override public boolean isVisible()
+				{ return (super.isVisible() && GuiContext.DEBUG); }
+		});
 		
 		container.add(new GuiLayout(Direction.VERTICAL) {{
 			setFill();
@@ -101,25 +98,16 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 	}
 	
 	/** Returns whether any of this screen's entries were changed from their previous values. */
-	public boolean isChanged() { return entryList.getEntries().anyMatch(e -> e.isChanged()); }
+	public boolean isChanged() { return entryList.getEntries().anyMatch(BaseEntry::isChanged); }
 	/** Returns whether all of this screen's entries are equal to their default values. */
-	public boolean isDefault() { return entryList.getEntries().allMatch(e -> e.isDefault()); }
+	public boolean isDefault() { return entryList.getEntries().allMatch(BaseEntry::isDefault); }
 	/** Returns whether all of this screen's entries represent a valid value. */
-	public boolean isValid() { return entryList.getEntries().allMatch(e -> e.isValid()); }
+	public boolean isValid() { return entryList.getEntries().allMatch(BaseEntry::isValid); }
 	
 	/** Sets all of this screen's entries back to their previous values. */
-	public void undoChanges() { entryList.getEntries().forEach(e -> e.undoChanges()); }
+	public void undoChanges() { entryList.getEntries().forEach(BaseEntry::undoChanges); }
 	/** Sets all of this screen's entries to their default values. */
-	public void setToDefault() { entryList.getEntries().forEach(e -> e.setToDefault()); }
-	
-	/** Called when any of this screen's entries changes. */
-	protected void onChanged() {
-		buttonDone.setEnabled(isValid());
-		buttonUndo.setEnabled(isChanged());
-		buttonReset.setEnabled(!isDefault());
-		if (_owningCategoryEntry != null)
-			_owningCategoryEntry.onChanged();
-	}
+	public void setToDefault() { entryList.getEntries().forEach(BaseEntry::setToDefault); }
 	
 	/** Applies changes made to this screen's entries.
 	 *  Called when clicking "Done" on the main config screen. */
@@ -141,13 +129,14 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 	/** Adds an entry to this screen's entry list. */
 	public void addEntry(GuiElementBase entry) { entryList.addFixed(entry); }
 	
-	
-	private static class DebugButton extends GuiButton {
-		public DebugButton(String text)
-			{ super(18, 18, text); }
-		@Override public boolean isVisible()
-			{ return (super.isVisible() && GuiContext.DEBUG); }
+	@Override
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		buttonDone.setEnabled(isValid());
+		buttonUndo.setEnabled(isChanged());
+		buttonReset.setEnabled(!isDefault());
+		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
+	
 	
 	public static class EntryListScrollable extends GuiScrollable {
 		

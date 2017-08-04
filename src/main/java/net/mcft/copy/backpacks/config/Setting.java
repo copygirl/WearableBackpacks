@@ -3,9 +3,7 @@ package net.mcft.copy.backpacks.config;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Supplier;
-import java.util.regex.Pattern;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
@@ -14,15 +12,11 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.client.config.ConfigGuiType;
-import net.minecraftforge.fml.client.config.IConfigElement;
-import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
-import net.minecraftforge.fml.client.config.GuiEditArrayEntries.IArrayEntry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
-import net.mcft.copy.backpacks.client.config.EntrySetting;
+import net.mcft.copy.backpacks.client.gui.config.BaseEntrySetting;
 
 /** Represents a single configuration setting. */
 public abstract class Setting<T> {
@@ -38,7 +32,7 @@ public abstract class Setting<T> {
 	
 	/** Holds the setting's current entry instance in the config GUI (if open). */
 	@SideOnly(Side.CLIENT)
-	private EntrySetting<T> _entry;
+	private BaseEntrySetting<T> _entry;
 	
 	/** The setting category, for example "general". */
 	private String _category;
@@ -185,11 +179,11 @@ public abstract class Setting<T> {
 	public String getComment() { return _comment; }
 	
 	/** Returns the setting's current entry value in the config GUI. */
-	private T getEntryValue() { return _entry.getValue(); }
+	private T getEntryValue() { return _entry.getValue().get(); }
 	/** Sets the setting's current config entry in the config GUI to the specified entry.
 	 *  Used for disabling config entries dynamically based on which settings they require. */
 	@SideOnly(Side.CLIENT)
-	public void setEntry(EntrySetting<T> entry) { _entry = entry; }
+	public void setEntry(BaseEntrySetting<T> entry) { _entry = entry; }
 	/** Resets the setting's current config entry in the config GUI. */
 	@SideOnly(Side.CLIENT)
 	public void resetEntry() { _entry = null; }
@@ -204,8 +198,6 @@ public abstract class Setting<T> {
 	
 	
 	// Forge Configuration related
-	
-	public IConfigElement getConfigElement() { return new ConfigElement(); }
 	
 	/** Loads the setting's value from the specified Configuration. */
 	protected abstract void loadFromConfiguration(Configuration config);
@@ -236,51 +228,6 @@ public abstract class Setting<T> {
 		None,
 		RejoinWorld,
 		RestartMinecraft
-	}
-	
-	
-	public class ConfigElement implements IConfigElement {
-		
-		public boolean isProperty() { return true; }
-		
-		public Class<? extends IConfigEntry> getConfigEntryClass() { return null; }
-		public Class<? extends IArrayEntry> getArrayEntryClass() { return null; }
-		
-		public String getName() { return Setting.this.getName(); }
-		public String getQualifiedName() { return Setting.this.getFullName(); }
-		public String getLanguageKey() { return "config." + WearableBackpacks.MOD_ID + "." + Setting.this.getFullName(); }
-		public String getComment() { return Setting.this.getComment(); }
-		
-		public List<IConfigElement> getChildElements() { return null; }
-		
-		public ConfigGuiType getType() { return null; }
-		
-		public boolean isList() { return false; }
-		public boolean isListLengthFixed() { return false; }
-		public int getMaxListLength() { return 0; }
-		
-		public boolean isDefault() { return Objects.equals(Setting.this.get(), Setting.this.getDefault()); }
-		public Object getDefault() { return Setting.this.getDefault(); }
-		public Object[] getDefaults() { return null; }
-		public void setToDefault() { set(Setting.this.getDefault()); }
-		
-		public boolean requiresWorldRestart() { return Setting.this.requiresWorldRejoin(); }
-		public boolean requiresMcRestart() { return Setting.this.requiresMinecraftRestart(); }
-		
-		public boolean showInGui() { return true; }
-		
-		public Object get() { return Setting.this.get(); }
-		public Object[] getList() { return null; }
-		
-		@SuppressWarnings("unchecked")
-		public void set(Object value) { Setting.this.set((T)value); }
-		public void set(Object[] aVal) {  }
-		
-		public String[] getValidValues() { return null; }
-		public Object getMinValue() { return null; }
-		public Object getMaxValue() { return null; }
-		public Pattern getValidationPattern() { return null; }
-		
 	}
 	
 }

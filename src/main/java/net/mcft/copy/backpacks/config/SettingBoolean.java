@@ -9,7 +9,7 @@ public class SettingBoolean extends SettingSingleValue<Boolean> {
 	
 	public SettingBoolean(boolean defaultValue) {
 		super(defaultValue);
-		setConfigEntryClass("net.mcft.copy.backpacks.client.config.EntryButton$Switch");
+		setConfigEntryClass("net.mcft.copy.backpacks.client.gui.config.EntryButton$Switch");
 	}
 	
 	@Override

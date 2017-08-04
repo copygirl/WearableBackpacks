@@ -15,7 +15,7 @@ public class SettingInteger extends SettingSingleValue<Integer> {
 	
 	public SettingInteger(int defaultValue) {
 		super(defaultValue);
-		setConfigEntryClass("net.mcft.copy.backpacks.client.config.EntryField$Number");
+		setConfigEntryClass("net.mcft.copy.backpacks.client.gui.config.EntryField$Number");
 	}
 	
 	/** Sets the valid range of values for this integer setting. */

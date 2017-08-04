@@ -1,7 +1,5 @@
 package net.mcft.copy.backpacks.client.gui.config;
 
-import java.util.Objects;
-
 import net.minecraftforge.fml.client.config.GuiUtils;
 
 import net.mcft.copy.backpacks.client.gui.control.GuiButton;
@@ -19,10 +17,8 @@ public abstract class EntryButton<T> extends BaseEntrySetting<T> {
 	public GuiButton getButton() { return (GuiButton)control; }
 	
 	@Override
-	protected void onChanged() {
-		getButton().setText(Objects.toString(getValue()));
-		super.onChanged();
-	}
+	protected void onChanged()
+		{ getButton().setText(getValue().map(Object::toString).orElse("<empty>")); }
 	
 	protected void onButtonPressed() {  }
 	
@@ -33,10 +29,11 @@ public abstract class EntryButton<T> extends BaseEntrySetting<T> {
 		@Override
 		protected void onChanged() {
 			super.onChanged();
-			getButton().setTextColor(GuiUtils.getColorCode(getValue() ? '2' : '4', true));
+			char chr = getValue().map(v -> v ? '2' : '4').orElse('7');
+			getButton().setTextColor(GuiUtils.getColorCode(chr, true));
 		}
 		@Override
-		protected void onButtonPressed() { setValue(!getValue()); }
+		protected void onButtonPressed() { setValue(!getValue().get()); }
 	}
 	
 }

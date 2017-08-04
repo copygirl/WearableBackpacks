@@ -10,7 +10,7 @@ public class SettingPercent extends SettingDouble {
 	public SettingPercent(double defaultValue) {
 		super(defaultValue);
 		setValidRange(0.0F, 1.0F);
-		setConfigEntryClass("net.mcft.copy.backpacks.client.config.EntrySliderPercent");
+		setConfigEntryClass("net.mcft.copy.backpacks.client.gui.config.EntrySlider$Percentage");
 	}
 	
 	@Override

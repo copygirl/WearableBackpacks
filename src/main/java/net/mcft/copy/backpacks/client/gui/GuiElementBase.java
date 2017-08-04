@@ -122,7 +122,7 @@ public abstract class GuiElementBase {
 	public void setFocused(boolean value) {
 		if (value && !canFocus())
 			throw new UnsupportedOperationException("This element can't be focused");
-		if (!isVisible() || !isEnabled()) return;
+		if (!isVisible()) return;
 		getContext().setFocused(value ? this : null);
 	}
 	
@@ -233,8 +233,15 @@ public abstract class GuiElementBase {
 		               (color >> 24 & 0xFF) / 255.0f); }
 	
 	
-	public static void drawRect(int x, int y, int u, int v, int width, int height)
-		{ drawRect(x, y, width, height, u, v, u + width, v + height); }
+	public static void drawRect(int x, int y, int u, int v, int width, int height, int texSize)
+		{ drawRect(x, y, u, v, width, height, texSize, texSize); }
+	public static void drawRect(int x, int y, int u, int v, int width, int height, int texWidth, int texHeight) {
+		float u1 = u / (float)texWidth;
+		float v1 = v / (float)texHeight;
+		float u2 = (u + width) / (float)texWidth;
+		float v2 = (v + height) / (float)texHeight;
+		drawRect(x, y, width, height, u1, v1, u2, v2);
+	}
 	public static void drawRect(int x, int y, int width, int height,
 	                            float u1, float v1, float u2, float v2) {
 		Tessellator tessellator = Tessellator.getInstance();

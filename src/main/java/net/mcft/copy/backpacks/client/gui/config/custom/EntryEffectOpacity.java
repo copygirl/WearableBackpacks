@@ -1,4 +1,4 @@
-package net.mcft.copy.backpacks.client.config.custom;
+package net.mcft.copy.backpacks.client.gui.config.custom;
 
 import org.lwjgl.opengl.GL11;
 
@@ -6,36 +6,27 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-import net.minecraftforge.fml.client.config.GuiConfig;
-import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.mcft.copy.backpacks.client.config.EntrySliderPercent;
-import net.mcft.copy.backpacks.config.Setting;
+import net.mcft.copy.backpacks.client.gui.config.BackpacksConfigScreen;
+import net.mcft.copy.backpacks.client.gui.config.EntrySlider;
+import net.mcft.copy.backpacks.client.gui.control.GuiSlider;
 import net.mcft.copy.backpacks.config.SettingDouble;
 
 @SideOnly(Side.CLIENT)
-public class EntryEffectOpacity extends EntrySliderPercent {
+public class EntryEffectOpacity extends EntrySlider.Percentage {
 	
-	public EntryEffectOpacity(GuiConfig owningScreen, GuiConfigEntries owningEntryList, Setting<Double> setting) {
-		super(owningScreen, owningEntryList, setting, new Slider(
-			((SettingDouble)setting).getMinValue(),
-			((SettingDouble)setting).getMaxValue()));
-	}
+	public EntryEffectOpacity(BackpacksConfigScreen owningScreen, SettingDouble setting)
+		{ super(owningScreen, setting, new Slider()); }
 	
-	public static class Slider extends EntrySliderPercent.Slider {
-		
-		public Slider(double min, double max) { super(min, max); }
-		
+	private static class Slider extends GuiSlider {
 		@Override
-		protected void mouseDragged(Minecraft mc, int mouseX, int mouseY) {
-			renderEffect(x + 1, y + 1, width - 2, height - 2, (float)getValue());
-			mc.getTextureManager().bindTexture(BUTTON_TEXTURES);
-			super.mouseDragged(mc, mouseX, mouseY);
+		protected void drawSliderForeground(boolean isHighlighted, float partialTicks) {
+			renderEffect(1, 1, getWidth() - 2, getHeight() - 2, (float)getValue());
+			super.drawSliderForeground(isHighlighted, partialTicks);
 		}
-		
 	}
 	
 	private static final ResourceLocation ENCHANTED_ITEM_GLINT =
