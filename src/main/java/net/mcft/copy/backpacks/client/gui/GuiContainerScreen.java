@@ -84,7 +84,7 @@ public class GuiContainerScreen extends GuiScreen {
 		GuiElementBase pressed = context.getPressed();
 		if (pressed == null) return;
 		pressed.onMouseUp(mouseButton, mouseX, mouseY);
-		context.setPressed(null, mouseX, mouseY);
+		context.setPressed(null);
 	}
 	
 	

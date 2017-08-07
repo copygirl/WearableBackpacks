@@ -28,11 +28,15 @@ public abstract class GuiElementBase {
 	
 	private GuiContext _context;
 	private GuiContainer _parent;
-	private int _width, _height;
+	
 	private boolean _visible = true, _enabled = true;
+
+	private int _width, _height;
+	
 	private Alignment _horizontalAlign = new Alignment.Min(0);
 	private Alignment _verticalAlign = new Alignment.Min(0);
 	
+	private int _dragStartX, _dragStartY;
 	
 	void setContext(GuiContext value) { _context = value; }
 	void setParent(GuiContainer value) { _parent = value; }
@@ -157,7 +161,9 @@ public abstract class GuiElementBase {
 	public boolean onMouseDown(int mouseButton, int mouseX, int mouseY) {
 		if (!isVisible()) return false;
 		if ((mouseButton == MouseButton.LEFT) && canPress()) {
-			getContext().setPressed(this, mouseX, mouseY);
+			GuiContext context = getContext();
+			context.setPressed(this);
+			if (canDrag()) { _dragStartX = mouseX; _dragStartY = mouseY; }
 			if (canFocus()) setFocused();
 			onPressed(mouseX, mouseY);
 			return true;
@@ -167,8 +173,7 @@ public abstract class GuiElementBase {
 	/** Called when the mouse is moved over this element or being dragged.
 	 *  Mouse position is relative to the element's position. */
 	public void onMouseMove(int mouseX, int mouseY) {
-		if (isVisible() && isDragged()) onDragged(mouseX, mouseY,
-			getContext().getDragStartX(), getContext().getDragStartY());
+		if (isVisible() && isDragged()) onDragged(mouseX, mouseY, _dragStartX, _dragStartY);
 	}
 	
 	public void onMouseUp(int mouseButton, int mouseX, int mouseY) {  }
