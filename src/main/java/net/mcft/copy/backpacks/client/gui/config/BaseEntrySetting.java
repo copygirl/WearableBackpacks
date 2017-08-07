@@ -2,8 +2,11 @@ package net.mcft.copy.backpacks.client.gui.config;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import net.minecraft.client.resources.I18n;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.gui.GuiElementBase;
@@ -25,10 +28,18 @@ public abstract class BaseEntrySetting<T> extends BaseEntry {
 		_previousValue = setting.get();
 		_defaultValue  = setting.getDefault();
 		value = Optional.of(_previousValue);
+		label.setTooltip(getSettingTooltip());
 		onChanged();
 	}
-	private static String getLanguageKey(Setting<?> setting)
+	
+	public static String getLanguageKey(Setting<?> setting)
 		{ return "config." + WearableBackpacks.MOD_ID + "." + setting.getFullName(); }
+	private List<String> getSettingTooltip() {
+		String langKey = getLanguageKey(setting);
+		String def = I18n.format("fml.configgui.tooltip.default", setting.getDefault());
+		String warn = setting.requiresMinecraftRestart() ? "fml.configgui.gameRestartTitle" : null;
+		return formatTooltip(langKey, langKey + ".tooltip", def, warn);
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static <T> BaseEntrySetting<T> Create(BackpacksConfigScreen owningScreen, Setting<T> setting) {

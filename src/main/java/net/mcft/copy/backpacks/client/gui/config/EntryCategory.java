@@ -1,5 +1,7 @@
 package net.mcft.copy.backpacks.client.gui.config;
 
+import java.util.List;
+
 import net.minecraft.client.resources.I18n;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
@@ -20,12 +22,17 @@ public class EntryCategory extends BaseEntry {
 		GuiButton button = (GuiButton)control;
 		button.setText(I18n.format(getLanguageKey()));
 		button.setAction(() -> onButtonPressed());
+		button.setTooltip(getCategoryTooltip());
 		
 		childScreen = new BackpacksConfigScreen(owningScreen, this);
 	}
 	
 	public String getLanguageKey()
 		{ return "config." + WearableBackpacks.MOD_ID + ".category." + category; }
+	private List<String> getCategoryTooltip() {
+		String langKey = getLanguageKey();
+		return formatTooltip(langKey, langKey + ".tooltip", null, null);
+	}
 	
 	@Override
 	public boolean isChanged() { return childScreen.isChanged(); }
