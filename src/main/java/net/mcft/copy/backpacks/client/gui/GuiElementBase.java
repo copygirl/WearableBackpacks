@@ -1,5 +1,8 @@
 package net.mcft.copy.backpacks.client.gui;
 
+import java.util.List;
+import java.util.function.Supplier;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -10,7 +13,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -36,7 +39,12 @@ public abstract class GuiElementBase {
 	private Alignment _horizontalAlign = new Alignment.Min(0);
 	private Alignment _verticalAlign = new Alignment.Min(0);
 	
+	private List<String> _tooltip = null;
+	private Supplier<List<String>> _tooltipFunc = null;
+	private int _tooltipDelay = TooltipDelay.NORMAL;
+	
 	private int _dragStartX, _dragStartY;
+	
 	
 	void setContext(GuiContext value) { _context = value; }
 	void setParent(GuiContainer value) { _parent = value; }
@@ -112,6 +120,30 @@ public abstract class GuiElementBase {
 	public final void setFillHorizontal() { setLeftRight(0); }
 	public final void setFillVertical() { setTopBottom(0); }
 	public final void setFill() { setFillHorizontal(); setFillVertical(); }
+	
+	// Tooltips
+	
+	public boolean hasTooltip() { return (_tooltip != null) || (_tooltipFunc != null); }
+	
+	public List<String> getTooltip()
+		{ return (_tooltipFunc != null) ? _tooltipFunc.get() : _tooltip; }
+	public int getTooltipDelay() { return _tooltipDelay; }
+	
+	public void setTooltip(List<String> value)
+		{ setTooltip(TooltipDelay.NORMAL, value); }
+	public void setTooltip(int delay, List<String> value)
+		{ _tooltip = value; _tooltipDelay = delay; }
+	public void setTooltip(Supplier<List<String>> value)
+		{ setTooltip(TooltipDelay.NORMAL, value); }
+	public void setTooltip(int delay, Supplier<List<String>> value)
+		{ _tooltipFunc = value; _tooltipDelay = delay; }
+	
+	public static final class TooltipDelay {
+		public static final int SHORT = 200;
+		public static final int NORMAL = 400;
+		public static final int LONG = 800;
+		private TooltipDelay() {  }
+	}
 	
 	// Element focus
 	
@@ -194,10 +226,14 @@ public abstract class GuiElementBase {
 	 *  Mouse position is relative to the element's position. */
 	public void draw(int mouseX, int mouseY, float partialTicks) {  }
 	
-	/** Draws this element's tooltip on the screen.
-	 *  Tooltip is rendered relative to this element's position.
-	 *  Mouse position is relative to the element's position. */
-	public void drawTooltip(int mouseX, int mouseY, float partialTicks) {  }
+	/** Draws this element's tooltip on the screen. Rendering and mouse
+	 *  position are global, not relative to this element's position. */
+	public void drawTooltip(int mouseX, int mouseY, int screenWidth, int screenHeight, float partialTicks) {
+		if (!hasTooltip()) return;
+		GuiUtils.drawHoveringText(getTooltip(),
+			mouseX, mouseY, screenWidth, screenHeight,
+			300, getFontRenderer());
+	}
 	
 	
 	// Utility methods

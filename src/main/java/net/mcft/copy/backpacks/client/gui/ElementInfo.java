@@ -1,5 +1,6 @@
 package net.mcft.copy.backpacks.client.gui;
 
+import java.util.LinkedList;
 import java.util.stream.Stream;
 
 // TODO: Use this 
@@ -20,7 +21,19 @@ public final class ElementInfo {
 		this.height  = element.getHeight();
 	}
 	
+	public ElementInfo getChild(GuiElementBase child) {
+		if (!(element instanceof GuiContainer))
+			throw new UnsupportedOperationException("This element is not a GuiContainer");
+		if (child.getParent() != element)
+			throw new IllegalArgumentException("This element is not the parent of the specified child");
+		GuiContainer container = (GuiContainer)element;
+		int childX = container.getChildX(child);
+		int childY = container.getChildY(child);
+		return new ElementInfo(child, globalX + childX, globalY + childY, childX, childY);
+	}
 	
+	
+	/** Returns a stream of elements at this position, going from parent to child. */
 	public Stream<ElementInfo> getElementsAt(int x, int y) {
 		Stream<ElementInfo> stream = Stream.of(this);
 		if (element instanceof GuiContainer)
@@ -31,14 +44,21 @@ public final class ElementInfo {
 		return stream;
 	}
 	
+	/** Builds a hierarchy of elements, going from child to parent. */
+	public static LinkedList<ElementInfo> getElementHierarchy(GuiElementBase element)
+		{ return getElementHierarchy(element, new LinkedList<ElementInfo>()); }
+	private static LinkedList<ElementInfo> getElementHierarchy(GuiElementBase element, LinkedList<ElementInfo> list) {
+		list.addFirst((element.getParent() != null)
+			? getElementHierarchy(element.getParent(), list).getFirst().getChild(element)
+			: new ElementInfo(element));
+		return list;
+	}
+	
 	public Stream<ElementInfo> getChildElements() {
 		if (element instanceof GuiContainer) {
 			GuiContainer container = (GuiContainer)element;
-			return container.children.stream().map(child -> {
-				int childX = container.getChildX(child);
-				int childY = container.getChildY(child);
-				return new ElementInfo(child, globalX + childX, globalY + childY, childX, childY);
-			});
+			return container.children.stream()
+				.map(child -> getChild(child));
 		} else return Stream.empty();
 	}
 	

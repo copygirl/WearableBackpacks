@@ -11,7 +11,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -25,6 +24,9 @@ public class GuiContainerScreen extends GuiScreen {
 	
 	public final GuiContext context;
 	public final GuiContainer container;
+	
+	private GuiElementBase _tooltipElement = null;
+	private long _tooltipTime = 0;
 	
 	public GuiContainerScreen() {
 		context   = new GuiContext();
@@ -61,21 +63,29 @@ public class GuiContainerScreen extends GuiScreen {
 	public void updateScreen() {
 		int mouseX = Mouse.getX() * width / mc.displayWidth;
 		int mouseY = height - Mouse.getY() * height / mc.displayHeight - 1;
+		
+		// Handle onMouseMove.
 		if ((mouseX != _lastMouseX) || (mouseY != _lastMouseY)) {
 			GuiElementBase pressed = context.getPressed();
 			if (pressed != null) {
-				int mx = mouseX;
-				int my = mouseY;
-				for (GuiElementBase element = pressed; element.getParent() != null; element = element.getParent()) {
-					mx -= element.getParent().getChildX(element);
-					my -= element.getParent().getChildY(element);
-				}
-				pressed.onMouseMove(mx, my);
+				ElementInfo info = ElementInfo.getElementHierarchy(pressed).getFirst();
+				pressed.onMouseMove(mouseX - info.globalX, mouseY - info.globalY);
 			} else if (container.contains(mouseX, mouseY))
 				container.onMouseMove(mouseX, mouseY);
 			_lastMouseX = mouseX;
 			_lastMouseY = mouseY;
 		}
+		
+		// Handle tooltips.
+		GuiElementBase tooltipElement = new ElementInfo(container)
+			.getElementsAt(mouseX, mouseY)
+			.map(info -> info.element)
+			.filter(element -> element.hasTooltip())
+			.reduce((first, second) -> second) // Get the last element.
+			.orElse(null);
+		if (tooltipElement != _tooltipElement)
+			_tooltipTime = Minecraft.getSystemTime();
+		_tooltipElement = tooltipElement;
 	}
 	
 	@Override
@@ -104,7 +114,11 @@ public class GuiContainerScreen extends GuiScreen {
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		drawBackground(0);
 		container.draw(mouseX, mouseY, partialTicks);
-		// TODO: Render tooltips.
+		
+		if ((_tooltipElement != null) && (Minecraft.getSystemTime() >=
+				_tooltipTime + _tooltipElement.getTooltipDelay()))
+			_tooltipElement.drawTooltip(mouseX, mouseY, width, height, partialTicks);
+		
 		if (GuiContext.DEBUG)
 			drawDebugInfo(mouseX, mouseY, partialTicks);
 	}
