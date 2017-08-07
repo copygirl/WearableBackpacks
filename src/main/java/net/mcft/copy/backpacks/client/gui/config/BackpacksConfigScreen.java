@@ -4,8 +4,9 @@ import java.util.stream.Stream;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TextComponentString;
 
-import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.config.GuiMessageDialog;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -14,6 +15,7 @@ import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.gui.*;
 import net.mcft.copy.backpacks.client.gui.control.*;
 import net.mcft.copy.backpacks.client.gui.test.GuiTestScreen;
+import net.mcft.copy.backpacks.config.BackpacksConfig;
 import net.mcft.copy.backpacks.config.Setting;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
@@ -32,12 +34,12 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 		this(parentScreen, (String)null);
 		
 		// Add all settings from the GENERAL category to the entry list.
-		for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings(Configuration.CATEGORY_GENERAL))
+		for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings(BackpacksConfig.CATEGORY_GENERAL))
 			addEntry(BaseEntrySetting.Create(this, setting));
 		
 		// After adding all settings from the GENERAL category, add its sub-categories.
 		for (String cat : WearableBackpacks.CONFIG.getCategoryNames())
-			if (!cat.equals(Configuration.CATEGORY_GENERAL))
+			if (!cat.equals(BackpacksConfig.CATEGORY_GENERAL))
 				addEntry(new EntryCategory(this, cat));
 	}
 	
@@ -46,7 +48,7 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 		this(parentScreen, category.getLanguageKey());
 		
 		// Add all settings for this category to the entry list.
-		String cat = (category != null) ? category.category : Configuration.CATEGORY_GENERAL;
+		String cat = (category != null) ? category.category : BackpacksConfig.CATEGORY_GENERAL;
 		for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings(cat))
 			addEntry(BaseEntrySetting.Create(this, setting));
 	}
@@ -83,15 +85,18 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 				setPaddingVertical(3, 9);
 				setSpacing(5);
 				
-				addFixed(buttonDone = new GuiButton(I18n.format("gui.done")));
+				buttonDone = new GuiButton(I18n.format("gui.done"));
 				if (buttonDone.getWidth() < 100) buttonDone.setWidth(100);
 				buttonDone.setAction(() -> doneClicked());
+				addFixed(buttonDone);
 				
-				addFixed(buttonUndo = new GuiButtonGlyph(GuiUtils.UNDO_CHAR, I18n.format("fml.configgui.tooltip.undoChanges")));
-				addFixed(buttonReset = new GuiButtonGlyph(GuiUtils.RESET_CHAR, I18n.format("fml.configgui.tooltip.resetToDefault")));
-				
+				buttonUndo = new GuiButtonGlyph(GuiUtils.UNDO_CHAR, I18n.format("fml.configgui.tooltip.undoChanges"));
 				buttonUndo.setAction(() -> undoChanges());
+				addFixed(buttonUndo);
+				
+				buttonReset = new GuiButtonGlyph(GuiUtils.RESET_CHAR, I18n.format("fml.configgui.tooltip.resetToDefault"));
 				buttonReset.setAction(() -> setToDefault());
+				addFixed(buttonReset);
 			}});
 		}});
 		
@@ -120,12 +125,17 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 	
 	/** Called when the "Done" buttons is clicked. */
 	protected void doneClicked() {
+		GuiScreen nextScreen = _parentScreen;
 		// If this is the root config screen, apply the changes!
 		if (!(_parentScreen instanceof BackpacksConfigScreen)) {
-			applyChanges();
+			if (applyChanges() == ChangeRequiredAction.RestartMinecraft)
+				nextScreen = new GuiMessageDialog(_parentScreen,
+					"fml.configgui.gameRestartTitle",
+					new TextComponentString(I18n.format("fml.configgui.gameRestartRequired")),
+					"fml.configgui.confirmRestartMessage");
 			WearableBackpacks.CONFIG.save();
 		}
-		GuiElementBase.display(_parentScreen);
+		GuiElementBase.display(nextScreen);
 	}
 	
 	/** Adds an entry to this screen's entry list. */
