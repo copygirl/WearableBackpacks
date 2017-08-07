@@ -121,8 +121,10 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 	/** Called when the "Done" buttons is clicked. */
 	protected void doneClicked() {
 		// If this is the root config screen, apply the changes!
-		if (!(_parentScreen instanceof BackpacksConfigScreen))
+		if (!(_parentScreen instanceof BackpacksConfigScreen)) {
 			applyChanges();
+			WearableBackpacks.CONFIG.save();
+		}
 		GuiElementBase.display(_parentScreen);
 	}
 	
