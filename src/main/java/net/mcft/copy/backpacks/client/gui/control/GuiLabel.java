@@ -50,6 +50,7 @@ public class GuiLabel extends GuiElementBase {
 	public GuiLabel(int x, int y, int width, int height, String text)
 		{ this(x, y, width, height, text, TextAlign.LEFT); }
 	public GuiLabel(int x, int y, int width, int height, String text, TextAlign align) {
+		_expands = false;
 		setPosition(x, y);
 		setSize(width, height);
 		setText(text);
@@ -67,12 +68,15 @@ public class GuiLabel extends GuiElementBase {
 	public String getText() { return _text; }
 	public void setText(String text) {
 		if (text == null) throw new NullPointerException("Argument text can't be null");
+		if (text.equals(_text)) return;
 		_text = text;
 		if (_expands) {
 			FontRenderer fontRenderer = getFontRenderer();
 			int width  = fontRenderer.getStringWidth(_text);
 			int height = fontRenderer.getWordWrappedHeight(_text, Integer.MAX_VALUE);
-			setSize(width, height);
+			// Don't call own setSize method. After all,
+			// we don't want _expands to be set to false.
+			super.setSize(width, height);
 		}
 	}
 	
