@@ -15,7 +15,6 @@ import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.gui.*;
 import net.mcft.copy.backpacks.client.gui.control.*;
 import net.mcft.copy.backpacks.client.gui.test.GuiTestScreen;
-import net.mcft.copy.backpacks.config.BackpacksConfig;
 import net.mcft.copy.backpacks.config.Setting;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
@@ -34,13 +33,12 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 		this(parentScreen, (String)null);
 		
 		// Add all settings from the GENERAL category to the entry list.
-		for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings(BackpacksConfig.CATEGORY_GENERAL))
+		for (Setting<?> setting : WearableBackpacks.CONFIG.getSettingsGeneral())
 			addEntry(BaseEntrySetting.Create(this, setting));
 		
 		// After adding all settings from the GENERAL category, add its sub-categories.
-		for (String cat : WearableBackpacks.CONFIG.getCategoryNames())
-			if (!cat.equals(BackpacksConfig.CATEGORY_GENERAL))
-				addEntry(new EntryCategory(this, cat));
+		for (String cat : WearableBackpacks.CONFIG.getCategories())
+			addEntry(new EntryCategory(this, cat));
 	}
 	
 	/** Creates a config GUI screen for a sub-category. */
@@ -48,8 +46,7 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 		this(parentScreen, category.getLanguageKey());
 		
 		// Add all settings for this category to the entry list.
-		String cat = (category != null) ? category.category : BackpacksConfig.CATEGORY_GENERAL;
-		for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings(cat))
+		for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings(category.category))
 			addEntry(BaseEntrySetting.Create(this, setting));
 	}
 	

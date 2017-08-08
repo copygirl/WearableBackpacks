@@ -1,6 +1,8 @@
 package net.mcft.copy.backpacks.config;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +27,7 @@ import net.mcft.copy.backpacks.config.custom.SettingPercent;
 import net.mcft.copy.backpacks.misc.BackpackSize;
 import net.mcft.copy.backpacks.network.MessageSyncSettings;
 
-public class BackpacksConfig extends Configuration {
+public class BackpacksConfig {
 	
 	// ==[ GENERAL ]==
 	
@@ -94,10 +96,12 @@ public class BackpacksConfig extends Configuration {
 	}
 	
 	
+	private final Configuration _config;
+	private List<String> _categories = new ArrayList<String>();
 	private Map<String, Setting<?>> _settings = new LinkedHashMap<String, Setting<?>>();
 	
 	public BackpacksConfig(File file) {
-		super(file);
+		_config = new Configuration(file);
 		
 		// Add settings from this class as general category.
 		addSettingsFromClass(this, Configuration.CATEGORY_GENERAL);
@@ -107,8 +111,10 @@ public class BackpacksConfig extends Configuration {
 			if ((field.getDeclaringClass() != getClass()) ||
 			    !field.getType().getName().endsWith("Category")) continue;
 			try {
+				String category = field.getName();
 				field.set(this, field.getType().getConstructors()[0].newInstance(this));
-				addSettingsFromClass(field.get(this), field.getName());
+				addSettingsFromClass(field.get(this), category);
+				if (!_categories.contains(category)) _categories.add(category);
 			} catch (InstantiationException |
 			         InvocationTargetException |
 			         IllegalAccessException ex) { throw new RuntimeException(ex); }
@@ -143,29 +149,34 @@ public class BackpacksConfig extends Configuration {
 			.filter(setting -> setting.getCategory().equals(category))
 			.collect(Collectors.toList());
 	}
+	/** Returns a collection containing all settings from the GENERAL category. */
+	public Collection<Setting<?>> getSettingsGeneral()
+		{ return getSettings(Configuration.CATEGORY_GENERAL); }
+	
+	/** Returns a list of all root categories (not including GENERAL). */
+	public List<String> getCategories()
+		{ return Collections.unmodifiableList(_categories); }
 	
 	
 	// Loading / saving / initializing
 	
-	@Override
 	public void load() {
 		// By default, Configuration calls load when constructed.
 		// At that time, members of this class are not yet initialized, so
 		// instead we call load manually afterwards from the main mod class.
 		if (_settings == null) return;
-		super.load();
+		_config.load();
 		
 		// Update config settings from old versions.
-		if (getCategory("backpack").containsKey("rows")) {
-			int rows = get("backpack", "rows", 4).getInt();
-			get("backpack", "size", "").set(new BackpackSize(9, rows).toString());
-			getCategory("backpack").remove("rows");
+		if (_config.getCategory("backpack").containsKey("rows")) {
+			int rows = _config.get("backpack", "rows", 4).getInt();
+			_config.get("backpack", "size", "").set(new BackpackSize(9, rows).toString());
+			_config.getCategory("backpack").remove("rows");
 		}
 		
-		getSettings().forEach(setting -> setting.loadFromConfiguration(this));
+		getSettings().forEach(setting -> setting.loadFromConfiguration(_config));
 	}
 	
-	@Override
 	public void save() {
 		// Our settings are very deliberately sorted, so group our settings by
 		// category and set the property order to how we have ordered the fields.
@@ -176,16 +187,16 @@ public class BackpacksConfig extends Configuration {
 			String category = entry.getKey();
 			if (category.equals(Configuration.CATEGORY_GENERAL)) continue;
 			List<String> order = entry.getValue().stream().map(Setting::getName).collect(Collectors.toList());
-			setCategoryPropertyOrder(category, order);
+			_config.setCategoryPropertyOrder(category, order);
 		}
 		// Unfortunately ordering is not possible for categories in the config file itself.
 		
 		// Remove old config properties.
-		getCategory(Configuration.CATEGORY_GENERAL).remove("enableHelpTooltips");
+		_config.getCategory(Configuration.CATEGORY_GENERAL).remove("enableHelpTooltips");
 		
-		getSettings().forEach(setting -> setting.saveToConfiguration(this));
+		getSettings().forEach(setting -> setting.saveToConfiguration(_config));
 		
-		super.save();
+		_config.save();
 	}
 	
 	/** Called once after content has been initialized to call setting update methods. */
