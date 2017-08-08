@@ -116,18 +116,21 @@ public class GuiScrollable extends GuiContainer {
 	}
 	
 	@Override
-	public int getChildPos(GuiElementBase element, Direction direction) {
+	public int getChildPos(GuiElementBase element, Direction direction)
+		{ return getChildPos(element, direction, true); }
+	protected int getChildPos(GuiElementBase element, Direction direction, boolean scroll) {
 		Alignment align = element.getAlign(direction);
+		int scrollAmount = (scroll ? getScroll(direction) : 0);
 		return (align instanceof ContentMax)
 				? Math.min(getSize(direction) - element.getSize(direction),
 				           getContentMax(direction) + ((ContentMax)align).margin)
 			: (align instanceof Alignment.Max)
 				? (align instanceof FixedMax ? getSize(direction)
-					: getContentSize(direction) - getScroll(direction) - getPaddingMax(direction))
+					: getContentSize(direction) - scrollAmount - getPaddingMax(direction))
 				- element.getSize(direction) - ((Alignment.Max)align).max
 			: (align instanceof IFixedAlign)
 				? super.getChildPos(element, direction) - getPaddingMin(direction)
-			: (super.getChildPos(element, direction) - getScroll(direction));
+			: (super.getChildPos(element, direction) - scrollAmount);
 	}
 	
 	@Override
@@ -155,9 +158,10 @@ public class GuiScrollable extends GuiContainer {
 			else if (align instanceof Alignment.Center) {
 				int size = child.getSize(direction);
 				max = Math.max(max, size);
-				contentMax(direction, getChildPos(child, direction) + size);
+				contentMax(direction, getChildPos(child, direction, false) + size);
 			} else if (!(align instanceof Alignment.Both)) {
-				int maxPos = getChildPos(child, direction) - getPaddingMin(direction) + child.getSize(direction);
+				int maxPos = getChildPos(child, direction, false)
+					- getPaddingMin(direction) + child.getSize(direction);
 				max = Math.max(max, maxPos);
 				contentMax(direction, maxPos);
 			}
@@ -165,25 +169,23 @@ public class GuiScrollable extends GuiContainer {
 		max += extra + getPadding(direction);
 		if (direction == Direction.HORIZONTAL)
 			_contentWidth = max; else _contentHeight = max;
+		if (getScroll(direction) > getMaxScroll(direction))
+			setScroll(direction, getMaxScroll(direction));
 	}
 	
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
 		if (!isVisible()) return;
 		
-		int globalX = 0;
-		int globalY = 0;
-		for (GuiContainer element = this; element.getParent() != null; element = element.getParent()) {
-			globalX += element.getParent().getChildX(element);
-			globalY += element.getParent().getChildY(element);
-		}
-		
+		// TODO: Generalize this into GuiContext and allow nested scissors?
+		ElementInfo info = ElementInfo.getElementHierarchy(this).getFirst();
 		int scale = new ScaledResolution(getMC()).getScaleFactor();
-		GL11.glScissor(globalX * scale, getMC().displayHeight - (globalY + getHeight()) * scale,
+		GL11.glScissor(info.globalX * scale, getMC().displayHeight - (info.globalY + getHeight()) * scale,
 		               getWidth() * scale, getHeight() * scale);
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		
-		drawBackground(globalX + getScrollX(), globalY + getScrollY(), mouseX, mouseY, partialTicks);
+		drawBackground(info.globalX + getScrollX(), info.globalY + getScrollY(),
+		               mouseX, mouseY, partialTicks);
 		
 		// Skip drawing the scrollbars.
 		foreachChildMousePos(mouseX, mouseY, (child, x, y, mx, my) -> {
