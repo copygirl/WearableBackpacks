@@ -68,6 +68,18 @@ public class BackpacksConfig extends Configuration {
 		
 	}
 	
+	// ==[ SPAWN ]==
+	
+	@SideOnly(Side.CLIENT)
+	public SpawnCategory spawn;
+	@SideOnly(Side.CLIENT)
+	public class SpawnCategory {
+		
+		public final Setting<Boolean> enabled = new SettingBoolean(true)
+			.setComment("Controls whether mobs can randomly spawn with backpacks.");
+		
+	}
+	
 	// ==[ COSMETIC ]==
 	
 	@SideOnly(Side.CLIENT)

@@ -99,6 +99,7 @@ public class ProxyCommon {
 	
 	@SubscribeEvent
 	public void onSpecialSpawn(SpecialSpawn event) {
+		if (!WearableBackpacks.CONFIG.spawn.enabled.get()) return;
 		// When a mob spawns naturally, see if it has a chance to spawn with a backpack.
 		EntityLivingBase entity = event.getEntityLiving();
 		Map<Item, Double> spawnEntry = BackpackRegistry.entities.get(entity.getClass());
