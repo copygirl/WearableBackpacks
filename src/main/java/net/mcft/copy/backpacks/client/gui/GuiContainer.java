@@ -1,6 +1,7 @@
 package net.mcft.copy.backpacks.client.gui;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -135,6 +136,10 @@ public class GuiContainer extends GuiElementBase {
 		element.setParent(null);
 		onChildRemoved(element);
 	}
+	
+	/** Returns the child elements in this container. */
+	public List<GuiElementBase> getChildren()
+		{ return Collections.unmodifiableList(children); }
 	
 	
 	@Override
