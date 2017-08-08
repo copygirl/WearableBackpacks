@@ -27,6 +27,9 @@ public class EntryCategory extends BaseEntry {
 		childScreen = new BackpacksConfigScreen(owningScreen, this);
 	}
 	
+	@Override
+	protected boolean hasLabel() { return false; }
+	
 	public String getLanguageKey()
 		{ return "config." + WearableBackpacks.MOD_ID + ".category." + category; }
 	private List<String> getCategoryTooltip() {

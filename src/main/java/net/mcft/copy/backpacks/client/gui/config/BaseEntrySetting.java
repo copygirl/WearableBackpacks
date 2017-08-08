@@ -19,23 +19,30 @@ public abstract class BaseEntrySetting<T> extends BaseEntry {
 	
 	private final T _previousValue;
 	private final T _defaultValue;
-	private Optional<T> value;
+	private Optional<T> _value;
 	
 	public BaseEntrySetting(BackpacksConfigScreen owningScreen, Setting<T> setting, GuiElementBase control) {
-		super(owningScreen, getLanguageKey(setting), control);
+		super(owningScreen, control);
 		this.setting = setting;
 		this.setting.setEntry(this);
+		
 		_previousValue = setting.get();
 		_defaultValue  = setting.getDefault();
-		value = Optional.of(_previousValue);
+		_value = Optional.of(_previousValue);
+		
+		label.setText(I18n.format(getLanguageKey()));
 		label.setTooltip(getSettingTooltip());
+		
 		onChanged();
 	}
 	
-	public static String getLanguageKey(Setting<?> setting)
+	@Override
+	protected boolean hasLabel() { return true; }
+	
+	public String getLanguageKey()
 		{ return "config." + WearableBackpacks.MOD_ID + "." + setting.getFullName(); }
 	private List<String> getSettingTooltip() {
-		String langKey = getLanguageKey(setting);
+		String langKey = getLanguageKey();
 		String def = I18n.format("fml.configgui.tooltip.default", setting.getDefault());
 		String warn = setting.requiresMinecraftRestart() ? "fml.configgui.gameRestartTitle" : null;
 		return formatTooltip(langKey, langKey + ".tooltip", def, warn);
@@ -63,12 +70,12 @@ public abstract class BaseEntrySetting<T> extends BaseEntry {
 	}
 	
 	
-	public Optional<T> getValue() { return value; }
+	public Optional<T> getValue() { return _value; }
 	
 	public void setValue(T value) { setValue(Optional.of(value)); }
 	public void setValue(Optional<T> value) {
-		if (Objects.equals(value, this.value)) return;
-		this.value = value;
+		if (Objects.equals(value, _value)) return;
+		_value = value;
 		onChanged();
 	}
 	
@@ -76,11 +83,11 @@ public abstract class BaseEntrySetting<T> extends BaseEntry {
 	public boolean isEnabled() { return (super.isEnabled() && setting.isEnabledConfig()); }
 	
 	@Override
-	public boolean isChanged() { return !value.equals(Optional.of(_previousValue)); }
+	public boolean isChanged() { return !_value.equals(Optional.of(_previousValue)); }
 	@Override
-	public boolean isDefault() { return value.equals(Optional.of(_defaultValue)); }
+	public boolean isDefault() { return _value.equals(Optional.of(_defaultValue)); }
 	@Override
-	public boolean isValid() { return value.isPresent(); }
+	public boolean isValid() { return _value.isPresent(); }
 	
 	@Override
 	public void undoChanges() { setValue(_previousValue); }

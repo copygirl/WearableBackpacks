@@ -26,24 +26,22 @@ public abstract class BaseEntry extends GuiLayout {
 	
 	protected final BackpacksConfigScreen owningScreen;
 	
-	public final String labelText;
 	public final GuiLabel label;
 	public final GuiElementBase control;
 	public final GuiButton buttonUndo;
 	public final GuiButton buttonReset;
 	
-	public BaseEntry(BackpacksConfigScreen owningScreen, GuiElementBase control)
-		{ this(owningScreen, null, control); }
-	public BaseEntry(BackpacksConfigScreen owningScreen, String labelText, GuiElementBase control) {
+	private String _labelText = null;
+	
+	public BaseEntry(BackpacksConfigScreen owningScreen, GuiElementBase control) {
 		super(Direction.HORIZONTAL);
 		this.owningScreen = owningScreen;
-		this.labelText = (labelText != null) ? I18n.format(labelText) : null;
 		this.control = control;
 		control.setHeight(DEFAULT_HEIGHT);
 		setFillHorizontal();
 		
-		if (labelText != null) {
-			label = new GuiLabel(this.labelText);
+		if (hasLabel()) {
+			label = new GuiLabel("");
 			label.setCenteredVertical();
 			label.setShadowDisabled();
 			
@@ -68,9 +66,9 @@ public abstract class BaseEntry extends GuiLayout {
 		addFixed(buttonReset);
 	}
 	
-	public boolean hasLabel() { return (label != null); }
-	public int getLabelWidth() { return (hasLabel() ? label.getWidth() : 0); }
-	public void setLabelWidth(int value) { if (hasLabel()) label.setWidth(value); }
+	protected abstract boolean hasLabel();
+	public int getLabelWidth() { return ((label != null) ? label.getWidth() : 0); }
+	public void setLabelWidth(int value) { if (label != null) label.setWidth(value); }
 	
 	protected String getFormatting() {
 		return (!isEnabled() ? TextFormatting.DARK_GRAY
@@ -113,7 +111,10 @@ public abstract class BaseEntry extends GuiLayout {
 	
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
-		if (label != null) label.setText(getFormatting() + labelText);
+		if (label != null) {
+			if (_labelText == null) _labelText = label.getText();
+			label.setText(getFormatting() + _labelText);
+		}
 		buttonUndo.setEnabled(isChanged());
 		buttonReset.setEnabled(!isDefault());
 		
