@@ -5,7 +5,9 @@ import java.util.List;
 import net.minecraft.client.resources.I18n;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
+import net.mcft.copy.backpacks.client.gui.GuiContainer;
 import net.mcft.copy.backpacks.client.gui.control.GuiButton;
+import net.mcft.copy.backpacks.client.gui.control.GuiLabel;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
 public class EntryCategory extends BaseEntry {
@@ -16,19 +18,19 @@ public class EntryCategory extends BaseEntry {
 	public final BackpacksConfigScreen childScreen;
 	
 	public EntryCategory(BackpacksConfigScreen owningScreen, String category) {
-		super(owningScreen, new GuiButton(BUTTON_WIDTH));
 		this.category = category;
 		
-		GuiButton button = (GuiButton)control;
+		GuiButton button = new GuiButton(BUTTON_WIDTH);
 		button.setText(I18n.format(getLanguageKey()));
 		button.setAction(() -> onButtonPressed());
 		button.setTooltip(getCategoryTooltip());
 		
+		setSpacing(0, 6, 4);
+		addWeighted(new GuiContainer()); // Filler
+		addFixed(button);
+		
 		childScreen = new BackpacksConfigScreen(owningScreen, this);
 	}
-	
-	@Override
-	protected boolean hasLabel() { return false; }
 	
 	public String getLanguageKey()
 		{ return "config." + WearableBackpacks.MOD_ID + ".category." + category; }
@@ -36,6 +38,15 @@ public class EntryCategory extends BaseEntry {
 		String langKey = getLanguageKey();
 		return formatTooltip(langKey, langKey + ".tooltip", null, null);
 	}
+	
+	protected void onButtonPressed() {
+		display(childScreen);
+	}
+	
+	// IConfigEntry implementation
+	
+	@Override
+	public GuiLabel getLabel() { return null; }
 	
 	@Override
 	public boolean isChanged() { return childScreen.isChanged(); }
@@ -52,9 +63,5 @@ public class EntryCategory extends BaseEntry {
 	@Override
 	public ChangeRequiredAction applyChanges()
 		{ return childScreen.applyChanges(); }
-	
-	protected void onButtonPressed() {
-		display(childScreen);
-	}
 	
 }

@@ -5,7 +5,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.mcft.copy.backpacks.client.gui.config.BackpacksConfigScreen;
 import net.mcft.copy.backpacks.client.gui.config.EntrySlider;
 import net.mcft.copy.backpacks.client.gui.control.GuiSlider;
 import net.mcft.copy.backpacks.config.SettingInteger;
@@ -13,8 +12,8 @@ import net.mcft.copy.backpacks.config.SettingInteger;
 @SideOnly(Side.CLIENT)
 public class EntryArmor extends EntrySlider.RangeInteger {
 	
-	public EntryArmor(BackpacksConfigScreen owningScreen, SettingInteger setting)
-		{ super(owningScreen, setting, new Slider()); }
+	public EntryArmor(SettingInteger setting)
+		{ super(setting, new Slider()); }
 	
 	private static class Slider extends GuiSlider {
 		@Override

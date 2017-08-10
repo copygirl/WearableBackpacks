@@ -6,7 +6,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.client.gui.Direction;
-import net.mcft.copy.backpacks.client.gui.config.BackpacksConfigScreen;
 import net.mcft.copy.backpacks.client.gui.config.BaseEntrySetting;
 import net.mcft.copy.backpacks.client.gui.control.GuiSlider;
 import net.mcft.copy.backpacks.config.custom.SettingBackpackSize;
@@ -15,8 +14,8 @@ import net.mcft.copy.backpacks.misc.BackpackSize;
 @SideOnly(Side.CLIENT)
 public class EntryBackpackSize extends BaseEntrySetting<BackpackSize> {
 	
-	public EntryBackpackSize(BackpacksConfigScreen owningScreen, SettingBackpackSize setting) {
-		super(owningScreen, setting, new Control());
+	public EntryBackpackSize(SettingBackpackSize setting) {
+		super(setting, new Control());
 		getControl()._entry = this;
 		getControl().setChangedAction(this::onControlChanged);
 	}

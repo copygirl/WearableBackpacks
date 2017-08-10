@@ -8,10 +8,10 @@ import net.mcft.copy.backpacks.config.SettingSingleValue;
 
 public abstract class EntryField<T> extends BaseEntrySetting<T> {
 	
-	public EntryField(BackpacksConfigScreen owningScreen, Setting<T> setting)
-		{ this(owningScreen, setting, new GuiField()); }
-	public EntryField(BackpacksConfigScreen owningScreen, Setting<T> setting, GuiField field) {
-		super(owningScreen, setting, field);
+	public EntryField(Setting<T> setting)
+		{ this(setting, new GuiField()); }
+	public EntryField(Setting<T> setting, GuiField field) {
+		super(setting, field);
 		field.setChangedAction(this::onFieldChanged);
 		field.setCharValidator(chr -> isCharValid(field.getText(), field.getCursorPosition(), chr));
 	}
@@ -37,8 +37,8 @@ public abstract class EntryField<T> extends BaseEntrySetting<T> {
 	
 	
 	public static class Number extends EntryField<Integer> {
-		public Number(BackpacksConfigScreen owningScreen, Setting<Integer> setting)
-			{ super(owningScreen, setting); }
+		public Number(Setting<Integer> setting)
+			{ super(setting); }
 		@Override
 		protected boolean isCharValid(String text, int cursorPosition, char chr) {
 			String validChars = "0123456789";
@@ -48,8 +48,8 @@ public abstract class EntryField<T> extends BaseEntrySetting<T> {
 	}
 	
 	public static class Decimal extends EntryField<Double> {
-		public Decimal(BackpacksConfigScreen owningScreen, Setting<Double> setting)
-			{ super(owningScreen, setting); }
+		public Decimal(Setting<Double> setting)
+			{ super(setting); }
 		@Override
 		protected boolean isCharValid(String text, int cursorPosition, char chr) {
 			String validChars = "0123456789";

@@ -7,10 +7,10 @@ import net.mcft.copy.backpacks.config.Setting;
 
 public abstract class EntryButton<T> extends BaseEntrySetting<T> {
 	
-	public EntryButton(BackpacksConfigScreen owningScreen, Setting<T> setting)
-		{ this(owningScreen, setting, new GuiButton()); }
-	public EntryButton(BackpacksConfigScreen owningScreen, Setting<T> setting, GuiButton button) {
-		super(owningScreen, setting, button);
+	public EntryButton(Setting<T> setting)
+		{ this(setting, new GuiButton()); }
+	public EntryButton(Setting<T> setting, GuiButton button) {
+		super(setting, button);
 		button.setAction(this::onButtonPressed);
 	}
 	
@@ -24,8 +24,8 @@ public abstract class EntryButton<T> extends BaseEntrySetting<T> {
 	
 	
 	public static class Switch extends EntryButton<Boolean> {
-		public Switch(BackpacksConfigScreen owningScreen, Setting<Boolean> setting)
-			{ super(owningScreen, setting); }
+		public Switch(Setting<Boolean> setting)
+			{ super(setting); }
 		@Override
 		protected void onChanged() {
 			super.onChanged();

@@ -1,5 +1,6 @@
 package net.mcft.copy.backpacks.client.gui.config;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import net.minecraft.client.gui.GuiScreen;
@@ -100,16 +101,16 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 	}
 	
 	/** Returns whether any of this screen's entries were changed from their previous values. */
-	public boolean isChanged() { return entryList.getEntries().anyMatch(BaseEntry::isChanged); }
+	public boolean isChanged() { return entryList.getEntries().anyMatch(IConfigEntry::isChanged); }
 	/** Returns whether all of this screen's entries are equal to their default values. */
-	public boolean isDefault() { return entryList.getEntries().allMatch(BaseEntry::isDefault); }
+	public boolean isDefault() { return entryList.getEntries().allMatch(IConfigEntry::isDefault); }
 	/** Returns whether all of this screen's entries represent a valid value. */
-	public boolean isValid() { return entryList.getEntries().allMatch(BaseEntry::isValid); }
+	public boolean isValid() { return entryList.getEntries().allMatch(IConfigEntry::isValid); }
 	
 	/** Sets all of this screen's entries back to their previous values. */
-	public void undoChanges() { entryList.getEntries().forEach(BaseEntry::undoChanges); }
+	public void undoChanges() { entryList.getEntries().forEach(IConfigEntry::undoChanges); }
 	/** Sets all of this screen's entries to their default values. */
-	public void setToDefault() { entryList.getEntries().forEach(BaseEntry::setToDefault); }
+	public void setToDefault() { entryList.getEntries().forEach(IConfigEntry::setToDefault); }
 	
 	/** Applies changes made to this screen's entries.
 	 *  Called when clicking "Done" on the main config screen. */
@@ -184,16 +185,21 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 			super.updateChildSizes(direction);
 			
 			maxLabelWidth = getEntries()
-				.mapToInt(e -> e.getLabelWidth())
+				.map(e -> e.getLabel())
+				.filter(Objects::nonNull)
+				.mapToInt(GuiLabel::getWidth)
 				.max().orElse(0);
 			
-			getEntries().forEach(e -> e.setLabelWidth(maxLabelWidth));
+			getEntries()
+				.map(e -> e.getLabel())
+				.filter(Objects::nonNull)
+				.forEach(l -> l.setWidth(maxLabelWidth));
 		}
 		
 		public Stream<GuiElementBase> getElements() { return children.stream(); }
 		
-		public Stream<BaseEntry> getEntries() { return getElements()
-			.filter(BaseEntry.class::isInstance).map(BaseEntry.class::cast); }
+		public Stream<IConfigEntry> getEntries() { return getElements()
+			.filter(IConfigEntry.class::isInstance).map(IConfigEntry.class::cast); }
 		
 	}
 	

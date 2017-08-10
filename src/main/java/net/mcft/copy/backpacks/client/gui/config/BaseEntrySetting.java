@@ -7,37 +7,51 @@ import java.util.Objects;
 import java.util.Optional;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TextFormatting;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.gui.GuiElementBase;
+import net.mcft.copy.backpacks.client.gui.control.GuiLabel;
 import net.mcft.copy.backpacks.config.Setting;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
 public abstract class BaseEntrySetting<T> extends BaseEntry {
 	
 	public final Setting<T> setting;
+	protected final GuiElementBase control;
 	
 	private final T _previousValue;
 	private final T _defaultValue;
 	private Optional<T> _value;
 	
-	public BaseEntrySetting(BackpacksConfigScreen owningScreen, Setting<T> setting, GuiElementBase control) {
-		super(owningScreen, control);
+	private final String _labelText;
+	private final GuiLabel _label;
+	
+	public BaseEntrySetting(Setting<T> setting, GuiElementBase control) {
 		this.setting = setting;
 		this.setting.setEntry(this);
+		this.control = control;
 		
 		_previousValue = setting.get();
 		_defaultValue  = setting.getDefault();
 		_value = Optional.of(_previousValue);
 		
-		label.setText(I18n.format(getLanguageKey()));
-		label.setTooltip(getSettingTooltip());
+		_labelText = I18n.format(getLanguageKey());
+		_label = new GuiLabel(_labelText);
+		_label.setCenteredVertical();
+		_label.setShadowDisabled();
+		_label.setTooltip(getSettingTooltip());
+		
+		control.setHeight(DEFAULT_HEIGHT);
+		
+		setSpacing(8, 6, 4);
+		addFixed(_label);
+		addWeighted(control);
+		addFixed(buttonUndo);
+		addFixed(buttonReset);
 		
 		onChanged();
 	}
-	
-	@Override
-	protected boolean hasLabel() { return true; }
 	
 	public String getLanguageKey()
 		{ return "config." + WearableBackpacks.MOD_ID + "." + setting.getFullName(); }
@@ -54,19 +68,22 @@ public abstract class BaseEntrySetting<T> extends BaseEntry {
 		if (entryClassName == null) throw new RuntimeException(
 			"Setting '" + setting.getFullName() + "' has no entry class defined");
 		try {
-			// Find a constructor with exactly two parameters:
-			// - First one must be of type BackpacksConfigScreen.
-			// - Second one must be of type Setting, compatible with the specified setting.
 			Constructor<?> constructor = Arrays.stream(Class.forName(entryClassName).getConstructors())
-				.filter(c -> (c.getParameterCount() == 2) &&
-				             c.getParameterTypes()[0].equals(BackpacksConfigScreen.class) &&
-				             c.getParameterTypes()[1].isAssignableFrom(setting.getClass()))
+				.filter(c -> (c.getParameterCount() == 1) && c.getParameterTypes()[0].isAssignableFrom(setting.getClass()))
 				.findFirst().orElseThrow(() -> new Exception("No compatible constructor found"));
 			// Create and return a new instance of this entry class.
-			return (BaseEntrySetting<T>)constructor.newInstance(owningScreen, setting);
+			return (BaseEntrySetting<T>)constructor.newInstance(setting);
 		} catch (Exception ex) { throw new RuntimeException(
 			"Exception while instanciating setting entry for '" +
 				setting.getFullName() + "' (entry class '" + entryClassName + "')", ex); }
+	}
+	
+	protected String getFormatting() {
+		return (!isEnabled() ? TextFormatting.DARK_GRAY
+		      : !isValid()   ? TextFormatting.RED
+		      : isChanged()  ? TextFormatting.WHITE
+		                     : TextFormatting.GRAY).toString()
+			+ (isChanged() ? TextFormatting.ITALIC.toString() : "");
 	}
 	
 	
@@ -79,8 +96,22 @@ public abstract class BaseEntrySetting<T> extends BaseEntry {
 		onChanged();
 	}
 	
+	/** Called when this entry's value changes, updating its control's state. */
+	protected void onChanged() {  }
+	
 	@Override
 	public boolean isEnabled() { return (super.isEnabled() && setting.isEnabledConfig()); }
+	
+	@Override
+	public void draw(int mouseX, int mouseY, float partialTicks) {
+		_label.setText(getFormatting() + _labelText);
+		super.draw(mouseX, mouseY, partialTicks);
+	}
+	
+	// IConfigEntry implementation
+	
+	@Override
+	public GuiLabel getLabel() { return _label; }
 	
 	@Override
 	public boolean isChanged() { return !_value.equals(Optional.of(_previousValue)); }
