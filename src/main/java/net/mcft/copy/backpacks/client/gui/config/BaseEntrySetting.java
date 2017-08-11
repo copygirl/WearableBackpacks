@@ -1,7 +1,5 @@
 package net.mcft.copy.backpacks.client.gui.config;
 
-import java.lang.reflect.Constructor;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -60,22 +58,6 @@ public abstract class BaseEntrySetting<T> extends BaseEntry {
 		String def = I18n.format("fml.configgui.tooltip.default", setting.getDefault());
 		String warn = setting.requiresMinecraftRestart() ? "fml.configgui.gameRestartTitle" : null;
 		return formatTooltip(langKey, langKey + ".tooltip", def, warn);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static <T> BaseEntrySetting<T> Create(BackpacksConfigScreen owningScreen, Setting<T> setting) {
-		String entryClassName = setting.getConfigEntryClass();
-		if (entryClassName == null) throw new RuntimeException(
-			"Setting '" + setting.getFullName() + "' has no entry class defined");
-		try {
-			Constructor<?> constructor = Arrays.stream(Class.forName(entryClassName).getConstructors())
-				.filter(c -> (c.getParameterCount() == 1) && c.getParameterTypes()[0].isAssignableFrom(setting.getClass()))
-				.findFirst().orElseThrow(() -> new Exception("No compatible constructor found"));
-			// Create and return a new instance of this entry class.
-			return (BaseEntrySetting<T>)constructor.newInstance(setting);
-		} catch (Exception ex) { throw new RuntimeException(
-			"Exception while instanciating setting entry for '" +
-				setting.getFullName() + "' (entry class '" + entryClassName + "')", ex); }
 	}
 	
 	protected String getFormatting() {

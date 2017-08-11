@@ -1,5 +1,7 @@
 package net.mcft.copy.backpacks.client.gui.config;
 
+import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -35,7 +37,7 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 		
 		// Add all settings from the GENERAL category to the entry list.
 		for (Setting<?> setting : WearableBackpacks.CONFIG.getSettingsGeneral())
-			addEntry(BaseEntrySetting.Create(this, setting));
+			addEntry(CreateEntryFromSetting(setting));
 		
 		// After adding all settings from the GENERAL category, add its sub-categories.
 		for (String cat : WearableBackpacks.CONFIG.getCategories())
@@ -48,7 +50,7 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 		
 		// Add all settings for this category to the entry list.
 		for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings(category.category))
-			addEntry(BaseEntrySetting.Create(this, setting));
+			addEntry(CreateEntryFromSetting(setting));
 	}
 	
 	public BackpacksConfigScreen(GuiScreen parentScreen, String title) {
@@ -100,6 +102,31 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 		
 	}
 	
+	
+	public static <T> GuiElementBase CreateEntryFromSetting(Setting<T> setting) {
+		String entryClassName = setting.getConfigEntryClass();
+		if (entryClassName == null) throw new RuntimeException(
+			"Setting '" + setting.getFullName() + "' has no entry class defined");
+		try {
+			Class<?> entryClass = Class.forName(entryClassName);
+			if (!GuiElementBase.class.isAssignableFrom(entryClass))
+				throw new Exception("Not a subclass of GuiElementBase");
+			// Find a constructor that has exactly one parameter of a compatible setting type.
+			Constructor<?> constructor = Arrays.stream(entryClass.getConstructors())
+				.filter(c -> (c.getParameterCount() == 1) && c.getParameterTypes()[0].isAssignableFrom(setting.getClass()))
+				.findFirst().orElseThrow(() -> new Exception("No compatible constructor found"));
+			// Create and return a new instance of this entry class.
+			return (GuiElementBase)constructor.newInstance(setting);
+		} catch (Exception ex) { throw new RuntimeException(
+			"Exception while instanciating setting entry for '" +
+				setting.getFullName() + "' (entry class '" + entryClassName + "')", ex); }
+	}
+	
+	
+	/** Adds an entry to this screen's entry list. */
+	public void addEntry(GuiElementBase entry) { entryList.addFixed(entry); }
+	
+	
 	/** Returns whether any of this screen's entries were changed from their previous values. */
 	public boolean isChanged() { return entryList.getEntries().anyMatch(IConfigEntry::isChanged); }
 	/** Returns whether all of this screen's entries are equal to their default values. */
@@ -136,8 +163,6 @@ public class BackpacksConfigScreen extends GuiContainerScreen {
 		GuiElementBase.display(nextScreen);
 	}
 	
-	/** Adds an entry to this screen's entry list. */
-	public void addEntry(GuiElementBase entry) { entryList.addFixed(entry); }
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
