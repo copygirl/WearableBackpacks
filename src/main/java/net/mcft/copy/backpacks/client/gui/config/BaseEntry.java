@@ -21,11 +21,11 @@ public abstract class BaseEntry extends GuiLayout implements IConfigEntry {
 		super(Direction.HORIZONTAL);
 		setFillHorizontal();
 		
-		buttonUndo = new GuiButtonGlyph(DEFAULT_HEIGHT, DEFAULT_HEIGHT, GuiUtils.UNDO_CHAR, 1.0f);
+		buttonUndo = new GuiButtonGlyph(ENTRY_HEIGHT, ENTRY_HEIGHT, GuiUtils.UNDO_CHAR, 1.0f);
 		buttonUndo.setCenteredVertical();
 		buttonUndo.setAction(() -> undoChanges());
 		
-		buttonReset = new GuiButtonGlyph(DEFAULT_HEIGHT, DEFAULT_HEIGHT, GuiUtils.RESET_CHAR, 1.0f);
+		buttonReset = new GuiButtonGlyph(ENTRY_HEIGHT, ENTRY_HEIGHT, GuiUtils.RESET_CHAR, 1.0f);
 		buttonReset.setCenteredVertical();
 		buttonReset.setAction(() -> setToDefault());
 	}

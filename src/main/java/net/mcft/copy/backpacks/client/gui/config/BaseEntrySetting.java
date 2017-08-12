@@ -40,7 +40,7 @@ public abstract class BaseEntrySetting<T> extends BaseEntry {
 		_label.setShadowDisabled();
 		_label.setTooltip(getSettingTooltip());
 		
-		control.setHeight(DEFAULT_HEIGHT);
+		control.setHeight(ENTRY_HEIGHT);
 		
 		setSpacing(8, 6, 4);
 		addFixed(_label);
