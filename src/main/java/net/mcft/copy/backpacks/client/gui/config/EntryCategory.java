@@ -28,6 +28,8 @@ public class EntryCategory extends BaseEntry {
 		setSpacing(0, 6, 4);
 		addWeighted(new GuiContainer()); // Filler
 		addFixed(button);
+		addFixed(buttonUndo);
+		addFixed(buttonReset);
 		
 		childScreen = new BackpacksConfigScreen(owningScreen, this);
 	}
