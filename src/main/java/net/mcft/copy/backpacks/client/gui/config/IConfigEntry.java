@@ -1,9 +1,19 @@
 package net.mcft.copy.backpacks.client.gui.config;
 
+import net.minecraft.util.text.TextFormatting;
+
 import net.mcft.copy.backpacks.client.gui.control.GuiLabel;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
 public interface IConfigEntry {
+	
+	public static final int DEFAULT_HEIGHT = 18;
+	public static final int BACKGROUND_INVALID = 0x40D00000;
+	
+	public static final String TOOLTIP_TITLE   = TextFormatting.GREEN.toString();
+	public static final String TOOLTIP_TEXT    = TextFormatting.YELLOW.toString();
+	public static final String TOOLTIP_DEFAULT = TextFormatting.AQUA.toString();
+	public static final String TOOLTIP_WARN    = TextFormatting.RED.toString();
 	
 	/** Returns this entry's label, or null if none. */
 	public GuiLabel getLabel();

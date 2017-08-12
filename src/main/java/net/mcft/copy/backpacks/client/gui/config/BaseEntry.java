@@ -5,7 +5,6 @@ import java.util.List;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.fml.client.config.GuiUtils;
 
@@ -14,14 +13,6 @@ import net.mcft.copy.backpacks.client.gui.control.*;
 import net.mcft.copy.backpacks.misc.util.LangUtils;
 
 public abstract class BaseEntry extends GuiLayout implements IConfigEntry {
-	
-	public static final int DEFAULT_HEIGHT = 18;
-	public static final int BACKGROUND_INVALID = 0x40D00000;
-	
-	public static final String TOOLTIP_TITLE   = TextFormatting.GREEN.toString();
-	public static final String TOOLTIP_TEXT    = TextFormatting.YELLOW.toString();
-	public static final String TOOLTIP_DEFAULT = TextFormatting.AQUA.toString();
-	public static final String TOOLTIP_WARN    = TextFormatting.RED.toString();
 	
 	public final GuiButton buttonUndo;
 	public final GuiButton buttonReset;
