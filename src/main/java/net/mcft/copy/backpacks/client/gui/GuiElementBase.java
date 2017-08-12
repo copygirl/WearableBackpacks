@@ -208,6 +208,9 @@ public abstract class GuiElementBase {
 		if (isVisible() && isDragged()) onDragged(mouseX, mouseY, _dragStartX, _dragStartY);
 	}
 	
+	/** Called when the mouse button is being released
+	 *  while in this element or while it's being dragged.
+	 *  Mouse position is relative to the element's position. */
 	public void onMouseUp(int mouseButton, int mouseX, int mouseY) {  }
 	
 	/** Called when the mouse wheel is being scrolled over this element.
@@ -253,6 +256,7 @@ public abstract class GuiElementBase {
 		
 	public static Minecraft getMC() { return Minecraft.getMinecraft(); }
 	public static void display(GuiScreen screen) { getMC().displayGuiScreen(screen); }
+	public static GuiScreen getCurrentScreen() { return getMC().currentScreen; }
 	
 	public static FontRenderer getFontRenderer() { return getMC().fontRenderer; }
 	public static int getStringWidth(String text) { return getFontRenderer().getStringWidth(text); }
