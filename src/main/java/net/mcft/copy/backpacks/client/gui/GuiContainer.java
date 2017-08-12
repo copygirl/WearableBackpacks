@@ -114,19 +114,22 @@ public class GuiContainer extends GuiElementBase {
 	}
 	
 	
+	/** Adds all of the specified elements to this container. */
+	public void addAll(GuiElementBase... elements)
+		{ for (GuiElementBase element : elements) add(element); }
 	/** Adds the specified element to this container. */
-	public void add(GuiElementBase element) {
+	public void add(GuiElementBase element)
+		{ insert(children.size(), element); }
+	/** Inserts the specified element at the specified index in the children list of this container. */
+	protected void insert(int index, GuiElementBase element) {
 		if (element.getContext() != null)
 			throw new UnsupportedOperationException("The specified element already has a context set");
 		if (getContext() != null)
 			element.setContext(getContext());
 		element.setParent(this);
-		children.add(element);
+		children.add(index, element);
 		onChildAdded(element);
 	}
-	/** Adds all of the specified elements to this container. */
-	public void addAll(GuiElementBase... elements)
-		{ for (GuiElementBase element : elements) add(element); }
 	
 	/** Removes the specified element from this container. */
 	public void remove(GuiElementBase element) {

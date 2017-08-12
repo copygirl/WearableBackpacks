@@ -17,27 +17,43 @@ public class GuiLayout extends GuiContainer {
 	public void setSpacing(int... value) { _spacing = value; }
 	
 	
-	// Adding / removing elements
-	
-	public void addFixed(GuiElementBase element, int size)
-		{ element.setSize(direction, size); addFixed(element); }
-	public void addFixed(GuiElementBase element)
-		{ addInternal(element, new LayoutAlignment.Fixed()); }
+	// Adding / getting elements
 	
 	@Override
-	public void add(GuiElementBase element)
-		{ addWeighted(element); }
-	public void addWeighted(GuiElementBase element)
-		{ addWeighted(element, 1.0); }
-	public void addWeighted(GuiElementBase element, double weight)
-		{ addWeighted(element, weight, 0); }
-	public void addWeighted(GuiElementBase element, double weight, int minSize)
-		{ addInternal(element, new LayoutAlignment.Weighted(weight, minSize)); }
+	public void add(GuiElementBase element) { addWeighted(element); }
 	
-	private void addInternal(GuiElementBase element, LayoutAlignment alignment) {
+	public void addFixed(GuiElementBase element, int size)
+		{ insertFixed(children.size(), element, size); }
+	public void addFixed(GuiElementBase element)
+		{ insertFixed(children.size(), element); }
+	
+	public void addWeighted(GuiElementBase element)
+		{ insertWeighted(children.size(), element);  }
+	public void addWeighted(GuiElementBase element, double weight)
+		{ insertWeighted(children.size(), element, weight);  }
+	public void addWeighted(GuiElementBase element, double weight, int minSize)
+		{ insertWeighted(children.size(), element, weight, minSize);  }
+	
+	public void insertFixed(int index, GuiElementBase element, int size)
+		{ element.setSize(direction, size); insertFixed(index, element); }
+	public void insertFixed(int index, GuiElementBase element)
+		{ insert(index, element, new LayoutAlignment.Fixed()); }
+	
+	public void insertWeighted(int index, GuiElementBase element)
+		{ insertWeighted(index, element, 1.0); }
+	public void insertWeighted(int index, GuiElementBase element, double weight)
+		{ insertWeighted(index, element, weight, 0); }
+	public void insertWeighted(int index, GuiElementBase element, double weight, int minSize)
+		{ insert(index, element, new LayoutAlignment.Weighted(weight, minSize)); }
+	
+	protected void insert(int index, GuiElementBase element, LayoutAlignment alignment) {
 		element.setAlign(direction, alignment);
-		super.add(element);
+		super.insert(index, element);
 	}
+	
+	/** Gets the element at the specified index in this layout container. */
+	public GuiElementBase get(int index)
+		{ return children.get(index); }
 	
 	
 	@Override
