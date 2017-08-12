@@ -7,6 +7,8 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GlStateManager.DestFactor;
+import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.util.math.MathHelper;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -214,7 +216,12 @@ public class GuiScrollable extends GuiContainer {
 	}
 	
 	public void drawForeground(int mouseX, int mouseY, float partialTicks) {
+		GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(
+			SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA,
+			SourceFactor.ZERO, DestFactor.ONE);
 		GlStateManager.disableTexture2D();
+		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		if (directions.contains(Direction.VERTICAL)) {
 			drawColoredRectARGB(0, 0, getWidth(), GRADIENT_SIZE, Color.BLACK, Color.BLACK, Color.TRANSPARENT, Color.TRANSPARENT);
 			drawColoredRectARGB(0, getHeight() - GRADIENT_SIZE, getWidth(), GRADIENT_SIZE, Color.TRANSPARENT, Color.TRANSPARENT, Color.BLACK, Color.BLACK);
@@ -223,7 +230,10 @@ public class GuiScrollable extends GuiContainer {
 			drawColoredRectARGB(0, 0, GRADIENT_SIZE, getHeight(), Color.BLACK, Color.TRANSPARENT, Color.BLACK, Color.TRANSPARENT);
 			drawColoredRectARGB(getWidth() - GRADIENT_SIZE, 0, GRADIENT_SIZE, getHeight(), Color.BLACK, Color.TRANSPARENT, Color.BLACK, Color.TRANSPARENT);
 		}
+		GlStateManager.shadeModel(GL11.GL_FLAT);
 		GlStateManager.enableTexture2D();
+		GlStateManager.disableBlend();
+		//GuiConfig
 		
 		// Draw only the scrollbars.
 		foreachChildMousePos(mouseX, mouseY, (child, x, y, mx, my) -> {
