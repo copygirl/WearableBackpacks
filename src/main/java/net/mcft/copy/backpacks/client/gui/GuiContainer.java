@@ -132,6 +132,8 @@ public class GuiContainer extends GuiElementBase {
 	public void remove(GuiElementBase element) {
 		if (!children.remove(element))
 			throw new UnsupportedOperationException("The specified element is not a child of this container");
+		if (element.isPressed())
+			element.getContext().setPressed(null);
 		element.setContext(null);
 		element.setParent(null);
 		onChildRemoved(element);
