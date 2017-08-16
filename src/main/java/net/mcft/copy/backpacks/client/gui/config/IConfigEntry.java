@@ -2,7 +2,6 @@ package net.mcft.copy.backpacks.client.gui.config;
 
 import net.minecraft.util.text.TextFormatting;
 
-import net.mcft.copy.backpacks.client.gui.GuiLabel;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
 public interface IConfigEntry {
@@ -14,9 +13,6 @@ public interface IConfigEntry {
 	public static final String TOOLTIP_TEXT    = TextFormatting.YELLOW.toString();
 	public static final String TOOLTIP_DEFAULT = TextFormatting.AQUA.toString();
 	public static final String TOOLTIP_WARN    = TextFormatting.RED.toString();
-	
-	/** Returns this entry's label, or null if none. */
-	public GuiLabel getLabel();
 	
 	/** Returns whether this entry was changed from its previous value. */
 	public boolean isChanged();

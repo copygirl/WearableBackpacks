@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.fml.client.config.GuiUtils;
 
@@ -42,9 +43,6 @@ public abstract class BaseEntry extends GuiLayout implements IConfigEntry {
 	}
 	
 	@Override
-	public boolean isValid() { return true; }
-	
-	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
 		buttonUndo.setEnabled(isChanged());
 		buttonReset.setEnabled(!isDefault());
@@ -56,6 +54,36 @@ public abstract class BaseEntry extends GuiLayout implements IConfigEntry {
 		}
 		
 		super.draw(mouseX, mouseY, partialTicks);
+	}
+	
+	
+	public static abstract class Labelled extends BaseEntry {
+		
+		public final GuiLabel label;
+		private String _labelText = null;
+		
+		public Labelled() {
+			label = new GuiLabel("");
+			label.setCenteredVertical();
+			label.setShadowDisabled();
+		}
+		
+		protected String getFormatting() {
+			return (!isEnabled() ? TextFormatting.DARK_GRAY
+			      : !isValid()   ? TextFormatting.RED
+			      : isChanged()  ? TextFormatting.WHITE
+			                     : TextFormatting.GRAY).toString()
+				+ (isChanged() ? TextFormatting.ITALIC.toString() : "");
+		}
+		
+		@Override
+		public void draw(int mouseX, int mouseY, float partialTicks) {
+			if (_labelText == null) _labelText = label.getText();
+			label.setText(getFormatting() + _labelText);
+			
+			super.draw(mouseX, mouseY, partialTicks);
+		}
+		
 	}
 	
 }

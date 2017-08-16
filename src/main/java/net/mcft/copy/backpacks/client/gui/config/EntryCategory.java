@@ -47,9 +47,6 @@ public class EntryCategory extends BaseEntry {
 	// IConfigEntry implementation
 	
 	@Override
-	public GuiLabel getLabel() { return null; }
-	
-	@Override
 	public boolean isChanged() { return childScreen.isChanged(); }
 	@Override
 	public boolean isDefault() { return childScreen.isDefault(); }

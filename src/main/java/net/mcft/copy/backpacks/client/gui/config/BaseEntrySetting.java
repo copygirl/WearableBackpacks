@@ -5,15 +5,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.text.TextFormatting;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.gui.GuiElementBase;
-import net.mcft.copy.backpacks.client.gui.control.GuiLabel;
 import net.mcft.copy.backpacks.config.Setting;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
-public abstract class BaseEntrySetting<T> extends BaseEntry {
+public abstract class BaseEntrySetting<T> extends BaseEntry.Labelled {
 	
 	public final Setting<T> setting;
 	protected final GuiElementBase control;
@@ -21,9 +19,6 @@ public abstract class BaseEntrySetting<T> extends BaseEntry {
 	private final T _previousValue;
 	private final T _defaultValue;
 	private Optional<T> _value;
-	
-	private final String _labelText;
-	private final GuiLabel _label;
 	
 	public BaseEntrySetting(Setting<T> setting, GuiElementBase control) {
 		this.setting = setting;
@@ -34,16 +29,13 @@ public abstract class BaseEntrySetting<T> extends BaseEntry {
 		_defaultValue  = setting.getDefault();
 		_value = Optional.of(_previousValue);
 		
-		_labelText = I18n.format(getLanguageKey());
-		_label = new GuiLabel(_labelText);
-		_label.setCenteredVertical();
-		_label.setShadowDisabled();
-		_label.setTooltip(getSettingTooltip());
+		label.setText(I18n.format(getLanguageKey()));
+		label.setTooltip(getSettingTooltip());
 		
 		control.setHeight(ENTRY_HEIGHT);
 		
 		setSpacing(8, 6, 4);
-		addFixed(_label);
+		addFixed(label);
 		addWeighted(control);
 		addFixed(buttonUndo);
 		addFixed(buttonReset);
@@ -58,14 +50,6 @@ public abstract class BaseEntrySetting<T> extends BaseEntry {
 		String def = I18n.format("fml.configgui.tooltip.default", setting.getDefault());
 		String warn = setting.requiresMinecraftRestart() ? "fml.configgui.gameRestartTitle" : null;
 		return formatTooltip(langKey, langKey + ".tooltip", def, warn);
-	}
-	
-	protected String getFormatting() {
-		return (!isEnabled() ? TextFormatting.DARK_GRAY
-		      : !isValid()   ? TextFormatting.RED
-		      : isChanged()  ? TextFormatting.WHITE
-		                     : TextFormatting.GRAY).toString()
-			+ (isChanged() ? TextFormatting.ITALIC.toString() : "");
 	}
 	
 	
@@ -84,16 +68,7 @@ public abstract class BaseEntrySetting<T> extends BaseEntry {
 	@Override
 	public boolean isEnabled() { return (super.isEnabled() && setting.isEnabledConfig()); }
 	
-	@Override
-	public void draw(int mouseX, int mouseY, float partialTicks) {
-		_label.setText(getFormatting() + _labelText);
-		super.draw(mouseX, mouseY, partialTicks);
-	}
-	
 	// IConfigEntry implementation
-	
-	@Override
-	public GuiLabel getLabel() { return _label; }
 	
 	@Override
 	public boolean isChanged() { return !_value.equals(Optional.of(_previousValue)); }

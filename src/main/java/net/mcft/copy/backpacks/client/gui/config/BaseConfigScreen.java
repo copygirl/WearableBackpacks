@@ -155,22 +155,25 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 		protected void updateChildSizes(Direction direction) {
 			super.updateChildSizes(direction);
 			
-			maxLabelWidth = getEntries()
-				.map(e -> e.getLabel())
-				.filter(Objects::nonNull)
+			maxLabelWidth = getEntryLabels()
 				.mapToInt(GuiLabel::getWidth)
 				.max().orElse(0);
-			
-			getEntries()
-				.map(e -> e.getLabel())
-				.filter(Objects::nonNull)
-				.forEach(l -> l.setWidth(maxLabelWidth));
+			getEntryLabels().forEach(l -> l.setWidth(maxLabelWidth));
 		}
 		
 		public Stream<GuiElementBase> getElements() { return children.stream(); }
 		
-		public Stream<IConfigEntry> getEntries() { return getElements()
-			.filter(IConfigEntry.class::isInstance).map(IConfigEntry.class::cast); }
+		public Stream<IConfigEntry> getEntries() {
+			return getElements()
+				.filter(IConfigEntry.class::isInstance)
+				.map(IConfigEntry.class::cast);
+		}
+		public Stream<GuiLabel> getEntryLabels() {
+			return getElements()
+				.filter(BaseEntry.Labelled.class::isInstance)
+				.map(BaseEntry.Labelled.class::cast)
+				.map(entry -> entry.label);
+		}
 		
 	}
 	
