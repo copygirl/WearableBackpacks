@@ -1,4 +1,4 @@
-package net.mcft.copy.backpacks.client.gui.control;
+package net.mcft.copy.backpacks.client.gui;
 
 import java.util.List;
 
@@ -74,9 +74,8 @@ public class GuiLabel extends GuiElementBase {
 			FontRenderer fontRenderer = getFontRenderer();
 			int width  = fontRenderer.getStringWidth(_text);
 			int height = fontRenderer.getWordWrappedHeight(_text, Integer.MAX_VALUE);
-			// Don't call own setSize method. After all,
-			// we don't want _expands to be set to false.
-			super.setSize(width, height);
+			setSize(width, height);
+			_expands = true;
 		}
 	}
 	
@@ -96,8 +95,8 @@ public class GuiLabel extends GuiElementBase {
 	
 	
 	@Override
-	public void setSize(Direction direction, int value) {
-		super.setSize(direction, value);
+	public void onSizeChanged(Direction direction) {
+		super.onSizeChanged(direction);
 		_expands = false;
 	}
 	

@@ -2,7 +2,7 @@ package net.mcft.copy.backpacks.client.gui.config;
 
 import net.minecraft.util.text.TextFormatting;
 
-import net.mcft.copy.backpacks.client.gui.control.GuiLabel;
+import net.mcft.copy.backpacks.client.gui.GuiLabel;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
 public interface IConfigEntry {

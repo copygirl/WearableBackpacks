@@ -7,7 +7,6 @@ import net.minecraft.client.resources.I18n;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.gui.GuiContainer;
 import net.mcft.copy.backpacks.client.gui.control.GuiButton;
-import net.mcft.copy.backpacks.client.gui.control.GuiLabel;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
 public class EntryCategory extends BaseEntry {

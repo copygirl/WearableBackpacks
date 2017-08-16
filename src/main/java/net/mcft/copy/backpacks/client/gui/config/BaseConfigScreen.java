@@ -16,10 +16,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mcft.copy.backpacks.client.gui.Direction;
 import net.mcft.copy.backpacks.client.gui.GuiContainerScreen;
 import net.mcft.copy.backpacks.client.gui.GuiElementBase;
+import net.mcft.copy.backpacks.client.gui.GuiLabel;
 import net.mcft.copy.backpacks.client.gui.GuiLayout;
 import net.mcft.copy.backpacks.client.gui.GuiScrollable;
 import net.mcft.copy.backpacks.client.gui.control.GuiButton;
-import net.mcft.copy.backpacks.client.gui.control.GuiLabel;
 
 @SideOnly(Side.CLIENT)
 public abstract class BaseConfigScreen extends GuiContainerScreen {
