@@ -3,7 +3,6 @@ package net.mcft.copy.backpacks.client.gui.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 
 import net.minecraftforge.fml.client.config.GuiUtils;
@@ -51,9 +50,9 @@ public abstract class BaseEntry extends GuiLayout implements IConfigEntry {
 		buttonReset.setEnabled(!isDefault());
 		
 		if (!isValid()) {
-			GlStateManager.disableTexture2D();
+			enableBlendAlphaStuffs();
 			drawColoredRectARGB(-4, -1, getWidth() + 8, getHeight() + 2, BACKGROUND_INVALID);
-			GlStateManager.enableTexture2D();
+			disableBlendAlphaStuffs();
 		}
 		
 		super.draw(mouseX, mouseY, partialTicks);

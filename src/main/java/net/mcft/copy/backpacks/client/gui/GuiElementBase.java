@@ -11,8 +11,11 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.GlStateManager.DestFactor;
+import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -277,6 +280,19 @@ public abstract class GuiElementBase {
 		               (color & 0xFF) / 255.0f,
 		               (color >> 24 & 0xFF) / 255.0f); }
 	
+	public static void enableBlendAlphaStuffs() {
+		GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(
+			SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA,
+			SourceFactor.ZERO, DestFactor.ONE);
+		GlStateManager.disableTexture2D();
+		GlStateManager.shadeModel(GL11.GL_SMOOTH);
+	}
+	public static void disableBlendAlphaStuffs() {
+		GlStateManager.shadeModel(GL11.GL_FLAT);
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableBlend();
+	}
 	
 	public static void drawRect(int x, int y, int u, int v, int width, int height, int texSize)
 		{ drawRect(x, y, u, v, width, height, texSize, texSize); }
