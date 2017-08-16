@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -20,6 +21,8 @@ import net.mcft.copy.backpacks.client.gui.GuiLabel;
 import net.mcft.copy.backpacks.client.gui.GuiLayout;
 import net.mcft.copy.backpacks.client.gui.GuiScrollable;
 import net.mcft.copy.backpacks.client.gui.control.GuiButton;
+import net.mcft.copy.backpacks.client.gui.control.GuiButtonGlyph;
+import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
 @SideOnly(Side.CLIENT)
 public abstract class BaseConfigScreen extends GuiContainerScreen {
@@ -33,6 +36,8 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 			protected final EntryList listEntries;
 		protected final GuiLayout layoutButtons;
 			protected final GuiButton buttonDone;
+			protected final GuiButton buttonReset;
+			protected final GuiButton buttonUndo;
 	
 	public BaseConfigScreen(GuiScreen parentScreen, String... titleLines) {
 		this.parentScreen = parentScreen;
@@ -65,13 +70,17 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 			layoutButtons.setCenteredHorizontal();
 			layoutButtons.setPaddingVertical(3, 9);
 			layoutButtons.setSpacing(5);
-		
-				buttonDone = new GuiButton(I18n.format("gui.done"));
+			
+				buttonDone  = new GuiButton(I18n.format("gui.done"));
+				buttonUndo  = new GuiButtonGlyph(GuiUtils.UNDO_CHAR, I18n.format("fml.configgui.tooltip.undoChanges"));
+				buttonReset = new GuiButtonGlyph(GuiUtils.RESET_CHAR, I18n.format("fml.configgui.tooltip.resetToDefault"));
 				if (buttonDone.getWidth() < 100) buttonDone.setWidth(100);
-				buttonDone.setAction(this::doneClicked);
 				
-				layoutButtons.addFixed(buttonDone);
-
+				buttonDone.setAction(this::doneClicked);
+				buttonUndo.setAction(this::undoChanges);
+				buttonReset.setAction(this::setToDefault);
+			
+			
 			layoutMain.addFixed(layoutTitle);
 			layoutMain.addWeighted(scrollableContent);
 			layoutMain.addFixed(layoutButtons);
@@ -84,7 +93,28 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 	public void addEntry(GuiElementBase entry)
 		{ listEntries.addFixed(entry); }
 	
-	/** Called when the "Done" buttons is clicked. */
+	/** Returns whether any of this screen's entries were changed from their previous values. */
+	public boolean isChanged() { return listEntries.getEntries().anyMatch(IConfigEntry::isChanged); }
+	/** Returns whether all of this screen's entries are equal to their default values. */
+	public boolean isDefault() { return listEntries.getEntries().allMatch(IConfigEntry::isDefault); }
+	/** Returns whether all of this screen's entries represent a valid value. */
+	public boolean isValid() { return listEntries.getEntries().allMatch(IConfigEntry::isValid); }
+	
+	/** Sets all of this screen's entries back to their previous values. */
+	public void undoChanges() { listEntries.getEntries().forEach(IConfigEntry::undoChanges); }
+	/** Sets all of this screen's entries to their default values. */
+	public void setToDefault() { listEntries.getEntries().forEach(IConfigEntry::setToDefault); }
+	
+	/** Applies changes made to this screen's entries.
+	 *  Called when clicking "Done" on the main config screen. */
+	public ChangeRequiredAction applyChanges() {
+		return listEntries.getEntries()
+			.map(e -> e.applyChanges())
+			.max(ChangeRequiredAction::compareTo)
+			.orElse(ChangeRequiredAction.None);
+	}
+	
+	/** Called when the "Done" button is clicked. */
 	protected void doneClicked()
 		{ GuiElementBase.display(parentScreen); }
 	

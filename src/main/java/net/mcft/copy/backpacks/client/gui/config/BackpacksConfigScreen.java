@@ -8,7 +8,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextComponentString;
 
 import net.minecraftforge.fml.client.config.GuiMessageDialog;
-import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -23,8 +22,6 @@ import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 public class BackpacksConfigScreen extends BaseConfigScreen {
 	
 	private final GuiButton _buttonTest;
-	protected final GuiButton buttonReset;
-	protected final GuiButton buttonUndo;
 	
 	/** Creates a config GUI screen for Wearable Backpacks (and its GENERAL category). */
 	public BackpacksConfigScreen(GuiScreen parentScreen) {
@@ -58,13 +55,7 @@ public class BackpacksConfigScreen extends BaseConfigScreen {
 		container.add(_buttonTest);
 		
 		// Buttons
-		
-		buttonUndo = new GuiButtonGlyph(GuiUtils.UNDO_CHAR, I18n.format("fml.configgui.tooltip.undoChanges"));
-		buttonUndo.setAction(() -> undoChanges());
-		
-		buttonReset = new GuiButtonGlyph(GuiUtils.RESET_CHAR, I18n.format("fml.configgui.tooltip.resetToDefault"));
-		buttonReset.setAction(() -> setToDefault());
-		
+		layoutButtons.addFixed(buttonDone);
 		layoutButtons.addFixed(buttonUndo);
 		layoutButtons.addFixed(buttonReset);
 	}
@@ -89,27 +80,6 @@ public class BackpacksConfigScreen extends BaseConfigScreen {
 				setting.getFullName() + "' (entry class '" + entryClassName + "')", ex); }
 	}
 	
-	
-	/** Returns whether any of this screen's entries were changed from their previous values. */
-	public boolean isChanged() { return listEntries.getEntries().anyMatch(IConfigEntry::isChanged); }
-	/** Returns whether all of this screen's entries are equal to their default values. */
-	public boolean isDefault() { return listEntries.getEntries().allMatch(IConfigEntry::isDefault); }
-	/** Returns whether all of this screen's entries represent a valid value. */
-	public boolean isValid() { return listEntries.getEntries().allMatch(IConfigEntry::isValid); }
-	
-	/** Sets all of this screen's entries back to their previous values. */
-	public void undoChanges() { listEntries.getEntries().forEach(IConfigEntry::undoChanges); }
-	/** Sets all of this screen's entries to their default values. */
-	public void setToDefault() { listEntries.getEntries().forEach(IConfigEntry::setToDefault); }
-	
-	/** Applies changes made to this screen's entries.
-	 *  Called when clicking "Done" on the main config screen. */
-	public ChangeRequiredAction applyChanges() {
-		return listEntries.getEntries()
-			.map(e -> e.applyChanges())
-			.max(ChangeRequiredAction::compareTo)
-			.orElse(ChangeRequiredAction.None);
-	}
 	
 	@Override
 	protected void doneClicked() {
