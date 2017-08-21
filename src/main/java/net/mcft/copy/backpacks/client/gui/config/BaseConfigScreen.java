@@ -13,7 +13,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
+import net.mcft.copy.backpacks.client.gui.Alignment;
 import net.mcft.copy.backpacks.client.gui.Direction;
 import net.mcft.copy.backpacks.client.gui.GuiContainerScreen;
 import net.mcft.copy.backpacks.client.gui.GuiElementBase;
@@ -134,8 +134,11 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 		protected void updateChildSizes(Direction direction) {
 			super.updateChildSizes(direction);
 			// TODO: This could be simplified if the Alignment class contained logic for position / sizing of elements.
-			if ((direction == Direction.HORIZONTAL) && (entryList != null))
-				entryList.setWidth(entryList.maxLabelWidth + 8 + getWidth() / 2);
+			if ((direction == Direction.HORIZONTAL) && (entryList != null)) {
+				int minimumWidth = entryList.maxElementWidth;
+				int dynamicWidth = entryList.maxLabelWidth + 8 + getWidth() / 2;
+				entryList.setWidth(Math.max(minimumWidth, dynamicWidth));
+			}
 		}
 		
 	}
@@ -143,6 +146,7 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 	public static class EntryList extends GuiLayout {
 		
 		public int maxLabelWidth;
+		public int maxElementWidth;
 		
 		public EntryList() {
 			super(Direction.VERTICAL);
@@ -159,6 +163,11 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 				.mapToInt(GuiLabel::getWidth)
 				.max().orElse(0);
 			getEntryLabels().forEach(l -> l.setWidth(maxLabelWidth));
+			
+			maxElementWidth = getElements()
+				.filter(e -> !(e.getAlign(Direction.HORIZONTAL) instanceof Alignment.Both))
+				.mapToInt(e -> e.getWidth())
+				.max().orElse(0);
 		}
 		
 		public Stream<GuiElementBase> getElements() { return children.stream(); }
