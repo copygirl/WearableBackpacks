@@ -11,7 +11,6 @@ import net.minecraft.util.math.MathHelper;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import net.mcft.copy.backpacks.client.gui.control.GuiSlider;
 
 @SideOnly(Side.CLIENT)
@@ -27,7 +26,7 @@ public class GuiScrollable extends GuiContainer {
 	private int _scrollStartX, _scrollStartY;
 	
 	private int _contentWidth = 0, _contentHeight = 0;
-	private int _contentRight = 0, _contentBottom = 0;
+	private int _contentWidthExtra = 0, _contentHeightExtra = 0;
 	
 	public GuiScrollable()
 		{ this(EnumSet.allOf(Direction.class)); }
@@ -76,18 +75,16 @@ public class GuiScrollable extends GuiContainer {
 	public int getMaxScroll(Direction direction)
 		{ return Math.max(0, getContentSize(direction) - getSize(direction)); }
 	
-		
-	public int getContentSize(Direction direction)
-		{ return (direction == Direction.HORIZONTAL) ? _contentWidth : _contentHeight; }
 	
-	private int getContentMax(Direction direction)
-		{ return (direction == Direction.HORIZONTAL) ? _contentRight : _contentBottom; }
-	private void resetContentMax(Direction direction)
-		{ if (direction == Direction.HORIZONTAL) _contentRight = 0; else _contentBottom = 0; }
-	private void contentMax(Direction direction, int value) {
-		if (direction == Direction.HORIZONTAL)
-			_contentRight = Math.max(_contentRight, value);
-		else _contentBottom = Math.max(_contentBottom, value);
+	public int getContentSize(Direction direction)
+		{ return getContentSize(direction, false); }
+	public int getContentSize(Direction direction, boolean withoutPadding) {
+		int size = (direction == Direction.HORIZONTAL)
+			? _contentWidth : _contentHeight;
+		if (!withoutPadding)
+			size += (direction == Direction.HORIZONTAL)
+				? _contentWidthExtra : _contentHeightExtra;
+		return size;
 	}
 	
 	
@@ -123,7 +120,7 @@ public class GuiScrollable extends GuiContainer {
 		int scrollAmount = (scroll ? getScroll(direction) : 0);
 		return (align instanceof ContentMax)
 				? Math.min(getSize(direction) - element.getSize(direction),
-				           getContentMax(direction) + ((ContentMax)align).margin)
+				           getContentSize(direction, true) + ((ContentMax)align).margin)
 			: (align instanceof Alignment.Max)
 				? (align instanceof FixedMax ? getSize(direction)
 					: getContentSize(direction) - scrollAmount - getPaddingMax(direction))
@@ -148,27 +145,22 @@ public class GuiScrollable extends GuiContainer {
 	
 	@Override
 	protected void expandToFitChildren(Direction direction) {
-		int max = 0;
+		int max   = 0;
 		int extra = 0;
-		resetContentMax(direction);
 		for (GuiElementBase child : children) {
 			Alignment align = child.getAlign(direction);
 			if (align instanceof ContentMax)
 				extra = Math.max(extra, ((ContentMax)align).margin + child.getSize(direction));
-			else if (align instanceof Alignment.Center) {
-				int size = child.getSize(direction);
-				max = Math.max(max, size);
-				contentMax(direction, getChildPos(child, direction, false) + size);
-			} else if (!(align instanceof Alignment.Both)) {
-				int maxPos = getChildPos(child, direction, false)
-					- getPaddingMin(direction) + child.getSize(direction);
-				max = Math.max(max, maxPos);
-				contentMax(direction, maxPos);
-			}
+			else if (!(align instanceof Alignment.Both))
+				max = Math.max(max, getChildPos(child, direction, false)
+					- getPaddingMin(direction) + child.getSize(direction));
 		}
-		max += extra + getPadding(direction);
 		if (direction == Direction.HORIZONTAL)
 			_contentWidth = max; else _contentHeight = max;
+		extra += getPadding(direction);
+		if (direction == Direction.HORIZONTAL)
+			_contentWidthExtra = extra; else _contentHeightExtra = extra;
+			
 		if (getScroll(direction) > getMaxScroll(direction))
 			setScroll(direction, getMaxScroll(direction));
 	}
