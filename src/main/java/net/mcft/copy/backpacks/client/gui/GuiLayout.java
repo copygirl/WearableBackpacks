@@ -28,11 +28,11 @@ public class GuiLayout extends GuiContainer {
 		{ insertFixed(children.size(), element); }
 	
 	public void addWeighted(GuiElementBase element)
-		{ insertWeighted(children.size(), element);  }
+		{ insertWeighted(children.size(), element); }
 	public void addWeighted(GuiElementBase element, double weight)
-		{ insertWeighted(children.size(), element, weight);  }
+		{ insertWeighted(children.size(), element, weight); }
 	public void addWeighted(GuiElementBase element, double weight, int minSize)
-		{ insertWeighted(children.size(), element, weight, minSize);  }
+		{ insertWeighted(children.size(), element, weight, minSize); }
 	
 	public void insertFixed(int index, GuiElementBase element, int size)
 		{ element.setSize(direction, size); insertFixed(index, element); }
@@ -47,6 +47,8 @@ public class GuiLayout extends GuiContainer {
 		{ insert(index, element, new LayoutAlignment.Weighted(weight, minSize)); }
 	
 	protected void insert(int index, GuiElementBase element, LayoutAlignment alignment) {
+		if (element.getContext() != null)
+			throw new UnsupportedOperationException("The specified element already has a context set");
 		element.setAlign(direction, alignment);
 		super.insert(index, element);
 	}
