@@ -294,6 +294,23 @@ public abstract class GuiElementBase {
 		GlStateManager.disableBlend();
 	}
 	
+	public static void drawRect(int x, int y, int width, int height) {
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder buffer = tessellator.getBuffer();
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+		buffer.pos(x        , y         , 0).endVertex();
+		buffer.pos(x        , y + height, 0).endVertex();
+		buffer.pos(x + width, y + height, 0).endVertex();
+		buffer.pos(x + width, y         , 0).endVertex();
+		tessellator.draw();
+	}
+	public static void drawOutline(int x, int y, int width, int height) {
+		drawRect(x,             y,              width, 1);
+		drawRect(x,             y + height - 1, width, 1);
+		drawRect(x,             y + 1,          1,     height - 2);
+		drawRect(x + width - 1, y + 1,          1,     height - 2);
+	}
+	
 	public static void drawRect(int x, int y, int u, int v, int width, int height, int texSize)
 		{ drawRect(x, y, u, v, width, height, texSize, texSize); }
 	public static void drawRect(int x, int y, int u, int v, int width, int height, int texWidth, int texHeight) {
