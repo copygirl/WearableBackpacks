@@ -35,6 +35,12 @@ public abstract class EntryField<T> extends BaseEntrySetting<T> {
 	protected boolean isCharValid(String text, int cursorPosition, char chr)
 		{ return true; }
 	
+	@Override
+	public void draw(int mouseX, int mouseY, float partialTicks) {
+		getField().setTextAndBorderColor(COLOR_TEXT_INVALID, !isValid());
+		super.draw(mouseX, mouseY, partialTicks);
+	}
+	
 	
 	public static class Number extends EntryField<Integer> {
 		public Number(Setting<Integer> setting)

@@ -49,7 +49,7 @@ public abstract class BaseEntry extends GuiLayout implements IConfigEntry {
 		
 		if (!isValid()) {
 			enableBlendAlphaStuffs();
-			drawColoredRectARGB(-4, -1, getWidth() + 8, getHeight() + 2, BACKGROUND_INVALID);
+			drawColoredRectARGB(-4, -1, getWidth() + 8, getHeight() + 2, COLOR_BACKGROUND_INVALID);
 			disableBlendAlphaStuffs();
 		}
 		
