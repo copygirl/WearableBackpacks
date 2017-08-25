@@ -17,7 +17,11 @@ public class GuiLayout extends GuiContainer {
 	public void setSpacing(int... value) { _spacing = value; }
 	
 	
-	// Adding / getting elements
+	// Getting / adding / inserting elements
+	
+	/** Gets the element at the specified index in this layout container. */
+	public GuiElementBase get(int index)
+	{ return children.get(index); }
 	
 	@Override
 	public void add(GuiElementBase element) { addWeighted(element); }
@@ -52,10 +56,6 @@ public class GuiLayout extends GuiContainer {
 		element.setAlign(direction, alignment);
 		super.insert(index, element);
 	}
-	
-	/** Gets the element at the specified index in this layout container. */
-	public GuiElementBase get(int index)
-		{ return children.get(index); }
 	
 	
 	@Override

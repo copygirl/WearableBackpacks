@@ -105,7 +105,7 @@ public class GuiContainer extends GuiElementBase {
 		}
 	}
 	
-	/** Called when a child element is added. */
+	/** Called when a child element is removed. */
 	public void onChildRemoved(GuiElementBase element) {
 		for (Direction direction : Direction.values()) {
 			updateChildSizes(direction);
@@ -141,6 +141,9 @@ public class GuiContainer extends GuiElementBase {
 		element.setParent(null);
 		onChildRemoved(element);
 	}
+	/** Removes all child elements from this container. */
+	public void clear()
+		{ while (!children.isEmpty()) remove(children.get(0)); }
 	
 	/** Returns the child elements in this container. */
 	public List<GuiElementBase> getChildren()
