@@ -21,7 +21,7 @@ public class GuiLayout extends GuiContainer {
 	
 	/** Gets the element at the specified index in this layout container. */
 	public GuiElementBase get(int index)
-	{ return children.get(index); }
+		{ return children.get(index); }
 	
 	@Override
 	public void add(GuiElementBase element) { addWeighted(element); }
@@ -82,7 +82,6 @@ public class GuiLayout extends GuiContainer {
 	
 	@Override
 	protected void updateChildSizes(Direction direction) {
-		if (children.isEmpty()) return;
 		if (direction != this.direction)
 			{ super.updateChildSizes(direction); return; }
 		

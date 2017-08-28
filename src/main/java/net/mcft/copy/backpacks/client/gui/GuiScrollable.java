@@ -11,6 +11,7 @@ import net.minecraft.util.math.MathHelper;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import net.mcft.copy.backpacks.client.gui.control.GuiSlider;
 
 @SideOnly(Side.CLIENT)

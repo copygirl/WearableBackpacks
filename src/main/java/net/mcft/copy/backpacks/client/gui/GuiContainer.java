@@ -16,6 +16,7 @@ public class GuiContainer extends GuiElementBase {
 	
 	private boolean _expandHorizontal = true, _expandVertical = true;
 	private int _padLeft, _padTop, _padRight, _padBottom;
+	private boolean _hadChild = false;
 	
 	
 	public GuiContainer() {  }
@@ -128,6 +129,7 @@ public class GuiContainer extends GuiElementBase {
 			element.setContext(getContext());
 		element.setParent(this);
 		children.add(index, element);
+		_hadChild = true;
 		onChildAdded(element);
 	}
 	
@@ -158,7 +160,7 @@ public class GuiContainer extends GuiElementBase {
 	
 	@Override
 	public void onSizeChanged(Direction direction) {
-		if (children.isEmpty()) setExpand(direction, false);
+		if (!_hadChild) setExpand(direction, false);
 		updateChildSizes(direction);
 		expandToFitChildren(direction);
 	}
