@@ -1,5 +1,6 @@
 package net.mcft.copy.backpacks.client.gui;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -126,10 +127,13 @@ public abstract class GuiElementBase {
 	
 	// Tooltips
 	
-	public boolean hasTooltip() { return (_tooltip != null) || (_tooltipFunc != null); }
+	public boolean hasTooltip() { return !getTooltip().isEmpty(); }
 	
-	public List<String> getTooltip()
-		{ return (_tooltipFunc != null) ? _tooltipFunc.get() : _tooltip; }
+	public List<String> getTooltip() {
+		List<String> tooltip = (_tooltipFunc != null) ? _tooltipFunc.get() : _tooltip;
+		if (tooltip == null) tooltip = Collections.emptyList();
+		return tooltip;
+	}
 	public int getTooltipDelay() { return _tooltipDelay; }
 	
 	public void setTooltip(List<String> value)
