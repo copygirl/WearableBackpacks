@@ -3,12 +3,15 @@ package net.mcft.copy.backpacks.client.gui.config;
 import java.util.List;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.gui.GuiContainer;
 import net.mcft.copy.backpacks.client.gui.control.GuiButton;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
+@SideOnly(Side.CLIENT)
 public class EntryCategory extends BaseEntry {
 	
 	public static final int BUTTON_WIDTH = 300;

@@ -4,11 +4,15 @@ import java.text.DecimalFormat;
 
 import org.apache.commons.lang3.StringUtils;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import net.mcft.copy.backpacks.client.gui.control.GuiSlider;
 import net.mcft.copy.backpacks.config.Setting;
 import net.mcft.copy.backpacks.config.SettingDouble;
 import net.mcft.copy.backpacks.config.SettingInteger;
 
+@SideOnly(Side.CLIENT)
 public abstract class EntrySlider<T> extends BaseEntrySetting<T> {
 	
 	public EntrySlider(Setting<T> setting)

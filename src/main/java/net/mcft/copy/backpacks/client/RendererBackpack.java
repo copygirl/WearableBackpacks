@@ -16,6 +16,9 @@ import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import net.mcft.copy.backpacks.ProxyClient;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
@@ -26,6 +29,7 @@ import net.mcft.copy.backpacks.misc.util.IntermodUtils;
 
 /** Contains methods and nested classes which handle rendering
     of backpacks as tile entity and layer on regular entities. */
+@SideOnly(Side.CLIENT)
 public final class RendererBackpack {
 	
 	private RendererBackpack() {  }

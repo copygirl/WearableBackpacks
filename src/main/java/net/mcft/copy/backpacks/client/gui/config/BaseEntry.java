@@ -7,11 +7,14 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.client.gui.*;
 import net.mcft.copy.backpacks.client.gui.control.*;
 import net.mcft.copy.backpacks.misc.util.LangUtils;
 
+@SideOnly(Side.CLIENT)
 public abstract class BaseEntry extends GuiLayout implements IConfigEntry {
 	
 	public final GuiButton buttonUndo;

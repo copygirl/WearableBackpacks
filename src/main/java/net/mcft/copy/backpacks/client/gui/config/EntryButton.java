@@ -1,10 +1,13 @@
 package net.mcft.copy.backpacks.client.gui.config;
 
 import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.client.gui.control.GuiButton;
 import net.mcft.copy.backpacks.config.Setting;
 
+@SideOnly(Side.CLIENT)
 public abstract class EntryButton<T> extends BaseEntrySetting<T> {
 	
 	public EntryButton(Setting<T> setting)

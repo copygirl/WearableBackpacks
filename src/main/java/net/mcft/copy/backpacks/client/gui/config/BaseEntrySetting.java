@@ -5,12 +5,15 @@ import java.util.Objects;
 import java.util.Optional;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.gui.GuiElementBase;
 import net.mcft.copy.backpacks.config.Setting;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
+@SideOnly(Side.CLIENT)
 public abstract class BaseEntrySetting<T> extends BaseEntry.Labelled {
 	
 	public final Setting<T> setting;

@@ -4,8 +4,12 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import net.mcft.copy.backpacks.container.ContainerBackpack;
 
+@SideOnly(Side.CLIENT)
 public class GuiBackpack extends GuiContainer {
 	
 	private static final GuiTextureResource CONTAINER_TEX =

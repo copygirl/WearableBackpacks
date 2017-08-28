@@ -3,9 +3,12 @@ package net.mcft.copy.backpacks.client.gui.config;
 import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
+@SideOnly(Side.CLIENT)
 public interface IConfigEntry {
 	
 	public static final int ENTRY_HEIGHT = 18;
