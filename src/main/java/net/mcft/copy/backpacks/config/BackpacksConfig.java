@@ -23,6 +23,7 @@ import net.mcft.copy.backpacks.BackpacksContent;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.config.custom.SettingBackpackSize;
+import net.mcft.copy.backpacks.config.custom.SettingListSpawn;
 import net.mcft.copy.backpacks.config.custom.SettingPercent;
 import net.mcft.copy.backpacks.misc.BackpackSize;
 import net.mcft.copy.backpacks.network.MessageSyncSettings;
@@ -79,6 +80,8 @@ public class BackpacksConfig {
 		
 		public final Setting<Boolean> enabled = new SettingBoolean(true)
 			.setComment("Controls whether mobs can randomly spawn with backpacks.");
+		
+		public final SettingListSpawn entities = new SettingListSpawn();
 		
 	}
 	
