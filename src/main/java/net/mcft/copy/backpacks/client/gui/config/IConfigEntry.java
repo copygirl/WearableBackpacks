@@ -2,7 +2,6 @@ package net.mcft.copy.backpacks.client.gui.config;
 
 import net.minecraft.util.text.TextFormatting;
 
-import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -12,8 +11,6 @@ import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 public interface IConfigEntry {
 	
 	public static final int ENTRY_HEIGHT = 18;
-	public static final int COLOR_BACKGROUND_INVALID = 0x40D00000;
-	public static final int COLOR_TEXT_INVALID = GuiUtils.getColorCode('c', true);
 	
 	public static final String TOOLTIP_TITLE   = TextFormatting.GREEN.toString();
 	public static final String TOOLTIP_TEXT    = TextFormatting.YELLOW.toString();

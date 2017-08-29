@@ -15,6 +15,8 @@ chat.wearablebackpacks.cantEquip.chestplate=You can't equip a backpack while wea
 key.wearablebackpacks.open=Open Backpack
 
 
+config.wearablebackpacks.gui.cancel=Cancel
+
 config.wearablebackpacks.general.equipAsChestArmor=Equip as Chest Armor
 config.wearablebackpacks.general.equipAsChestArmor.tooltip=Controls whether equipped backpacks take up the chest armor equipment slot.
 config.wearablebackpacks.general.enableEquippedInteraction=Enable Equipped Interaction
@@ -24,16 +26,18 @@ config.wearablebackpacks.general.enableSelfInteraction.tooltip=Controls whether 
 config.wearablebackpacks.general.dropAsBlockOnDeath=Drop as Block on Death
 config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Controls whether backpacks place themselves down upon death, instead of scattering their contents.
 
+config.wearablebackpacks.general.status.outOfRange=Value is out of range (%1$s - %1$s).
+config.wearablebackpacks.general.status.required=Setting "%1$s" is required for this setting.
+config.wearablebackpacks.general.status.chestplate=No effect if not equipped as armor. [general.equipAsChestArmor = false]
+
 config.wearablebackpacks.category.backpack=Backpack Settings
 config.wearablebackpacks.category.backpack.tooltip=Controls settings regarding regular backpacks.
 config.wearablebackpacks.backpack.enabled=Enabled
 config.wearablebackpacks.backpack.enabled.tooltip=Controls whether the regular backpack is enabled.
 config.wearablebackpacks.backpack.durability=Durability
 config.wearablebackpacks.backpack.durability.tooltip=Controls the durability of the regular backpack (0 for unbreakable). Lowering this (including setting to 0) can cause issues with already damaged backpacks.
-config.wearablebackpacks.backpack.durability.hint=No effect if not equipped as armor.
 config.wearablebackpacks.backpack.armor=Armor
 config.wearablebackpacks.backpack.armor.tooltip=Armor points of regular backpacks.
-config.wearablebackpacks.backpack.armor.hint=No effect if not equipped as armor.
 config.wearablebackpacks.backpack.size=Storage Size
 config.wearablebackpacks.backpack.size.tooltip=Controls the storage size of regular backpacks. Does not affect currently placed or equipped backpacks, turn them back into an item to apply changes.
 
@@ -41,6 +45,18 @@ config.wearablebackpacks.category.spawn=Spawn Settings
 config.wearablebackpacks.category.spawn.tooltip=Controls settings regarding mobs spawning with backpacks
 config.wearablebackpacks.spawn.enabled=Enabled
 config.wearablebackpacks.spawn.enabled.tooltip=Controls whether mobs can randomly spawn with backpacks
+config.wearablebackpacks.spawn.entries=Entity Spawn Entries
+
+config.wearablebackpacks.spawn.entityID=Entity ID
+config.wearablebackpacks.spawn.entityID.tooltip=Internal identifier of the entity, such as "minecraft:zombie".
+config.wearablebackpacks.spawn.chance=Chance
+config.wearablebackpacks.spawn.chance.tooltip=Chance of 1 in X that an entity spawns with this backpack (100 = 1%%, 1000 = 0.1%%).
+config.wearablebackpacks.spawn.backpack=Backpack
+config.wearablebackpacks.spawn.backpack.tooltip=Item ID of the backpack to spawn on the entity (for example "wearablebackpacks:backpack").
+config.wearablebackpacks.spawn.lootTable=Loot Table
+config.wearablebackpacks.spawn.lootTable.tooltip=ID of the loot table used to fill this backpack (for example "wearablebackpacks:backpack/default").
+
+config.wearablebackpacks.spawn.status.entityNotFound=The specified entity couldn't be found. Entry will be ignored.
 
 config.wearablebackpacks.category.cosmetic=Cosmetic Settings
 config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay.

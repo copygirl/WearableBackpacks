@@ -8,6 +8,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mcft.copy.backpacks.client.gui.control.GuiField;
 import net.mcft.copy.backpacks.config.Setting;
 import net.mcft.copy.backpacks.config.SettingSingleValue;
+import net.mcft.copy.backpacks.config.Status;
+import net.mcft.copy.backpacks.config.Status.Severity;
 
 @SideOnly(Side.CLIENT)
 public abstract class EntryField<T> extends BaseEntrySetting<T> {
@@ -41,7 +43,9 @@ public abstract class EntryField<T> extends BaseEntrySetting<T> {
 	
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
-		getField().setTextAndBorderColor(COLOR_TEXT_INVALID, !isValid());
+		Severity severity = Status.getSeverity(getStatus());
+		getField().setTextAndBorderColor(severity.foregroundColor,
+			(severity == Severity.WARN) || (severity == Severity.ERROR));
 		super.draw(mouseX, mouseY, partialTicks);
 	}
 	

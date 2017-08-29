@@ -1,22 +1,19 @@
 package net.mcft.copy.backpacks.config;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.function.BooleanSupplier;
+import java.util.stream.Collectors;
 import java.util.function.Consumer;
 
-import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.util.text.TextFormatting;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.gui.config.BaseEntrySetting;
+import net.mcft.copy.backpacks.config.Status.Severity;
 
 /** Represents a single configuration setting. */
 public abstract class Setting<T> {
@@ -39,13 +36,11 @@ public abstract class Setting<T> {
 	/** The setting name, for example "equipAsChestArmor". */
 	private String _name;
 	
-	/** Stores a function which is called to determine if requirements are met. */
-	private BooleanSupplier _requireFunc = () -> true;
 	/** Stores the action required after changing this setting. */
 	private ChangeRequiredAction _changeRequiredAction = ChangeRequiredAction.None;
 	
-	/** Stores a function which is called to determine if recommendations are met (returns hint). */
-	private Supplier<List<String>> _recommendFunc = () -> null;
+	/** Stores a list of functions which get called to handle hints, warnings and errors. */
+	private List<Supplier<Status>> _statusFuncs = new ArrayList<Supplier<Status>>();
 	
 	/** Stores whether the setting will be synced to players joining a world. */
 	private boolean _doesSync = false;
@@ -75,37 +70,23 @@ public abstract class Setting<T> {
 		_name = name;
 	}
 	
-	/** Sets a function that determines if the setting's requirements are met. */
-	public final Setting<T> setRequirement(BooleanSupplier requireFunc)
-		{ _requireFunc = requireFunc; return this; }
-	/** Sets the specified settings to be required for this setting. */
-	@SafeVarargs
-	public final Setting<T> setRequired(Setting<Boolean>... settings)
-		{ return setRequirement(() -> Arrays.asList(settings).stream().allMatch(setting -> setting.get())); }
+	/** Adds a function to this setting that may return a status to hint,
+	 *  warn or error about the state of the setting or other factors. */
+	public final Setting<T> addStatusFunc(Supplier<Status> func)
+		{ _statusFuncs.add(func); return this; }
+		/** Sets the specified setting to be required for this setting to be valid. */
+	public final Setting<T> setRequired(Setting<Boolean> setting)
+		{ return addStatusFunc(() -> !setting.get() ? Status.REQUIRED(setting) : Status.NONE); }
+	/** Sets the specified setting to be recommended for this setting. */
+	public final Setting<T> setRecommended(Setting<Boolean> setting, String key)
+		{ return addStatusFunc(() -> !setting.get() ? Status.RECOMMENDED(setting, key) : Status.NONE); }
+	
 	/** Sets the setting to require rejoining the world after being changed. */
 	public Setting<T> setRequiresWorldRejoin()
 		{ _changeRequiredAction = ChangeRequiredAction.RejoinWorld; return this; }
 	/** Sets the setting to require restarting the game after being changed. */
 	public Setting<T> setRequiresMinecraftRestart()
 		{ _changeRequiredAction = ChangeRequiredAction.RestartMinecraft; return this; }
-	
-	/** Sets a function that determines if the setting's recommendations are met. */
-	public final Setting<T> setRecommendation(Supplier<List<String>> recommendFunc)
-		{ _recommendFunc = recommendFunc; return this; }
-	/** Sets the specified setting to be recommended for this setting. */
-	@SafeVarargs
-	public final Setting<T> setRecommended(Setting<Boolean>... settings) {
-		// TODO: This should probably be moved somewhere else.
-		return setRecommendation(() -> {
-			if (Arrays.asList(settings).stream().allMatch(setting -> setting.get())) return null;
-			String key = "config." + WearableBackpacks.MOD_ID + "." + getFullName() + ".hint";
-			List<String> tooltip = new ArrayList<String>(Arrays.asList(
-				(TextFormatting.YELLOW + I18n.format(key)).split("\\\\n")));
-			for (Setting<Boolean> setting : settings) if (!setting.get())
-				tooltip.add(TextFormatting.AQUA + "[" + setting.getFullName() + " = false]");
-			return tooltip;
-		});
-	}
 	
 	/** Sets the setting to be synchronized to players joining a world. */
 	public Setting<T> setSynced() { _doesSync = true; return this; }
@@ -136,8 +117,13 @@ public abstract class Setting<T> {
 	/** Sets the setting's current value. */
 	public void set(T value) { _value = value; }
 	
-	/** Returns if this setting is enabled based on its requirements. */
-	public boolean isEnabled() { return _requireFunc.getAsBoolean(); }
+	/** Returns this setting's current status regarding its value / requirements. */
+	public List<Status> getStatus()
+		{ return _statusFuncs.stream().map(Supplier::get).collect(Collectors.toList()); }
+	
+	/** Returns if this setting is enabled based on its requirements / status functions. */
+	public boolean isEnabled()
+		{ return Severity.ERROR != Status.getSeverity(getStatus()); }
 	/** Returns if this setting is enabled based on its requirements (uses config entry values). */
 	@SideOnly(Side.CLIENT)
 	public boolean isEnabledConfig() {
@@ -156,16 +142,6 @@ public abstract class Setting<T> {
 	/** Returns whether changing the setting requires Minecraft to be restarted. */
 	public boolean requiresMinecraftRestart()
 		{ return (getChangeRequiredAction() == ChangeRequiredAction.RestartMinecraft); }
-	
-	/** Returns a recommendation hint for this setting if
-	 *  not all recommendations are met, or null otherwise. */
-	@SideOnly(Side.CLIENT)
-	public List<String> getRecommendationHint() {
-		_checkEntryValue = true;
-		List<String> hintTooltip = _recommendFunc.get();
-		_checkEntryValue = false;
-		return hintTooltip;
-	}
 	
 	/** Returns if the setting is synced to players when they join a (multiplayer/LAN) world. */
 	public boolean doesSync() { return _doesSync; }

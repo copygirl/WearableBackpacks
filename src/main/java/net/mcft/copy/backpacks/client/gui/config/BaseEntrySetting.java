@@ -1,16 +1,19 @@
 package net.mcft.copy.backpacks.client.gui.config;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import net.minecraft.client.resources.I18n;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.gui.GuiElementBase;
 import net.mcft.copy.backpacks.config.Setting;
+import net.mcft.copy.backpacks.config.Status;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
 @SideOnly(Side.CLIENT)
@@ -37,7 +40,8 @@ public abstract class BaseEntrySetting<T> extends BaseEntry.Labelled {
 		
 		control.setHeight(ENTRY_HEIGHT);
 		
-		setSpacing(8, 6, 4);
+		setSpacing(4, 8, 6, 4);
+		addFixed(iconStatus);
 		addFixed(label);
 		addWeighted(control);
 		addFixed(buttonUndo);
@@ -65,6 +69,16 @@ public abstract class BaseEntrySetting<T> extends BaseEntry.Labelled {
 		onChanged();
 	}
 	
+	@Override
+	public List<Status> getStatus() {
+		List<Status> status = setting.getStatus();
+		if (!_value.isPresent()) {
+			status = new ArrayList<Status>(status);
+			status.add(Status.INVALID);
+		}
+		return status;
+	}
+	
 	/** Called when this entry's value changes, updating its control's state. */
 	protected void onChanged() {  }
 	
@@ -77,8 +91,6 @@ public abstract class BaseEntrySetting<T> extends BaseEntry.Labelled {
 	public boolean isChanged() { return !_value.equals(Optional.of(_previousValue)); }
 	@Override
 	public boolean isDefault() { return _value.equals(Optional.of(_defaultValue)); }
-	@Override
-	public boolean isValid() { return _value.isPresent(); }
 	
 	@Override
 	public void undoChanges() { setValue(_previousValue); }

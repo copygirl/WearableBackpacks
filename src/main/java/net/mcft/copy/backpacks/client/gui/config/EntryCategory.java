@@ -1,14 +1,18 @@
 package net.mcft.copy.backpacks.client.gui.config;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.client.resources.I18n;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.gui.GuiContainer;
 import net.mcft.copy.backpacks.client.gui.control.GuiButton;
+import net.mcft.copy.backpacks.config.Status;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 
 @SideOnly(Side.CLIENT)
@@ -24,7 +28,7 @@ public class EntryCategory extends BaseEntry {
 		
 		GuiButton button = new GuiButton(BUTTON_WIDTH);
 		button.setText(I18n.format(getLanguageKey()));
-		button.setAction(() -> onButtonPressed());
+		button.setAction(this::onButtonPressed);
 		button.setTooltip(getCategoryTooltip());
 		
 		setSpacing(0, 6, 4);
@@ -43,9 +47,15 @@ public class EntryCategory extends BaseEntry {
 		return formatTooltip(langKey, langKey + ".tooltip", null, null);
 	}
 	
-	protected void onButtonPressed() {
-		display(childScreen);
+	@Override
+	public List<Status> getStatus() {
+		return childScreen.isValid()
+			? Collections.emptyList()
+			: Arrays.asList(Status.INVALID);
 	}
+	
+	protected void onButtonPressed()
+		{ display(childScreen); }
 	
 	// IConfigEntry implementation
 	
@@ -53,8 +63,6 @@ public class EntryCategory extends BaseEntry {
 	public boolean isChanged() { return childScreen.isChanged(); }
 	@Override
 	public boolean isDefault() { return childScreen.isDefault(); }
-	@Override
-	public boolean isValid() { return childScreen.isValid(); }
 	
 	@Override
 	public void undoChanges() { childScreen.undoChanges(); }
