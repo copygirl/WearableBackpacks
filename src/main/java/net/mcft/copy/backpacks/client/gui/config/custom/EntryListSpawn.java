@@ -114,7 +114,7 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 	public ChangeRequiredAction applyChanges() {
 		if (!isChanged()) return ChangeRequiredAction.None;
 		_setting.set(getValue());
-		if (_setting.requiresMinecraftRestart()) _setting.update();
+		if (!_setting.requiresMinecraftRestart()) _setting.update();
 		return _setting.getChangeRequiredAction();
 	}
 	

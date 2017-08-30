@@ -101,7 +101,7 @@ public abstract class BaseEntrySetting<T> extends BaseEntry.Labelled {
 	public ChangeRequiredAction applyChanges() {
 		if (!isChanged()) return ChangeRequiredAction.None;
 		setting.set(getValue().get());
-		if (setting.requiresMinecraftRestart()) setting.update();
+		if (!setting.requiresMinecraftRestart()) setting.update();
 		return setting.getChangeRequiredAction();
 	}
 	
