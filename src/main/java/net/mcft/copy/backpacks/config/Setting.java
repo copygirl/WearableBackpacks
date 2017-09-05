@@ -58,17 +58,14 @@ public abstract class Setting<T> {
 	private String _comment = null;
 	
 	
-	public Setting(T defaultValue) {
-		_defaultValue = defaultValue;
-	}
+	public Setting(T defaultValue)
+		{ _defaultValue = defaultValue; }
 	
 	/** Set the setting's category and name.
 	 *  This is called automatically. Category and name are taken from
 	 *  reflected field names. Keeps the constructor short and simple. */
-	protected void init(String category, String name) {
-		_category = category;
-		_name = name;
-	}
+	protected void init(String category, String name)
+		{ _category = category; _name = name; }
 	
 	/** Adds a function to this setting that may return a status to hint,
 	 *  warn or error about the state of the setting or other factors. */

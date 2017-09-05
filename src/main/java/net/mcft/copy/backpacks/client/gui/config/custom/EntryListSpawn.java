@@ -1,9 +1,12 @@
 package net.mcft.copy.backpacks.client.gui.config.custom;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
@@ -24,6 +27,7 @@ import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 import net.mcft.copy.backpacks.config.Status.Severity;
 import net.mcft.copy.backpacks.config.custom.SettingListSpawn;
 import net.mcft.copy.backpacks.config.custom.SettingListSpawn.BackpackEntityEntry;
+import net.mcft.copy.backpacks.config.custom.SettingListSpawn.BackpackEntry;
 
 @SideOnly(Side.CLIENT)
 public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
@@ -33,7 +37,9 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 	private final SettingListSpawn _setting;
 	
 	public EntryListSpawn(SettingListSpawn setting) {
-		super(240, setting.get(), setting.getDefault());
+		// Use static getDefaultValue instead of getDefault because
+		// it can only be populated after settings have been initialized.
+		super(240, setting.get(), SettingListSpawn.getDefaultValue());
 		_setting = setting;
 		
 		GuiContainer entryLabel = new GuiContainer();
@@ -45,6 +51,40 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 			label.setBottom(2);
 			entryLabel.add(label);
 		insertFixed(0, entryLabel);
+	}
+	
+	@Override
+	public void setValue(List<BackpackEntityEntry> value) {
+		// This method works by taking the default value as
+		// a base and merging the specified value into it.
+		List<BackpackEntityEntry> defaultEntities = defaultValue.stream()
+			.map(BackpackEntityEntry::clone).collect(Collectors.toCollection(ArrayList::new));
+		List<BackpackEntityEntry> customEntities = new ArrayList<>();
+		
+		for (BackpackEntityEntry valueEntry : value) {
+			BackpackEntityEntry defaultEntry = defaultEntities.stream()
+				.filter(e -> e.entityID.equals(valueEntry.entityID))
+				.findAny().orElse(null);
+			
+			if (defaultEntry == null) {
+				customEntities.add(valueEntry.clone());
+				continue;
+			}
+			
+			List<BackpackEntry> customBackpacks = new ArrayList<>();
+			for (BackpackEntry backpackEntry : valueEntry.entries) {
+				BackpackEntry defaultBackpack = defaultEntry.entries.stream()
+					.filter(e -> Objects.equals(e.id, backpackEntry.id))
+					.findAny().orElse(null);
+				if (defaultBackpack != null)
+					defaultBackpack.chance = backpackEntry.chance;
+				else customBackpacks.add(backpackEntry.clone());
+			}
+			defaultEntry.entries.addAll(customBackpacks);
+		}
+		
+		defaultEntities.addAll(customEntities);
+		super.setValue(defaultEntities);
 	}
 	
 	@Override
@@ -61,7 +101,7 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 			.filter(entry -> EntityLivingBase.class.isAssignableFrom(entry.getEntityClass()));
 	}
 	public static String getEntityEntryName(Optional<EntityEntry> entry, String entityID)
-		{ return entry.map(EntityEntry::getName).map(s -> "[" + s + "]").orElse(entityID); }
+		{ return entry.map(EntityEntry::getName).map(s -> "[" + s + "]").orElse("\"" + entityID + "\""); }
 	
 	
 	public static class Entry extends BaseEntryList.Entry<BackpackEntityEntry> {
@@ -86,23 +126,22 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 		@Override
 		public void setValue(BackpackEntityEntry value) {
 			_value = value;
-			Optional<EntityEntry> entry = getEntityEntry(_value.entityID);
+			
+			Optional<EntityEntry> entry = getEntityEntry(value.entityID);
 			_knownEntity = entry.isPresent();
-			buttonEdit.setText(getEntityEntryName(entry, _value.entityID));
+			buttonEdit.setText(getEntityEntryName(entry, value.entityID));
+			if (!_knownEntity) buttonEdit.setTextColor(Severity.WARN.foregroundColor);
+			else buttonEdit.unsetTextColor();
+			
+			boolean hasPredefined = SettingListSpawn.getDefaultEntityIDs().contains(value.entityID);
+			buttonMove.setEnabled(!hasPredefined);
+			buttonRemove.setEnabled(!hasPredefined);
 		}
 		
 		@Override
 		public List<Status> getStatus() {
 			return _knownEntity ? Collections.emptyList()
 			                    : Arrays.asList(STATUS_NOT_FOUND);
-		}
-		
-		@Override
-		public void draw(int mouseX, int mouseY, float partialTicks) {
-			if (!_knownEntity) buttonEdit.setTextColor(Severity.WARN.foregroundColor);
-			else buttonEdit.unsetTextColor();
-			
-			super.draw(mouseX, mouseY, partialTicks);
 		}
 		
 	}

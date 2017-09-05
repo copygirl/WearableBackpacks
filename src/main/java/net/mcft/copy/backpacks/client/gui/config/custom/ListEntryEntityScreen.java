@@ -31,6 +31,7 @@ import net.mcft.copy.backpacks.client.gui.control.GuiField;
 import net.mcft.copy.backpacks.config.Status;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 import net.mcft.copy.backpacks.config.Status.Severity;
+import net.mcft.copy.backpacks.config.custom.SettingListSpawn;
 import net.mcft.copy.backpacks.config.custom.SettingListSpawn.BackpackEntityEntry;
 import net.mcft.copy.backpacks.config.custom.SettingListSpawn.BackpackEntry;
 
@@ -54,6 +55,11 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 		
 		List<BackpackEntry> entries = entry.map(EntryListSpawn.Entry::getValue)
 			.map(e -> e.entries).orElseGet(Collections::emptyList);
+		List<BackpackEntry> defaults = entry.map(EntryListSpawn.Entry::getValue)
+			.flatMap(e -> SettingListSpawn.getDefaultValue().stream()
+				.filter(f -> f.entityID.equals(e.entityID)).findAny())
+			.map(e -> e.entries)
+			.orElseGet(Collections::emptyList);
 		
 		// Title
 		labelTitleEntityName = new GuiLabel("");
@@ -62,7 +68,7 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 		
 		// Content
 		entryEntityID = new EntryEntityID(this);
-		listBackpack  = new EntryListBackpack(entries, Collections.emptyList());
+		listBackpack  = new EntryListBackpack(entries, defaults);
 		
 		listEntries.addFixed(entryEntityID);
 		listEntries.addFixed(listBackpack);
@@ -73,10 +79,13 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 		buttonCancel.setAction(this::cancelClicked);
 		
 		layoutButtons.addFixed(buttonDone);
-		layoutButtons.addFixed(buttonUndo);
-		// FIXME: Add if there's a default available.
-		// layoutButtons.addFixed(buttonReset);
-		layoutButtons.addFixed(buttonCancel);
+		// If editing an existing entry ...
+		if (entry.isPresent()) {
+			layoutButtons.addFixed(buttonUndo); // Add "Undo Changes" button.
+			// If defaults are available, add "Set to Default" button.
+			if (!defaults.isEmpty()) layoutButtons.addFixed(buttonReset);
+		// ... otherwise add just "Cancel" button.
+		} else layoutButtons.addFixed(buttonCancel);
 	}
 	
 	@Override
@@ -106,6 +115,7 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 		
 		private final ListEntryEntityScreen _owningScreen;
 		
+		public final String previousValue;
 		public final GuiField field;
 		public Optional<EntityEntry> entityEntry;
 		
@@ -115,8 +125,8 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 			
 			_owningScreen = owningScreen;
 			
-			field = new GuiField(0, ENTRY_HEIGHT, _owningScreen._entry
-				.map(e -> e.getValue().entityID).orElse(""));
+			previousValue = _owningScreen._entry.map(e -> e.getValue().entityID).orElse("");
+			field = new GuiField(0, ENTRY_HEIGHT, previousValue);
 			field.setChangedAction(this::onChanged);
 			
 			setSpacing(4, 8, 6);
@@ -125,6 +135,7 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 			addWeighted(field);
 			addFixed(buttonUndo);
 			
+			setEnabled(!SettingListSpawn.getDefaultEntityIDs().contains(field.getText()));
 			onChanged();
 		}
 		
@@ -153,14 +164,14 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 		// IConfigEntry implementation
 		
 		@Override
-		public boolean isChanged() { return false; }
+		public boolean isChanged() { return !previousValue.equals(field.getText()); }
 		@Override
-		public boolean isDefault() { return true; }
+		public boolean isDefault() { return true; } // Doesn't matter.
 		
 		@Override
-		public void undoChanges() {  }
+		public void undoChanges() { field.setText(previousValue); }
 		@Override
-		public void setToDefault() {  }
+		public void setToDefault() {  } // Doesn't matter.
 		
 		@Override
 		public ChangeRequiredAction applyChanges()
@@ -204,6 +215,7 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 		
 		public static class Entry extends BaseEntryList.Entry<BackpackEntry> {
 			
+			public String id;
 			public final GuiField fieldChance;
 			public final GuiField fieldBackpack;
 			public final GuiField fieldLootTable;
@@ -232,15 +244,23 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 			
 			@Override
 			public BackpackEntry getValue() {
-				return new BackpackEntry(
+				return new BackpackEntry(id,
+					fieldBackpack.getText(),
 					!fieldChance.getText().isEmpty() ? Integer.parseInt(fieldChance.getText()) : 0,
-					fieldBackpack.getText(), fieldLootTable.getText());
+					fieldLootTable.getText());
 			}
 			@Override
 			public void setValue(BackpackEntry value) {
+				id = value.id;
 				fieldChance.setText(Integer.toString(value.chance));
 				fieldBackpack.setText(value.backpack);
 				fieldLootTable.setText(value.lootTable);
+				if (SettingListSpawn.getDefaultEntryIDs().contains(id)) {
+					buttonMove.setEnabled(false);
+					fieldBackpack.setEnabled(false);
+					fieldLootTable.setEnabled(false);
+					buttonRemove.setEnabled(false);
+				}
 			}
 			
 			private void onBackpackChanged() {
@@ -258,6 +278,11 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 			
 			@Override
 			public void draw(int mouseX, int mouseY, float partialTicks) {
+				buttonMove.setEnabled(id == null);
+				fieldBackpack.setEnabled(id == null);
+				fieldLootTable.setEnabled(id == null);
+				buttonRemove.setEnabled(id == null);
+				
 				// This is ugly but I'm too lazy to make it not so.
 				fieldChance.setTextAndBorderColor(Severity.ERROR.foregroundColor, fieldChance.getText().isEmpty());
 				if (fieldBackpack.getText().isEmpty()) fieldBackpack.setTextAndBorderColor(Severity.ERROR.foregroundColor, true);

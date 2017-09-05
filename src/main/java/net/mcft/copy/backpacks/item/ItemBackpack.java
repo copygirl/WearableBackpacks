@@ -193,7 +193,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	// IBackpackType implementation
 	
 	@Override
-	public void onSpawnedWith(EntityLivingBase entity, IBackpack backpack) {
+	public void onSpawnedWith(EntityLivingBase entity, IBackpack backpack, String lootTable) {
 		
 		// If backpack is equipped in chestplate slot, set drop chance to 100%.
 		if ((entity instanceof EntityLiving) &&
@@ -212,8 +212,8 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		
 		// Set backpack's loot table.
 		IBackpackData data = backpack.getData();
-		if (data instanceof BackpackDataItems)
-			((BackpackDataItems)data).setLootTable(LOOT_TABLE, rnd.nextLong());
+		if ((lootTable != null) && (data instanceof BackpackDataItems))
+			((BackpackDataItems)data).setLootTable(lootTable, rnd.nextLong());
 		
 	}
 	

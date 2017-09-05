@@ -5,14 +5,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -43,7 +41,6 @@ import net.mcft.copy.backpacks.api.IBackpackType;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
 import net.mcft.copy.backpacks.container.SlotArmorBackpack;
 import net.mcft.copy.backpacks.item.DyeWashingHandler;
-import net.mcft.copy.backpacks.item.ItemBackpack;
 import net.mcft.copy.backpacks.misc.BackpackCapability;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 import net.mcft.copy.backpacks.misc.util.WorldUtils;
@@ -102,22 +99,21 @@ public class ProxyCommon {
 		if (!WearableBackpacks.CONFIG.spawn.enabled.get()) return;
 		// When a mob spawns naturally, see if it has a chance to spawn with a backpack.
 		EntityLivingBase entity = event.getEntityLiving();
-		Map<Item, Double> spawnEntry = BackpackRegistry.entities.get(entity.getClass());
-		if (spawnEntry == null) return; // Doesn't have an entry.
+		List<BackpackRegistry.Entry> entries = BackpackRegistry.entities.get(entity.getClass());
+		if (entries == null) return; // Doesn't have any entries.
 		
-		for (Map.Entry<Item, Double> itemEntry : spawnEntry.entrySet()) {
-			ItemBackpack item  = (ItemBackpack)itemEntry.getKey();
-			double probability = itemEntry.getValue();
-			if (entity.world.rand.nextDouble() >= probability) return;
+		for (BackpackRegistry.Entry entry : entries) {
+			if ((entry.chance == 0) || (entity.world.rand.nextDouble() > (1.0 / entry.chance))) continue;
 			BackpackCapability backpack = (BackpackCapability)entity.getCapability(IBackpack.CAPABILITY, null);
 			// Set the backpack capability of the entity to spawn with the specified backpack.
 			// This will be delayed until the first update tick to fire after armor has been generated.
-			backpack.spawnWith = item;
+			backpack.spawnWith = entry;
 		}
 	}
 	/** Called when a mob spawns with a backpack with a 1 tick delay. */
-	private void onSpawnedWith(EntityLivingBase entity, BackpackCapability backpack, ItemBackpack item) {
-		ItemStack stack = new ItemStack(item);
+	private void onSpawnedWith(EntityLivingBase entity, BackpackCapability backpack,
+	                           BackpackRegistry.Entry entry) {
+		ItemStack stack = new ItemStack(entry.backpack);
 		
 		// Set damage to a random amount (25% - 75%).
 		int maxDamage = stack.getMaxDamage();
@@ -142,10 +138,10 @@ public class ProxyCommon {
 			}
 		}
 		
-		IBackpackType type = (IBackpackType)item;
+		IBackpackType type = (IBackpackType)entry.backpack;
 		IBackpackData data = type.createBackpackData(stack);
 		BackpackHelper.setEquippedBackpack(entity, stack, data);
-		type.onSpawnedWith(entity, backpack);
+		type.onSpawnedWith(entity, backpack, entry.lootTable);
 		backpack.spawnWith  = null;
 		backpack.mayDespawn = true;
 	}
@@ -229,8 +225,6 @@ public class ProxyCommon {
 		// if they've been removed somehow.
 		
 		EntityLivingBase entity = event.getEntityLiving();
-		if (!BackpackRegistry.canEntityWearBackpacks(entity)) return;
-		
 		BackpackCapability backpack = (BackpackCapability)entity
 			.getCapability(IBackpack.CAPABILITY, null);
 		if (backpack == null) return;

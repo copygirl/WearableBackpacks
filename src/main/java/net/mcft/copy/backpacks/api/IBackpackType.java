@@ -9,7 +9,7 @@ import net.minecraft.tileentity.TileEntity;
 public interface IBackpackType {
 	
 	/** Called when an entity spawns with this backpack naturally. */
-	void onSpawnedWith(EntityLivingBase entity, IBackpack capability);
+	void onSpawnedWith(EntityLivingBase entity, IBackpack capability, String lootTable);
 	
 	/** Called before the backpack is equipped by an entity.
 	 *  <p>

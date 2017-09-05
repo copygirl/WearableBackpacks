@@ -137,14 +137,15 @@ public abstract class BaseEntryList<T> extends GuiLayout implements IConfigEntry
 	// IConfigEntry implementation
 	
 	@Override
-	public boolean isChanged() { return !iteratorEquals(getValueAsStream().iterator(), previousValue.iterator()); }
+	public boolean isChanged()
+		{ return !iteratorEquals(getValueAsStream().iterator(), previousValue.iterator()); }
 	@Override
-	public boolean isDefault() { return iteratorEquals(getValueAsStream().iterator(), defaultValue.iterator()); }
+	public boolean isDefault()
+		{ return iteratorEquals(getValueAsStream().iterator(), defaultValue.iterator()); }
+	
 	@Override
-	public final boolean isValid() {
-		return getEntries().allMatch(entry ->
-			(Status.getSeverity(entry.getStatus()) != Severity.ERROR));
-	}
+	public final boolean isValid()
+		{ return getEntries().allMatch(entry -> (Status.getSeverity(entry.getStatus()) != Severity.ERROR)); }
 	
 	@Override
 	public void undoChanges() { setValue(previousValue); }

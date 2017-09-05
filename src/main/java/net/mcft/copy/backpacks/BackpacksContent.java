@@ -42,9 +42,13 @@ public class BackpacksContent {
 			event.getRegistry().register(
 				BACKPACK.setRegistryName(WearableBackpacks.MOD_ID, "backpack"));
 			
-			BackpackRegistry.registerBackpackEntity(EntityZombie.class, BACKPACK, 1.0 / 800);
-			BackpackRegistry.registerBackpackEntity(EntitySkeleton.class, BACKPACK, 1.0 / 1200);
-			BackpackRegistry.registerBackpackEntity(EntityPigZombie.class, BACKPACK, 1.0 / 1000);
+			String id = WearableBackpacks.MOD_ID + ":backpack";
+			BackpackRegistry.registerBackpackEntity(EntityZombie.class,
+				id + "/zombie", BACKPACK, 800, ItemBackpack.LOOT_TABLE.toString());
+			BackpackRegistry.registerBackpackEntity(EntitySkeleton.class,
+				id + "/skeleton", BACKPACK, 1200, ItemBackpack.LOOT_TABLE.toString());
+			BackpackRegistry.registerBackpackEntity(EntityPigZombie.class,
+				id + "/zombie_pigman", BACKPACK, 1000, ItemBackpack.LOOT_TABLE.toString());
 			
 			LootTableList.register(ItemBackpack.LOOT_TABLE);
 		}

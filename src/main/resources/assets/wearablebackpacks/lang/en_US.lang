@@ -50,7 +50,7 @@ config.wearablebackpacks.spawn.entries=Entity Spawn Entries
 config.wearablebackpacks.spawn.entityID=Entity ID
 config.wearablebackpacks.spawn.entityID.tooltip=Internal identifier of the entity, such as "minecraft:zombie".
 config.wearablebackpacks.spawn.chance=Chance
-config.wearablebackpacks.spawn.chance.tooltip=Chance of 1 in X that an entity spawns with this backpack (100 = 1%%, 1000 = 0.1%%).
+config.wearablebackpacks.spawn.chance.tooltip=Chance of 1 in X that an entity spawns with this backpack (100 = 1%%, 1000 = 0.1%%). Set to 0 to disable.
 config.wearablebackpacks.spawn.backpack=Backpack
 config.wearablebackpacks.spawn.backpack.tooltip=Item ID of the backpack to spawn on the entity (for example "wearablebackpacks:backpack").
 config.wearablebackpacks.spawn.lootTable=Loot Table

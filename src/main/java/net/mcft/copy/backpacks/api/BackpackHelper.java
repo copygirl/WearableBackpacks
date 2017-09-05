@@ -48,30 +48,29 @@ public final class BackpackHelper {
 	public static IBackpack getBackpack(Entity entity) {
 		if (entity == null) return null;
 		IBackpack backpack = entity.getCapability(IBackpack.CAPABILITY, null);
-		return (((backpack != null) && !backpack.getStack().isEmpty()) ? backpack : null);
+		return ((backpack != null) && !backpack.getStack().isEmpty()) ? backpack : null;
 	}
 	
 	/** Returns the tile entity's backpack capability. */
-	public static IBackpack getBackpack(TileEntity entity) {
-		return ((entity != null) ? entity.getCapability(IBackpack.CAPABILITY, null) : null);
-	}
+	public static IBackpack getBackpack(TileEntity entity)
+		{ return (entity != null) ? entity.getCapability(IBackpack.CAPABILITY, null) : null; }
 	
 	/** Returns the backpack type of an item stack, or null if it isn't a backpack. */
-	public static IBackpackType getBackpackType(ItemStack stack) {
-		return (!stack.isEmpty() ? getBackpackType(stack.getItem()) : null);
-	}
+	public static IBackpackType getBackpackType(ItemStack stack)
+		{ return !stack.isEmpty() ? getBackpackType(stack.getItem()) : null; }
 	/** Returns the backpack type of an item, or null if it doesn't implement IBackpackType. */
-	public static IBackpackType getBackpackType(Item item) {
-		return ((item instanceof IBackpackType) ? (IBackpackType)item : null);
-	}
+	public static IBackpackType getBackpackType(Item item)
+		{ return (item instanceof IBackpackType) ? (IBackpackType)item : null; }
 	
 	/** Returns if the entity can equip a backpack right now.
 	 *  Requires the entity to be able to wear backpacks, not currently have a backpack equipped, and
 	 *  if {@link equipAsChestArmor} is true and the entity is a player, an empty chest armor slot. */
 	public static boolean canEquipBackpack(EntityLivingBase entity) {
-		return (BackpackRegistry.canEntityWearBackpacks(entity) && (getBackpack(entity) == null) &&
-		        !(equipAsChestArmor && (entity instanceof EntityPlayer) &&
-		          !entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST).isEmpty()));
+		return (entity.getCapability(IBackpack.CAPABILITY, null) != null) // Has backpack capability.
+			&& (getBackpack(entity) == null)                              // Doesn't currently have backpack equipped.
+			&& !(equipAsChestArmor && (entity instanceof EntityPlayer)    // Isn't wearing a chestplate while equipAsChestArmor is on.
+				&& !entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST).isEmpty());
+		// FIXME: How does this work with non-player entities? Do / should they always wear backpacks as armor or what?
 	}
 	
 	/** Sets the entity's equipped backpack and data. */

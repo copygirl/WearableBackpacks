@@ -1,5 +1,6 @@
 package net.mcft.copy.backpacks.config;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,7 +67,7 @@ public class Status {
 	public static List<String> getMessage(List<Status> status) {
 		return status.stream()
 			.filter(s -> (s._translateKey != null))
-			// TODO: Order by severity.
+			.sorted(Comparator.comparingInt(s -> -s.severity.ordinal()))
 			.map(s -> "\u00a7" + s.severity.colorChar +
 			          I18n.format(s._translateKey, s._translateParams))
 			.collect(Collectors.toList());

@@ -30,7 +30,7 @@ public class BackpackDataItems implements IBackpackData {
 	
 	private BackpackSize _size;
 	private ItemStackHandler _items = null;
-	private ResourceLocation _lootTable = null;
+	private String _lootTable = null;
 	private long _lootTableSeed = 0;
 	
 	public BackpackDataItems() {  }
@@ -56,21 +56,21 @@ public class BackpackDataItems implements IBackpackData {
 	}
 	
 	/** Sets the backpack's loot table and seed. */
-	public void setLootTable(ResourceLocation lootTable, long lootTableSeed) {
+	public void setLootTable(String lootTable, long lootTableSeed) {
 		if (_items != null) throw new UnsupportedOperationException();
 		_lootTable = lootTable;
 		_lootTableSeed = lootTableSeed;
 	}
 	
 	
-	public static void generateLoot(ItemStackHandler items, ResourceLocation tableLoc, long seed,
+	public static void generateLoot(ItemStackHandler items, String tableStr, long seed,
 	                                World world, EntityPlayer player) {
 		Random rnd = new Random(seed);
 		double maxFullness = (0.6 + rnd.nextDouble() * 0.2);
 		int maxOccupiedSlots = (int)Math.ceil(items.getSlots() * maxFullness);
 		
 		LootTableManager manager = world.getLootTableManager();
-		LootTable table = manager.getLootTableFromLocation(tableLoc);
+		LootTable table = manager.getLootTableFromLocation(new ResourceLocation(tableStr));
 		LootContext context = new LootContext(((player != null) ? player.getLuck() : 0),
 		                                      (WorldServer)world, manager, player, null, null);
 		List<ItemStack> loot = table.generateLootForPools(rnd, context);
@@ -104,7 +104,7 @@ public class BackpackDataItems implements IBackpackData {
 			if (compound.hasKey(TAG_ITEMS)) {
 				getItems().deserializeNBT(compound.getCompoundTag(TAG_ITEMS));
 			} else if (compound.hasKey(TAG_LOOT_TABLE)) {
-				_lootTable = new ResourceLocation(compound.getString(TAG_LOOT_TABLE));
+				_lootTable     = compound.getString(TAG_LOOT_TABLE);
 				_lootTableSeed = compound.getLong(TAG_LOOT_TABLE_SEED);
 			}
 		} else {
