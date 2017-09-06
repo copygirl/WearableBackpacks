@@ -169,7 +169,7 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 		@Override
 		public boolean isChanged() { return !previousValue.equals(field.getText()); }
 		@Override
-		public boolean isDefault() { return true; } // Doesn't matter.
+		public boolean isDefault() { return false; } // Doesn't matter.
 		
 		@Override
 		public void undoChanges() { field.setText(previousValue); }
@@ -267,6 +267,7 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 					fieldLootTable.setEnabled(false);
 					buttonRemove.setEnabled(false);
 				}
+				onBackpackChanged();
 			}
 			
 			private void onBackpackChanged() {
@@ -320,10 +321,18 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 				setPosition(x, y);
 				setSize(width, height);
 				setStack(stack);
+				setTooltip(0, Collections.emptyList()); // Just set delay.
 			}
 			
 			public ItemStack getStack() { return _stack; }
 			public void setStack(ItemStack value) { _stack = value; }
+			
+			@Override
+			public List<String> getTooltip() {
+				return !getStack().isEmpty()
+					? getContext().getScreen().getItemToolTip(getStack())
+					: null;
+			}
 			
 			public void setBackgroundColor(int value) { _colorBackground = value; }
 			public void setBorderColor(int value) { _colorBorder = value; }
