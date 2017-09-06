@@ -87,7 +87,7 @@ public class Status {
 		
 		private Severity(char chr, int background) {
 			colorChar = chr;
-			foregroundColor = GuiUtils.getColorCode(chr, true);
+			foregroundColor = 0xFF000000 | GuiUtils.getColorCode(chr, true);
 			backgroundColor = background;
 			guiIconIndex = ordinal();
 		}

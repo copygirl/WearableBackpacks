@@ -6,11 +6,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fml.common.registry.EntityEntry;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -34,6 +36,7 @@ import net.mcft.copy.backpacks.config.Status.Severity;
 import net.mcft.copy.backpacks.config.custom.SettingListSpawn;
 import net.mcft.copy.backpacks.config.custom.SettingListSpawn.BackpackEntityEntry;
 import net.mcft.copy.backpacks.config.custom.SettingListSpawn.BackpackEntry;
+import net.mcft.copy.backpacks.item.ItemBackpack;
 
 @SideOnly(Side.CLIENT)
 public class ListEntryEntityScreen extends BaseConfigScreen {
@@ -189,9 +192,10 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 			GuiLayout entryHeader = new GuiLayout(Direction.HORIZONTAL);
 			entryHeader.setFillHorizontal();
 			entryHeader.setHeight(ENTRY_HEIGHT);
-			entryHeader.setPaddingHorizontal(MoveButton.WIDTH, ENTRY_HEIGHT);
+			entryHeader.setPaddingHorizontal(MoveButton.WIDTH - 8, ENTRY_HEIGHT + 2);
 			
-				entryHeader.addFixed(createLabel("spawn.chance"), CHANCE_WIDTH);
+				entryHeader.setSpacing(9, 2);
+				entryHeader.addFixed(createLabel("spawn.chance"), CHANCE_WIDTH + 20);
 				entryHeader.addWeighted(createLabel("spawn.backpack"));
 				entryHeader.addWeighted(createLabel("spawn.lootTable"));
 			
@@ -217,10 +221,9 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 			
 			public String id;
 			public final GuiField fieldChance;
+			public final GuiItem itemBackpack;
 			public final GuiField fieldBackpack;
 			public final GuiField fieldLootTable;
-			
-			private boolean _backpackValid = false;
 			
 			public Entry(EntryListBackpack owningList) {
 				super(owningList);
@@ -228,12 +231,15 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 				fieldChance = new GuiField(CHANCE_WIDTH, ENTRY_HEIGHT);
 				fieldChance.setMaxLength(5);
 				fieldChance.setCharValidator(Character::isDigit);
+				itemBackpack = new GuiItem(18, 18);
 				fieldBackpack = new GuiField(0, ENTRY_HEIGHT);
 				fieldBackpack.setChangedAction(this::onBackpackChanged);
 				fieldLootTable = new GuiField(0, ENTRY_HEIGHT);
 				
+				setSpacing(2, 2, -1, 2);
 				addFixed(buttonMove);
 				addFixed(fieldChance);
+				addFixed(itemBackpack);
 				addWeighted(fieldBackpack);
 				addWeighted(fieldLootTable);
 				addFixed(buttonRemove);
@@ -264,15 +270,17 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 			}
 			
 			private void onBackpackChanged() {
-				_backpackValid = ForgeRegistries.ITEMS.containsKey(
-					new ResourceLocation(fieldBackpack.getText()));
+				Item item = Item.getByNameOrId(fieldBackpack.getText());
+				ItemStack backpack = (item != null) ? new ItemStack(item) : ItemStack.EMPTY;
+				itemBackpack.setStack(backpack);
 			}
 			@Override
 			public List<Status> getStatus() {
 				List<Status> status = new ArrayList<Status>();
 				if (fieldChance.getText().isEmpty()) status.add(Status.EMPTY);
 				if (fieldBackpack.getText().isEmpty()) status.add(Status.EMPTY);
-				else if (!_backpackValid) status.add(Status.WARN());
+				else if (itemBackpack.getStack().isEmpty()) status.add(Status.WARN());
+				else if (!(itemBackpack.getStack().getItem() instanceof ItemBackpack)) status.add(Status.ERROR());
 				return status;
 			}
 			
@@ -285,11 +293,61 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 				
 				// This is ugly but I'm too lazy to make it not so.
 				fieldChance.setTextAndBorderColor(Severity.ERROR.foregroundColor, fieldChance.getText().isEmpty());
-				if (fieldBackpack.getText().isEmpty()) fieldBackpack.setTextAndBorderColor(Severity.ERROR.foregroundColor, true);
-				else if (!_backpackValid) fieldBackpack.setTextAndBorderColor(Severity.WARN.foregroundColor, true);
-				else fieldBackpack.setTextAndBorderColor(-1, false);
+				int backpackColor = fieldBackpack.getText().isEmpty() ? Severity.ERROR.foregroundColor
+					: itemBackpack.getStack().isEmpty() ? Severity.WARN.foregroundColor
+					: !(itemBackpack.getStack().getItem() instanceof ItemBackpack) ? Severity.ERROR.foregroundColor
+					: -1;
+				fieldBackpack.setTextAndBorderColor(backpackColor, (backpackColor != -1));
+				itemBackpack.setBorderColor((backpackColor != -1) ? backpackColor : GuiField.COLOR_BORDER_DEFAULT);
 				
 				super.draw(mouseX, mouseY, partialTicks);
+			}
+			
+		}
+		
+		public static class GuiItem extends GuiElementBase {
+			
+			private ItemStack _stack = ItemStack.EMPTY;
+			
+			private int _colorBackground = 0xFF333333;
+			private int _colorBorder     = GuiField.COLOR_BORDER_DEFAULT;
+			
+			public GuiItem(int width, int height)
+				{ this(width, height, ItemStack.EMPTY); }
+			public GuiItem(int width, int height, ItemStack stack)
+				{ this(0, 0, width, height, stack); }
+			public GuiItem(int x, int y, int width, int height, ItemStack stack) {
+				setPosition(x, y);
+				setSize(width, height);
+				setStack(stack);
+			}
+			
+			public ItemStack getStack() { return _stack; }
+			public void setStack(ItemStack value) { _stack = value; }
+			
+			public void setBackgroundColor(int value) { _colorBackground = value; }
+			public void setBorderColor(int value) { _colorBorder = value; }
+			
+			@Override
+			public void draw(int mouseX, int mouseY, float partialTicks) {
+				int w = getWidth();
+				int h = getHeight();
+				
+				enableBlendAlphaStuffs();
+				setRenderColorARGB(_colorBackground); drawRect(1, 1, w - 2, h - 2);
+				setRenderColorARGB(_colorBorder);     drawOutline(0, 0, w, h);
+				disableBlendAlphaStuffs();
+				
+				ItemStack stack = getStack();
+				if (stack.isEmpty()) return;
+				
+				GlStateManager.enableDepth();
+				GlStateManager.enableRescaleNormal();
+				RenderHelper.enableGUIStandardItemLighting();
+				getMC().getRenderItem().renderItemIntoGUI(stack, w / 2 - 8, h / 2 - 8);
+				RenderHelper.disableStandardItemLighting();
+				GlStateManager.disableRescaleNormal();
+				GlStateManager.disableDepth();
 			}
 			
 		}
