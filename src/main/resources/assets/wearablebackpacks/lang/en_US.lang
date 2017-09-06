@@ -46,6 +46,9 @@ config.wearablebackpacks.category.spawn.tooltip=Controls settings regarding mobs
 config.wearablebackpacks.spawn.enabled=Enabled
 config.wearablebackpacks.spawn.enabled.tooltip=Controls whether mobs can randomly spawn with backpacks
 config.wearablebackpacks.spawn.entries=Entity Spawn Entries
+config.wearablebackpacks.spawn.entry=%1$s entries
+config.wearablebackpacks.spawn.entry.0=No entries!
+config.wearablebackpacks.spawn.entry.1=1 entry
 
 config.wearablebackpacks.spawn.entityID=Entity ID
 config.wearablebackpacks.spawn.entityID.tooltip=Internal identifier of the entity, such as "minecraft:zombie".

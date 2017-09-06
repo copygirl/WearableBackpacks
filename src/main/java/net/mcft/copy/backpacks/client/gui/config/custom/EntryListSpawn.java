@@ -12,6 +12,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
@@ -20,6 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.client.gui.GuiContainer;
 import net.mcft.copy.backpacks.client.gui.GuiLabel;
+import net.mcft.copy.backpacks.client.gui.GuiLabel.TextAlign;
 import net.mcft.copy.backpacks.client.gui.config.BaseEntryList;
 import net.mcft.copy.backpacks.client.gui.control.GuiButton;
 import net.mcft.copy.backpacks.config.Status;
@@ -39,7 +41,7 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 	public EntryListSpawn(SettingListSpawn setting) {
 		// Use static getDefaultValue instead of getDefault because
 		// it can only be populated after settings have been initialized.
-		super(240, setting.get(), SettingListSpawn.getDefaultValue());
+		super(260, setting.get(), SettingListSpawn.getDefaultValue());
 		_setting = setting;
 		
 		GuiContainer entryLabel = new GuiContainer();
@@ -106,6 +108,7 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 	
 	public static class Entry extends BaseEntryList.Entry<BackpackEntityEntry> {
 		
+		public final GuiLabel labelName;
 		public final GuiButton buttonEdit;
 		private BackpackEntityEntry _value;
 		private boolean _knownEntity;
@@ -113,11 +116,15 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 		public Entry(EntryListSpawn owningList) {
 			super(owningList);
 			
-			buttonEdit = new GuiButton(0, ENTRY_HEIGHT);
+			labelName = new GuiLabel(0, "", TextAlign.CENTER);
+			labelName.setCenteredVertical();
+			
+			buttonEdit = new GuiButton(100, ENTRY_HEIGHT);
 			buttonEdit.setAction(() -> { display(new ListEntryEntityScreen(owningList, Optional.of(this))); });
 			
 			addFixed(buttonMove);
-			addWeighted(buttonEdit);
+			addWeighted(labelName);
+			addFixed(buttonEdit);
 			addFixed(buttonRemove);
 		}
 		
@@ -128,14 +135,31 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 			_value = value;
 			
 			Optional<EntityEntry> entry = getEntityEntry(value.entityID);
-			_knownEntity = entry.isPresent();
-			buttonEdit.setText(getEntityEntryName(entry, value.entityID));
-			if (!_knownEntity) buttonEdit.setTextColor(Severity.WARN.foregroundColor);
-			else buttonEdit.unsetTextColor();
+			_knownEntity      = entry.isPresent();
+			Severity severity = Status.getSeverity(getStatus());
+			boolean isFine    = (severity == Severity.FINE);
+			
+			int numEntries = value.entries.size();
+			String entriesTextKey = "config." + WearableBackpacks.MOD_ID + ".spawn.entry";
+			// First we try to translate "[...].spawn.entry.<num>".
+			String entriesText = I18n.format(entriesTextKey + "." + numEntries);
+			if (entriesText.equals(entriesTextKey + "." + numEntries))
+				// If not found, use "[...].spawn.entry" instead.
+				entriesText = I18n.format(entriesTextKey, numEntries);
+			// ... I miss C#'s ?? operator :(
 			
 			boolean hasPredefined = SettingListSpawn.getDefaultEntityIDs().contains(value.entityID);
 			buttonMove.setEnabled(!hasPredefined);
 			buttonRemove.setEnabled(!hasPredefined);
+			
+			labelName.setText(getEntityEntryName(entry, value.entityID));
+			labelName.setColor(hasPredefined ? GuiUtils.getColorCode('8', true)
+			                 : isFine        ? GuiUtils.getColorCode('7', true)
+			                                 : severity.foregroundColor);
+			
+			buttonEdit.setText(entriesText);
+			if (!_knownEntity) buttonEdit.setTextColor(Severity.WARN.foregroundColor);
+			else buttonEdit.unsetTextColor();
 		}
 		
 		@Override
