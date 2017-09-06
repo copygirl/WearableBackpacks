@@ -36,9 +36,13 @@ public class GuiContainerScreen extends GuiScreen {
 	
 	@Override
 	public void setWorldAndResolution(Minecraft mc, int width, int height) {
+		context.setScreen(this);
 		super.setWorldAndResolution(mc, width, height);
 		container.setSize(width, height);
 	}
+	
+	@Override
+	public void onGuiClosed() { context.setScreen(null); }
 	
 	
 	@Override

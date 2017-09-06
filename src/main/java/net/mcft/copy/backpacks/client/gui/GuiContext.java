@@ -11,15 +11,15 @@ public class GuiContext {
 	
 	private GuiElementBase _focused;
 	private GuiElementBase _pressed;
+	private GuiContainerScreen _screen;
 	
-	/** Returns the currently focused element, if any. */
 	public GuiElementBase getFocused() { return _focused; }
-	/** Sets the currently focused element. */
 	void setFocused(GuiElementBase value) { _focused = value; }
 	
-	/** Returns the currently pressed element, if any. */
 	public GuiElementBase getPressed() { return _pressed; }
-	/** Sets the currently pressed element. */
 	void setPressed(GuiElementBase value) { _pressed = value; }
+	
+	public GuiContainerScreen getScreen() { return _screen; }
+	void setScreen(GuiContainerScreen value) { _screen = value; }
 	
 }
