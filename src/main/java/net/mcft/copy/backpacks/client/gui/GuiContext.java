@@ -6,7 +6,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class GuiContext {
 	
-	public static boolean DEBUG = false;
+	public static boolean DEBUG      = false;
+	public static boolean DEBUG_TEXT = false;
 	
 	private GuiElementBase _focused;
 	private GuiElementBase _pressed;

@@ -101,8 +101,10 @@ public class GuiContainerScreen extends GuiScreen {
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		super.keyTyped(typedChar, keyCode);
-		if (isShiftKeyDown() && (keyCode == Keyboard.KEY_F3))
-			GuiContext.DEBUG = !GuiContext.DEBUG;
+		if (keyCode == Keyboard.KEY_F3) {
+			if (isShiftKeyDown()) GuiContext.DEBUG = !GuiContext.DEBUG;
+			else if (GuiContext.DEBUG) GuiContext.DEBUG_TEXT = !GuiContext.DEBUG_TEXT;
+		}
 		
 		GuiElementBase focused = context.getFocused();
 		if (focused != null) focused.onKey(keyCode, typedChar);
@@ -126,17 +128,20 @@ public class GuiContainerScreen extends GuiScreen {
 	private void drawDebugInfo(int mouseX, int mouseY, float partialTicks) {
 		FontRenderer fontRenderer = GuiElementBase.getFontRenderer();
 		List<ElementInfo> hierarchy = new ElementInfo(container)
-			.getElementsAt(mouseX, mouseY)
-			.collect(Collectors.toList());
+			.getElementsAt(mouseX, mouseY).collect(Collectors.toList());
 		ElementInfo last = hierarchy.get(hierarchy.size() - 1);
 		List<ElementInfo> children = last.getChildElements().collect(Collectors.toList());
 		
+		GuiElementBase.enableBlendAlphaStuffs();
 		// Draw element boundaries.
-		int color = 0x40000000;
-		for (ElementInfo info : hierarchy) {
-			Gui.drawRect(info.globalX, info.globalY, info.globalX + info.width, info.globalY + info.height, color);
-			color ^= 0xFFFFFF;
-		}
+		GuiElementBase.setRenderColorARGB(0x60FFFF00);
+		for (ElementInfo info : hierarchy) if (info != last)
+			GuiElementBase.drawOutline(info.globalX - 1, info.globalY - 1, info.width + 2, info.height + 2);
+		// Draw selected element boundaries.
+		GuiElementBase.setRenderColorARGB(0xA000FF00);
+		GuiElementBase.drawOutline(last.globalX - 1, last.globalY - 1, last.width + 2, last.height + 2);
+		GuiElementBase.setRenderColorARGB(0x3000FF00);
+		GuiElementBase.drawRect(last.globalX, last.globalY, last.width, last.height);
 		// Draw container padding.
 		if (last.element instanceof GuiContainer) {
 			GuiContainer container = (GuiContainer)last.element;
@@ -146,16 +151,21 @@ public class GuiContainerScreen extends GuiScreen {
 			int padRight  = container.getPaddingRight();
 			int padTop    = container.getPaddingTop();
 			int padBottom = container.getPaddingBottom();
-			Gui.drawRect(x,                y,                 x + padLeft,      y + h,      0x400000FF);
-			Gui.drawRect(x + w - padRight, y,                 x + w,            y + h,      0x400000FF);
-			Gui.drawRect(x + padLeft,      y,                 x + w - padRight, y + padTop, 0x400000FF);
-			Gui.drawRect(x + padLeft,      y + h - padBottom, x + w - padRight, y + h,      0x400000FF);
+			GuiElementBase.setRenderColorARGB(0x800000FF);
+			GuiElementBase.drawRect(x,                y,                 padLeft, h);
+			GuiElementBase.drawRect(x + w - padRight, y,                 padRight, h);
+			GuiElementBase.drawRect(x + padLeft,      y,                 w, padTop);
+			GuiElementBase.drawRect(x + padLeft,      y + h - padBottom, w, padBottom);
 		}
 		// Draw child elements boundaries.
-		if (!children.isEmpty())
-		for (ElementInfo child : children)
-			Gui.drawRect(child.globalX, child.globalY, child.globalX + child.width, child.globalY + child.height, 0x40FF0000);
+		if (!children.isEmpty()) {
+			GuiElementBase.setRenderColorARGB(0x80FF0000);
+			for (ElementInfo child : children)
+				GuiElementBase.drawOutline(child.globalX - 1, child.globalY - 1, child.width + 2, child.height + 2);
+		}
+		GuiElementBase.disableBlendAlphaStuffs();
 		
+		if (!GuiContext.DEBUG_TEXT) return;
 		// Draw debug text for elements in the hierarchy ..
 		int textY = 4;
 		for (ElementInfo info : hierarchy) {
