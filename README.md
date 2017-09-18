@@ -111,7 +111,9 @@ treated the same.
 
 **Authors:** [copygirl](https://github.com/copygirl),
              [asiekierka](https://github.com/asiekierka)  
-**Contributors:** [InsomniaKitten](https://github.com/InsomniaKitten) ([#33](https://github.com/copygirl/WearableBackpacks/pull/33))  
+**Contributors:** [InsomniaKitten](https://github.com/InsomniaKitten)
+                      ([#33](https://github.com/copygirl/WearableBackpacks/pull/33),
+                       [#50](https://github.com/copygirl/WearableBackpacks/pull/50))  
 
 ### Localization
 
