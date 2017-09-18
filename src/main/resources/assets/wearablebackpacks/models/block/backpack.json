@@ -20,6 +20,10 @@
 			"rotation": [ 0, 160, 0 ],
 			"translation": [ 0, 2, 0 ],
 			"scale": [ 0.6, 0.6, 0.6 ]
+		},
+		"fixed": {
+			"rotation":  [ 0, 180, 0 ],
+			"translation":  [ 0, 2, 0 ]
 		}
 	},
 	"elements": [{

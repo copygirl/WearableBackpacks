@@ -1,4 +1,10 @@
 {
+	"display": {
+		"fixed": {
+			"rotation":  [ 0, 180, 0 ],
+			"translation":  [ 0, 2, 0 ]
+		}
+	},
 	"elements": [{
 		"__comment": "top",
 		"from": [  3,  9,  5 ],
