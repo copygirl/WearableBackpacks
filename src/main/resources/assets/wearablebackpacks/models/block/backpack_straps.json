@@ -1,4 +1,9 @@
 {
+	"display": {
+		"fixed": {
+			"rotation":  [ 0, 180, 0 ]
+		}
+	},
 	"elements": [{
 		"__comment": "left",
 		"from": [ 11,  3, 4 ],
