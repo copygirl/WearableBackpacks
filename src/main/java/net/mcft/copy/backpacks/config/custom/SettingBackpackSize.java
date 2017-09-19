@@ -9,7 +9,7 @@ public class SettingBackpackSize extends SettingSingleValue<BackpackSize> {
 	
 	public SettingBackpackSize(int defaultColumns, int defaultRows) {
 		super(new BackpackSize(defaultColumns, defaultRows));
-		setConfigEntryClass("net.mcft.copy.backpacks.client.gui.config.custom.EntryBackpackSize");
+		setConfigEntryClass("net.mcft.copy.backpacks.client.gui.config.custom.EntryValueBackpackSize");
 	}
 	
 	@Override

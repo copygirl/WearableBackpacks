@@ -15,7 +15,7 @@ public class SettingDouble extends SettingSingleValue<Double> {
 	
 	public SettingDouble(double defaultValue) {
 		super(defaultValue);
-		setConfigEntryClass("net.mcft.copy.backpacks.client.gui.config.EntryField$Decimal");
+		setConfigEntryClass("net.mcft.copy.backpacks.client.gui.config.EntryValueField$Decimal");
 	}
 	
 	/** Sets the valid range of values for this double setting. */

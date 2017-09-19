@@ -12,7 +12,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.mcft.copy.backpacks.client.gui.config.BaseEntrySetting;
+import net.mcft.copy.backpacks.client.gui.config.EntrySetting;
 import net.mcft.copy.backpacks.config.Status.Severity;
 
 /** Represents a single configuration setting. */
@@ -29,7 +29,7 @@ public abstract class Setting<T> {
 	
 	/** Holds the setting's current entry instance in the config GUI (if open). */
 	@SideOnly(Side.CLIENT)
-	private BaseEntrySetting<T> _entry;
+	private EntrySetting<T> _entry;
 	
 	/** The setting category, for example "general". */
 	private String _category;
@@ -115,20 +115,24 @@ public abstract class Setting<T> {
 	public void set(T value) { _value = value; }
 	
 	/** Returns this setting's current status regarding its value / requirements. */
-	public List<Status> getStatus()
-		{ return _statusFuncs.stream().map(Supplier::get).collect(Collectors.toList()); }
+	public List<Status> getStatus() { return _statusFuncs.stream().map(Supplier::get).collect(Collectors.toList()); }
+	/** Returns this setting's current status regarding its value / requirements.
+	 *  (Using the current config entry values.) */
+	@SideOnly(Side.CLIENT)
+	public List<Status> getStatusConfig() {
+		_checkEntryValue = true;
+		List<Status> list = getStatus();
+		_checkEntryValue = false;
+		return list;
+	}
 	
 	/** Returns if this setting is enabled based on its requirements / status functions. */
 	public boolean isEnabled()
 		{ return Severity.ERROR != Status.getSeverity(getStatus()); }
 	/** Returns if this setting is enabled based on its requirements (uses config entry values). */
 	@SideOnly(Side.CLIENT)
-	public boolean isEnabledConfig() {
-		_checkEntryValue = true;
-		boolean enabled = isEnabled();
-		_checkEntryValue = false;
-		return enabled;
-	}
+	public boolean isEnabledConfig()
+		{ return Severity.ERROR != Status.getSeverity(getStatusConfig()); }
 	
 	/** Returns the required action after changing this
 	 *  setting (such as world rejoin or Minecraft restart). */
@@ -156,7 +160,7 @@ public abstract class Setting<T> {
 	/** Sets the setting's current config entry in the config GUI to the specified entry.
 	 *  Used for disabling config entries dynamically based on which settings they require. */
 	@SideOnly(Side.CLIENT)
-	public void setEntry(BaseEntrySetting<T> entry) { _entry = entry; }
+	public void setEntry(EntrySetting<T> entry) { _entry = entry; }
 	/** Resets the setting's current config entry in the config GUI. */
 	@SideOnly(Side.CLIENT)
 	public void resetEntry() { _entry = null; }

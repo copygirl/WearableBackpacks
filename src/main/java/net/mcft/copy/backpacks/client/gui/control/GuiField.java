@@ -77,6 +77,7 @@ public class GuiField extends GuiElementBase {
 		{ _colorBorder = ((value & 0xFF000000) == 0) ? (value | 0xFF000000) : value; }
 	public void resetBorderColor() { setBorderColor(COLOR_BORDER_DEFAULT); }
 	
+	// FIXME: Remove me!
 	public void setTextAndBorderColor(int value, boolean setElseDefault) {
 		setTextColor(setElseDefault ? value : COLOR_TEXT_DEFAULT);
 		setBorderColor(setElseDefault ? value : COLOR_BORDER_DEFAULT);

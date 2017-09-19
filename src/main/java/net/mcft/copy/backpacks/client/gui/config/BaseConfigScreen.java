@@ -179,8 +179,9 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 		}
 		public Stream<GuiLabel> getEntryLabels() {
 			return getElements()
-				.filter(BaseEntry.Labelled.class::isInstance)
-				.map(BaseEntry.Labelled.class::cast)
+				.filter(BaseEntry.class::isInstance)
+				.map(BaseEntry.class::cast)
+				.filter(BaseEntry::hasLabel)
 				.map(entry -> entry.label);
 		}
 		

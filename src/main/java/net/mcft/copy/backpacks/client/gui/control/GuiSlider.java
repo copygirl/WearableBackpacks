@@ -62,17 +62,17 @@ public class GuiSlider extends GuiElementBase {
 	
 	// Raw amount related
 	
-	public double getAmount(Direction direction) {
+	public double getSliderRaw(Direction direction) {
 		ensureValidDirection(direction);
 		return (direction == Direction.HORIZONTAL) ? _amountX : _amountY;
 	}
-	public final double getAmountX() { return getAmount(Direction.HORIZONTAL); }
-	public final double getAmountY() { return getAmount(Direction.VERTICAL); }
-	public final double getAmount() { return getAmount(getOnlyDirection()); }
+	public final double getSliderRawX() { return getSliderRaw(Direction.HORIZONTAL); }
+	public final double getSliderRawY() { return getSliderRaw(Direction.VERTICAL); }
+	public final double getSliderRaw() { return getSliderRaw(getOnlyDirection()); }
 	
-	public void setAmount(Direction direction, double value)
-		{ setAmountInternal(direction, value, true); }
-	private boolean setAmountInternal(Direction direction, double value, boolean fireChanged) {
+	public void setSliderRaw(Direction direction, double value)
+		{ setSliderRawInternal(direction, value, true); }
+	private boolean setSliderRawInternal(Direction direction, double value, boolean fireChanged) {
 		ensureValidDirection(direction);
 		value = MathHelper.clamp(value, 0, 1);
 		
@@ -95,12 +95,12 @@ public class GuiSlider extends GuiElementBase {
 		if (fireChanged) onChanged();
 		return true;
 	}
-	public final void setAmountX(double value) { setAmount(Direction.HORIZONTAL, value); }
-	public final void setAmountY(double value) { setAmount(Direction.VERTICAL, value); }
-	public final void setAmount(double value) { setAmount(getOnlyDirection(), value); }
-	public final void setAmount(double hor, double vert) {
-		if (setAmountInternal(Direction.HORIZONTAL, hor, false) |
-			setAmountInternal(Direction.VERTICAL, vert, false))
+	public final void setSliderRawX(double value) { setSliderRaw(Direction.HORIZONTAL, value); }
+	public final void setSliderRawY(double value) { setSliderRaw(Direction.VERTICAL, value); }
+	public final void setSliderRaw(double value) { setSliderRaw(getOnlyDirection(), value); }
+	public final void setSliderRaw(double hor, double vert) {
+		if (setSliderRawInternal(Direction.HORIZONTAL, hor, false) |
+			setSliderRawInternal(Direction.VERTICAL, vert, false))
 			onChanged();
 	}
 	
@@ -144,38 +144,38 @@ public class GuiSlider extends GuiElementBase {
 	public final void setStepSize(double value) { _stepX = _stepY = value; }
 	
 	
-	public double getValue(Direction direction) {
+	public double getSliderValue(Direction direction) {
 		double min = getMin(direction);
 		double max = getMax(direction);
 		double stepSize = getStepSize(direction);
-		double value = min + getAmount(direction) * (max - min);
+		double value = min + getSliderRaw(direction) * (max - min);
 		return (stepSize > 0) ? Math.round(value / stepSize) * stepSize : value;
 	}
-	public final double getValueX() { return getValue(Direction.HORIZONTAL); }
-	public final double getValueY() { return getValue(Direction.VERTICAL); }
-	public final double getValue() { return getValue(getOnlyDirection()); }
+	public final double getSliderValueX() { return getSliderValue(Direction.HORIZONTAL); }
+	public final double getSliderValueY() { return getSliderValue(Direction.VERTICAL); }
+	public final double getSliderValue() { return getSliderValue(getOnlyDirection()); }
 	
-	public void setValue(Direction direction, double value) {
+	public void setSliderValue(Direction direction, double value) {
 		double min = getMin(direction);
 		double max = getMax(direction);
-		setAmount(direction, (value - min) / (max - min));
+		setSliderRaw(direction, (value - min) / (max - min));
 	}
-	public final void setValue(double hor, double vert) {
+	public final void setSliderValue(double hor, double vert) {
 		double hMin = getMin(Direction.HORIZONTAL);
 		double hMax = getMax(Direction.HORIZONTAL);
 		double vMin = getMin(Direction.VERTICAL);
 		double vMax = getMax(Direction.VERTICAL);
-		setAmount((hor - hMin) / (hMax - hMin), (vert - vMin) / (vMax - vMin));
+		setSliderRaw((hor - hMin) / (hMax - hMin), (vert - vMin) / (vMax - vMin));
 	}
-	public final void setValueX(double value) { setValue(Direction.HORIZONTAL, value); }
-	public final void setValueY(double value) { setValue(Direction.VERTICAL, value); }
-	public final void setValue(double value) { setValue(getOnlyDirection(), value); }
+	public final void setSliderValueX(double value) { setSliderValue(Direction.HORIZONTAL, value); }
+	public final void setSliderValueY(double value) { setSliderValue(Direction.VERTICAL, value); }
+	public final void setSliderValue(double value) { setSliderValue(getOnlyDirection(), value); }
 	
 	public void setValueFormatter(DoubleFunction<String> value) {
 		if (value == null) throw new NullPointerException("Argument value can't be null");
 		_valueFormatter = value;
 	}
-	public String getValueText() { return _valueFormatter.apply(getValue()); }
+	public String getValueText() { return _valueFormatter.apply(getSliderValue()); }
 	
 	
 	@Override
@@ -191,7 +191,7 @@ public class GuiSlider extends GuiElementBase {
 	public void onDragged(int mouseX, int mouseY, int startX, int startY) {
 		for (Direction direction : directions) {
 			int pos = (direction == Direction.HORIZONTAL) ? mouseX : mouseY;
-			setAmount(direction, (pos - getSliderSize() / 2) / (float)(getSize(direction) - getSliderSize()));
+			setSliderRaw(direction, (pos - getSliderSize() / 2) / (float)(getSize(direction) - getSliderSize()));
 		}
 	}
 	
@@ -219,8 +219,8 @@ public class GuiSlider extends GuiElementBase {
 		int sliderSize = getSliderSize();
 		boolean slideHorizontal = directions.contains(Direction.HORIZONTAL);
 		boolean slideVertical   = directions.contains(Direction.VERTICAL);
-		int x = slideHorizontal ? (int)((getWidth()  - sliderSize) * getAmountX()) : 0;
-		int y = slideVertical   ? (int)((getHeight() - sliderSize) * getAmountY()) : 0;
+		int x = slideHorizontal ? (int)((getWidth()  - sliderSize) * getSliderRawX()) : 0;
+		int y = slideVertical   ? (int)((getHeight() - sliderSize) * getSliderRawY()) : 0;
 		int w = slideHorizontal ? sliderSize : getWidth();
 		int h = slideVertical   ? sliderSize : getHeight();
 		int ty = isEnabled() ? 66 : 46;

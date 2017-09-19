@@ -244,7 +244,7 @@ public class GuiScrollable extends GuiContainer {
 			this.direction = direction;
 			setAlign(direction, new FixedBoth(0, 0));
 			setAlign(direction.perpendicular(), new FixedMax(0));
-			setAmount(0);
+			setSliderRaw(0);
 		}
 		
 		@Override
@@ -254,7 +254,7 @@ public class GuiScrollable extends GuiContainer {
 		}
 		
 		@Override
-		public double getAmount(Direction direction)
+		public double getSliderRaw(Direction direction)
 			{ return (double)getScroll(direction) / getMaxScroll(direction); }
 		
 		@Override
@@ -277,7 +277,7 @@ public class GuiScrollable extends GuiContainer {
 			if (!isVisible() || (getMaxScroll(direction) == 0)) return;
 			
 			int sliderSize = getSliderSize();
-			int sliderPosition = (int)(getAmount() * (getSize(direction) - sliderSize));
+			int sliderPosition = (int)(getSliderRaw() * (getSize(direction) - sliderSize));
 			int x, y, w, h;
 			if (direction == Direction.HORIZONTAL) {
 				x = sliderPosition; y = 0;

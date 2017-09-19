@@ -26,6 +26,7 @@ import net.mcft.copy.backpacks.client.gui.config.BackpacksConfigScreen;
 import net.mcft.copy.backpacks.client.gui.config.BaseConfigScreen;
 import net.mcft.copy.backpacks.client.gui.config.BaseEntry;
 import net.mcft.copy.backpacks.client.gui.config.BaseEntryList;
+import net.mcft.copy.backpacks.client.gui.config.EntryValueField;
 import net.mcft.copy.backpacks.client.gui.config.IConfigEntry;
 import net.mcft.copy.backpacks.client.gui.config.BaseEntryList.Entry.MoveButton;
 import net.mcft.copy.backpacks.client.gui.control.GuiButton;
@@ -77,7 +78,7 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 		listEntries.addFixed(listBackpack);
 		
 		// Buttons
-		buttonCancel = new GuiButton(translate("gui.cancel"));
+		buttonCancel = new GuiButton(I18n.format("config." + WearableBackpacks.MOD_ID + ".gui.cancel"));
 		if (buttonCancel.getWidth() < 100) buttonCancel.setWidth(100);
 		buttonCancel.setAction(this::cancelClicked);
 		
@@ -94,7 +95,7 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 	@Override
 	protected void doneClicked() {
 		BackpackEntityEntry value = new BackpackEntityEntry();
-		value.entityID = entryEntityID.field.getText();
+		value.entityID = entryEntityID.getValue().get();
 		value.entries  = listBackpack.getValue();
 		
 		_entry.orElseGet(() -> (EntryListSpawn.Entry)_owningList.addEntry()).setValue(value);
@@ -113,72 +114,45 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 	}
 	
 	
-	// TODO: Have this somehow extend EntryField?
-	public static class EntryEntityID extends BaseEntry.Labelled {
+	public static class EntryEntityID extends BaseEntry.Value<String> {
 		
 		private final ListEntryEntityScreen _owningScreen;
 		
 		public final String previousValue;
-		public final GuiField field;
 		public Optional<EntityEntry> entityEntry;
 		
 		public EntryEntityID(ListEntryEntityScreen owningScreen) {
-			label.setText(translate("spawn.entityID"));
-			label.setTooltip(translateTooltip("spawn.entityID"));
+			super(new EntryValueField.Text());
+			setLabelAndTooltip("spawn.entityID");
+			((EntryValueField.Text)control).setChangedAction(this::onChanged);
 			
 			_owningScreen = owningScreen;
-			
 			previousValue = _owningScreen._entry.map(e -> e.getValue().entityID).orElse("");
-			field = new GuiField(0, ENTRY_HEIGHT, previousValue);
-			field.setChangedAction(this::onChanged);
+			setValue(previousValue);
 			
-			setSpacing(4, 8, 6);
-			addFixed(iconStatus);
-			addFixed(label);
-			addWeighted(field);
-			addFixed(buttonUndo);
-			
-			setEnabled(!SettingListSpawn.getDefaultEntityIDs().contains(field.getText()));
 			onChanged();
 		}
 		
 		@Override
 		public List<Status> getStatus() {
-			return entityEntry.isPresent()   ? Collections.emptyList()
-			     : field.getText().isEmpty() ? Arrays.asList(Status.EMPTY)
-			                                 : Arrays.asList(EntryListSpawn.STATUS_NOT_FOUND);
+			return entityEntry.isPresent()    ? Collections.emptyList()
+			     : getValue().get().isEmpty() ? Arrays.asList(Status.EMPTY)
+			                                  : Arrays.asList(EntryListSpawn.STATUS_NOT_FOUND);
 		}
 		
 		private void onChanged() {
-			String entityID = field.getText();
+			String entityID = getValue().get();
 			entityEntry = EntryListSpawn.getEntityEntry(entityID);
 			_owningScreen.labelTitleEntityName.setText(
 				EntryListSpawn.getEntityEntryName(entityEntry, entityID));
 		}
 		
-		@Override
-		public void draw(int mouseX, int mouseY, float partialTicks) {
-			Severity severity = Status.getSeverity(getStatus());
-			field.setTextAndBorderColor(severity.foregroundColor,
-				(severity == Severity.WARN) || (severity == Severity.ERROR));
-			super.draw(mouseX, mouseY, partialTicks);
-		}
-		
 		// IConfigEntry implementation
 		
 		@Override
-		public boolean isChanged() { return !previousValue.equals(field.getText()); }
+		public boolean isChanged() { return !previousValue.equals(getValue().get()); }
 		@Override
-		public boolean isDefault() { return false; } // Doesn't matter.
-		
-		@Override
-		public void undoChanges() { field.setText(previousValue); }
-		@Override
-		public void setToDefault() {  } // Doesn't matter.
-		
-		@Override
-		public ChangeRequiredAction applyChanges()
-			{ return ChangeRequiredAction.None; }
+		public void undoChanges() { setValue(previousValue); }
 		
 	}
 	
@@ -202,8 +176,9 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 			insertFixed(0, entryHeader);
 		}
 		private static GuiLabel createLabel(String key) {
-			GuiLabel label = new GuiLabel(translate(key), TextAlign.CENTER);
-			label.setTooltip(translateTooltip(key));
+			key = "config." + WearableBackpacks.MOD_ID + "." + key;
+			GuiLabel label = new GuiLabel(I18n.format(key), TextAlign.CENTER);
+			label.setTooltip(Arrays.asList(I18n.format(key + ".tooltip").split("\\n")));
 			label.setBottom(2);
 			return label;
 		}
@@ -362,10 +337,5 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 		}
 		
 	}
-	
-	private static String translate(String key)
-		{ return I18n.format("config." + WearableBackpacks.MOD_ID + "." + key); }
-	private static List<String> translateTooltip(String key)
-		{ return Arrays.asList(translate(key + ".tooltip").split("\\n")); }
 	
 }

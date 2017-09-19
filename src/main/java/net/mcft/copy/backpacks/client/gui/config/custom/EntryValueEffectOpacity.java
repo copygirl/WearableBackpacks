@@ -10,22 +10,15 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.mcft.copy.backpacks.client.gui.config.EntrySlider;
-import net.mcft.copy.backpacks.client.gui.control.GuiSlider;
-import net.mcft.copy.backpacks.config.SettingDouble;
+import net.mcft.copy.backpacks.client.gui.config.EntryValueSlider;
 
 @SideOnly(Side.CLIENT)
-public class EntryEffectOpacity extends EntrySlider.Percentage {
+public class EntryValueEffectOpacity extends EntryValueSlider.Percentage {
 	
-	public EntryEffectOpacity(SettingDouble setting)
-		{ super(setting, new Slider()); }
-	
-	private static class Slider extends GuiSlider {
-		@Override
-		protected void drawSliderForeground(boolean isHighlighted, float partialTicks) {
-			renderEffect(1, 1, getWidth() - 2, getHeight() - 2, (float)getValue());
-			super.drawSliderForeground(isHighlighted, partialTicks);
-		}
+	@Override
+	protected void drawSliderForeground(boolean isHighlighted, float partialTicks) {
+		renderEffect(1, 1, getWidth() - 2, getHeight() - 2, (float)getSliderValue());
+		super.drawSliderForeground(isHighlighted, partialTicks);
 	}
 	
 	private static final ResourceLocation ENCHANTED_ITEM_GLINT =

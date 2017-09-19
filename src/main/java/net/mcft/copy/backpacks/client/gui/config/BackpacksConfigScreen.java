@@ -1,8 +1,5 @@
 package net.mcft.copy.backpacks.client.gui.config;
 
-import java.lang.reflect.Constructor;
-import java.util.Arrays;
-
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextComponentString;
@@ -11,9 +8,14 @@ import net.minecraftforge.fml.client.config.GuiMessageDialog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.lang.reflect.Constructor;
+import java.util.Arrays;
+
 import net.mcft.copy.backpacks.WearableBackpacks;
-import net.mcft.copy.backpacks.client.gui.*;
-import net.mcft.copy.backpacks.client.gui.control.*;
+import net.mcft.copy.backpacks.client.gui.GuiContext;
+import net.mcft.copy.backpacks.client.gui.GuiElementBase;
+import net.mcft.copy.backpacks.client.gui.config.EntrySetting;
+import net.mcft.copy.backpacks.client.gui.control.GuiButton;
 import net.mcft.copy.backpacks.client.gui.test.GuiTestScreen;
 import net.mcft.copy.backpacks.config.Setting;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
@@ -61,6 +63,7 @@ public class BackpacksConfigScreen extends BaseConfigScreen {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public static <T> GuiElementBase CreateEntryFromSetting(Setting<T> setting) {
 		String entryClassName = setting.getConfigEntryClass();
 		if (entryClassName == null) throw new RuntimeException(
@@ -69,6 +72,11 @@ public class BackpacksConfigScreen extends BaseConfigScreen {
 			Class<?> entryClass = Class.forName(entryClassName);
 			if (!GuiElementBase.class.isAssignableFrom(entryClass))
 				throw new Exception("Not a subclass of GuiElementBase");
+			
+			// If entry class is IConfigValue, create an EntrySetting using it.
+			if (IConfigValue.class.isAssignableFrom(entryClass))
+				return new EntrySetting<T>(setting, (IConfigValue<T>)entryClass.newInstance());
+			
 			// Find a constructor that has exactly one parameter of a compatible setting type.
 			Constructor<?> constructor = Arrays.stream(entryClass.getConstructors())
 				.filter(c -> (c.getParameterCount() == 1) && c.getParameterTypes()[0].isAssignableFrom(setting.getClass()))
