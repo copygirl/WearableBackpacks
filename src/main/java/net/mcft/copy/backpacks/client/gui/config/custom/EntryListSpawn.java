@@ -46,7 +46,7 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 		
 		GuiContainer entryLabel = new GuiContainer();
 		entryLabel.setFillHorizontal();
-		entryLabel.setHeight(ENTRY_HEIGHT);
+		entryLabel.setHeight(DEFAULT_ENTRY_HEIGHT);
 			GuiLabel label = new GuiLabel(I18n.format(
 				"config." + WearableBackpacks.MOD_ID + ".spawn.entries"));
 			label.setCenteredHorizontal();
@@ -119,7 +119,7 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 			labelName = new GuiLabel(0, "", TextAlign.CENTER);
 			labelName.setCenteredVertical();
 			
-			buttonEdit = new GuiButton(100, ENTRY_HEIGHT);
+			buttonEdit = new GuiButton(100, DEFAULT_ENTRY_HEIGHT);
 			buttonEdit.setAction(() -> { display(new ListEntryEntityScreen(owningList, Optional.of(this))); });
 			
 			addFixed(buttonMove);

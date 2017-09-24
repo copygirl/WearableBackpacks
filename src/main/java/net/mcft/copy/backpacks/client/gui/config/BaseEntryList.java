@@ -39,7 +39,7 @@ public abstract class BaseEntryList<T> extends GuiLayout implements IConfigEntry
 		layoutList = new GuiLayout(Direction.VERTICAL);
 		layoutList.setFillHorizontal();
 		
-		buttonAdd = new GuiButton(0, ENTRY_HEIGHT, TextFormatting.GREEN + "+");
+		buttonAdd = new GuiButton(0, DEFAULT_ENTRY_HEIGHT, TextFormatting.GREEN + "+");
 		buttonAdd.setFill();
 		buttonAdd.setAction(this::addButtonPressed);
 		
@@ -91,7 +91,7 @@ public abstract class BaseEntryList<T> extends GuiLayout implements IConfigEntry
 			
 			buttonMove = new MoveButton();
 			
-			buttonRemove = new GuiButton(ENTRY_HEIGHT, ENTRY_HEIGHT, TextFormatting.RED + "x");
+			buttonRemove = new GuiButton(DEFAULT_ENTRY_HEIGHT, DEFAULT_ENTRY_HEIGHT, TextFormatting.RED + "x");
 			buttonRemove.setAction(() -> owningList.layoutList.remove(this));
 		}
 		
@@ -118,7 +118,7 @@ public abstract class BaseEntryList<T> extends GuiLayout implements IConfigEntry
 			public static final int WIDTH = 12;
 			protected int yOffset = 0;
 			public MoveButton() {
-				super(WIDTH, ENTRY_HEIGHT - 2, "=");
+				super(WIDTH, DEFAULT_ENTRY_HEIGHT - 2, "=");
 				setCenteredVertical();
 			}
 			@Override

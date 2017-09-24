@@ -14,7 +14,7 @@ import net.mcft.copy.backpacks.config.Status.Severity;
 public abstract class EntryValueField<T> extends GuiField
 	implements IConfigValue<T>, IConfigValue.ShowsStatus {
 	
-	public EntryValueField() { setFillVertical(); }
+	public EntryValueField() { setHeight(IConfigEntry.DEFAULT_ENTRY_HEIGHT); }
 	
 	@Override
 	public Optional<T> getValue() {

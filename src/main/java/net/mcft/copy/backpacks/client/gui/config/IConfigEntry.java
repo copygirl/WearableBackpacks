@@ -10,7 +10,7 @@ import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 @SideOnly(Side.CLIENT)
 public interface IConfigEntry {
 	
-	public static final int ENTRY_HEIGHT = 18;
+	public static final int DEFAULT_ENTRY_HEIGHT = 18;
 	
 	public static final String TOOLTIP_TITLE   = TextFormatting.GREEN.toString();
 	public static final String TOOLTIP_TEXT    = TextFormatting.YELLOW.toString();

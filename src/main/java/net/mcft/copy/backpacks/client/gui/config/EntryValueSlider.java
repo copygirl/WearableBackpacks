@@ -18,7 +18,7 @@ import net.mcft.copy.backpacks.config.SettingInteger;
 public abstract class EntryValueSlider<T> extends GuiSlider
 	implements IConfigValue<T>, IConfigValue.Setup<T> {
 	
-	public EntryValueSlider() { setFillVertical(); }
+	public EntryValueSlider() { setHeight(IConfigEntry.DEFAULT_ENTRY_HEIGHT); }
 	
 	public static class RangeDouble extends EntryValueSlider<Double> {
 		@Override

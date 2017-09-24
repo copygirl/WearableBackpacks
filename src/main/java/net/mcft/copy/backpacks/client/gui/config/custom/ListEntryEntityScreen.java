@@ -165,8 +165,8 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 			
 			GuiLayout entryHeader = new GuiLayout(Direction.HORIZONTAL);
 			entryHeader.setFillHorizontal();
-			entryHeader.setHeight(ENTRY_HEIGHT);
-			entryHeader.setPaddingHorizontal(MoveButton.WIDTH - 8, ENTRY_HEIGHT + 2);
+			entryHeader.setHeight(DEFAULT_ENTRY_HEIGHT);
+			entryHeader.setPaddingHorizontal(MoveButton.WIDTH - 8, DEFAULT_ENTRY_HEIGHT + 2);
 			
 				entryHeader.setSpacing(9, 2);
 				entryHeader.addFixed(createLabel("spawn.chance"), CHANCE_WIDTH + 20);
@@ -203,13 +203,13 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 			public Entry(EntryListBackpack owningList) {
 				super(owningList);
 				
-				fieldChance = new GuiField(CHANCE_WIDTH, ENTRY_HEIGHT);
+				fieldChance = new GuiField(CHANCE_WIDTH, DEFAULT_ENTRY_HEIGHT);
 				fieldChance.setMaxLength(5);
 				fieldChance.setCharValidator(Character::isDigit);
 				itemBackpack = new GuiItem(18, 18);
-				fieldBackpack = new GuiField(0, ENTRY_HEIGHT);
+				fieldBackpack = new GuiField(0, DEFAULT_ENTRY_HEIGHT);
 				fieldBackpack.setChangedAction(this::onBackpackChanged);
-				fieldLootTable = new GuiField(0, ENTRY_HEIGHT);
+				fieldLootTable = new GuiField(0, DEFAULT_ENTRY_HEIGHT);
 				
 				setSpacing(2, 2, -1, 2);
 				addFixed(buttonMove);

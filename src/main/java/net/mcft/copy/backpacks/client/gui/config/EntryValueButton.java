@@ -14,7 +14,7 @@ public abstract class EntryValueButton<T> extends GuiButton implements IConfigVa
 	
 	protected T value;
 	
-	public EntryValueButton() { setFillVertical(); }
+	public EntryValueButton() { setHeight(IConfigEntry.DEFAULT_ENTRY_HEIGHT); }
 	
 	@Override
 	public Optional<T> getValue() { return Optional.of(value); }
