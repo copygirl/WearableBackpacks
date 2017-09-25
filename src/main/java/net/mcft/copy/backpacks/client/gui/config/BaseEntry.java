@@ -117,42 +117,32 @@ public abstract class BaseEntry extends GuiLayout implements IConfigEntry {
 		super.draw(mouseX, mouseY, partialTicks);
 	}
 	
-	// Dummy IConfigEntry implementation
-	
-	@Override
-	public boolean isChanged() { return true; }
-	@Override
-	public boolean isDefault() { return false; }
-	
-	@Override
-	public void undoChanges() {  }
-	@Override
-	public void setToDefault() {  }
-	
-	@Override
-	public ChangeRequiredAction applyChanges()
-		{ return ChangeRequiredAction.None; }
-	
-	
-	
-	public static abstract class Value<T> extends BaseEntry {
+		
+	public static class Value<T> extends BaseEntry {
 		
 		protected IConfigValue<T> control;
+		public final Optional<T> previousValue;
+		public final Optional<T> defaultValue;
 		
-		public Value(IConfigValue<T> control) {
+		public Value(IConfigValue<T> control, T currentValue, T defaultValue)
+			{ this(control, Optional.ofNullable(currentValue), Optional.ofNullable(defaultValue)); }
+		public Value(IConfigValue<T> control, Optional<T> currentValue, Optional<T> defaultValue) {
 			if (control == null) throw new NullPointerException("control must not be null");
-			this.control = control;
+			this.control       = control;
+			this.previousValue = currentValue;
+			this.defaultValue  = defaultValue;
 			
 			setSpacing(4, 8, 6, 4);
 			addFixed(iconStatus);
 			addFixed(label);
 			addWeighted((GuiElementBase)control);
-			addFixed(buttonUndo);
-			addFixed(buttonReset);
+			if (previousValue.isPresent()) addFixed(buttonUndo);
+			if (defaultValue.isPresent()) addFixed(buttonReset);
+			
+			currentValue.ifPresent(this::setValue);
 		}
 		
 		public Optional<T> getValue() { return control.getValue(); }
-		
 		public void setValue(T value) { control.setValue(value); }
 		
 		@Override
@@ -168,6 +158,22 @@ public abstract class BaseEntry extends GuiLayout implements IConfigEntry {
 				((IConfigValue.ShowsStatus)control).setStatus(getStatus());
 			super.draw(mouseX, mouseY, partialTicks);
 		}
+		
+		// IConfigEntry implementation
+		
+		@Override
+		public boolean isChanged() { return !previousValue.equals(getValue()); }
+		@Override
+		public boolean isDefault() { return defaultValue.equals(getValue()); }
+		
+		@Override
+		public void undoChanges() { previousValue.ifPresent(this::setValue); }
+		@Override
+		public void setToDefault() { defaultValue.ifPresent(this::setValue); }
+		
+		@Override
+		public ChangeRequiredAction applyChanges()
+			{ return ChangeRequiredAction.None; }
 		
 	}
 	

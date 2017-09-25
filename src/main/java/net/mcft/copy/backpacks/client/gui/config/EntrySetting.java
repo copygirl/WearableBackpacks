@@ -2,7 +2,6 @@ package net.mcft.copy.backpacks.client.gui.config;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -16,25 +15,20 @@ public class EntrySetting<T> extends BaseEntry.Value<T> {
 	
 	public final Setting<T> setting;
 	
-	private final T _previousValue;
-	private final T _defaultValue;
-	
-	@SuppressWarnings("unchecked") // Java is stupid.
 	public EntrySetting(Setting<T> setting, IConfigValue<T> control) {
-		super(control);
+		super(setup(control, setting), setting.getDefault(), setting.get());
 		this.setting = setting;
 		this.setting.setEntry(this);
-		
-		_previousValue = setting.get();
-		_defaultValue  = setting.getDefault();
 		
 		setLabelAndTooltip(setting.getFullName(),
 			Objects.toString(setting.getDefault()),
 			(setting.requiresMinecraftRestart() ? "fml.configgui.gameRestartTitle" : null));
-		
+	}
+	@SuppressWarnings("unchecked") // Java is stupid.
+	private static <T> IConfigValue<T> setup(IConfigValue<T> control, Setting<T> setting) {
 		if (control instanceof IConfigValue.Setup)
 			((IConfigValue.Setup<T>)control).setup(setting);
-		setValue(setting.get());
+		return control;
 	}
 	
 	@Override
@@ -49,16 +43,6 @@ public class EntrySetting<T> extends BaseEntry.Value<T> {
 	public boolean isEnabled() { return (super.isEnabled() && setting.isEnabledConfig()); }
 	
 	// IConfigEntry implementation
-	
-	@Override
-	public boolean isChanged() { return !getValue().equals(Optional.of(_previousValue)); }
-	@Override
-	public boolean isDefault() { return getValue().equals(Optional.of(_defaultValue)); }
-	
-	@Override
-	public void undoChanges() { setValue(_previousValue); }
-	@Override
-	public void setToDefault() { setValue(_defaultValue); }
 	
 	@Override
 	public ChangeRequiredAction applyChanges() {

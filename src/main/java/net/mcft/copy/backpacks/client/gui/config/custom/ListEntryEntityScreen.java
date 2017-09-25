@@ -116,20 +116,15 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 	
 	public static class EntryEntityID extends BaseEntry.Value<String> {
 		
-		private final ListEntryEntityScreen _owningScreen;
+		private final GuiLabel _labelName;
 		
-		public final String previousValue;
 		public Optional<EntityEntry> entityEntry;
 		
 		public EntryEntityID(ListEntryEntityScreen owningScreen) {
-			super(new EntryValueField.Text());
+			super(new EntryValueField.Text(), owningScreen._entry.map(e -> e.getValue().entityID), Optional.empty());
 			setLabelAndTooltip("spawn.entityID");
 			((EntryValueField.Text)control).setChangedAction(this::onChanged);
-			
-			_owningScreen = owningScreen;
-			previousValue = _owningScreen._entry.map(e -> e.getValue().entityID).orElse("");
-			setValue(previousValue);
-			
+			_labelName = owningScreen.labelTitleEntityName;
 			onChanged();
 		}
 		
@@ -143,16 +138,8 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 		private void onChanged() {
 			String entityID = getValue().get();
 			entityEntry = EntryListSpawn.getEntityEntry(entityID);
-			_owningScreen.labelTitleEntityName.setText(
-				EntryListSpawn.getEntityEntryName(entityEntry, entityID));
+			_labelName.setText(EntryListSpawn.getEntityEntryName(entityEntry, entityID));
 		}
-		
-		// IConfigEntry implementation
-		
-		@Override
-		public boolean isChanged() { return !previousValue.equals(getValue().get()); }
-		@Override
-		public void undoChanges() { setValue(previousValue); }
 		
 	}
 	

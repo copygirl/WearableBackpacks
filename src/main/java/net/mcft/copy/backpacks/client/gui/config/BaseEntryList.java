@@ -142,7 +142,6 @@ public abstract class BaseEntryList<T> extends GuiLayout implements IConfigEntry
 	@Override
 	public boolean isDefault()
 		{ return iteratorEquals(getValueAsStream().iterator(), defaultValue.iterator()); }
-	
 	@Override
 	public final boolean isValid()
 		{ return getEntries().allMatch(entry -> (Status.getSeverity(entry.getStatus()) != Severity.ERROR)); }
