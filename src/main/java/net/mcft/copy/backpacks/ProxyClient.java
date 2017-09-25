@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderBiped;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -37,6 +37,7 @@ import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.api.IBackpack;
+import net.mcft.copy.backpacks.api.BackpackRegistry.BackpackEntityEntry;
 import net.mcft.copy.backpacks.ProxyCommon;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
 import net.mcft.copy.backpacks.client.BakedModelDefaultTexture;
@@ -79,10 +80,14 @@ public class ProxyClient extends ProxyCommon {
 		skinMap.get("default").addLayer(new RendererBackpack.Layer());
 		skinMap.get("slim").addLayer(new RendererBackpack.Layer());
 		
-		for (Class<? extends EntityLivingBase> entityClass : BackpackRegistry.entities.keySet()) {
+		// FIXME: Add backpack render layer dynamically?
+		for (BackpackEntityEntry entry : BackpackRegistry.getEntityEntries()) {
+			Class<? extends EntityLivingBase> entityClass = entry.getEntityClass();
+			if (entityClass == null) continue;
+			
 			Render<?> render = manager.getEntityClassRenderObject(entityClass);
-			if (!(render instanceof RenderBiped)) continue;
-			((RenderBiped<?>)render).addLayer(new RendererBackpack.Layer());
+			if (!(render instanceof RenderLivingBase)) continue;
+			((RenderLivingBase<?>)render).addLayer(new RendererBackpack.Layer());
 		}
 	}
 	
@@ -91,11 +96,11 @@ public class ProxyClient extends ProxyCommon {
 	
 	@SubscribeEvent
 	public void onModelBake(ModelBakeEvent event) {
-		MODEL_BACKPACK = bakeBlockModel("wearablebackpacks:block/backpack");
-		MODEL_BACKPACK_TOP = bakeBlockModel("wearablebackpacks:block/backpack_top");
+		MODEL_BACKPACK        = bakeBlockModel("wearablebackpacks:block/backpack");
+		MODEL_BACKPACK_TOP    = bakeBlockModel("wearablebackpacks:block/backpack_top");
 		MODEL_BACKPACK_STRAPS = bakeBlockModel("wearablebackpacks:block/backpack_straps");
 		
-		MODEL_BACKPACK_ENCH = new BakedModelDefaultTexture(MODEL_BACKPACK);
+		MODEL_BACKPACK_ENCH     = new BakedModelDefaultTexture(MODEL_BACKPACK);
 		MODEL_BACKPACK_ENCH_TOP = new BakedModelDefaultTexture(MODEL_BACKPACK_TOP);
 	}
 	private static IBakedModel bakeBlockModel(String location) {

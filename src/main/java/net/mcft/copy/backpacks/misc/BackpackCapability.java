@@ -14,10 +14,10 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
-import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackType;
+import net.mcft.copy.backpacks.api.BackpackRegistry.BackpackEntry;
 import net.mcft.copy.backpacks.misc.util.MiscUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils.NbtType;
@@ -46,7 +46,7 @@ public class BackpackCapability implements IBackpack {
 	/** This is also null if the backpack is not equipped to the chestplate slot. */
 	public IBackpackType lastType = null;
 	/** Set to a backpack registry entry if the entity is meant to be spawned with a backpack. */
-	public BackpackRegistry.Entry spawnWith = null;
+	public BackpackEntry spawnWith = null;
 	/** Set to true if the backpack may despawn once placed down as a tile entity. */
 	public boolean mayDespawn = false;
 	

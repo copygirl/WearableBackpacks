@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,6 +17,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
+import net.mcft.copy.backpacks.api.BackpackRegistry;
+import net.mcft.copy.backpacks.api.BackpackRegistry.BackpackEntityEntry;
 import net.mcft.copy.backpacks.client.gui.GuiContainer;
 import net.mcft.copy.backpacks.client.gui.GuiLabel;
 import net.mcft.copy.backpacks.client.gui.GuiLabel.TextAlign;
@@ -28,8 +28,6 @@ import net.mcft.copy.backpacks.config.Status;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 import net.mcft.copy.backpacks.config.Status.Severity;
 import net.mcft.copy.backpacks.config.custom.SettingListSpawn;
-import net.mcft.copy.backpacks.config.custom.SettingListSpawn.BackpackEntityEntry;
-import net.mcft.copy.backpacks.config.custom.SettingListSpawn.BackpackEntry;
 
 @SideOnly(Side.CLIENT)
 public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
@@ -39,9 +37,9 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 	private final SettingListSpawn _setting;
 	
 	public EntryListSpawn(SettingListSpawn setting) {
-		// Use static getDefaultValue instead of getDefault because
-		// it can only be populated after settings have been initialized.
-		super(260, setting.get(), SettingListSpawn.getDefaultValue());
+		// Use getDefaultEntityEntries instead of getDefault because
+		// it will only be populated after CONFIG has been initialized.
+		super(260, setting.get(), BackpackRegistry.getDefaultEntityEntries());
 		_setting = setting;
 		
 		GuiContainer entryLabel = new GuiContainer();
@@ -57,36 +55,9 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 	
 	@Override
 	public void setValue(List<BackpackEntityEntry> value) {
-		// This method works by taking the default value as
-		// a base and merging the specified value into it.
-		List<BackpackEntityEntry> defaultEntities = defaultValue.stream()
-			.map(BackpackEntityEntry::clone).collect(Collectors.toCollection(ArrayList::new));
-		List<BackpackEntityEntry> customEntities = new ArrayList<>();
-		
-		for (BackpackEntityEntry valueEntry : value) {
-			BackpackEntityEntry defaultEntry = defaultEntities.stream()
-				.filter(e -> e.entityID.equals(valueEntry.entityID))
-				.findAny().orElse(null);
-			
-			if (defaultEntry == null) {
-				customEntities.add(valueEntry.clone());
-				continue;
-			}
-			
-			List<BackpackEntry> customBackpacks = new ArrayList<>();
-			for (BackpackEntry backpackEntry : valueEntry.entries) {
-				BackpackEntry defaultBackpack = defaultEntry.entries.stream()
-					.filter(e -> Objects.equals(e.id, backpackEntry.id))
-					.findAny().orElse(null);
-				if (defaultBackpack != null)
-					defaultBackpack.chance = backpackEntry.chance;
-				else customBackpacks.add(backpackEntry.clone());
-			}
-			defaultEntry.entries.addAll(customBackpacks);
-		}
-		
-		defaultEntities.addAll(customEntities);
-		super.setValue(defaultEntities);
+		List<BackpackEntityEntry> entityEntries = new ArrayList<>();
+		BackpackRegistry.mergeEntityEntriesWithDefault(entityEntries, value);
+		super.setValue(entityEntries);
 	}
 	
 	@Override
@@ -139,7 +110,7 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 			Severity severity = Status.getSeverity(getStatus());
 			boolean isFine    = (severity == Severity.FINE);
 			
-			int numEntries = value.entries.size();
+			int numEntries = value.getEntries().size();
 			String entriesTextKey = "config." + WearableBackpacks.MOD_ID + ".spawn.entry";
 			// First we try to translate "[...].spawn.entry.<num>".
 			String entriesText = I18n.format(entriesTextKey + "." + numEntries);
@@ -148,14 +119,13 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 				entriesText = I18n.format(entriesTextKey, numEntries);
 			// ... I miss C#'s ?? operator :(
 			
-			boolean hasPredefined = SettingListSpawn.getDefaultEntityIDs().contains(value.entityID);
-			buttonMove.setEnabled(!hasPredefined);
-			buttonRemove.setEnabled(!hasPredefined);
+			buttonMove.setEnabled(!value.isDefault);
+			buttonRemove.setEnabled(!value.isDefault);
 			
 			labelName.setText(getEntityEntryName(entry, value.entityID));
-			labelName.setColor(hasPredefined ? GuiUtils.getColorCode('8', true)
-			                 : isFine        ? GuiUtils.getColorCode('7', true)
-			                                 : severity.foregroundColor);
+			labelName.setColor(value.isDefault ? GuiUtils.getColorCode('8', true)
+			                 : isFine          ? GuiUtils.getColorCode('7', true)
+			                                   : severity.foregroundColor);
 			
 			buttonEdit.setText(entriesText);
 			if (!_knownEntity) buttonEdit.setTextColor(Severity.WARN.foregroundColor);

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -17,6 +18,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
+import net.mcft.copy.backpacks.api.BackpackRegistry.BackpackEntityEntry;
+import net.mcft.copy.backpacks.api.BackpackRegistry.BackpackEntry;
+import net.mcft.copy.backpacks.api.BackpackRegistry.ColorRange;
+import net.mcft.copy.backpacks.api.BackpackRegistry.RenderOptions;
 import net.mcft.copy.backpacks.client.gui.Direction;
 import net.mcft.copy.backpacks.client.gui.GuiElementBase;
 import net.mcft.copy.backpacks.client.gui.GuiLabel;
@@ -34,9 +39,6 @@ import net.mcft.copy.backpacks.client.gui.control.GuiField;
 import net.mcft.copy.backpacks.config.Status;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 import net.mcft.copy.backpacks.config.Status.Severity;
-import net.mcft.copy.backpacks.config.custom.SettingListSpawn;
-import net.mcft.copy.backpacks.config.custom.SettingListSpawn.BackpackEntityEntry;
-import net.mcft.copy.backpacks.config.custom.SettingListSpawn.BackpackEntry;
 import net.mcft.copy.backpacks.item.ItemBackpack;
 
 @SideOnly(Side.CLIENT)
@@ -47,8 +49,12 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 	
 	public final GuiLabel labelTitleEntityName;
 	public final EntryEntityID entryEntityID;
+	public final BaseEntry.Value<List<Double>> entryTranslate;
+	public final BaseEntry.Value<Double> entryScale;
+	public final BaseEntry.Value<Double> entryRotate;
 	public final EntryListBackpack listBackpack;
 	public final GuiButton buttonCancel;
+	public final boolean isDefault;
 	
 	public ListEntryEntityScreen(EntryListSpawn owningList, Optional<EntryListSpawn.Entry> entry) {
 		super(GuiElementBase.getCurrentScreen(),
@@ -57,13 +63,10 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 		_owningList = owningList;
 		_entry      = entry;
 		
-		List<BackpackEntry> entries = entry.map(EntryListSpawn.Entry::getValue)
-			.map(e -> e.entries).orElseGet(Collections::emptyList);
-		List<BackpackEntry> defaults = entry.map(EntryListSpawn.Entry::getValue)
-			.flatMap(e -> SettingListSpawn.getDefaultValue().stream()
-				.filter(f -> f.entityID.equals(e.entityID)).findAny())
-			.map(e -> e.entries)
-			.orElseGet(Collections::emptyList);
+		Optional<BackpackEntityEntry> backpackEntry = entry.map(EntryListSpawn.Entry::getValue);
+		isDefault   = backpackEntry.map(e -> e.isDefault).orElse(false);
+		List<BackpackEntry> entries  = backpackEntry.map(BackpackEntityEntry::getEntries).orElseGet(Collections::emptyList);
+		List<BackpackEntry> defaults = entries.stream().filter(e -> e.isDefault).collect(Collectors.toList());
 		
 		// Title
 		labelTitleEntityName = new GuiLabel("");
@@ -71,10 +74,27 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 		layoutTitle.addFixed(labelTitleEntityName);
 		
 		// Content
-		entryEntityID = new EntryEntityID(this);
-		listBackpack  = new EntryListBackpack(entries, defaults);
+		entryEntityID  = new EntryEntityID(this);
+		entryTranslate = new BaseEntry.Value<>(new EntryValueMulti<Double>(3, EntryValueField.Decimal.class),
+			backpackEntry.map(e -> Arrays.asList(e.renderOptions.x, e.renderOptions.y, e.renderOptions.z)), Optional.empty());
+		entryScale     = new BaseEntry.Value<>(new EntryValueField.Decimal(),
+			backpackEntry.map(e -> e.renderOptions.scale), Optional.empty());
+		entryRotate    = new BaseEntry.Value<>(new EntryValueField.Decimal(),
+			backpackEntry.map(e -> e.renderOptions.rotate), Optional.empty());
+		listBackpack   = new EntryListBackpack(entries, defaults);
+		
+		entryTranslate.setLabelAndTooltip("spawn.translate");
+		entryScale.setLabelAndTooltip("spawn.scale");
+		entryRotate.setLabelAndTooltip("spawn.rotate");
 		
 		listEntries.addFixed(entryEntityID);
+		if (isDefault) {
+			entryEntityID.setEnabled(false);
+		} else {
+			listEntries.addFixed(entryTranslate);
+			listEntries.addFixed(entryScale);
+			listEntries.addFixed(entryRotate);
+		}
 		listEntries.addFixed(listBackpack);
 		
 		// Buttons
@@ -94,9 +114,13 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 	
 	@Override
 	protected void doneClicked() {
-		BackpackEntityEntry value = new BackpackEntityEntry();
-		value.entityID = entryEntityID.getValue().get();
-		value.entries  = listBackpack.getValue();
+		RenderOptions renderOptions;
+		List<Double> translate = entryTranslate.getValue().get();
+		renderOptions = new RenderOptions(
+			translate.get(0), translate.get(1), translate.get(2),
+			entryScale.getValue().get(), entryRotate.getValue().get());
+		BackpackEntityEntry value = new BackpackEntityEntry(
+			entryEntityID.getValue().get(), renderOptions, listBackpack.getValue(), isDefault);
 		
 		_entry.orElseGet(() -> (EntryListSpawn.Entry)_owningList.addEntry()).setValue(value);
 		GuiElementBase.display(parentScreen);
@@ -186,6 +210,8 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 			public final GuiItem itemBackpack;
 			public final GuiField fieldBackpack;
 			public final GuiField fieldLootTable;
+			private ColorRange _colorRange; // TODO: Add a color button. (In preview, show random color!)
+			private boolean _isDefault;
 			
 			public Entry(EntryListBackpack owningList) {
 				super(owningList);
@@ -215,7 +241,7 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 				return new BackpackEntry(id,
 					fieldBackpack.getText(),
 					!fieldChance.getText().isEmpty() ? Integer.parseInt(fieldChance.getText()) : 0,
-					fieldLootTable.getText());
+					fieldLootTable.getText(), _colorRange, _isDefault);
 			}
 			@Override
 			public void setValue(BackpackEntry value) {
@@ -223,7 +249,9 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 				fieldChance.setText(Integer.toString(value.chance));
 				fieldBackpack.setText(value.backpack);
 				fieldLootTable.setText(value.lootTable);
-				if (SettingListSpawn.getDefaultEntryIDs().contains(id)) {
+				_colorRange = value.colorRange;
+				_isDefault  = value.isDefault;
+				if (_isDefault) {
 					buttonMove.setEnabled(false);
 					fieldBackpack.setEnabled(false);
 					fieldLootTable.setEnabled(false);
