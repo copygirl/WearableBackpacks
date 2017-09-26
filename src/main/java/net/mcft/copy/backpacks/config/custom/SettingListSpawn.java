@@ -193,7 +193,7 @@ public class SettingListSpawn extends Setting<List<BackpackEntityEntry>> {
 	private static final String SEPERATOR       = ",";
 	private static final String ID_SEPERATOR    = "=";
 	private static final String COLOR_SEPERATOR = "~";
-	private static final String COLOR_NULL      = "NONE";
+	private static final String COLOR_NULL      = "DEFAULT";
 	
 	private static BackpackEntry parseBackpack(String str) {
 		String id = null;
@@ -208,14 +208,7 @@ public class SettingListSpawn extends Setting<List<BackpackEntityEntry>> {
 		int chance       = Integer.parseInt(values[0].trim());
 		String backpack  = values[1].trim();
 		String lootTable = values[2].trim();
-		ColorRange color;
-		if (!COLOR_NULL.equalsIgnoreCase(values[3].trim())) {
-			String[] minMax = values[3].split("\\" + COLOR_SEPERATOR, 2);
-			if (minMax.length != 2) throw new IllegalArgumentException(
-				"Expected 2 parts for color range, got " + minMax.length);
-			color = new ColorRange(Integer.parseInt(minMax[0].trim()),
-			                       Integer.parseInt(minMax[1].trim()));
-		} else color = null;
+		ColorRange color = parseColorRange(values[3].trim());
 		if (chance < 0) throw new IllegalArgumentException("Chance is negative");
 		return new BackpackEntry(id, backpack, chance, lootTable, color, false);
 	}
@@ -223,10 +216,27 @@ public class SettingListSpawn extends Setting<List<BackpackEntityEntry>> {
 		String str = value.chance + SEPERATOR + " " +
 		             value.backpack + SEPERATOR + " " +
 		             value.lootTable + SEPERATOR + " " +
-			((value.colorRange != null)
-				? (value.colorRange.min + " " + COLOR_SEPERATOR + " " + value.colorRange.max)
-				: COLOR_NULL);
+		             toString(value.colorRange);
 		return (value.id != null) ? (value.id + " " + ID_SEPERATOR + " " + str) : str;
+	}
+	
+	private static ColorRange parseColorRange(String str) {
+		if (COLOR_NULL.equalsIgnoreCase(str)) return null;
+		String[] minMax = str.split("\\" + COLOR_SEPERATOR, 2);
+		if (minMax.length != 2) throw new IllegalArgumentException(
+			"Expected 2 parts for color range, got " + minMax.length);
+		String min = minMax[0].trim();
+		String max = minMax[1].trim();
+		if ((min.length() != 7) || (min.charAt(0) != '#') ||
+		    (max.length() != 7) || (max.charAt(0) != '#')) throw new IllegalArgumentException(
+				"Colors in the color range are not in the format #RRGGBB");
+		return new ColorRange(Integer.parseInt(min.substring(1), 16),
+		                      Integer.parseInt(max.substring(1), 16));
+	}
+	private static String toString(ColorRange colorRange) {
+		return (colorRange != null)
+			? String.format("#%06X %s #%06X", colorRange.min, COLOR_SEPERATOR, colorRange.max)
+			: COLOR_NULL;
 	}
 	
 }
