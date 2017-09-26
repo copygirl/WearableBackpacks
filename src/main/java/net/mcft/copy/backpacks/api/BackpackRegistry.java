@@ -31,7 +31,7 @@ public final class BackpackRegistry {
 	 *  Must be called in pre-initialization phase (or before). */
 	public static void registerEntity(String entityID, RenderOptions renderOptions) {
 		if (entityID == null) throw new NullPointerException("entityID must not be null");
-		if (_defaultEntities.stream().anyMatch(e -> e.entityID.equals(entityID)))
+		if (getDefaultEntityEntry(entityID) != null)
 			throw new IllegalArgumentException("entityID '" + entityID + "' has already been registered");
 		if (Loader.instance().getLoaderState().compareTo(LoaderState.PREINITIALIZATION) > 0)
 			throw new IllegalStateException("Must be called during (or before) pre-initialization phase.");
@@ -56,9 +56,8 @@ public final class BackpackRegistry {
 	                                    String lootTable, ColorRange colorRange) {
 		if (entityID == null) throw new NullPointerException("entityID must not be null");
 		if (entryID == null) throw new NullPointerException("entryID must not be null");
-		BackpackEntityEntry entityEntry = _defaultEntities.stream()
-			.filter(e -> e.entityID.equals(entityID)).findAny().orElseThrow(() ->
-				new IllegalStateException("entityID '" + entityID + "' has not been registered yet"));
+		BackpackEntityEntry entityEntry = getDefaultEntityEntry(entityID);
+		if (entityEntry == null) new IllegalStateException("entityID '" + entityID + "' has not been registered yet");
 		if (entityEntry._backpackEntries.stream().anyMatch(e -> e.id.equals(entryID)))
 			throw new IllegalArgumentException("entryID '" + entryID + "' has already been used for entityID '" + entityID + "'");
 		if (Loader.instance().getLoaderState().compareTo(LoaderState.PREINITIALIZATION) > 0)
@@ -112,21 +111,18 @@ public final class BackpackRegistry {
 		_defaultEntities.stream().map(BackpackEntityEntry::new).forEach(dest::add);
 		
 		for (BackpackEntityEntry entityEntry : value) {
-			BackpackEntityEntry defaultEntityEntry = getDefaultEntityEntry(entityEntry.entityID);
+			BackpackEntityEntry defaultEntityEntry = dest.stream()
+				.filter(e -> e.entityID.equals(entityEntry.entityID))
+				.findAny().orElse(null);
 			if (defaultEntityEntry != null) {
 				for (BackpackEntry backpackEntry : entityEntry._backpackEntries) {
 					int index = IntStream.range(0, defaultEntityEntry._backpackEntries.size())
 						.filter(i -> defaultEntityEntry._backpackEntries.get(i).id.equals(backpackEntry.id))
 						.findFirst().orElse(-1);
 					if (index >= 0) {
-						BackpackEntry existingBackpackEntry = defaultEntityEntry._backpackEntries.get(index);
+						BackpackEntry e = defaultEntityEntry._backpackEntries.get(index);
 						defaultEntityEntry._backpackEntries.set(index, new BackpackEntry(
-							existingBackpackEntry.id,
-							existingBackpackEntry.backpack,
-							backpackEntry.chance,
-							existingBackpackEntry.lootTable,
-							existingBackpackEntry.colorRange,
-							existingBackpackEntry.isDefault));
+							e.id, e.backpack, backpackEntry.chance, e.lootTable, e.colorRange, e.isDefault));
 					} else defaultEntityEntry._backpackEntries.add(backpackEntry);
 				}
 			} else dest.add(entityEntry);
