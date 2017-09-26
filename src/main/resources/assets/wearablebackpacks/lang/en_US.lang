@@ -47,10 +47,10 @@ config.wearablebackpacks.spawn.enabled=Enabled
 config.wearablebackpacks.spawn.enabled.tooltip=Controls whether mobs can randomly spawn with backpacks
 config.wearablebackpacks.spawn.translate=Position
 config.wearablebackpacks.spawn.translate.tooltip=Controls the render position of the backpack on this entity
-config.wearablebackpacks.spawn.scale=Scale
-config.wearablebackpacks.spawn.scale.tooltip=Controls the render scale (size) of the backpack on this entity
 config.wearablebackpacks.spawn.rotate=Rotation
 config.wearablebackpacks.spawn.rotate.tooltip=Controls the render rotation of the backpack on this entity
+config.wearablebackpacks.spawn.scale=Scale
+config.wearablebackpacks.spawn.scale.tooltip=Controls the render scale (size) of the backpack on this entity
 config.wearablebackpacks.spawn.entries=Entity Spawn Entries
 config.wearablebackpacks.spawn.entry=%1$s entries
 config.wearablebackpacks.spawn.entry.0=No entries!
@@ -61,9 +61,9 @@ config.wearablebackpacks.spawn.entityID.tooltip=Internal identifier of the entit
 config.wearablebackpacks.spawn.chance=Chance
 config.wearablebackpacks.spawn.chance.tooltip=Chance of 1 in X that an entity spawns with this backpack (100 = 1%%, 1000 = 0.1%%). Set to 0 to disable.
 config.wearablebackpacks.spawn.backpack=Backpack
-config.wearablebackpacks.spawn.backpack.tooltip=Item ID of the backpack to spawn on the entity (for example "wearablebackpacks:backpack").
+config.wearablebackpacks.spawn.backpack.tooltip=Item ID of the backpack to spawn on the entity.
 config.wearablebackpacks.spawn.lootTable=Loot Table
-config.wearablebackpacks.spawn.lootTable.tooltip=ID of the loot table used to fill this backpack (for example "wearablebackpacks:backpack/default").
+config.wearablebackpacks.spawn.lootTable.tooltip=ID of the loot table used to fill this backpack.
 
 config.wearablebackpacks.spawn.status.entityNotFound=The specified entity couldn't be found. Entry will be ignored.
 
