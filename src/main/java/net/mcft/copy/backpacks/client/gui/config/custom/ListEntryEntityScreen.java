@@ -277,10 +277,10 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 			
 			@Override
 			public void draw(int mouseX, int mouseY, float partialTicks) {
-				buttonMove.setEnabled(id == null);
-				fieldBackpack.setEnabled(id == null);
-				fieldLootTable.setEnabled(id == null);
-				buttonRemove.setEnabled(id == null);
+				buttonMove.setEnabled(!_isDefault);
+				fieldBackpack.setEnabled(!_isDefault);
+				fieldLootTable.setEnabled(!_isDefault);
+				buttonRemove.setEnabled(!_isDefault);
 				
 				// This is ugly but I'm too lazy to make it not so.
 				fieldChance.setTextAndBorderColor(Severity.ERROR.foregroundColor, fieldChance.getText().isEmpty());
