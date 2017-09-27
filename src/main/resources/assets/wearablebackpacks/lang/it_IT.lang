@@ -1,0 +1,73 @@
+container.wearablebackpacks.backpack=Zaino
+
+item.wearablebackpacks.backpack.name=Zaino
+
+tooltip.wearablebackpacks.moreInfo=Tieni premuto %1$s per più informazioni.
+tooltip.wearablebackpacks.openHint=Premi %1$s per aprire lo zaino mentre è equipaggiato.
+tooltip.wearablebackpacks.equipHint=Posizionalo a terra e rompilo\nmentre sei accovacciato per equipaggiarlo.
+tooltip.wearablebackpacks.equipHint.extended=Accovacciati e rompi lo zaino per equipaggiarlo.\nAcovacciati e premi Tasto Destro\ncon nulla in mano per unequipaggiarlo.
+tooltip.wearablebackpacks.unequipHint=Accovacciati e premi Tasto Destro a terra\ncon nulla in mano per unequipaggiarlo.
+tooltip.wearablebackpacks.used=Attualmente usato da un altro giocatore.
+
+chat.wearablebackpacks.cantEquip=Hai già uno Zaino equipaggiato.
+chat.wearablebackpacks.cantEquip.chestplate=Non puoi equipaggiare lo Zaino se hai una corazza già equipaggiata.
+
+key.wearablebackpacks.open=Apri Zaino
+
+
+config.wearablebackpacks.gui.cancel=Annulla
+
+config.wearablebackpacks.general.equipAsChestArmor=Equipaggia come Armatura Corazza
+config.wearablebackpacks.general.equipAsChestArmor.tooltip=Controlla se lo Zaino sarà equipaggiato nello spazio della corazza.
+config.wearablebackpacks.general.enableEquippedInteraction=Permetti Iterazione da altri
+config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Controlla se i giocatori hanno accesso agli zaini degli altri giocatori (ed entità).
+config.wearablebackpacks.general.enableSelfInteraction=Permetti Iterazione quando equipaggiato
+config.wearablebackpacks.general.enableSelfInteraction.tooltip=Controlla se un giocatore ha accesso al proprio zaino utilizzando un tasto.
+config.wearablebackpacks.general.dropAsBlockOnDeath=Piazza come blocco alla morte
+config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Controlla se lo Zaino si piazza a terra alla morte invece di spargere il contenuto.
+
+config.wearablebackpacks.general.status.outOfRange=Il valore è fuori intervallo (%1$s - %1$s).
+config.wearablebackpacks.general.status.required=Impostare "%1$s" è richiesto per questa impostazione.
+config.wearablebackpacks.general.status.chestplate=Nessun effetto se non equipaggiato come armatura [general.equipAsChestArmor = false]
+
+config.wearablebackpacks.category.backpack=Impostazioni Zaino
+config.wearablebackpacks.category.backpack.tooltip=Controlla le impostazioni riguardanti i normali zaini.
+config.wearablebackpacks.backpack.enabled=Abilitato
+config.wearablebackpacks.backpack.enabled.tooltip=Controlla se i normali zaini sono abilitati.
+config.wearablebackpacks.backpack.durability=Durabilità
+config.wearablebackpacks.backpack.durability.tooltip=Controlla la durabilità del normale zaino (0 per indistruttibile) . Abbassando questo valore può causare problemi con gli zaini già danneggiati.
+config.wearablebackpacks.backpack.armor=Armatura
+config.wearablebackpacks.backpack.armor.tooltip=I punti armatura ottenuti da un normale zaino.
+config.wearablebackpacks.backpack.size=Grandezza Immagazzinamento Zaino
+config.wearablebackpacks.backpack.size.tooltip=Controlla la grandezza dell'immagazzinamento del normale zaino. Non infulenzerà gli zaini già posizionati o equipaggiati, facendoli tornare ad oggetto applicherà i cambiamenti.
+
+config.wearablebackpacks.category.spawn=Impostazioni di Evocazione
+config.wearablebackpacks.category.spawn.tooltip=Controlla le impostazioni riguardati l'evocazione di mob con gli zaini
+config.wearablebackpacks.spawn.enabled=Abilitato
+config.wearablebackpacks.spawn.enabled.tooltip=Controlla se i mob possono essere evocati con uno zaino
+config.wearablebackpacks.spawn.translate=Posizione
+config.wearablebackpacks.spawn.translate.tooltip=Controlla la posizione dello zaino visualizzata sull'entità
+config.wearablebackpacks.spawn.scale=Scala
+config.wearablebackpacks.spawn.scale.tooltip=Controlla la grandezza dello zaino visualizzata sull'entità
+config.wearablebackpacks.spawn.rotate=Rotazione
+config.wearablebackpacks.spawn.rotate.tooltip=Controlla la rotazione dello zaino visualizzata sull'entità
+config.wearablebackpacks.spawn.entries=Lista (voci) di entità evocabili
+config.wearablebackpacks.spawn.entry=%1$s voci
+config.wearablebackpacks.spawn.entry.0=Nessuna voce!
+config.wearablebackpacks.spawn.entry.1=1 voce
+
+config.wearablebackpacks.spawn.entityID=ID Entità
+config.wearablebackpacks.spawn.entityID.tooltip=Identificatore interno dell'entità, come "minecraft:zombie".
+config.wearablebackpacks.spawn.chance=Possibiltà
+config.wearablebackpacks.spawn.chance.tooltip=Possibilità (1 in x) che l'entità verrà evocata con uno zaino (100 = 1%%, 1000 = 0.1%%). Imposta a 0 per disabilitare.
+config.wearablebackpacks.spawn.backpack=Zaino
+config.wearablebackpacks.spawn.backpack.tooltip=ID dell'oggetto dello zaino da aggiungere all'entità evocata (per esempio "wearablebackpacks:backpack").
+config.wearablebackpacks.spawn.lootTable=Loot Table
+config.wearablebackpacks.spawn.lootTable.tooltip=ID della loot table utilizzata per riempire il backpack (per esempio "wearablebackpacks:backpack/default").
+
+config.wearablebackpacks.spawn.status.entityNotFound=L'entità specificata non è stata trovata. La voce sarà ignorata.
+
+config.wearablebackpacks.category.cosmetic=Impostazioni Cosmetiche
+config.wearablebackpacks.category.cosmetic.tooltip=Controlla le impostazioni dell'apparenza (solo client) che non influenzano il gameplay.
+config.wearablebackpacks.cosmetic.enchantEffectOpacity=Opacità dell'effetto dell'incantesimo	
+config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controlla l'opacità / visibilità dell'effetto di incantesimo degli zaini equipaggiati / posizionati, se presente.
