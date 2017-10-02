@@ -66,7 +66,7 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 	
 	@Override
 	protected void addButtonPressed()
-		{ display(new ListEntryEntityScreen(this, Optional.empty())); }
+		{ display(new ScreenEntityEntry(this, Optional.empty())); }
 	
 	
 	public static Optional<EntityEntry> getEntityEntry(String entityID) {
@@ -91,7 +91,7 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 			labelName.setCenteredVertical();
 			
 			buttonEdit = new GuiButton(100, DEFAULT_ENTRY_HEIGHT);
-			buttonEdit.setAction(() -> { display(new ListEntryEntityScreen(owningList, Optional.of(this))); });
+			buttonEdit.setAction(() -> { display(new ScreenEntityEntry(owningList, Optional.of(this))); });
 			
 			addFixed(buttonMove);
 			addWeighted(labelName);

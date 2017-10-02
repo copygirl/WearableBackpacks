@@ -5,8 +5,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
@@ -27,12 +29,12 @@ import net.mcft.copy.backpacks.client.gui.GuiElementBase;
 import net.mcft.copy.backpacks.client.gui.GuiLabel;
 import net.mcft.copy.backpacks.client.gui.GuiLayout;
 import net.mcft.copy.backpacks.client.gui.GuiLabel.TextAlign;
-import net.mcft.copy.backpacks.client.gui.config.BackpacksConfigScreen;
 import net.mcft.copy.backpacks.client.gui.config.BaseConfigScreen;
 import net.mcft.copy.backpacks.client.gui.config.BaseEntry;
 import net.mcft.copy.backpacks.client.gui.config.BaseEntryList;
 import net.mcft.copy.backpacks.client.gui.config.EntryValueField;
 import net.mcft.copy.backpacks.client.gui.config.IConfigEntry;
+import net.mcft.copy.backpacks.client.gui.config.IConfigValue;
 import net.mcft.copy.backpacks.client.gui.config.BaseEntryList.Entry.MoveButton;
 import net.mcft.copy.backpacks.client.gui.control.GuiButton;
 import net.mcft.copy.backpacks.client.gui.control.GuiField;
@@ -42,29 +44,26 @@ import net.mcft.copy.backpacks.config.Status.Severity;
 import net.mcft.copy.backpacks.item.ItemBackpack;
 
 @SideOnly(Side.CLIENT)
-public class ListEntryEntityScreen extends BaseConfigScreen {
+public class ScreenEntityEntry extends BaseConfigScreen {
 	
 	private final EntryListSpawn _owningList;
 	private final Optional<EntryListSpawn.Entry> _entry;
 	
 	public final GuiLabel labelTitleEntityName;
 	public final EntryEntityID entryEntityID;
-	public final BaseEntry.Value<List<Double>> entryTranslate;
-	public final BaseEntry.Value<Double> entryScale;
-	public final BaseEntry.Value<Double> entryRotate;
+	public final BaseEntry.Value<RenderOptions> entryRenderOptions;
 	public final EntryListBackpack listBackpack;
 	public final GuiButton buttonCancel;
 	public final boolean isDefault;
 	
-	public ListEntryEntityScreen(EntryListSpawn owningList, Optional<EntryListSpawn.Entry> entry) {
+	public ScreenEntityEntry(EntryListSpawn owningList, Optional<EntryListSpawn.Entry> entry) {
 		super(GuiElementBase.getCurrentScreen(),
-			((BackpacksConfigScreen)GuiElementBase
-				.getCurrentScreen()).titleLines.toArray(new String[0]));
+		      ((BaseConfigScreen)GuiElementBase.getCurrentScreen()).titleLines.toArray(new String[0]));
 		_owningList = owningList;
 		_entry      = entry;
 		
 		Optional<BackpackEntityEntry> backpackEntry = entry.map(EntryListSpawn.Entry::getValue);
-		isDefault   = backpackEntry.map(e -> e.isDefault).orElse(false);
+		isDefault = backpackEntry.map(e -> e.isDefault).orElse(false);
 		List<BackpackEntry> entries  = backpackEntry.map(BackpackEntityEntry::getEntries).orElseGet(Collections::emptyList);
 		List<BackpackEntry> defaults = entries.stream().filter(e -> e.isDefault).collect(Collectors.toList());
 		
@@ -74,28 +73,21 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 		layoutTitle.addFixed(labelTitleEntityName);
 		
 		// Content
-		entryEntityID  = new EntryEntityID(this);
-		entryTranslate = new BaseEntry.Value<>(new EntryValueMulti<Double>(3, EntryValueField.Decimal.class),
-			backpackEntry.map(e -> Arrays.asList(e.renderOptions.x, e.renderOptions.y, e.renderOptions.z)), Optional.empty());
-		entryScale     = new BaseEntry.Value<>(new EntryValueField.Decimal(),
-			backpackEntry.map(e -> e.renderOptions.scale), Optional.empty());
-		entryRotate    = new BaseEntry.Value<>(new EntryValueField.Decimal(),
-			backpackEntry.map(e -> e.renderOptions.rotate), Optional.empty());
-		listBackpack   = new EntryListBackpack(entries, defaults);
-		
-		entryTranslate.setLabelAndTooltip("spawn.translate");
-		entryScale.setLabelAndTooltip("spawn.scale");
-		entryRotate.setLabelAndTooltip("spawn.rotate");
+		entryEntityID = new EntryEntityID(this);
+		entryRenderOptions = new BaseEntry.Value<RenderOptions>(
+			new EntryValueButtonScreen<RenderOptions>(ScreenRenderOptions::new),
+			_entry.map(e -> e.getValue().renderOptions), Optional.empty());
+		entryRenderOptions.setLabelAndTooltip("spawn.renderOptions");
+		listBackpack = new EntryListBackpack(entries, defaults);
 		
 		listEntries.addFixed(entryEntityID);
+		listEntries.addFixed(entryRenderOptions);
+		listEntries.addFixed(listBackpack);
+		
 		if (isDefault) {
 			entryEntityID.setEnabled(false);
-		} else {
-			listEntries.addFixed(entryTranslate);
-			listEntries.addFixed(entryScale);
-			listEntries.addFixed(entryRotate);
+			entryRenderOptions.setEnabled(false);
 		}
-		listEntries.addFixed(listBackpack);
 		
 		// Buttons
 		buttonCancel = new GuiButton(I18n.format("config." + WearableBackpacks.MOD_ID + ".gui.cancel"));
@@ -114,13 +106,10 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 	
 	@Override
 	protected void doneClicked() {
-		RenderOptions renderOptions;
-		List<Double> translate = entryTranslate.getValue().get();
-		renderOptions = new RenderOptions(
-			translate.get(0), translate.get(1), translate.get(2),
-			entryScale.getValue().get(), entryRotate.getValue().get());
 		BackpackEntityEntry value = new BackpackEntityEntry(
-			entryEntityID.getValue().get(), renderOptions, listBackpack.getValue(), isDefault);
+			entryEntityID.getValue().get(),
+			entryRenderOptions.getValue().get(),
+			listBackpack.getValue(), isDefault);
 		
 		_entry.orElseGet(() -> (EntryListSpawn.Entry)_owningList.addEntry()).setValue(value);
 		GuiElementBase.display(parentScreen);
@@ -144,7 +133,7 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 		
 		public Optional<EntityEntry> entityEntry;
 		
-		public EntryEntityID(ListEntryEntityScreen owningScreen) {
+		public EntryEntityID(ScreenEntityEntry owningScreen) {
 			super(new EntryValueField.Text(), owningScreen._entry.map(e -> e.getValue().entityID), Optional.empty());
 			setLabelAndTooltip("spawn.entityID");
 			((EntryValueField.Text)control).setChangedAction(this::onChanged);
@@ -164,6 +153,24 @@ public class ListEntryEntityScreen extends BaseConfigScreen {
 			entityEntry = EntryListSpawn.getEntityEntry(entityID);
 			_labelName.setText(EntryListSpawn.getEntityEntryName(entityEntry, entityID));
 		}
+		
+	}
+	
+	public static class EntryValueButtonScreen<T> extends GuiButton implements IConfigValue<T> {
+		
+		private final Function<IConfigValue<T>, GuiScreen> _screenFactory;
+		private T _value;
+		
+		public EntryValueButtonScreen(Function<IConfigValue<T>, GuiScreen> screenFactory) {
+			if (screenFactory == null) throw new NullPointerException("screenFactory must not be null");
+			_screenFactory = screenFactory;
+			setAction(() -> display(_screenFactory.apply(this)));
+		}
+		
+		@Override
+		public Optional<T> getValue() { return Optional.of(_value); }
+		@Override
+		public void setValue(T value) { _value = value; }
 		
 	}
 	

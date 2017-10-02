@@ -21,7 +21,10 @@ public abstract class EntryValueSlider<T> extends GuiSlider
 	public EntryValueSlider() { setHeight(IConfigEntry.DEFAULT_ENTRY_HEIGHT); }
 	
 	public static class RangeDouble extends EntryValueSlider<Double> {
-		@Override
+		public RangeDouble(double min, double max, double step) { this(min, max); setStepSize(step); }
+		public RangeDouble(double min, double max) { setRange(min, max); }
+		public RangeDouble() {  }
+			@Override
 		public void setup(Setting<Double> setting) {
 			SettingDouble settingD = (SettingDouble)setting;
 			setRange(settingD.getMinValue(), settingD.getMaxValue());
@@ -33,6 +36,7 @@ public abstract class EntryValueSlider<T> extends GuiSlider
 	}
 	
 	public static class RangeInteger extends EntryValueSlider<Integer> {
+		public RangeInteger(int min, int max) { setRange(min, max); }
 		public RangeInteger() {
 			setValueFormatter(val -> Long.toString(Math.round(val)));
 			setStepSize(1);
