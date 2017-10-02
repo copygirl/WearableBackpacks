@@ -2,10 +2,7 @@ package net.mcft.copy.backpacks.client.gui;
 
 import java.util.EnumSet;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.MathHelper;
 
@@ -170,12 +167,8 @@ public class GuiScrollable extends GuiContainer {
 	public void draw(int mouseX, int mouseY, float partialTicks) {
 		if (!isVisible()) return;
 		
-		// TODO: Generalize this into GuiContext and allow nested scissors?
 		ElementInfo info = ElementInfo.getElementHierarchy(this).getFirst();
-		int scale = new ScaledResolution(getMC()).getScaleFactor();
-		GL11.glScissor(info.globalX * scale, getMC().displayHeight - (info.globalY + getHeight()) * scale,
-		               getWidth() * scale, getHeight() * scale);
-		GL11.glEnable(GL11.GL_SCISSOR_TEST);
+		getContext().pushScissor(info.globalX, info.globalY, getWidth(), getHeight());
 		
 		drawBackground(info.globalX + getScrollX(), info.globalY + getScrollY(),
 		               mouseX, mouseY, partialTicks);
@@ -191,7 +184,7 @@ public class GuiScrollable extends GuiContainer {
 		
 		drawForeground(mouseX, mouseY, partialTicks);
 		
-		GL11.glDisable(GL11.GL_SCISSOR_TEST);
+		getContext().popScissor();
 	}
 	
 	public void drawBackground(int x, int y, int mouseX, int mouseY, float partialTicks) {
