@@ -12,6 +12,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -56,6 +57,7 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 	public final GuiButton buttonCancel;
 	public final boolean isDefault;
 	
+	@SuppressWarnings("unchecked")
 	public ScreenEntityEntry(EntryListSpawn owningList, Optional<EntryListSpawn.Entry> entry) {
 		super(GuiElementBase.getCurrentScreen(),
 		      ((BaseConfigScreen)GuiElementBase.getCurrentScreen()).titleLines.toArray(new String[0]));
@@ -75,7 +77,9 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 		// Content
 		entryEntityID = new EntryEntityID(this);
 		entryRenderOptions = new BaseEntry.Value<RenderOptions>(
-			new EntryValueButtonScreen<RenderOptions>(ScreenRenderOptions::new),
+			new EntryValueButtonScreen<RenderOptions>(e -> new ScreenRenderOptions(e,
+				(Class<? extends EntityLivingBase>)entryEntityID.entityEntry
+					.map(EntityEntry::getEntityClass).orElse(null))),
 			_entry.map(e -> e.getValue().renderOptions), Optional.empty());
 		entryRenderOptions.setLabelAndTooltip("spawn.renderOptions");
 		listBackpack = new EntryListBackpack(entries, defaults);

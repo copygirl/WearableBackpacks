@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.EntityLivingBase;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackRegistry.RenderOptions;
 import net.mcft.copy.backpacks.client.gui.GuiElementBase;
+import net.mcft.copy.backpacks.client.gui.GuiEntityRender;
 import net.mcft.copy.backpacks.client.gui.config.BaseConfigScreen;
 import net.mcft.copy.backpacks.client.gui.config.BaseEntry;
 import net.mcft.copy.backpacks.client.gui.config.EntryValueField;
@@ -27,10 +29,12 @@ public class ScreenRenderOptions extends BaseConfigScreen {
 	public final BaseEntry.Value<List<Double>> entryTranslate;
 	public final BaseEntry.Value<Double> entryRotate;
 	public final BaseEntry.Value<Double> entryScale;
+	public final GuiEntityRender entityRender;
 	
-	public ScreenRenderOptions(IConfigValue<RenderOptions> element) {
+	public ScreenRenderOptions(IConfigValue<RenderOptions> element, Class<? extends EntityLivingBase> entityClass) {
 		super(GuiElementBase.getCurrentScreen(), Stream.concat(
 				((BaseConfigScreen)GuiElementBase.getCurrentScreen()).titleLines.stream(),
+				// TODO: Add the entityID in here (make title lines a method?)
 				Stream.of(I18n.format("config." + WearableBackpacks.MOD_ID + ".spawn.renderOptions"))
 			).toArray(String[]::new));
 		_element = element;
@@ -44,6 +48,10 @@ public class ScreenRenderOptions extends BaseConfigScreen {
 		entryTranslate.setLabelAndTooltip("spawn.translate");
 		entryRotate.setLabelAndTooltip("spawn.rotate");
 		entryScale.setLabelAndTooltip("spawn.scale");
+		
+		entityRender = new GuiEntityRender(8, 8, 100, 200, entityClass);
+		entityRender.setYaw(145.0F);
+		scrollableContent.add(entityRender);
 		
 		listEntries.addFixed(entryTranslate);
 		listEntries.addFixed(entryRotate);
