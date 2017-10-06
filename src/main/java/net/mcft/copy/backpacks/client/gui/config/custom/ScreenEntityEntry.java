@@ -328,7 +328,7 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 			public List<String> getTooltip() {
 				return !getStack().isEmpty()
 					? getContext().getScreen().getItemToolTip(getStack())
-					: null;
+					: Collections.emptyList();
 			}
 			
 			public void setBackgroundColor(int value) { _colorBackground = value; }
