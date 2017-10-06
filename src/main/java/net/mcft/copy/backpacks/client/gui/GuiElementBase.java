@@ -48,6 +48,7 @@ public abstract class GuiElementBase {
 	private int _tooltipDelay = TooltipDelay.NORMAL;
 	
 	private int _dragStartX, _dragStartY;
+	private int _dragPrevX, _dragPrevY;
 	
 	
 	void setContext(GuiContext value) { _context = value; }
@@ -184,8 +185,9 @@ public abstract class GuiElementBase {
 	/** Returns if this element is currently being dragged. */
 	public boolean isDragged() { return (canDrag() && isPressed()); }
 	/** Called when the mouse moves while this element is being dragged.
-	 *  Mouse and start position are relative to the element's position. */
-	public void onDragged(int mouseX, int mouseY, int startX, int startY) {  }
+	 *  Mouse and start position are relative to the element's position.
+	 *  Delta position is relative to the previous mouse position. */
+	public void onDragged(int mouseX, int mouseY, int deltaX, int deltaY, int startX, int startY) {  }
 	
 	// Basic events
 	
@@ -202,7 +204,10 @@ public abstract class GuiElementBase {
 		if ((mouseButton == MouseButton.LEFT) && canPress()) {
 			GuiContext context = getContext();
 			context.setPressed(this);
-			if (canDrag()) { _dragStartX = mouseX; _dragStartY = mouseY; }
+			if (canDrag()) {
+				_dragStartX = mouseX; _dragStartY = mouseY;
+				_dragPrevX  = mouseX; _dragPrevY  = mouseY;
+			}
 			if (canFocus()) setFocused();
 			onPressed(mouseX, mouseY);
 			return true;
@@ -212,7 +217,12 @@ public abstract class GuiElementBase {
 	/** Called when the mouse is moved over this element or being dragged.
 	 *  Mouse position is relative to the element's position. */
 	public void onMouseMove(int mouseX, int mouseY) {
-		if (isVisible() && isDragged()) onDragged(mouseX, mouseY, _dragStartX, _dragStartY);
+		if (isVisible() && isDragged()) {
+			onDragged(mouseX, mouseY,
+			          mouseX - _dragPrevX, mouseY - _dragPrevY,
+			          _dragStartX, _dragStartY);
+			_dragPrevX = mouseX; _dragPrevY = mouseY;
+		}
 	}
 	
 	/** Called when the mouse button is being released

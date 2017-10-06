@@ -124,7 +124,7 @@ public abstract class BaseEntryList<T> extends GuiLayout implements IConfigEntry
 			@Override
 			public boolean canDrag() { return true; }
 			@Override
-			public void onDragged(int mouseX, int mouseY, int startX, int startY)
+			public void onDragged(int mouseX, int mouseY, int deltaX, int deltaY, int startX, int startY)
 				{ yOffset = mouseY - startY; }
 			@Override
 			public void onMouseUp(int mouseButton, int mouseX, int mouseY)

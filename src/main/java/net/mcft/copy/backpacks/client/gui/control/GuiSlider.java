@@ -184,11 +184,11 @@ public class GuiSlider extends GuiElementBase {
 	@Override
 	public void onPressed(int mouseX, int mouseY) {
 		super.onPressed(mouseX, mouseY);
-		onDragged(mouseX, mouseY, mouseX, mouseY);
+		onDragged(mouseX, mouseY, 0, 0, mouseX, mouseY);
 	}
 	
 	@Override
-	public void onDragged(int mouseX, int mouseY, int startX, int startY) {
+	public void onDragged(int mouseX, int mouseY, int deltaX, int deltaY, int startX, int startY) {
 		for (Direction direction : directions) {
 			int pos = (direction == Direction.HORIZONTAL) ? mouseX : mouseY;
 			setSliderRaw(direction, (pos - getSliderSize() / 2) / (float)(getSize(direction) - getSliderSize()));

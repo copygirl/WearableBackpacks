@@ -233,7 +233,7 @@ public class GuiTestScreen extends GuiContainerScreen {
 			
 			container.add(new GuiButton(8, 8, 100, 20, "Drag me!") {
 				@Override public boolean canDrag() { return true; }
-				@Override public void onDragged(int mouseX, int mouseY, int startX, int startY) {
+				@Override public void onDragged(int mouseX, int mouseY, int deltaX, int deltaY, int startX, int startY) {
 					setPosition(((Alignment.Min)getHorizontalAlign()).min + mouseX - startX,
 								((Alignment.Min)getVerticalAlign()).min   + mouseY - startY);
 				}

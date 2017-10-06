@@ -97,7 +97,7 @@ public class GuiScrollable extends GuiContainer {
 		_scrollStartY = _scrollY;
 	}
 	@Override
-	public void onDragged(int mouseX, int mouseY, int startX, int startY) {
+	public void onDragged(int mouseX, int mouseY, int deltaX, int deltaY, int startX, int startY) {
 		setScrollX(_scrollStartX + (startX - mouseX));
 		setScrollY(_scrollStartY + (startY - mouseY));
 	}
@@ -256,7 +256,7 @@ public class GuiScrollable extends GuiContainer {
 			super.onPressed(mouseX, mouseY);
 		}
 		@Override
-		public void onDragged(int mouseX, int mouseY, int startX, int startY) {
+		public void onDragged(int mouseX, int mouseY, int deltaX, int deltaY, int startX, int startY) {
 			int diff = (direction == Direction.HORIZONTAL) ? (mouseX - startX) : (mouseY - startY);
 			double scrollFactor = (double)(getSize(direction) - getSliderSize()) / Math.max(1, getMaxScroll(direction));
 			setScroll(direction, _scrollStart + (int)(diff / scrollFactor));
