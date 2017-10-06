@@ -33,8 +33,14 @@ public class GuiContext {
 	
 	private Stack<ScissorRegion> _scissorStack = new Stack<>();
 	
-	public void pushScissor(int x, int y, int width, int height) {
-		ScissorRegion region = new ScissorRegion(x, y, width, height);
+	public void pushScissor(GuiElementBase element, int x, int y, int width, int height) {
+		ElementInfo info = ElementInfo.getElementHierarchy(element).getFirst();
+		pushScissor(info.globalX + x, info.globalY + y, width, height);
+	}
+	public void pushScissor(int globalX, int globalY, int width, int height) {
+		ScissorRegion region = !_scissorStack.empty()
+			? _scissorStack.peek().merge(globalX, globalY, width, height)
+			: new ScissorRegion(globalX, globalY, width, height);
 		_scissorStack.push(region);
 		setScissor(region);
 	}
@@ -47,16 +53,22 @@ public class GuiContext {
 		if (region != null) {
 			Minecraft mc = Minecraft.getMinecraft();
 			int scale = new ScaledResolution(mc).getScaleFactor();
-			GL11.glScissor(region.x * scale, mc.displayHeight - (region.y + region.height) * scale,
-						region.width * scale, region.height * scale);
+			GL11.glScissor(region.globalX * scale, mc.displayHeight - (region.globalY + region.height) * scale,
+			               region.width * scale, region.height * scale);
 			GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		} else GL11.glDisable(GL11.GL_SCISSOR_TEST);
 	}
 	
 	private static class ScissorRegion {
-		public final int x, y, width, height;
-		public ScissorRegion(int x, int y, int width, int height)
-			{ this.x = x; this.y = y; this.width = width; this.height = height; }
+		public final int globalX, globalY, width, height;
+		public ScissorRegion(int globalX, int globalY, int width, int height)
+			{ this.globalX = globalX; this.globalY = globalY; this.width = width; this.height = height; }
+		public ScissorRegion merge(int globalX, int globalY, int width, int height) {
+			return new ScissorRegion(
+				Math.max(globalX, this.globalX), Math.max(globalY, this.globalY),
+				Math.min(globalX + width, this.globalX + this.width) - Math.max(globalX, this.globalX),
+				Math.min(globalY + height, this.globalY + this.height) - Math.max(globalY, this.globalY));
+		}
 	}
 	
 }
