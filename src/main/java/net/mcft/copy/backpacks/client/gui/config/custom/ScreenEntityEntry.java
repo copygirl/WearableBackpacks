@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -50,7 +51,6 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 	private final EntryListSpawn _owningList;
 	private final Optional<EntryListSpawn.Entry> _entry;
 	
-	public final GuiLabel labelTitleEntityName;
 	public final EntryEntityID entryEntityID;
 	public final BaseEntry.Value<RenderOptions> entryRenderOptions;
 	public final EntryListBackpack listBackpack;
@@ -59,8 +59,10 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 	
 	@SuppressWarnings("unchecked")
 	public ScreenEntityEntry(EntryListSpawn owningList, Optional<EntryListSpawn.Entry> entry) {
-		super(GuiElementBase.getCurrentScreen(),
-		      ((BaseConfigScreen)GuiElementBase.getCurrentScreen()).titleLines.toArray(new String[0]));
+		super(GuiElementBase.getCurrentScreen(), Stream.concat(
+				((BaseConfigScreen)GuiElementBase.getCurrentScreen()).getTitleLines().stream(),
+				Stream.of("")
+			).toArray(String[]::new));
 		_owningList = owningList;
 		_entry      = entry;
 		
@@ -68,11 +70,6 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 		isDefault = backpackEntry.map(e -> e.isDefault).orElse(false);
 		List<BackpackEntry> entries  = backpackEntry.map(BackpackEntityEntry::getEntries).orElseGet(Collections::emptyList);
 		List<BackpackEntry> defaults = entries.stream().filter(e -> e.isDefault).collect(Collectors.toList());
-		
-		// Title
-		labelTitleEntityName = new GuiLabel("");
-		labelTitleEntityName.setCenteredHorizontal();
-		layoutTitle.addFixed(labelTitleEntityName);
 		
 		// Content
 		entryEntityID = new EntryEntityID(this);
@@ -133,15 +130,16 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 	
 	public static class EntryEntityID extends BaseEntry.Value<String> {
 		
-		private final GuiLabel _labelName;
+		private final ScreenEntityEntry _owningScreen;
 		
 		public Optional<EntityEntry> entityEntry;
 		
 		public EntryEntityID(ScreenEntityEntry owningScreen) {
-			super(new EntryValueField.Text(), owningScreen._entry.map(e -> e.getValue().entityID), Optional.empty());
+			super(new EntryValueField.Text(), owningScreen._entry
+				.map(e -> e.getValue().entityID), Optional.empty());
 			setLabelAndTooltip("spawn.entityID");
 			((EntryValueField.Text)control).setChangedAction(this::onChanged);
-			_labelName = owningScreen.labelTitleEntityName;
+			_owningScreen = owningScreen;
 			onChanged();
 		}
 		
@@ -155,7 +153,8 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 		private void onChanged() {
 			String entityID = getValue().get();
 			entityEntry = EntryListSpawn.getEntityEntry(entityID);
-			_labelName.setText(EntryListSpawn.getEntityEntryName(entityEntry, entityID));
+			_owningScreen.setTitleLine(_owningScreen.getTitleLineCount() - 1,
+			                           EntryListSpawn.getEntityEntryName(entityEntry, entityID));
 		}
 		
 	}

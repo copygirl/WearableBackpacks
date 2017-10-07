@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -33,25 +32,24 @@ public class ScreenRenderOptions extends BaseConfigScreen {
 	
 	public ScreenRenderOptions(IConfigValue<RenderOptions> element, Class<? extends EntityLivingBase> entityClass) {
 		super(GuiElementBase.getCurrentScreen(), Stream.concat(
-				((BaseConfigScreen)GuiElementBase.getCurrentScreen()).titleLines.stream(),
-				// TODO: Add the entityID in here (make title lines a method?)
-				Stream.of(I18n.format("config." + WearableBackpacks.MOD_ID + ".spawn.renderOptions"))
+				((BaseConfigScreen)GuiElementBase.getCurrentScreen()).getTitleLines().stream(),
+				Stream.of("config." + WearableBackpacks.MOD_ID + ".spawn.renderOptions")
 			).toArray(String[]::new));
 		_element = element;
+		
+		entityRender = new GuiEntityRender(8, 8, 100, 200, entityClass);
+		entityRender.setYaw(145.0F);
+		scrollableContent.add(entityRender);
 		
 		RenderOptions value = element.getValue().get();
 		entryTranslate = new BaseEntry.Value<>(new EntryValueMulti<Double>(3, EntryValueField.Decimal.class),
 		                                       Arrays.asList(value.x, value.y, value.z), null);
-		entryRotate    = new BaseEntry.Value<>(new EntryValueSlider.RangeDouble(0, 360, 5), value.rotate, null);
+		entryRotate    = new BaseEntry.Value<>(new EntryValueSlider.RangeDouble(-180, 180, 5), value.rotate, null);
 		entryScale     = new BaseEntry.Value<>(new EntryValueField.Decimal(), value.scale, null);
 		
 		entryTranslate.setLabelAndTooltip("spawn.translate");
 		entryRotate.setLabelAndTooltip("spawn.rotate");
 		entryScale.setLabelAndTooltip("spawn.scale");
-		
-		entityRender = new GuiEntityRender(8, 8, 100, 200, entityClass);
-		entityRender.setYaw(145.0F);
-		scrollableContent.add(entityRender);
 		
 		listEntries.addFixed(entryTranslate);
 		listEntries.addFixed(entryRotate);

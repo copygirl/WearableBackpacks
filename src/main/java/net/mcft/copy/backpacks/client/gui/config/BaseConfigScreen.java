@@ -27,8 +27,9 @@ import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 @SideOnly(Side.CLIENT)
 public abstract class BaseConfigScreen extends GuiContainerScreen {
 	
+	private final List<GuiLabel> _titleLabels;
+	
 	public final GuiScreen parentScreen;
-	public final List<String> titleLines;
 	
 	protected final GuiLayout layoutMain;
 		protected final GuiLayout layoutTitle;
@@ -52,14 +53,11 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 			layoutTitle.setPaddingVertical(7);
 			layoutTitle.setSpacing(1);
 			
-			this.titleLines = Collections.unmodifiableList(Arrays.stream(titleLines)
+			_titleLabels = Arrays.stream(titleLines)
 				.filter(Objects::nonNull).map(I18n::format)
-				.collect(Collectors.toList()));
-			this.titleLines.forEach(line -> {
-				GuiLabel title = new GuiLabel(line);
-				title.setCenteredHorizontal();
-				layoutTitle.addFixed(title);
-			});
+				.map(GuiLabel::new).collect(Collectors.toList());
+			_titleLabels.forEach(GuiLabel::setCenteredHorizontal);
+			_titleLabels.forEach(layoutTitle::addFixed);
 			
 			// Content
 			listEntries = new EntryList();
@@ -92,6 +90,14 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 	/** Adds an entry to this screen's entry list. */
 	public void addEntry(GuiElementBase entry)
 		{ listEntries.addFixed(entry); }
+	
+	public List<String> getTitleLines() {
+		return Collections.unmodifiableList(_titleLabels.stream()
+			.map(GuiLabel::getText).collect(Collectors.toList()));
+	}
+	public int getTitleLineCount() { return _titleLabels.size(); }
+	public void setTitleLine(int index, String value)
+		{ _titleLabels.get(index).setText(I18n.format(value)); }
 	
 	/** Returns whether any of this screen's entries were changed from their previous values. */
 	public boolean isChanged() { return listEntries.getEntries().anyMatch(IConfigEntry::isChanged); }
