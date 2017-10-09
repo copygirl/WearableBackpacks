@@ -175,7 +175,7 @@ public abstract class GuiElementBase {
 	/** Returns if this element can be pressed. */
 	public boolean canPress() { return (canDrag() || canFocus()); }
 	/** Returns if this element is currently being pressed down. */
-	public boolean isPressed() { return (getContext().getPressed() == this); }
+	public boolean isPressed() { return (getContext() != null) && (getContext().getPressed() == this); }
 	/** Called when this element is pressed with the left mouse button.
 	 *  Mouse position is relative to the element's position. */
 	public void onPressed(int mouseX, int mouseY) {  }
