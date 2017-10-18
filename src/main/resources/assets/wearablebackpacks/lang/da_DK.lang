@@ -1,0 +1,76 @@
+container.wearablebackpacks.backpack=Rygsæk
+
+item.wearablebackpacks.backpack.name=Rygsæk
+
+tooltip.wearablebackpacks.moreInfo=Hold %1$s inde for mere information.
+tooltip.wearablebackpacks.openHint=Tryk %1$s for at åbne når rygsækken er på.
+tooltip.wearablebackpacks.equipHint=Sæt ned og ødelæg\nmens du sniger for at tage den på.
+tooltip.wearablebackpacks.equipHint.extended=Snig og ødelæg for at tage på.\nSnig og højreklik jorden\nmed tomme hænder for\nat tage af.
+tooltip.wearablebackpacks.unequipHint=Snig og højreklik jorden\nmed tomme hænder for at tage af.
+tooltip.wearablebackpacks.used=Bliver brugt af spiller.
+
+chat.wearablebackpacks.cantEquip=Du har allerede en rygsæk på.
+chat.wearablebackpacks.cantEquip.chestplate=Du kan ikke tage en rygsæk på, mens du har brystplade på.
+
+key.wearablebackpacks.open=Åben rygsæk
+
+
+config.wearablebackpacks.gui.cancel=Annuller
+
+config.wearablebackpacks.general.equipAsChestArmor=Tag på som brystbeskyttelse
+config.wearablebackpacks.general.equipAsChestArmor.tooltip=Styrer om rygsække, man har på fylder armor slottet.
+config.wearablebackpacks.general.enableEquippedInteraction=Slå "Equipped Interaction" til
+config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Styrer om spillere kan åbne rygsække på ryggen af andre.
+config.wearablebackpacks.general.enableSelfInteraction=Slå "Self Interaction" til
+config.wearablebackpacks.general.enableSelfInteraction.tooltip=Styrer om spillere kan åbne deres egne rygsække med en genvejstast.
+config.wearablebackpacks.general.dropAsBlockOnDeath=Dropper som blok, når man dør
+config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Styrer om en rygsæk skal sætte sig selv på jorden i stedet for at sprede sit indhold, når man dør.
+
+config.wearablebackpacks.general.status.outOfRange=Værdien er uden for rækken (%1$s - %1$s).
+config.wearablebackpacks.general.status.required=Instilling "%1$s" er nødvending for denne.
+config.wearablebackpacks.general.status.chestplate=Ingen effekt, hvis ikke taget på som armor. [general.equipAsChestArmor = false]
+
+config.wearablebackpacks.category.backpack=Rygsæk Instillinger
+config.wearablebackpacks.category.backpack.tooltip=Styrer instillinger omkring almindelig rygsække.
+config.wearablebackpacks.backpack.enabled=Slået til
+config.wearablebackpacks.backpack.enabled.tooltip=Styrer om den normale rygsæk er slået til.
+config.wearablebackpacks.backpack.durability=Holdbarhed
+config.wearablebackpacks.backpack.durability.tooltip=Styrer holdbarheden for den normale rygsæk (0 kan ikke ødelægges). Hvis man sætter tallet ned (også til 0), kan det skabe problemer for allerede eksisterende tasker.
+config.wearablebackpacks.backpack.armor=Armor
+config.wearablebackpacks.backpack.armor.tooltip=Armor point for normale rygsække.
+config.wearablebackpacks.backpack.size=Opbevarelsesplads
+config.wearablebackpacks.backpack.size.tooltip=Styrer opbevarelsespladsen for normale rygsække. Ændrer ikke rygsække som allerede er på ryggen eller på jorden. Lav dem tilbage til en item for at få ændringerne med.
+
+config.wearablebackpacks.category.spawn=Spawn-Instillinger
+config.wearablebackpacks.category.spawn.tooltip=Styrer instillinger omkring mobs, der spawner med rygsække
+config.wearablebackpacks.spawn.enabled=Slået til
+config.wearablebackpacks.spawn.enabled.tooltip=Styrer om mobs har en chance for at spawne med rygsække
+config.wearablebackpacks.spawn.entries=Entity Spawn-tilfælde
+config.wearablebackpacks.spawn.entry=%1$s tilfælde
+config.wearablebackpacks.spawn.entry.0=Ingen tilfælde!
+config.wearablebackpacks.spawn.entry.1=1 tilfælde
+
+config.wearablebackpacks.spawn.entityID=Entity ID
+config.wearablebackpacks.spawn.entityID.tooltip=Intern identifikation på entities, som f.eks.: "minecraft:zombie".
+config.wearablebackpacks.spawn.renderOptions=Render-Instillinger
+config.wearablebackpacks.spawn.renderOptions.tooltip=Styrer positionen, rotationen og størrelsen på rygsækken for denne entity.
+config.wearablebackpacks.spawn.chance=Chance
+config.wearablebackpacks.spawn.chance.tooltip=Chance for 1 ud af X at en entity spawned med denne rygsæk (100 = 1%%, 1000 = 0.1%%). Sæt til 0 for at slå fra.
+config.wearablebackpacks.spawn.backpack=Rygsæk
+config.wearablebackpacks.spawn.backpack.tooltip=Item ID for rygsækken, der skal spawnes med denne entity.
+config.wearablebackpacks.spawn.lootTable=Skattetabel
+config.wearablebackpacks.spawn.lootTable.tooltip=ID for skattetabellen, der skal bruges til at fylde denne rygsæk.
+
+config.wearablebackpacks.spawn.translate=Position
+config.wearablebackpacks.spawn.translate.tooltip=Styrer renderpositionen for rygsækken på denne entity
+config.wearablebackpacks.spawn.rotate=Rotation
+config.wearablebackpacks.spawn.rotate.tooltip=Styrer renderrotationen for rygsækken på denne entity
+config.wearablebackpacks.spawn.scale=Skala
+config.wearablebackpacks.spawn.scale.tooltip=Styrer størrelsen på rygsækken på denne entity.
+
+config.wearablebackpacks.spawn.status.entityNotFound=Den angivne entity kunne ikke findes. Den bliver ignoreret.
+
+config.wearablebackpacks.category.cosmetic=Kosmetiske Instillinger
+config.wearablebackpacks.category.cosmetic.tooltip=Styrer udseensmæssige ting på klientens side, som ikke ændrer gameplay.
+config.wearablebackpacks.cosmetic.enchantEffectOpacity=Enchant-Effekt Gennemsigtighed
+config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Styrer synligheden af enchanted-effekten på rygsække på ryggen eller jorden.
