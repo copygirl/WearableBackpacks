@@ -122,7 +122,7 @@ public class GuiContainer extends GuiElementBase {
 	public void add(GuiElementBase element)
 		{ insert(children.size(), element); }
 	/** Inserts the specified element at the specified index in the children list of this container. */
-	protected void insert(int index, GuiElementBase element) {
+	public void insert(int index, GuiElementBase element) {
 		if (element.getContext() != null)
 			throw new UnsupportedOperationException("The specified element already has a context set");
 		if (getContext() != null)
@@ -190,7 +190,7 @@ public class GuiContainer extends GuiElementBase {
 	@Override
 	public boolean onMouseDown(int mouseButton, int mouseX, int mouseY) {
 		return (isVisible() && isEnabled() &&
-		        (foreachFindChildMousePos(mouseX, mouseY, (child, x, y, mx, my) ->
+		        (foreachFindChildMousePosReversed(mouseX, mouseY, (child, x, y, mx, my) ->
 		             (child.contains(mx, my) && child.onMouseDown(mouseButton, mx, my))) != null) ||
 		         super.onMouseDown(mouseButton, mouseX, mouseY));
 	}
@@ -206,7 +206,7 @@ public class GuiContainer extends GuiElementBase {
 	@Override
 	public boolean onMouseScroll(int scroll, int mouseX, int mouseY) {
 		return (isVisible() && isEnabled() &&
-		        (foreachFindChildMousePos(mouseX, mouseY, (child, x, y, mx, my) ->
+		        (foreachFindChildMousePosReversed(mouseX, mouseY, (child, x, y, mx, my) ->
 		             (child.contains(mx, my) && child.onMouseScroll(scroll, mx, my))) != null) ||
 		         super.onMouseScroll(scroll, mouseX, mouseY));
 	}
@@ -240,9 +240,11 @@ public class GuiContainer extends GuiElementBase {
 		}
 	}
 	
-	protected GuiElementBase foreachFindChildMousePos(
-		int mouseX, int mouseY, ChildPosMousePredicate consumer) {
-		for (GuiElementBase child : children) {
+	protected GuiElementBase foreachFindChildMousePosReversed(
+			int mouseX, int mouseY, ChildPosMousePredicate consumer) {
+		int size = children.size();
+		for (int i = 0; i < size; i++) {
+			GuiElementBase child = children.get(size - 1 - i);
 			int x = getChildX(child);
 			int y = getChildY(child);
 			int mx = mouseX - x;

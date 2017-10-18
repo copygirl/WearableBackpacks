@@ -58,11 +58,11 @@ public final class ElementInfo {
 	}
 	
 	public Stream<ElementInfo> getChildElements() {
-		if (element instanceof GuiContainer) {
-			GuiContainer container = (GuiContainer)element;
-			return container.children.stream()
-				.map(child -> getChild(child));
-		} else return Stream.empty();
+		if (!(element instanceof GuiContainer))
+			return Stream.empty();
+		GuiContainer container = (GuiContainer)element;
+		return container.children.stream()
+			.map(child -> getChild(child));
 	}
 	
 	
