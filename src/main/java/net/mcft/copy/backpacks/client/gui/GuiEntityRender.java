@@ -37,7 +37,7 @@ import net.mcft.copy.backpacks.client.gui.control.GuiField;
 
 public class GuiEntityRender extends GuiElementBase {
 	
-	private static final int RESERVED_SPACE = 12;
+	private static final int RESERVED_SPACE = 16;
 	
 	private Entity _entity = null;
 	
@@ -51,9 +51,15 @@ public class GuiEntityRender extends GuiElementBase {
 	private float _pitchMin     = -25.0F;
 	private float _pitchMax     =  25.0F;
 	
+	private float _centerX = 0.5F;
+	private float _centerY = 0.5F;
+	private float _zoom = 1.0F;
+	
 	private int _colorBackground = Color.BLACK;
 	private int _colorBorder     = GuiField.COLOR_BORDER_DEFAULT;
 	
+	public GuiEntityRender(Entity entity)
+		{ this(80, 140, entity); }
 	public GuiEntityRender(int width, int height)
 		{ this(width, height, (Entity)null); }
 	public GuiEntityRender(int width, int height, Entity entity)
@@ -64,6 +70,8 @@ public class GuiEntityRender extends GuiElementBase {
 		setEntity(entity);
 	}
 	
+	public GuiEntityRender(Class<? extends Entity> entityClass)
+		{ this(80, 140, entityClass); }
 	public GuiEntityRender(int width, int height, Class<? extends Entity> entityClass)
 		{ this(0, 0, width, height, entityClass); }
 	public GuiEntityRender(int x, int y, int width, int height, Class<? extends Entity> entityClass) {
@@ -94,6 +102,9 @@ public class GuiEntityRender extends GuiElementBase {
 		{ setPitch(value); setPitchControl(min, max); }
 	public void setPitch(float value) { _pitchDefault = value; }
 	public void setPitchControl(float min, float max) { _pitchMin = min; _pitchMax = max; }
+	
+	public void setCenter(float x, float y) { _centerX = x; _centerY = y; }
+	public void setZoom(float value) { _zoom = value; }
 	
 	public void setBackgroundColor(int value) { _colorBackground = value; }
 	public void setBorderColor(int value) { _colorBorder = value; }
@@ -130,7 +141,7 @@ public class GuiEntityRender extends GuiElementBase {
 		float entityWidth  = (float)(bbox.maxX - bbox.minX);
 		float entityHeight = (float)(bbox.maxY - bbox.minY);
 		float scale = Math.min((w - RESERVED_SPACE) / entityWidth,
-		                       (h - RESERVED_SPACE) / entityHeight);
+		                       (h - RESERVED_SPACE) / entityHeight) * _zoom;
 		float yaw   = _yawDefault + _yaw;
 		float pitch = _pitchDefault + _pitch;
 		
@@ -150,7 +161,7 @@ public class GuiEntityRender extends GuiElementBase {
 		// From GuiInventory.drawEntityOnScreen
 		GlStateManager.enableColorMaterial();
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(w / 2, h / 2, 100.0F);
+		GlStateManager.translate(w * _centerX, h * _centerY, 100.0F);
 		GlStateManager.scale(-scale, scale, scale);
 		GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
 		GlStateManager.rotate(pitch, 1.0F, 0.0F, 0.0F);

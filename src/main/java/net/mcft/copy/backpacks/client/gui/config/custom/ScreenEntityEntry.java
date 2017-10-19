@@ -60,8 +60,8 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 	@SuppressWarnings("unchecked")
 	public ScreenEntityEntry(EntryListSpawn owningList, Optional<EntryListSpawn.Entry> entry) {
 		super(GuiElementBase.getCurrentScreen(), Stream.concat(
-				((BaseConfigScreen)GuiElementBase.getCurrentScreen()).getTitleLines().stream(),
-				Stream.of("")
+				((BaseConfigScreen)GuiElementBase.getCurrentScreen()).getTitleLines().stream().skip(1),
+				Stream.of("< this is where the entity name will go >")
 			).toArray(String[]::new));
 		_owningList = owningList;
 		_entry      = entry;

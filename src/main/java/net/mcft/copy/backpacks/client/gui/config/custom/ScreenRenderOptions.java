@@ -13,6 +13,8 @@ import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackRegistry.RenderOptions;
 import net.mcft.copy.backpacks.client.gui.GuiElementBase;
 import net.mcft.copy.backpacks.client.gui.GuiEntityRender;
+import net.mcft.copy.backpacks.client.gui.GuiScrollable;
+import net.mcft.copy.backpacks.client.gui.GuiElementBase.Color;
 import net.mcft.copy.backpacks.client.gui.config.BaseConfigScreen;
 import net.mcft.copy.backpacks.client.gui.config.BaseEntry;
 import net.mcft.copy.backpacks.client.gui.config.EntryValueField;
@@ -32,17 +34,28 @@ public class ScreenRenderOptions extends BaseConfigScreen {
 	
 	public ScreenRenderOptions(IConfigValue<RenderOptions> element, Class<? extends EntityLivingBase> entityClass) {
 		super(GuiElementBase.getCurrentScreen(), Stream.concat(
-				((BaseConfigScreen)GuiElementBase.getCurrentScreen()).getTitleLines().stream(),
+				((BaseConfigScreen)GuiElementBase.getCurrentScreen()).getTitleLines().stream().skip(1),
 				Stream.of("config." + WearableBackpacks.MOD_ID + ".spawn.renderOptions")
 			).toArray(String[]::new));
 		_element = element;
 		
-		entityRender = new GuiEntityRender(8, 8, 100, 200, entityClass);
+		scrollableContent.entryList = null;
+		listEntries.setWidth(180);
+		listEntries.setAlign(new GuiScrollable.FixedMax(8),
+		                     new GuiScrollable.FixedMax(0));
+		
+		entityRender = new GuiEntityRender(entityClass);
+		entityRender.setAlign(new GuiScrollable.FixedBoth(0, 0),
+		                      new GuiScrollable.FixedBoth(0, 0));
 		entityRender.setYaw(145.0F);
-		scrollableContent.add(entityRender);
+		entityRender.setCenter(0.3F, 0.5F);
+		entityRender.setZoom(0.9F);
+		entityRender.setBackgroundColor(Color.TRANSPARENT);
+		entityRender.setBorderColor(Color.TRANSPARENT);
+		scrollableContent.insert(0, entityRender);
 		
 		RenderOptions value = element.getValue().get();
-		entryTranslate = new BaseEntry.Value<>(new EntryValueMulti<Double>(3, EntryValueField.Decimal.class),
+		entryTranslate = new BaseEntry.Value<>(new EntryValueMulti<>(3, EntryValueField.Decimal.class),
 		                                       Arrays.asList(value.x, value.y, value.z), null);
 		entryRotate    = new BaseEntry.Value<>(new EntryValueSlider.RangeDouble(-180, 180, 5), value.rotate, null);
 		entryScale     = new BaseEntry.Value<>(new EntryValueField.Decimal(), value.scale, null);
@@ -50,6 +63,10 @@ public class ScreenRenderOptions extends BaseConfigScreen {
 		entryTranslate.setLabelAndTooltip("spawn.translate");
 		entryRotate.setLabelAndTooltip("spawn.rotate");
 		entryScale.setLabelAndTooltip("spawn.scale");
+		
+		entryTranslate.remove(entryTranslate.buttonUndo);
+		entryRotate.remove(entryRotate.buttonUndo);
+		entryScale.remove(entryScale.buttonUndo);
 		
 		listEntries.addFixed(entryTranslate);
 		listEntries.addFixed(entryRotate);

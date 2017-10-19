@@ -33,7 +33,7 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 	
 	protected final GuiLayout layoutMain;
 		protected final GuiLayout layoutTitle;
-		protected final GuiScrollable scrollableContent;
+		protected final EntryListScrollable scrollableContent;
 			protected final EntryList listEntries;
 		protected final GuiLayout layoutButtons;
 			protected final GuiButton buttonDone;
@@ -46,7 +46,7 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 		layoutMain = new GuiLayout(Direction.VERTICAL);
 		layoutMain.setFill();
 		layoutMain.setSpacing(0);
-			
+		
 			// Title
 			layoutTitle = new GuiLayout(Direction.VERTICAL);
 			layoutTitle.setFillHorizontal();
@@ -78,13 +78,11 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 				buttonUndo.setAction(this::undoChanges);
 				buttonReset.setAction(this::setToDefault);
 			
-			
 			layoutMain.addFixed(layoutTitle);
 			layoutMain.addWeighted(scrollableContent);
 			layoutMain.addFixed(layoutButtons);
 		
 		container.add(layoutMain);
-		
 	}
 	
 	/** Adds an entry to this screen's entry list. */
@@ -127,7 +125,7 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 	
 	public static class EntryListScrollable extends GuiScrollable {
 		
-		public final EntryList entryList;
+		public EntryList entryList;
 		
 		public EntryListScrollable(EntryList entryList) {
 			super(Direction.VERTICAL);
@@ -140,11 +138,10 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 		protected void updateChildSizes(Direction direction) {
 			super.updateChildSizes(direction);
 			// TODO: This could be simplified if the Alignment class contained logic for position / sizing of elements.
-			if ((direction == Direction.HORIZONTAL) && (entryList != null)) {
-				int minimumWidth = entryList.maxElementWidth;
-				int dynamicWidth = entryList.maxLabelWidth + 8 + getWidth() / 2;
-				entryList.setWidth(Math.max(minimumWidth, dynamicWidth));
-			}
+			if ((direction != Direction.HORIZONTAL) || (entryList == null)) return;
+			int minimumWidth = entryList.maxElementWidth;
+			int dynamicWidth = entryList.maxLabelWidth + 8 + getWidth() / 2;
+			entryList.setWidth(Math.max(minimumWidth, dynamicWidth));
 		}
 		
 	}
@@ -166,13 +163,13 @@ public abstract class BaseConfigScreen extends GuiContainerScreen {
 			super.updateChildSizes(direction);
 			
 			maxLabelWidth = getEntryLabels()
-				.mapToInt(GuiLabel::getWidth)
+				.mapToInt(GuiElementBase::getWidth)
 				.max().orElse(0);
 			getEntryLabels().forEach(l -> l.setWidth(maxLabelWidth));
 			
 			maxElementWidth = getElements()
 				.filter(e -> !(e.getAlign(Direction.HORIZONTAL) instanceof Alignment.Both))
-				.mapToInt(e -> e.getWidth())
+				.mapToInt(GuiElementBase::getWidth)
 				.max().orElse(0);
 		}
 		
