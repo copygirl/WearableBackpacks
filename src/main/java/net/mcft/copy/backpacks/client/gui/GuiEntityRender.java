@@ -115,7 +115,7 @@ public class GuiEntityRender extends GuiElementBase {
 	@Override
 	public void onDragged(int mouseX, int mouseY, int deltaX, int deltaY, int startX, int startY) {
 		_yaw   += deltaX * 2;
-		_pitch -= deltaY;
+		_pitch += deltaY;
 		boolean yawWrap   = (_yawMax - _yawMin >= 360.0F);
 		boolean pitchWrap = (_pitchMax - _pitchMin >= 360.0F);
 		if (_yaw < _yawMin) _yaw = yawWrap ? _yaw + 360.0F : _yawMin;
@@ -194,10 +194,12 @@ public class GuiEntityRender extends GuiElementBase {
 		public static final DummyWorld INSTANCE = new DummyWorld();
 		public final DummyPlayerSP player;
 		
-		public DummyWorld() {
-			super(new DummySaveHandler(), new WorldInfo(new WorldSettings(
-					0, GameType.SURVIVAL, false, false, WorldType.DEFAULT), "DummyWorld"
-				), new WorldProviderSurface(), null, true);
+		public DummyWorld()
+			{ this(new WorldSettings(0, GameType.SURVIVAL, false, false, WorldType.DEFAULT)); }
+		public DummyWorld(WorldSettings settings) {
+			super(new DummySaveHandler(),
+			      new WorldInfo(settings, "DummyWorld"),
+			      new WorldProviderSurface(), null, true);
 			provider.setWorld(this);
 			player = new DummyPlayerSP(this);
 		}
@@ -237,8 +239,6 @@ public class GuiEntityRender extends GuiElementBase {
 					getMC(), null, null, getMC().getSession().getProfile()
 				), null, null);
 		}
-		
-		
 	}
 	
 }

@@ -187,23 +187,20 @@ public final class BackpackRegistry {
 	
 	public static final class RenderOptions {
 		
-		public static final RenderOptions DEFAULT = new RenderOptions(12, 2.5, 0, 0, 0.8);
+		public static final RenderOptions DEFAULT = new RenderOptions(0, 2.5, 0.0, 0.8);
 		
-		public final double x, y, z;
+		public final double y, z;
 		public final double rotate, scale;
 		
-		public RenderOptions(double x, double y, double z,
-		                     double rotate, double scale) {
-			this.x = x; this.y = y; this.z = z;
-			this.rotate = rotate; this.scale = scale;
-		}
+		public RenderOptions(double y, double z, double rotate, double scale)
+			{ this.y = y; this.z = z; this.rotate = rotate; this.scale = scale; }
 		
 		@Override
 		public boolean equals(Object obj) {
 			if (!(obj instanceof RenderOptions)) return false;
 			RenderOptions other = (RenderOptions)obj;
-			return (other.x == x) && (other.y == y) && (other.z == z)
-				&& (other.rotate == rotate) && (other.scale == scale);
+			return (other.y == y) && (other.z == z) &&
+			       (other.rotate == rotate) && (other.scale == scale);
 		}
 		
 	}

@@ -130,20 +130,19 @@ public class BackpackCapability implements IBackpack {
 		
 		final BackpackCapability backpack;
 		
-		public Provider(EntityLivingBase entity) { backpack = new BackpackCapability(entity); }
+		public Provider(EntityLivingBase entity)
+			{ backpack = new BackpackCapability(entity); }
 		
 		// ICapabilityProvider implementation
 		
 		@Override
-		public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-			return (capability == IBackpack.CAPABILITY);
-		}
+		public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+			{ return (capability == IBackpack.CAPABILITY); }
 		
 		@Override
 		@SuppressWarnings("unchecked")
-		public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-			return ((capability == IBackpack.CAPABILITY) ? (T)backpack : null);
-		}
+		public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+			{ return ((capability == IBackpack.CAPABILITY) ? (T)backpack : null); }
 		
 		// INBTSerializable implementation
 		

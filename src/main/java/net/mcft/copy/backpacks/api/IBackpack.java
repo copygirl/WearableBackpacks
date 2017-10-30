@@ -30,4 +30,30 @@ public interface IBackpack {
 		return BackpackHelper.getBackpackType(getStack());
 	}
 	
+	
+	/** A dummy implementation of IBackpack. */
+	public static class Impl implements IBackpack {
+		
+		protected ItemStack stack    = ItemStack.EMPTY;
+		protected IBackpackData data = null;
+		protected int playersUsing   = 0;
+		protected int lidTicks       = 0;
+		protected int prevLidTicks   = 0;
+		
+		public ItemStack getStack() { return stack; }
+		public void setStack(ItemStack value) { stack = value; }
+		
+		public IBackpackData getData() { return data; }
+		public void setData(IBackpackData value) { data = value; }
+		
+		public int getPlayersUsing() { return playersUsing; }
+		public void setPlayersUsing(int value) { playersUsing = value; }
+		
+		public int getLidTicks() { return lidTicks; }
+		public int getPrevLidTicks() { return prevLidTicks; }
+		public void setLidTicks(int value)
+			{ prevLidTicks = lidTicks; lidTicks = value; }
+		
+	}
+	
 }

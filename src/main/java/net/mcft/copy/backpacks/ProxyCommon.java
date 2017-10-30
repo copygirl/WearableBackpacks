@@ -72,21 +72,18 @@ public class ProxyCommon {
 	}
 	
 	@SubscribeEvent
-	public void onPlayerLogin(PlayerLoggedInEvent event) {
-		sendBackpackStack(event.player, event.player);
-	}
+	public void onPlayerLogin(PlayerLoggedInEvent event)
+		{ sendBackpackStack(event.player, event.player); }
 	@SubscribeEvent
-	public void onPlayerChangedDimensionEvent(PlayerChangedDimensionEvent event) {
-		sendBackpackStack(event.player, event.player);
-	}
+	public void onPlayerChangedDimensionEvent(PlayerChangedDimensionEvent event)
+		{ sendBackpackStack(event.player, event.player); }
 	@SubscribeEvent
-	public void onPlayerRespawn(PlayerRespawnEvent event) {
-		sendBackpackStack(event.player, event.player);
-	}
+	public void onPlayerRespawn(PlayerRespawnEvent event)
+		{ sendBackpackStack(event.player, event.player); }
 	@SubscribeEvent
-	public void onPlayerStartTracking(PlayerEvent.StartTracking event) {
-		sendBackpackStack(event.getTarget(), event.getEntityPlayer());
-	}
+	public void onPlayerStartTracking(PlayerEvent.StartTracking event)
+		{ sendBackpackStack(event.getTarget(), event.getEntityPlayer()); }
+	
 	private void sendBackpackStack(Entity carrier, EntityPlayer player) {
 		BackpackCapability backpack = (BackpackCapability)BackpackHelper.getBackpack(carrier);
 		if (backpack != null) WearableBackpacks.CHANNEL.sendTo(

@@ -129,21 +129,21 @@ public class SettingListSpawn extends Setting<List<BackpackEntityEntry>> {
 	public static final String TAG_SCALE     = "scale";
 	
 	private static void saveRenderOptions(Configuration config, String category, RenderOptions value) {
-		config.get(category, "translate", new double[3]).set(new double[]{ value.x, value.y, value.z });
+		config.get(category, "translate", new double[3]).set(new double[]{ value.y, value.z });
 		config.get(category, "rotate", 0.0).set(value.rotate);
 		config.get(category, "scale", 0.0).set(value.scale);
 	}
 	private static RenderOptions loadRenderOptions(Configuration config, String category) {
-		double[] translate = config.get(category, "translate", new double[3]).getDoubleList();
+		double[] translate = config.get(category, "translate", new double[2]).getDoubleList();
 		return new RenderOptions(
-			translate[0], translate[1], translate[2],
+			translate[0], translate[1],
 			config.get(category, "rotate", 0.0).getDouble(),
 			config.get(category, "scale", 0.0).getDouble());
 	}
 	
 	private static NBTTagCompound serializeRenderOptions(RenderOptions value) {
 		return NbtUtils.createCompound(
-			TAG_TRANSLATE, NbtUtils.createList(value.x, value.y, value.z),
+			TAG_TRANSLATE, NbtUtils.createList(value.y, value.z),
 			TAG_ROTATE, value.rotate,
 			TAG_SCALE, value.scale);
 	}
@@ -152,7 +152,6 @@ public class SettingListSpawn extends Setting<List<BackpackEntityEntry>> {
 		return new RenderOptions(
 			translate.getDoubleAt(0),
 			translate.getDoubleAt(1),
-			translate.getDoubleAt(2),
 			nbt.getDouble(TAG_ROTATE),
 			nbt.getDouble(TAG_SCALE));
 	}

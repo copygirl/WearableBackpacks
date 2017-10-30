@@ -28,8 +28,8 @@ public class EntryCategory extends BaseEntry {
 		
 		GuiButton button = new GuiButton(BUTTON_WIDTH);
 		button.setText(I18n.format(getLanguageKey()));
-		button.setAction(this::onButtonPressed);
 		button.setTooltip(getCategoryTooltip());
+		button.setAction(this::onButtonPressed);
 		
 		setSpacing(0, 6, 4);
 		addWeighted(new GuiContainer()); // Filler

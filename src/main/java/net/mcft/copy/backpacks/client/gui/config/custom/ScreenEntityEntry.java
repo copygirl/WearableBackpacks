@@ -5,11 +5,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
@@ -34,6 +32,7 @@ import net.mcft.copy.backpacks.client.gui.GuiLabel.TextAlign;
 import net.mcft.copy.backpacks.client.gui.config.BaseConfigScreen;
 import net.mcft.copy.backpacks.client.gui.config.BaseEntry;
 import net.mcft.copy.backpacks.client.gui.config.BaseEntryList;
+import net.mcft.copy.backpacks.client.gui.config.EntryCategory;
 import net.mcft.copy.backpacks.client.gui.config.EntryValueField;
 import net.mcft.copy.backpacks.client.gui.config.IConfigEntry;
 import net.mcft.copy.backpacks.client.gui.config.IConfigValue;
@@ -52,12 +51,11 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 	private final Optional<EntryListSpawn.Entry> _entry;
 	
 	public final EntryEntityID entryEntityID;
-	public final BaseEntry.Value<RenderOptions> entryRenderOptions;
+	public final EntryButtonRenderOptions entryRenderOptions;
 	public final EntryListBackpack listBackpack;
 	public final GuiButton buttonCancel;
 	public final boolean isDefault;
 	
-	@SuppressWarnings("unchecked")
 	public ScreenEntityEntry(EntryListSpawn owningList, Optional<EntryListSpawn.Entry> entry) {
 		super(GuiElementBase.getCurrentScreen(), Stream.concat(
 				((BaseConfigScreen)GuiElementBase.getCurrentScreen()).getTitleLines().stream().skip(1),
@@ -73,11 +71,8 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 		
 		// Content
 		entryEntityID = new EntryEntityID(this);
-		entryRenderOptions = new BaseEntry.Value<RenderOptions>(
-			new EntryValueButtonScreen<RenderOptions>(e -> new ScreenRenderOptions(e,
-				(Class<? extends EntityLivingBase>)entryEntityID.entityEntry
-					.map(EntityEntry::getEntityClass).orElse(null))),
-			_entry.map(e -> e.getValue().renderOptions), Optional.empty());
+		entryRenderOptions = new EntryButtonRenderOptions(
+			entryEntityID, _entry.map(e -> e.getValue().renderOptions));
 		entryRenderOptions.setLabelAndTooltip("spawn.renderOptions");
 		listBackpack = new EntryListBackpack(entries, defaults);
 		
@@ -159,21 +154,57 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 		
 	}
 	
-	public static class EntryValueButtonScreen<T> extends GuiButton implements IConfigValue<T> {
+	@SuppressWarnings("unchecked")
+	public static class EntryButtonRenderOptions extends BaseEntry implements IConfigValue<RenderOptions> {
 		
-		private final Function<IConfigValue<T>, GuiScreen> _screenFactory;
-		private T _value;
+		private final Optional<RenderOptions> _previousValue;
+		private RenderOptions _value;
 		
-		public EntryValueButtonScreen(Function<IConfigValue<T>, GuiScreen> screenFactory) {
-			if (screenFactory == null) throw new NullPointerException("screenFactory must not be null");
-			_screenFactory = screenFactory;
-			setAction(() -> display(_screenFactory.apply(this)));
+		public EntryButtonRenderOptions(EntryEntityID entityID, Optional<RenderOptions> value) {
+			_previousValue = value;
+			_value = value.orElse(RenderOptions.DEFAULT);
+			
+			GuiButton button = new GuiButton(EntryCategory.BUTTON_WIDTH);
+			String languageKey = "config." + WearableBackpacks.MOD_ID + ".spawn.renderOptions";
+			button.setText(I18n.format(languageKey));
+			button.setTooltip(formatTooltip(languageKey, languageKey + ".tooltip", null, null));
+			button.setAction(() -> display(new ScreenRenderOptions(this, entityID.entityEntry
+				.map(e -> (Class<? extends EntityLivingBase>)e.getEntityClass()).orElse(null))));
+			
+			setSpacing(6);
+			addWeighted(button);
+			addFixed(buttonUndo);
 		}
 		
 		@Override
-		public Optional<T> getValue() { return Optional.of(_value); }
+		public List<Status> getStatus() {
+			List<Status> status = new ArrayList<Status>();
+			if (!getValue().isPresent()) status.add(Status.INVALID);
+			return status;
+		}
+		
+		// IConfigValue implementation
+		
 		@Override
-		public void setValue(T value) { _value = value; }
+		public Optional<RenderOptions> getValue() { return Optional.of(_value); }
+		@Override
+		public void setValue(RenderOptions value) { _value = value; }
+		
+		// IConfigEntry implementation
+		
+		@Override
+		public boolean isChanged() { return !_previousValue.equals(getValue()); }
+		@Override
+		public boolean isDefault() { return false; }
+		
+		@Override
+		public void undoChanges() { _previousValue.ifPresent(this::setValue); }
+		@Override
+		public void setToDefault() {  }
+		
+		@Override
+		public ChangeRequiredAction applyChanges()
+			{ return ChangeRequiredAction.None; }
 		
 	}
 	

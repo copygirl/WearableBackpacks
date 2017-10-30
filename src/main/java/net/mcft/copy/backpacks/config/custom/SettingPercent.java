@@ -35,8 +35,7 @@ public class SettingPercent extends SettingDouble {
 	}
 	
 	@Override
-	public String stringify(Double value) {
-		return (value * 100) + "%";
-	}
+	public String stringify(Double value)
+		{ return (value * 100) + "%"; }
 	
 }

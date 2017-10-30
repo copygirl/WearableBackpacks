@@ -22,8 +22,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.mcft.copy.backpacks.ProxyClient;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
+import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackType;
+import net.mcft.copy.backpacks.api.BackpackRegistry.BackpackEntityEntry;
+import net.mcft.copy.backpacks.api.BackpackRegistry.RenderOptions;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
 import net.mcft.copy.backpacks.misc.util.IntermodUtils;
 
@@ -73,17 +76,25 @@ public final class RendererBackpack {
 	
 	public static class Layer implements LayerRenderer<EntityLivingBase> {
 		
-		// TODO: Allow this to be changed for backpack models that are visually bigger.
-		private static final float HEIGHT_OFFSET = 12.0F;
-		private static final float DEPTH_OFFSET = 2.5F;
+		private static IBackpack _overrideBackpack = null;
+		private static RenderOptions _overrideRenderOptions = null;
 		
 		public boolean shouldCombineTextures() { return false; }
 		
 		public void doRenderLayer(EntityLivingBase entity, float limbSwing, float limbSwingAmount,
 		                          float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
 			
-			IBackpack backpack = BackpackHelper.getBackpack(entity);
-			if (backpack == null) return;
+			IBackpack backpack;
+			RenderOptions renderOptions;
+			if (_overrideBackpack != null) {
+				backpack = _overrideBackpack;
+				renderOptions = _overrideRenderOptions;
+			} else {
+				backpack = BackpackHelper.getBackpack(entity);
+				BackpackEntityEntry entry = BackpackRegistry.getEntityEntry(entity.getClass());
+				renderOptions = (entry != null) ? entry.renderOptions : null;
+			}
+			if ((backpack == null) || (renderOptions == null)) return;
 			
 			GlStateManager.pushMatrix();
 			
@@ -106,15 +117,22 @@ public final class RendererBackpack {
 				GlStateManager.rotate(90.0F / (float)Math.PI, 1.0F, 0.0F, 0.0F);
 			}
 			
-			GlStateManager.scale(0.8F, 0.8F, 0.8F);
-			GlStateManager.translate(8.0F * scale, HEIGHT_OFFSET * scale, -DEPTH_OFFSET * scale);
+			GlStateManager.scale(renderOptions.scale, renderOptions.scale, renderOptions.scale);
+			GlStateManager.translate(8.0F * scale, renderOptions.y * scale, renderOptions.z * scale);
 			GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
+			GlStateManager.rotate((float)renderOptions.rotate, 1.0F, 0.0F, 0.0F);
+			GlStateManager.translate(0, ProxyClient.MODEL_BACKPACK_BOX.maxY * scale * -16,
+			                            ProxyClient.MODEL_BACKPACK_BOX.minZ * scale * -16);
 			
 			renderBackpack(backpack, entity.ticksExisted + partialTicks, false);
 			
 			GlStateManager.popMatrix();
 			
 		}
+		
+		public static void setOverride(IBackpack backpack, RenderOptions renderOptions)
+			{ _overrideBackpack = backpack; _overrideRenderOptions = renderOptions; }
+		public static void resetOverride() { setOverride(null, null); }
 		
 	}
 	
