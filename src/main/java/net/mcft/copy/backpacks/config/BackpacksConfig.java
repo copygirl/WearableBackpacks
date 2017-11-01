@@ -210,7 +210,7 @@ public class BackpacksConfig {
 	public void onConfigChanged(OnConfigChangedEvent event) {
 		if (!event.getModID().equals(WearableBackpacks.MOD_ID)) return;
 		// Resyncronize the settings to all players.
-		if (event.isWorldRunning())
+		if (event.isWorldRunning()) // TODO: Show chat message when settings are updated?
 			WearableBackpacks.CHANNEL.sendToAll(MessageSyncSettings.create());
 		save();
 	}

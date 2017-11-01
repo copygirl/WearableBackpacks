@@ -11,7 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import net.minecraftforge.common.config.Configuration;
-
+import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.api.BackpackRegistry.BackpackEntityEntry;
 import net.mcft.copy.backpacks.api.BackpackRegistry.BackpackEntry;
@@ -26,6 +26,7 @@ public class SettingListSpawn extends Setting<List<BackpackEntityEntry>> {
 	public SettingListSpawn() {
 		super(Collections.emptyList());
 		setConfigEntryClass("net.mcft.copy.backpacks.client.gui.config.custom.EntryListSpawn");
+		setSynced();
 	}
 	
 	
@@ -47,7 +48,7 @@ public class SettingListSpawn extends Setting<List<BackpackEntityEntry>> {
 			.forEach(category -> config.removeCategory(config.getCategory(category)));
 		
 		int index = 0;
-		for (BackpackEntityEntry entity : get()) {
+		for (BackpackEntityEntry entity : getOwn()) {
 			String category = getCategory() + Configuration.CATEGORY_SPLITTER + entity.entityID;
 			config.setCategoryPropertyOrder(category, Arrays.asList(
 				"index", "translate", "rotate", "scale", "entries"));
@@ -74,8 +75,8 @@ public class SettingListSpawn extends Setting<List<BackpackEntityEntry>> {
 	
 	@Override
 	public void update() {
-		if (!isEnabled()) return;
 		BackpackRegistry.updateEntityEntries(get());
+		WearableBackpacks.PROXY.initBackpackLayers();
 	}
 	
 	

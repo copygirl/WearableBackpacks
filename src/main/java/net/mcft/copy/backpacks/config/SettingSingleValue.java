@@ -16,7 +16,7 @@ public abstract class SettingSingleValue<T> extends Setting<T> {
 	
 	@Override
 	protected void saveToConfiguration(Configuration config)
-		{ getPropertyFromConfig(config).set(stringify(get())); }
+		{ getPropertyFromConfig(config).set(stringify(getOwn())); }
 	
 	
 	/** Returns the Forge Property.Type used for this setting. Defaults to STRING. */
