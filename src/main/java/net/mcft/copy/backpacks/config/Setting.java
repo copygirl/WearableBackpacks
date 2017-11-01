@@ -50,7 +50,7 @@ public abstract class Setting<T> {
 	private T _syncedValue = null;
 	
 	/** Action fired when setting is updated (synced or changed ingame), null if none. */
-	private Consumer<T> _updateAction = null;
+	private Consumer<Setting<T>> _updateAction = null;
 	
 	/** Holds the setting's custom config entry class to use in place of the default, if any. */
 	private String _configEntryClass = null;
@@ -89,10 +89,10 @@ public abstract class Setting<T> {
 	public Setting<T> setSynced() { _doesSync = true; return this; }
 	/** Sets the setting to be synchronized to players joining a world.
 	 *  The specified action is fired when the setting is synced on the receiving player's side. */
-	public Setting<T> setSynced(Consumer<T> action) { setSynced(); return setUpdate(action); }
+	public Setting<T> setSynced(Consumer<Setting<T>> action) { setSynced(); return setUpdate(action); }
 	
 	/** Sets the update function to be fired when the setting is updated (config changed or syncronized). */
-	public Setting<T> setUpdate(Consumer<T> action) { _updateAction = action; return this; }
+	public Setting<T> setUpdate(Consumer<Setting<T>> action) { _updateAction = action; return this; }
 	
 	/** Sets the setting's config entry class, to be used in place of the default. */
 	public Setting<T> setConfigEntryClass(String entryClass) { _configEntryClass = entryClass; return this; }
@@ -169,12 +169,8 @@ public abstract class Setting<T> {
 	public void resetEntry() { _entry = null; }
 	
 	
-	/** Calls the update action if present
-	 *  and any required setting is enabled. */
-	public void update() {
-		if ((_updateAction != null) && isEnabled())
-			_updateAction.accept(_value);
-	}
+	/** Calls the update action if present. */
+	public void update() { if (_updateAction != null) _updateAction.accept(this); }
 	
 	
 	// Forge Configuration related
@@ -191,8 +187,7 @@ public abstract class Setting<T> {
 	public void readSynced(NBTBase tag) {
 		_isSynced = true;
 		_syncedValue = read(tag);
-		if (_updateAction != null)
-			_updateAction.accept(_syncedValue);
+		update();
 	}
 	/** Writes the own value to an NBT tag, returning it. */
 	public NBTBase writeSynced() { return write(_value); }

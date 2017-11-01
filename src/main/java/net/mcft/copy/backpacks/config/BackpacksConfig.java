@@ -33,7 +33,7 @@ public class BackpacksConfig {
 	// ==[ GENERAL ]==
 	
 	public final Setting<Boolean> equipAsChestArmor = new SettingBoolean(true)
-		.setSynced((value) -> BackpackHelper.equipAsChestArmor = value)
+		.setSynced(setting -> BackpackHelper.equipAsChestArmor = setting.get())
 		.setComment("If disabled, backpacks do not take up the player's chest armor equipment slot. Default: true.");
 	
 	public final Setting<Boolean> enableEquippedInteraction = new SettingBoolean(true)
@@ -55,7 +55,7 @@ public class BackpacksConfig {
 		
 		public final Setting<Integer> durability = new SettingInteger(214).setValidRange(0, Integer.MAX_VALUE)
 			.setRequired(enabled).setRecommended(equipAsChestArmor, "chestplate")
-			.setSynced((value) -> BackpacksContent.BACKPACK.setMaxDamage(value))
+			.setSynced(setting -> BackpacksContent.BACKPACK.setMaxDamage(setting.get()))
 			.setComment("Durability of a normal backpack. Set to 0 for unbreakable. Default: 214.\n" +
 			            "Lowering this (including setting to 0) can cause issues with already damaged backpacks.");
 		
