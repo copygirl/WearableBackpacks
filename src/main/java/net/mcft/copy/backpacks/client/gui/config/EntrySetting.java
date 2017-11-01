@@ -16,7 +16,7 @@ public class EntrySetting<T> extends BaseEntry.Value<T> {
 	public final Setting<T> setting;
 	
 	public EntrySetting(Setting<T> setting, IConfigValue<T> control) {
-		super(setup(control, setting), setting.getDefault(), setting.get());
+		super(setup(control, setting), setting.getDefault(), setting.getOwn());
 		this.setting = setting;
 		this.setting.setEntry(this);
 		

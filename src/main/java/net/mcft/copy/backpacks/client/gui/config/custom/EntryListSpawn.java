@@ -39,7 +39,7 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 	public EntryListSpawn(SettingListSpawn setting) {
 		// Use getDefaultEntityEntries instead of getDefault because
 		// it will only be populated after CONFIG has been initialized.
-		super(260, setting.get(), BackpackRegistry.getDefaultEntityEntries());
+		super(260, setting.getOwn(), BackpackRegistry.getDefaultEntityEntries());
 		_setting = setting;
 		
 		GuiContainer entryLabel = new GuiContainer();

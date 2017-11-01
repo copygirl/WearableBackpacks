@@ -110,7 +110,10 @@ public abstract class Setting<T> {
 	/** Returns the setting's default value. */
 	public T getDefault() { return _defaultValue; }
 	/** Returns the setting's current value. */
-	public T get() { return (_checkEntryValue ? getEntryValue() : (_isSynced ? _syncedValue : _value)); }
+	public T get() { return (_checkEntryValue ? getEntryValue() : (_isSynced ? _syncedValue : getOwn())); }
+	/** Returns the setting's own, actual value, regardless
+	 *  of config GUI or client-server syncronization. */
+	public T getOwn() { return _value; }
 	/** Sets the setting's current value. */
 	public void set(T value) { _value = value; }
 	
