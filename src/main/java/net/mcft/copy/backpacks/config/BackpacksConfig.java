@@ -73,9 +73,7 @@ public class BackpacksConfig {
 	
 	// ==[ SPAWN ]==
 	
-	@SideOnly(Side.CLIENT)
 	public SpawnCategory spawn;
-	@SideOnly(Side.CLIENT)
 	public class SpawnCategory {
 		
 		public final Setting<Boolean> enabled = new SettingBoolean(true)
