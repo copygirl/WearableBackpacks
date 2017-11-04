@@ -39,7 +39,7 @@ public final class RendererBackpack {
 	
 	private static void renderBackpack(IBackpack backpack, float ticks, boolean renderStraps) {
 		ItemStack stack = backpack.getStack();
-		int color = ProxyClient.ITEM_COLOR.getColorFromItemstack(stack, 0);
+		int color = ProxyClient.ITEM_COLOR.colorMultiplier(stack, 0);
 		
 		BlockModelRenderer renderer = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer();
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);

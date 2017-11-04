@@ -93,7 +93,7 @@ public final class BackpackHelper {
 		if ((backpack == null) || !player.isEntityAlive() || !carrier.isEntityAlive()) return false;
 		if (player == carrier) return true;
 		
-		double distance = player.getDistanceToEntity(carrier);
+		double distance = player.getDistance(carrier);
 		// Calculate angle between player and carrier.
 		double angle = Math.toDegrees(Math.atan2(carrier.posZ - player.posZ, carrier.posX - player.posX));
 		// Calculate difference between angle and the direction the carrier entity is looking.

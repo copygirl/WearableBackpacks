@@ -197,7 +197,7 @@ public class ProxyClient extends ProxyCommon {
 			IBackpack backpack = BackpackHelper.getBackpack(world.getTileEntity(pos));
 			if (backpack != null) stack = backpack.getStack();
 		}
-		return ITEM_COLOR.getColorFromItemstack(stack, tintIndex);
+		return ITEM_COLOR.colorMultiplier(stack, tintIndex);
 	};
 	
 	

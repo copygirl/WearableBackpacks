@@ -18,7 +18,7 @@ import net.mcft.copy.backpacks.misc.util.NbtUtils;
 public class RecipeDyeableItem extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 	
 	@Override
-	public boolean isHidden() { return true; }
+	public boolean isDynamic() { return true; }
 	
 	@Override
 	public boolean canFit(int width, int height) { return (width * height) >= 2; }
