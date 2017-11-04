@@ -2,6 +2,7 @@ package net.mcft.copy.backpacks;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import net.minecraft.client.Minecraft;
@@ -89,12 +90,15 @@ public class ProxyClient extends ProxyCommon {
 		Map<String, RenderPlayer> skinMap = manager.getSkinMap();
 		skinMap.get("default").addLayer(new RendererBackpack.Layer());
 		skinMap.get("slim").addLayer(new RendererBackpack.Layer());
-		
-		// FIXME: Add backpack render layer dynamically?
-		for (BackpackEntityEntry entry : BackpackRegistry.getEntityEntries()) {
-			Class<? extends EntityLivingBase> entityClass = entry.getEntityClass();
-			if (entityClass != null) ensureHasBackpackLayer(entityClass);
-		}
+	}
+	
+	@Override
+	public void initBackpackLayers() {
+		// A for loop would be one less line.. but streams are pretty! >.<
+		BackpackRegistry.getEntityEntries().stream()
+			.map(BackpackEntityEntry::getEntityClass)
+			.filter(Objects::nonNull)
+			.forEach(ProxyClient::ensureHasBackpackLayer);
 	}
 	
 	private static final Set<Class<? extends EntityLivingBase>> _hasLayerChecked = new HashSet<>();

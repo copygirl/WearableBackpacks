@@ -11,8 +11,12 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
+
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
@@ -210,21 +214,28 @@ public class BackpacksConfig {
 	public void onConfigChanged(OnConfigChangedEvent event) {
 		if (!event.getModID().equals(WearableBackpacks.MOD_ID)) return;
 		// Resyncronize the settings to all players.
-		if (event.isWorldRunning()) // TODO: Show chat message when settings are updated?
-			WearableBackpacks.CHANNEL.sendToAll(MessageSyncSettings.create());
+		if (event.isWorldRunning()) WearableBackpacks.CHANNEL.sendToAll(
+			MessageSyncSettings.create(), BackpacksConfig::isNotServerOwner);
+		// TODO: Show chat message when settings are updated?
 		save();
 	}
 	
+	/** Synchronizes settings with players when they join the world / server. */
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerLoggedInEvent event) {
-		// Synchronize settings with players when they join the world / server.
+		if (isNotServerOwner(event.player)) return;
 		WearableBackpacks.CHANNEL.sendTo(MessageSyncSettings.create(), event.player);
 	}
 	
+	/** Resets all synced values of the settings after disconnecting. */
 	@SubscribeEvent
-	public void onDisconnectedFromServer(ClientDisconnectionFromServerEvent event) {
-		// Reset all synced values of the settings.
-		getSettings().forEach(Setting::resetSynced);
-	}
+	public void onDisconnectedFromServer(ClientDisconnectionFromServerEvent event)
+		{ getSettings().forEach(Setting::resetSynced); }
+	
+	
+	private static MinecraftServer getServerInstance()
+		{ return FMLCommonHandler.instance().getMinecraftServerInstance(); }
+	private static boolean isNotServerOwner(EntityPlayer player)
+		{ return player.getName().equalsIgnoreCase(getServerInstance().getServerOwner()); }
 	
 }

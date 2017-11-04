@@ -33,22 +33,19 @@ public abstract class BackpacksMessageHandler<T extends IMessage> implements IMe
 	/** Returns the player associated with this message context.
 	 *  On the server, returns the player who sent the message.
 	 *  On the client, returns the local player entity. */
-	public static EntityPlayer getPlayer(MessageContext ctx) {
-		return (ctx.side.isServer() ? ctx.getServerHandler().player : ClientUtils.getPlayer());
-	}
+	public static EntityPlayer getPlayer(MessageContext ctx)
+		{ return (ctx.side.isServer() ? ctx.getServerHandler().player : ClientUtils.getPlayer()); }
 	
 	/** Returns the world associated with this message context.
 	 *  On the server, returns the world the player is in who sent the message.
 	 *  On the client, returns the local world. */
-	public static World getWorld(MessageContext ctx) {
-		return getPlayer(ctx).world;
-	}
+	public static World getWorld(MessageContext ctx)
+		{ return getPlayer(ctx).world; }
 	
 	/** Returns the appropriate thread scheduler for this message context.
 	 *  On the server, returns the world the player is in (world's thread).
 	 *  On the client, returns the Minecraft instance (main game thread). */
-	public static IThreadListener getScheduler(MessageContext ctx) {
-		return (ctx.side.isServer() ? (WorldServer)getWorld(ctx) : ClientUtils.getScheduler());
-	}
+	public static IThreadListener getScheduler(MessageContext ctx)
+		{ return (ctx.side.isServer() ? (WorldServer)getWorld(ctx) : ClientUtils.getScheduler()); }
 	
 }

@@ -69,8 +69,7 @@ public final class BackpackRegistry {
 	 *  This affects whether the entity will be constructed with an IBackpack capability. */
 	public static boolean canEntityWearBackpacks(Entity entity) {
 		return (entity != null) && EntityLivingBase.class.isAssignableFrom(entity.getClass())
-			? (getEntityEntry(entity.getClass().asSubclass(EntityLivingBase.class)) != null)
-			: false;
+			&& (getEntityEntry(entity.getClass().asSubclass(EntityLivingBase.class)) != null);
 	}
 	
 	

@@ -61,14 +61,18 @@ public class ProxyCommon {
 	
 	public void init() {  }
 	
+	/** Intializes the backpack layers on the client-side.
+	 *  Called when spawn setting is loaded / changed. */
+	public void initBackpackLayers() {  }
+	
 	// Attaching / sending capability
 	
 	@SubscribeEvent
 	public void onAttachCapabilitiesEntity(AttachCapabilitiesEvent<Entity> event) {
+		if (!BackpackRegistry.canEntityWearBackpacks(event.getObject())) return;
 		// Give entities that can wear backpacks the backpack capability.
-		if (BackpackRegistry.canEntityWearBackpacks(event.getObject()))
-			event.addCapability(BackpackCapability.IDENTIFIER,
-				new BackpackCapability.Provider((EntityLivingBase)event.getObject()));
+		event.addCapability(BackpackCapability.IDENTIFIER,
+			new BackpackCapability.Provider((EntityLivingBase)event.getObject()));
 	}
 	
 	@SubscribeEvent
@@ -97,7 +101,8 @@ public class ProxyCommon {
 		if (!WearableBackpacks.CONFIG.spawn.enabled.get()) return;
 		// When a mob spawns naturally, see if it has a chance to spawn with a backpack.
 		EntityLivingBase entity = event.getEntityLiving();
-		for (BackpackEntry entry : BackpackRegistry.getBackpackEntries(entity.getClass())) {
+		List<BackpackEntry> entries = BackpackRegistry.getBackpackEntries(entity.getClass());
+		for (BackpackEntry entry : entries) {
 			if ((entry.chance == 0) || (entity.world.rand.nextDouble() > (1.0 / entry.chance))) continue;
 			BackpackCapability backpack = (BackpackCapability)entity.getCapability(IBackpack.CAPABILITY, null);
 			// Set the backpack capability of the entity to spawn with the specified backpack.
@@ -223,25 +228,25 @@ public class ProxyCommon {
 			.getCapability(IBackpack.CAPABILITY, null);
 		if (backpack == null) return;
 		
+		if (backpack.spawnWith != null)
+			onSpawnedWith(entity, backpack, backpack.spawnWith);
+		boolean hasBackpack = !backpack.getStack().isEmpty();
+			
 		if (backpack.isChestArmor()) {
 			if (entity instanceof EntityPlayer)
 				SlotArmorBackpack.replace((EntityPlayer)entity);
 			
-			if (backpack.getStack().isEmpty()) {
+			if (!hasBackpack) {
 				// Backpack has been removed somehow.
 				backpack.getType().onFaultyRemoval(entity, backpack);
 				backpack.setStack(ItemStack.EMPTY);
+				return;
 			}
-		}
+		} else if (!hasBackpack) return;
 		
-		if (backpack.spawnWith != null)
-			onSpawnedWith(entity, backpack, backpack.spawnWith);
-		else if (!backpack.getStack().isEmpty()) {
-			backpack.getType().onEquippedTick(entity, backpack);
-			
-			if (entity.world.isRemote)
-				BackpackHelper.updateLidTicks(backpack, entity.posX, entity.posY + 1.0, entity.posZ);
-		}
+		backpack.getType().onEquippedTick(entity, backpack);
+		if (entity.world.isRemote)
+			BackpackHelper.updateLidTicks(backpack, entity.posX, entity.posY + 1.0, entity.posZ);
 		
 	}
 	
