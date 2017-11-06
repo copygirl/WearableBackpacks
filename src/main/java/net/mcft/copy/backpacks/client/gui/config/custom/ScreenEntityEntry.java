@@ -47,8 +47,8 @@ import net.mcft.copy.backpacks.item.ItemBackpack;
 @SideOnly(Side.CLIENT)
 public class ScreenEntityEntry extends BaseConfigScreen {
 	
-	private final EntryListSpawn _owningList;
-	private final Optional<EntryListSpawn.Entry> _entry;
+	private final EntryListEntities _owningList;
+	private final Optional<EntryListEntities.Entry> _entry;
 	
 	public final EntryEntityID entryEntityID;
 	public final EntryButtonRenderOptions entryRenderOptions;
@@ -56,7 +56,7 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 	public final GuiButton buttonCancel;
 	public final boolean isDefault;
 	
-	public ScreenEntityEntry(EntryListSpawn owningList, Optional<EntryListSpawn.Entry> entry) {
+	public ScreenEntityEntry(EntryListEntities owningList, Optional<EntryListEntities.Entry> entry) {
 		super(GuiElementBase.getCurrentScreen(), Stream.concat(
 				((BaseConfigScreen)GuiElementBase.getCurrentScreen()).getTitleLines().stream().skip(1),
 				Stream.of("< this is where the entity name will go >")
@@ -64,7 +64,7 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 		_owningList = owningList;
 		_entry      = entry;
 		
-		Optional<BackpackEntityEntry> backpackEntry = entry.map(EntryListSpawn.Entry::getValue);
+		Optional<BackpackEntityEntry> backpackEntry = entry.map(EntryListEntities.Entry::getValue);
 		isDefault = backpackEntry.map(e -> e.isDefault).orElse(false);
 		List<BackpackEntry> entries  = backpackEntry.map(BackpackEntityEntry::getEntries).orElseGet(Collections::emptyList);
 		List<BackpackEntry> defaults = entries.stream().filter(e -> e.isDefault).collect(Collectors.toList());
@@ -73,7 +73,7 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 		entryEntityID = new EntryEntityID(this);
 		entryRenderOptions = new EntryButtonRenderOptions(
 			entryEntityID, _entry.map(e -> e.getValue().renderOptions));
-		entryRenderOptions.setLabelAndTooltip("spawn.renderOptions");
+		entryRenderOptions.setLabelAndTooltip("entity.renderOptions");
 		listBackpack = new EntryListBackpack(entries, defaults);
 		
 		listEntries.addFixed(entryEntityID);
@@ -107,7 +107,7 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 			entryRenderOptions.getValue().get(),
 			listBackpack.getValue(), isDefault);
 		
-		_entry.orElseGet(() -> (EntryListSpawn.Entry)_owningList.addEntry()).setValue(value);
+		_entry.orElseGet(() -> (EntryListEntities.Entry)_owningList.addEntry()).setValue(value);
 		GuiElementBase.display(parentScreen);
 	}
 	
@@ -132,7 +132,7 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 		public EntryEntityID(ScreenEntityEntry owningScreen) {
 			super(new EntryValueField.Text(), owningScreen._entry
 				.map(e -> e.getValue().entityID), Optional.empty());
-			setLabelAndTooltip("spawn.entityID");
+			setLabelAndTooltip("entity.entityID");
 			((EntryValueField.Text)control).setChangedAction(this::onChanged);
 			_owningScreen = owningScreen;
 			onChanged();
@@ -142,14 +142,14 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 		public List<Status> getStatus() {
 			return entityEntry.isPresent()    ? Collections.emptyList()
 			     : getValue().get().isEmpty() ? Arrays.asList(Status.EMPTY)
-			                                  : Arrays.asList(EntryListSpawn.STATUS_NOT_FOUND);
+			                                  : Arrays.asList(EntryListEntities.STATUS_NOT_FOUND);
 		}
 		
 		private void onChanged() {
 			String entityID = getValue().get();
-			entityEntry = EntryListSpawn.getEntityEntry(entityID);
+			entityEntry = EntryListEntities.getEntityEntry(entityID);
 			_owningScreen.setTitleLine(_owningScreen.getTitleLineCount() - 1,
-			                           EntryListSpawn.getEntityEntryName(entityEntry, entityID));
+			                           EntryListEntities.getEntityEntryName(entityEntry, entityID));
 		}
 		
 	}
@@ -165,7 +165,7 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 			_value = value.orElse(RenderOptions.DEFAULT);
 			
 			GuiButton button = new GuiButton(EntryCategory.BUTTON_WIDTH);
-			String languageKey = "config." + WearableBackpacks.MOD_ID + ".spawn.renderOptions";
+			String languageKey = "config." + WearableBackpacks.MOD_ID + ".entity.renderOptions";
 			button.setText(I18n.format(languageKey));
 			button.setTooltip(formatTooltip(languageKey, languageKey + ".tooltip", null, null));
 			button.setAction(() -> display(new ScreenRenderOptions(this, entityID.entityEntry
@@ -221,9 +221,9 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 			entryHeader.setPaddingHorizontal(MoveButton.WIDTH - 8, DEFAULT_ENTRY_HEIGHT + 2);
 			
 				entryHeader.setSpacing(9, 2);
-				entryHeader.addFixed(createLabel("spawn.chance"), CHANCE_WIDTH + 20);
-				entryHeader.addWeighted(createLabel("spawn.backpack"));
-				entryHeader.addWeighted(createLabel("spawn.lootTable"));
+				entryHeader.addFixed(createLabel("entity.chance"), CHANCE_WIDTH + 20);
+				entryHeader.addWeighted(createLabel("entity.backpack"));
+				entryHeader.addWeighted(createLabel("entity.lootTable"));
 			
 			insertFixed(0, entryHeader);
 		}

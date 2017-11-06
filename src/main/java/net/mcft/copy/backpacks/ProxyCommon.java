@@ -24,7 +24,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent.SpecialSpawn;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -97,12 +97,13 @@ public class ProxyCommon {
 	// Backpack interactions / events
 	
 	@SubscribeEvent
-	public void onSpecialSpawn(SpecialSpawn event) {
-		if (!WearableBackpacks.CONFIG.spawn.enabled.get()) return;
-		// When a mob spawns naturally, see if it has a chance to spawn with a backpack.
+	public void onCheckSpawn(CheckSpawn event) {
+		// When a mob is about to spawn, see if it has a chance to wear a backpack.
+		if (!(event.isSpawner() ? WearableBackpacks.CONFIG.entity.spawnFromSpawners
+		                        : WearableBackpacks.CONFIG.entity.spawnNaturally).get()) return;
 		EntityLivingBase entity = event.getEntityLiving();
-		List<BackpackEntry> entries = BackpackRegistry.getBackpackEntries(entity.getClass());
-		for (BackpackEntry entry : entries) {
+		
+		for (BackpackEntry entry : BackpackRegistry.getBackpackEntries(entity.getClass())) {
 			if ((entry.chance == 0) || (entity.world.rand.nextDouble() > (1.0 / entry.chance))) continue;
 			BackpackCapability backpack = (BackpackCapability)entity.getCapability(IBackpack.CAPABILITY, null);
 			// Set the backpack capability of the entity to spawn with the specified backpack.

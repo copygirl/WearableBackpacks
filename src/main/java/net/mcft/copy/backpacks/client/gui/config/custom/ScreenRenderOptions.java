@@ -39,7 +39,7 @@ public class ScreenRenderOptions extends BaseConfigScreen {
 	public ScreenRenderOptions(IConfigValue<RenderOptions> element, Class<? extends EntityLivingBase> entityClass) {
 		super(GuiElementBase.getCurrentScreen(), Stream.concat(
 				((BaseConfigScreen)GuiElementBase.getCurrentScreen()).getTitleLines().stream().skip(1),
-				Stream.of("config." + WearableBackpacks.MOD_ID + ".spawn.renderOptions")
+				Stream.of("config." + WearableBackpacks.MOD_ID + ".entity.renderOptions")
 			).toArray(String[]::new));
 		_element = element;
 		
@@ -67,9 +67,9 @@ public class ScreenRenderOptions extends BaseConfigScreen {
 		entryRotate    = new BaseEntry.Value<>(new EntryValueSlider.RangeDouble(-90, 90, 5), value.rotate, null);
 		entryScale     = new BaseEntry.Value<>(new EntryValueField.Decimal(), value.scale, null);
 		
-		entryTranslate.setLabelAndTooltip("spawn.translate");
-		entryRotate.setLabelAndTooltip("spawn.rotate");
-		entryScale.setLabelAndTooltip("spawn.scale");
+		entryTranslate.setLabelAndTooltip("entity.translate");
+		entryRotate.setLabelAndTooltip("entity.rotate");
+		entryScale.setLabelAndTooltip("entity.scale");
 		
 		entryTranslate.remove(entryTranslate.buttonUndo);
 		entryRotate.remove(entryRotate.buttonUndo);

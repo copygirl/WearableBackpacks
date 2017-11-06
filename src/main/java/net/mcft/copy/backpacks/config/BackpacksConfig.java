@@ -27,7 +27,7 @@ import net.mcft.copy.backpacks.BackpacksContent;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.config.custom.SettingBackpackSize;
-import net.mcft.copy.backpacks.config.custom.SettingListSpawn;
+import net.mcft.copy.backpacks.config.custom.SettingListEntities;
 import net.mcft.copy.backpacks.config.custom.SettingPercent;
 import net.mcft.copy.backpacks.misc.BackpackSize;
 import net.mcft.copy.backpacks.network.MessageSyncSettings;
@@ -75,15 +75,18 @@ public class BackpacksConfig {
 		
 	}
 	
-	// ==[ SPAWN ]==
+	// ==[ ENTITY ]==
 	
-	public SpawnCategory spawn;
-	public class SpawnCategory {
+	public EntityCategory entity;
+	public class EntityCategory {
 		
-		public final Setting<Boolean> enabled = new SettingBoolean(true)
-			.setComment("Controls whether mobs can randomly spawn with backpacks.");
+		public final Setting<Boolean> spawnNaturally = new SettingBoolean(true)
+			.setComment("Controls whether mobs spawned naturally can randomly be wearing backpacks.");
 		
-		public final SettingListSpawn entities = new SettingListSpawn();
+		public final Setting<Boolean> spawnFromSpawners = new SettingBoolean(false)
+			.setComment("Controls whether mobs spawned from spawners can randomly be wearing backpacks.");
+		
+		public final SettingListEntities list = new SettingListEntities();
 		
 	}
 	

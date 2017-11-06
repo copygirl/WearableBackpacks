@@ -27,16 +27,16 @@ import net.mcft.copy.backpacks.client.gui.control.GuiButton;
 import net.mcft.copy.backpacks.config.Status;
 import net.mcft.copy.backpacks.config.Setting.ChangeRequiredAction;
 import net.mcft.copy.backpacks.config.Status.Severity;
-import net.mcft.copy.backpacks.config.custom.SettingListSpawn;
+import net.mcft.copy.backpacks.config.custom.SettingListEntities;
 
 @SideOnly(Side.CLIENT)
-public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
+public class EntryListEntities extends BaseEntryList<BackpackEntityEntry> {
 	
-	public static final Status STATUS_NOT_FOUND = Status.WARN("spawn", "entityNotFound");
+	public static final Status STATUS_NOT_FOUND = Status.WARN("entity", "entityNotFound");
 	
-	private final SettingListSpawn _setting;
+	private final SettingListEntities _setting;
 	
-	public EntryListSpawn(SettingListSpawn setting) {
+	public EntryListEntities(SettingListEntities setting) {
 		// Use getDefaultEntityEntries instead of getDefault because
 		// it will only be populated after CONFIG has been initialized.
 		super(260, setting.getOwn(), BackpackRegistry.getDefaultEntityEntries());
@@ -46,7 +46,7 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 		entryLabel.setFillHorizontal();
 		entryLabel.setHeight(DEFAULT_ENTRY_HEIGHT);
 			GuiLabel label = new GuiLabel(I18n.format(
-				"config." + WearableBackpacks.MOD_ID + ".spawn.entries"));
+				"config." + WearableBackpacks.MOD_ID + ".entity.list"));
 			label.setCenteredHorizontal();
 			label.setBottom(2);
 			entryLabel.add(label);
@@ -84,7 +84,7 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 		private BackpackEntityEntry _value;
 		private boolean _knownEntity;
 		
-		public Entry(EntryListSpawn owningList) {
+		public Entry(EntryListEntities owningList) {
 			super(owningList);
 			
 			labelName = new GuiLabel(0, "", TextAlign.CENTER);
@@ -111,11 +111,11 @@ public class EntryListSpawn extends BaseEntryList<BackpackEntityEntry> {
 			boolean isFine    = (severity == Severity.FINE);
 			
 			int numEntries = value.getEntries().size();
-			String entriesTextKey = "config." + WearableBackpacks.MOD_ID + ".spawn.entry";
-			// First we try to translate "[...].spawn.entry.<num>".
+			String entriesTextKey = "config." + WearableBackpacks.MOD_ID + ".entity.entry";
+			// First we try to translate "[...].entity.entry.<num>".
 			String entriesText = I18n.format(entriesTextKey + "." + numEntries);
 			if (entriesText.equals(entriesTextKey + "." + numEntries))
-				// If not found, use "[...].spawn.entry" instead.
+				// If not found, use "[...].entity.entry" instead.
 				entriesText = I18n.format(entriesTextKey, numEntries);
 			// ... I miss C#'s ?? operator :(
 			

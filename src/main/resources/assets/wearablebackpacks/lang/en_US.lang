@@ -41,34 +41,36 @@ config.wearablebackpacks.backpack.armor.tooltip=Armor points of regular backpack
 config.wearablebackpacks.backpack.size=Storage Size
 config.wearablebackpacks.backpack.size.tooltip=Controls the storage size of regular backpacks. Does not affect currently placed or equipped backpacks, turn them back into an item to apply changes.
 
-config.wearablebackpacks.category.spawn=Spawn Settings
-config.wearablebackpacks.category.spawn.tooltip=Controls settings regarding mobs spawning with backpacks
-config.wearablebackpacks.spawn.enabled=Enabled
-config.wearablebackpacks.spawn.enabled.tooltip=Controls whether mobs can randomly spawn with backpacks
-config.wearablebackpacks.spawn.entries=Entity Spawn Entries
-config.wearablebackpacks.spawn.entry=%1$s entries
-config.wearablebackpacks.spawn.entry.0=No entries!
-config.wearablebackpacks.spawn.entry.1=1 entry
+config.wearablebackpacks.category.entity=Entity Settings
+config.wearablebackpacks.category.entity.tooltip=Controls settings regarding entities wearing backpacks
+config.wearablebackpacks.entity.spawnNaturally=Spawn Naturally
+config.wearablebackpacks.entity.spawnNaturally.tooltip=Controls whether mobs spawned naturally can randomly be wearing backpacks
+config.wearablebackpacks.entity.spawnFromSpawners=Spawn From Spawners
+config.wearablebackpacks.entity.spawnFromSpawners.tooltip=Controls whether mobs spawned from spawners can randomly be wearing backpacks
+config.wearablebackpacks.entity.list=Entity Entries
+config.wearablebackpacks.entity.entry=%1$s entries
+config.wearablebackpacks.entity.entry.0=No entries!
+config.wearablebackpacks.entity.entry.1=1 entry
 
-config.wearablebackpacks.spawn.entityID=Entity ID
-config.wearablebackpacks.spawn.entityID.tooltip=Internal identifier of the entity, such as "minecraft:zombie".
-config.wearablebackpacks.spawn.renderOptions=Render Options
-config.wearablebackpacks.spawn.renderOptions.tooltip=Controls the position, rotation and scale of the backpack on this entity.
-config.wearablebackpacks.spawn.chance=Chance
-config.wearablebackpacks.spawn.chance.tooltip=Chance of 1 in X that an entity spawns with this backpack (100 = 1%%, 1000 = 0.1%%). Set to 0 to disable.
-config.wearablebackpacks.spawn.backpack=Backpack
-config.wearablebackpacks.spawn.backpack.tooltip=Item ID of the backpack to spawn on the entity.
-config.wearablebackpacks.spawn.lootTable=Loot Table
-config.wearablebackpacks.spawn.lootTable.tooltip=ID of the loot table used to fill this backpack.
+config.wearablebackpacks.entity.entityID=Entity ID
+config.wearablebackpacks.entity.entityID.tooltip=Internal identifier of the entity, such as "minecraft:zombie".
+config.wearablebackpacks.entity.renderOptions=Render Options
+config.wearablebackpacks.entity.renderOptions.tooltip=Controls the position, rotation and scale of the backpack on this entity.
+config.wearablebackpacks.entity.chance=Chance
+config.wearablebackpacks.entity.chance.tooltip=Chance of 1 in X that an entity spawns with this backpack (100 = 1%%, 1000 = 0.1%%). Set to 0 to disable.
+config.wearablebackpacks.entity.backpack=Backpack
+config.wearablebackpacks.entity.backpack.tooltip=Item ID of the backpack to spawn on the entity.
+config.wearablebackpacks.entity.lootTable=Loot Table
+config.wearablebackpacks.entity.lootTable.tooltip=ID of the loot table used to fill this backpack.
 
-config.wearablebackpacks.spawn.translate=Position
-config.wearablebackpacks.spawn.translate.tooltip=Controls the render position of the backpack on this entity
-config.wearablebackpacks.spawn.rotate=Rotation
-config.wearablebackpacks.spawn.rotate.tooltip=Controls the render rotation of the backpack on this entity
-config.wearablebackpacks.spawn.scale=Scale
-config.wearablebackpacks.spawn.scale.tooltip=Controls the render scale (size) of the backpack on this entity
+config.wearablebackpacks.entity.translate=Position
+config.wearablebackpacks.entity.translate.tooltip=Controls the render position of the backpack on this entity
+config.wearablebackpacks.entity.rotate=Rotation
+config.wearablebackpacks.entity.rotate.tooltip=Controls the render rotation of the backpack on this entity
+config.wearablebackpacks.entity.scale=Scale
+config.wearablebackpacks.entity.scale.tooltip=Controls the render scale (size) of the backpack on this entity
 
-config.wearablebackpacks.spawn.status.entityNotFound=The specified entity couldn't be found. Entry will be ignored.
+config.wearablebackpacks.entity.status.entityNotFound=The specified entity couldn't be found. Entry will be ignored.
 
 config.wearablebackpacks.category.cosmetic=Cosmetic Settings
 config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay.

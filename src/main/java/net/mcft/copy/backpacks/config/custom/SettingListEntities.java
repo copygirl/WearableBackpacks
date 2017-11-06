@@ -21,11 +21,11 @@ import net.mcft.copy.backpacks.config.Setting;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils.NbtType;
 
-public class SettingListSpawn extends Setting<List<BackpackEntityEntry>> {
+public class SettingListEntities extends Setting<List<BackpackEntityEntry>> {
 	
-	public SettingListSpawn() {
+	public SettingListEntities() {
 		super(Collections.emptyList());
-		setConfigEntryClass("net.mcft.copy.backpacks.client.gui.config.custom.EntryListSpawn");
+		setConfigEntryClass("net.mcft.copy.backpacks.client.gui.config.custom.EntryListEntities");
 		setSynced();
 	}
 	
@@ -62,13 +62,13 @@ public class SettingListSpawn extends Setting<List<BackpackEntityEntry>> {
 	public List<BackpackEntityEntry> read(NBTBase tag) {
 		return NbtUtils.stream((NBTTagList)tag)
 			.map(NBTTagCompound.class::cast)
-			.map(SettingListSpawn::deserializeEntity)
+			.map(SettingListEntities::deserializeEntity)
 			.collect(Collectors.toList());
 	}
 	@Override
 	public NBTBase write(List<BackpackEntityEntry> value) {
 		return value.stream()
-			.map(SettingListSpawn::serializeEntity)
+			.map(SettingListEntities::serializeEntity)
 			.collect(NbtUtils.toList());
 	}
 	
@@ -92,14 +92,14 @@ public class SettingListSpawn extends Setting<List<BackpackEntityEntry>> {
 	private static void saveEntity(Configuration config, String category, BackpackEntityEntry value) {
 		saveRenderOptions(config, category, value.renderOptions);
 		config.get(category, "entries", new String[0]).set(value.getEntries().stream()
-			.map(SettingListSpawn::toString).toArray(length -> new String[length]));
+			.map(SettingListEntities::toString).toArray(length -> new String[length]));
 	}
 	private static BackpackEntityEntry loadEntity(Configuration config, String category) {
 		return new BackpackEntityEntry(
 			category.split("\\" + Configuration.CATEGORY_SPLITTER, 2)[1],
 			loadRenderOptions(config, category),
 			Arrays.stream(config.get(category, "entries", new String[0]).getStringList())
-				.map(SettingListSpawn::parseBackpack).collect(Collectors.toList()), false);
+				.map(SettingListEntities::parseBackpack).collect(Collectors.toList()), false);
 	}
 	
 	private static NBTTagCompound serializeEntity(BackpackEntityEntry value) {
