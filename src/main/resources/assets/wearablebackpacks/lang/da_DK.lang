@@ -43,10 +43,10 @@ config.wearablebackpacks.backpack.size.tooltip=Styrer opbevarelsespladsen for no
 
 config.wearablebackpacks.category.entity=Spawn-Instillinger
 config.wearablebackpacks.category.entity.tooltip=Styrer instillinger omkring mobs, der spawner med rygsække
-# config.wearablebackpacks.entity.spawnNaturally=Spawn Naturally
-# config.wearablebackpacks.entity.spawnNaturally.tooltip=Controls whether mobs spawned naturally can randomly be wearing backpacks
-# config.wearablebackpacks.entity.spawnFromSpawners=Spawn From Spawners
-# config.wearablebackpacks.entity.spawnFromSpawners.tooltip=Controls whether mobs spawned from spawners can randomly be wearing backpacks
+config.wearablebackpacks.entity.spawnNaturally=Spawn Naturligt
+config.wearablebackpacks.entity.spawnNaturally.tooltip=Styrer om mobs, der spawner naturligt, kan spawne med rygsække på
+config.wearablebackpacks.entity.spawnFromSpawners=Spawn fra Spawners
+config.wearablebackpacks.entity.spawnFromSpawners.tooltip=Styrer om mobs, der spawner fra mob spawners, kan spawne med rygsække på
 config.wearablebackpacks.entity.entries=Entity Spawn-tilfælde
 config.wearablebackpacks.entity.entry=%1$s tilfælde
 config.wearablebackpacks.entity.entry.0=Ingen tilfælde!
