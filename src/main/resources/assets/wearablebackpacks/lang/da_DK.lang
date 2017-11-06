@@ -41,34 +41,36 @@ config.wearablebackpacks.backpack.armor.tooltip=Armor point for normale rygsækk
 config.wearablebackpacks.backpack.size=Opbevarelsesplads
 config.wearablebackpacks.backpack.size.tooltip=Styrer opbevarelsespladsen for normale rygsække. Ændrer ikke rygsække som allerede er på ryggen eller på jorden. Lav dem tilbage til en item for at få ændringerne med.
 
-config.wearablebackpacks.category.spawn=Spawn-Instillinger
-config.wearablebackpacks.category.spawn.tooltip=Styrer instillinger omkring mobs, der spawner med rygsække
-config.wearablebackpacks.spawn.enabled=Slået til
-config.wearablebackpacks.spawn.enabled.tooltip=Styrer om mobs har en chance for at spawne med rygsække
-config.wearablebackpacks.spawn.entries=Entity Spawn-tilfælde
-config.wearablebackpacks.spawn.entry=%1$s tilfælde
-config.wearablebackpacks.spawn.entry.0=Ingen tilfælde!
-config.wearablebackpacks.spawn.entry.1=1 tilfælde
+config.wearablebackpacks.category.entity=Spawn-Instillinger
+config.wearablebackpacks.category.entity.tooltip=Styrer instillinger omkring mobs, der spawner med rygsække
+# config.wearablebackpacks.entity.spawnNaturally=Spawn Naturally
+# config.wearablebackpacks.entity.spawnNaturally.tooltip=Controls whether mobs spawned naturally can randomly be wearing backpacks
+# config.wearablebackpacks.entity.spawnFromSpawners=Spawn From Spawners
+# config.wearablebackpacks.entity.spawnFromSpawners.tooltip=Controls whether mobs spawned from spawners can randomly be wearing backpacks
+config.wearablebackpacks.entity.entries=Entity Spawn-tilfælde
+config.wearablebackpacks.entity.entry=%1$s tilfælde
+config.wearablebackpacks.entity.entry.0=Ingen tilfælde!
+config.wearablebackpacks.entity.entry.1=1 tilfælde
 
-config.wearablebackpacks.spawn.entityID=Entity ID
-config.wearablebackpacks.spawn.entityID.tooltip=Intern identifikation på entities, som f.eks.: "minecraft:zombie".
-config.wearablebackpacks.spawn.renderOptions=Render-Instillinger
-config.wearablebackpacks.spawn.renderOptions.tooltip=Styrer positionen, rotationen og størrelsen på rygsækken for denne entity.
-config.wearablebackpacks.spawn.chance=Chance
-config.wearablebackpacks.spawn.chance.tooltip=Chance for 1 ud af X at en entity spawned med denne rygsæk (100 = 1%%, 1000 = 0.1%%). Sæt til 0 for at slå fra.
-config.wearablebackpacks.spawn.backpack=Rygsæk
-config.wearablebackpacks.spawn.backpack.tooltip=Item ID for rygsækken, der skal spawnes med denne entity.
-config.wearablebackpacks.spawn.lootTable=Skattetabel
-config.wearablebackpacks.spawn.lootTable.tooltip=ID for skattetabellen, der skal bruges til at fylde denne rygsæk.
+config.wearablebackpacks.entity.entityID=Entity ID
+config.wearablebackpacks.entity.entityID.tooltip=Intern identifikation på entities, som f.eks.: "minecraft:zombie".
+config.wearablebackpacks.entity.renderOptions=Render-Instillinger
+config.wearablebackpacks.entity.renderOptions.tooltip=Styrer positionen, rotationen og størrelsen på rygsækken for denne entity.
+config.wearablebackpacks.entity.chance=Chance
+config.wearablebackpacks.entity.chance.tooltip=Chance for 1 ud af X at en entity spawned med denne rygsæk (100 = 1%%, 1000 = 0.1%%). Sæt til 0 for at slå fra.
+config.wearablebackpacks.entity.backpack=Rygsæk
+config.wearablebackpacks.entity.backpack.tooltip=Item ID for rygsækken, der skal spawnes med denne entity.
+config.wearablebackpacks.entity.lootTable=Skattetabel
+config.wearablebackpacks.entity.lootTable.tooltip=ID for skattetabellen, der skal bruges til at fylde denne rygsæk.
 
-config.wearablebackpacks.spawn.translate=Position
-config.wearablebackpacks.spawn.translate.tooltip=Styrer renderpositionen for rygsækken på denne entity
-config.wearablebackpacks.spawn.rotate=Rotation
-config.wearablebackpacks.spawn.rotate.tooltip=Styrer renderrotationen for rygsækken på denne entity
-config.wearablebackpacks.spawn.scale=Skala
-config.wearablebackpacks.spawn.scale.tooltip=Styrer størrelsen på rygsækken på denne entity.
+config.wearablebackpacks.entity.translate=Position
+config.wearablebackpacks.entity.translate.tooltip=Styrer renderpositionen for rygsækken på denne entity
+config.wearablebackpacks.entity.rotate=Rotation
+config.wearablebackpacks.entity.rotate.tooltip=Styrer renderrotationen for rygsækken på denne entity
+config.wearablebackpacks.entity.scale=Skala
+config.wearablebackpacks.entity.scale.tooltip=Styrer størrelsen på rygsækken på denne entity.
 
-config.wearablebackpacks.spawn.status.entityNotFound=Den angivne entity kunne ikke findes. Den bliver ignoreret.
+config.wearablebackpacks.entity.status.entityNotFound=Den angivne entity kunne ikke findes. Den bliver ignoreret.
 
 config.wearablebackpacks.category.cosmetic=Kosmetiske Instillinger
 config.wearablebackpacks.category.cosmetic.tooltip=Styrer udseensmæssige ting på klientens side, som ikke ændrer gameplay.
