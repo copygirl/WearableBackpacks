@@ -24,6 +24,10 @@ config.wearablebackpacks.general.enableSelfInteraction.tooltip=Bepaalt of speler
 config.wearablebackpacks.general.dropAsBlockOnDeath=Laat vallen als Blok op Overlijden
 config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Bepaalt of rugzakken zichzelf neerplaatsen in geval van overlijden, in plaats van hun inhoud te verstrooiingen.
 
+# config.wearablebackpacks.general.status.outOfRange=Value is out of range (%1$s - %1$s).
+# config.wearablebackpacks.general.status.required=Setting "%1$s" is required for this setting.
+# config.wearablebackpacks.general.status.chestplate=No effect if not equipped as armor. [general.equipAsChestArmor = false]
+
 config.wearablebackpacks.category.backpack=Rugzak Instellingen
 config.wearablebackpacks.category.backpack.tooltip=Bepaalt de instellingen van normale rugzakken.
 config.wearablebackpacks.backpack.enabled=Ingeschakeld

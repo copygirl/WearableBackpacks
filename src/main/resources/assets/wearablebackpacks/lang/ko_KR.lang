@@ -24,6 +24,10 @@ key.wearablebackpacks.open=가방 열기
 # config.wearablebackpacks.general.dropAsBlockOnDeath=Drop as Block on Death
 # config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Controls whether backpacks place themselves down upon death, instead of scattering their contents.
 
+# config.wearablebackpacks.general.status.outOfRange=Value is out of range (%1$s - %1$s).
+# config.wearablebackpacks.general.status.required=Setting "%1$s" is required for this setting.
+# config.wearablebackpacks.general.status.chestplate=No effect if not equipped as armor. [general.equipAsChestArmor = false]
+
 config.wearablebackpacks.category.backpack=가방 설정
 # config.wearablebackpacks.category.backpack.tooltip=Controls settings regarding regular backpacks.
 # config.wearablebackpacks.backpack.enabled=Enabled

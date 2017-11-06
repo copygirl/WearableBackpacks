@@ -23,6 +23,10 @@ config.wearablebackpacks.general.enableSelfInteraction.tooltip=Controla si los j
 config.wearablebackpacks.general.dropAsBlockOnDeath=Soltar al morir
 config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Controla si las mochilas se colocan en el lugar de la muerte, en vez de dispersar su contenido.
 
+# config.wearablebackpacks.general.status.outOfRange=Value is out of range (%1$s - %1$s).
+# config.wearablebackpacks.general.status.required=Setting "%1$s" is required for this setting.
+# config.wearablebackpacks.general.status.chestplate=No effect if not equipped as armor. [general.equipAsChestArmor = false]
+
 config.wearablebackpacks.category.backpack=Ajustes de la mochila
 config.wearablebackpacks.category.backpack.tooltip=Controla la configuración de las mochilas.
 config.wearablebackpacks.backpack.enabled=Activar mochila

@@ -23,6 +23,10 @@ config.wearablebackpacks.general.enableSelfInteraction.tooltip=Разрешае�
 config.wearablebackpacks.general.dropAsBlockOnDeath=Ставить на землю как блок после смерти
 config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Разрешает рюкзаку падать на землю при смерти игрока целиком, а не разбрасывать своё содержимое.
 
+# config.wearablebackpacks.general.status.outOfRange=Value is out of range (%1$s - %1$s).
+# config.wearablebackpacks.general.status.required=Setting "%1$s" is required for this setting.
+# config.wearablebackpacks.general.status.chestplate=No effect if not equipped as armor. [general.equipAsChestArmor = false]
+
 config.wearablebackpacks.category.backpack=Настройки рюкзака
 config.wearablebackpacks.category.backpack.tooltip=Управляет настройками рюкзаков.
 config.wearablebackpacks.backpack.enabled=Разрешено
