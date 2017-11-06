@@ -15,6 +15,8 @@ chat.wearablebackpacks.cantEquip.chestplate=Du kannst keinen Rucksack zusammen m
 key.wearablebackpacks.open=Rucksack öffnen
 
 
+config.wearablebackpacks.gui.cancel=Abbrechen
+
 config.wearablebackpacks.general.equipAsChestArmor=Als Brustrüstung ausrüsten
 config.wearablebackpacks.general.equipAsChestArmor.tooltip=Kontrolliert, ob getragene Rucksäcke den Brustrüstungsplatz beanspruchen.
 config.wearablebackpacks.general.enableEquippedInteraction=Interaktionen mit getragenen Rucksäcken aktivieren
@@ -24,51 +26,53 @@ config.wearablebackpacks.general.enableSelfInteraction.tooltip=Kontolliert, ob S
 config.wearablebackpacks.general.dropAsBlockOnDeath=Bei Tod als Block absetzen
 config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Kontrolliert, ob Rucksäcke sich als Block platzieren, wenn ihre Besitzer sterben, anstatt ihre Inhalte auf dem Boden zu verteilen.
 
+config.wearablebackpacks.general.status.outOfRange=Wert ist außer Reichweite (%1$s - %1$s).
+config.wearablebackpacks.general.status.required=Für diese Einstellung wird Einstellung "%1$s" benötigt.
+config.wearablebackpacks.general.status.chestplate=Hat keinen Effekt, wenn er nicht als Rüstung verwendet wird. [general.equipAsChestArmor = false]
+
 config.wearablebackpacks.category.backpack=Rucksackeinstellungen
 config.wearablebackpacks.category.backpack.tooltip=Kontrolliert Einstellungen für normale Rucksäcke.
 config.wearablebackpacks.backpack.enabled=Aktiviert
 config.wearablebackpacks.backpack.enabled.tooltip=Kontrolliert, ob der normale Rucksack aktiviert ist.
 config.wearablebackpacks.backpack.durability=Haltbarkeit
 config.wearablebackpacks.backpack.durability.tooltip=Kontrolliert die Haltbarkeit von normalen Rucksäcken (0 für unzerstörbar). Vermindern (auch auf 0) kann Probleme mit bereits beschädigten Rucksäcken hervorrufen.
-config.wearablebackpacks.backpack.durability.hint=Hat keinen Effekt, wenn er nicht als Rüstung verwendet wird.
 config.wearablebackpacks.backpack.armor=Rüstung
 config.wearablebackpacks.backpack.armor.tooltip=Rüstungspunkte normaler Rucksäcke.
-config.wearablebackpacks.backpack.armor.hint=Hat keinen Effekt, wenn er nicht als Rüstung verwendet wird.
 config.wearablebackpacks.backpack.size=Lagerraum
 config.wearablebackpacks.backpack.size.tooltip=Bestimmt die Menge an Items, die ein normaler Rucksack halten kann. Betrifft bereits platzierte oder ausgerüstete Rucksäcke nicht.
 
-# config.wearablebackpacks.category.entity=Entity Settings
-# config.wearablebackpacks.category.entity.tooltip=Controls settings regarding entities wearing backpacks
-# config.wearablebackpacks.entity.spawnNaturally=Spawn Naturally
-# config.wearablebackpacks.entity.spawnNaturally.tooltip=Controls whether mobs spawned naturally can randomly be wearing backpacks
-# config.wearablebackpacks.entity.spawnFromSpawners=Spawn From Spawners
-# config.wearablebackpacks.entity.spawnFromSpawners.tooltip=Controls whether mobs spawned from spawners can randomly be wearing backpacks
-# config.wearablebackpacks.entity.list=Entity Entries
-# config.wearablebackpacks.entity.entry=%1$s entries
-# config.wearablebackpacks.entity.entry.0=No entries!
-# config.wearablebackpacks.entity.entry.1=1 entry
+config.wearablebackpacks.category.entity=Entity-Einstellungen
+config.wearablebackpacks.category.entity.tooltip=Kontrolliert Einstellungen für alles Rucksacktragende.
+config.wearablebackpacks.entity.spawnNaturally=Natürlicher Spawn
+config.wearablebackpacks.entity.spawnNaturally.tooltip=Kontrolliert, ob natürlich spawnende Monster ab und zu Rucksäcke tragen können.
+config.wearablebackpacks.entity.spawnFromSpawners=Spawn von Spawnern
+config.wearablebackpacks.entity.spawnFromSpawners.tooltip=Kontrolliert, ob aus Spawnern stammende Monster ab und zu Rucksäcke tragen können.
+config.wearablebackpacks.entity.list=Entity-Einträge
+config.wearablebackpacks.entity.entry=%1$s Einträge
+config.wearablebackpacks.entity.entry.0=Keine Einträge!
+config.wearablebackpacks.entity.entry.1=1 Eintrag
 
-# config.wearablebackpacks.entity.entityID=Entity ID
-# config.wearablebackpacks.entity.entityID.tooltip=Internal identifier of the entity, such as "minecraft:zombie".
-# config.wearablebackpacks.entity.renderOptions=Render Options
-# config.wearablebackpacks.entity.renderOptions.tooltip=Controls the position, rotation and scale of the backpack on this entity.
-# config.wearablebackpacks.entity.chance=Chance
-# config.wearablebackpacks.entity.chance.tooltip=Chance of 1 in X that an entity spawns with this backpack (100 = 1%%, 1000 = 0.1%%). Set to 0 to disable.
-# config.wearablebackpacks.entity.backpack=Backpack
-# config.wearablebackpacks.entity.backpack.tooltip=Item ID of the backpack to spawn on the entity.
-# config.wearablebackpacks.entity.lootTable=Loot Table
-# config.wearablebackpacks.entity.lootTable.tooltip=ID of the loot table used to fill this backpack.
+config.wearablebackpacks.entity.entityID=Entity-ID
+config.wearablebackpacks.entity.entityID.tooltip=Interner Name, zum Beispiel "minecraft:zombie".
+config.wearablebackpacks.entity.renderOptions=Renderoptionen
+config.wearablebackpacks.entity.renderOptions.tooltip=Kontrolliert Position, Rotation und Größe des Rucksacks an diesem Entity.
+config.wearablebackpacks.entity.chance=Chance
+config.wearablebackpacks.entity.chance.tooltip=Chance von 1 zu X, dass ein Entity mit diesem Rucksack spawnt. (100 = 1%%, 1000 = 0.1%%). Deaktiviere mit 0.
+config.wearablebackpacks.entity.backpack=Rucksack
+config.wearablebackpacks.entity.backpack.tooltip=Item-ID des Rucksacks, mit welchem der Entity spawnen soll.
+config.wearablebackpacks.entity.lootTable=Loot Table
+config.wearablebackpacks.entity.lootTable.tooltip=ID der Loot Table, die zum Füllen dieses Rucksacks verwendet wird.
 
-# config.wearablebackpacks.entity.translate=Position
-# config.wearablebackpacks.entity.translate.tooltip=Controls the render position of the backpack on this entity
-# config.wearablebackpacks.entity.rotate=Rotation
-# config.wearablebackpacks.entity.rotate.tooltip=Controls the render rotation of the backpack on this entity
-# config.wearablebackpacks.entity.scale=Scale
-# config.wearablebackpacks.entity.scale.tooltip=Controls the render scale (size) of the backpack on this entity
+config.wearablebackpacks.entity.translate=Position
+config.wearablebackpacks.entity.translate.tooltip=Bestimmt die Renderposition des Rucksacks an diesem Entity.
+config.wearablebackpacks.entity.rotate=Rotation
+config.wearablebackpacks.entity.rotate.tooltip=Bestimmt die Renderrotation des Rucksacks an diesem Entity.
+config.wearablebackpacks.entity.scale=Größe
+config.wearablebackpacks.entity.scale.tooltip=Bestimmt die sichtbare Größe des Rucksacks an diesem Entity.
 
-# config.wearablebackpacks.entity.status.entityNotFound=The specified entity couldn't be found. Entry will be ignored.
+config.wearablebackpacks.entity.status.entityNotFound=Der Entity konnte nicht gefunden werden; wird ignoriert.
 
-# config.wearablebackpacks.category.cosmetic=Cosmetic Settings
-# config.wearablebackpacks.category.cosmetic.tooltip=Controls cosmetic (client only) settings that don't affect gameplay.
-# config.wearablebackpacks.cosmetic.enchantEffectOpacity=Enchant Effect Opacity
-# config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Controls the opacity / visibility of the enchantment effect on equipped and placed backpacks, if present.
+config.wearablebackpacks.category.cosmetic=Kosmetische Einstellungen
+config.wearablebackpacks.category.cosmetic.tooltip=Client-seitige Einstellungen, die keinen Einfluss auf das Gameplay haben.
+config.wearablebackpacks.cosmetic.enchantEffectOpacity=Undurchsichtigkeit des Verzauberungseffekts
+config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Bestimmt die Durchsichtigkeit des Verzauberungseffects auf getragenen und platzierten Rucksäcken, wenn vorhanden.
