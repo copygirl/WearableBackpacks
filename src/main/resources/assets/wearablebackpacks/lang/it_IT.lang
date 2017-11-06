@@ -41,31 +41,33 @@ config.wearablebackpacks.backpack.armor.tooltip=I punti armatura ottenuti da un 
 config.wearablebackpacks.backpack.size=Grandezza Immagazzinamento Zaino
 config.wearablebackpacks.backpack.size.tooltip=Controlla la grandezza dell'immagazzinamento del normale zaino. Non infulenzerà gli zaini già posizionati o equipaggiati, facendoli tornare ad oggetto applicherà i cambiamenti.
 
-config.wearablebackpacks.category.spawn=Impostazioni di Evocazione
-config.wearablebackpacks.category.spawn.tooltip=Controlla le impostazioni riguardati l'evocazione di mob con gli zaini
-config.wearablebackpacks.spawn.enabled=Abilitato
-config.wearablebackpacks.spawn.enabled.tooltip=Controlla se i mob possono essere evocati con uno zaino
-config.wearablebackpacks.spawn.translate=Posizione
-config.wearablebackpacks.spawn.translate.tooltip=Controlla la posizione dello zaino visualizzata sull'entità
-config.wearablebackpacks.spawn.scale=Scala
-config.wearablebackpacks.spawn.scale.tooltip=Controlla la grandezza dello zaino visualizzata sull'entità
-config.wearablebackpacks.spawn.rotate=Rotazione
-config.wearablebackpacks.spawn.rotate.tooltip=Controlla la rotazione dello zaino visualizzata sull'entità
-config.wearablebackpacks.spawn.entries=Lista (voci) di entità evocabili
-config.wearablebackpacks.spawn.entry=%1$s voci
-config.wearablebackpacks.spawn.entry.0=Nessuna voce!
-config.wearablebackpacks.spawn.entry.1=1 voce
+config.wearablebackpacks.category.entity=Impostazioni di Evocazione
+config.wearablebackpacks.category.entity.tooltip=Controlla le impostazioni riguardati l'evocazione di mob con gli zaini
+# config.wearablebackpacks.entity.spawnNaturally=Spawn Naturally
+# config.wearablebackpacks.entity.spawnNaturally.tooltip=Controls whether mobs spawned naturally can randomly be wearing backpacks
+# config.wearablebackpacks.entity.spawnFromSpawners=Spawn From Spawners
+# config.wearablebackpacks.entity.spawnFromSpawners.tooltip=Controls whether mobs spawned from spawners can randomly be wearing backpacks
+config.wearablebackpacks.entity.translate=Posizione
+config.wearablebackpacks.entity.translate.tooltip=Controlla la posizione dello zaino visualizzata sull'entità
+config.wearablebackpacks.entity.scale=Scala
+config.wearablebackpacks.entity.scale.tooltip=Controlla la grandezza dello zaino visualizzata sull'entità
+config.wearablebackpacks.entity.rotate=Rotazione
+config.wearablebackpacks.entity.rotate.tooltip=Controlla la rotazione dello zaino visualizzata sull'entità
+config.wearablebackpacks.entity.entries=Lista (voci) di entità evocabili
+config.wearablebackpacks.entity.entry=%1$s voci
+config.wearablebackpacks.entity.entry.0=Nessuna voce!
+config.wearablebackpacks.entity.entry.1=1 voce
 
-config.wearablebackpacks.spawn.entityID=ID Entità
-config.wearablebackpacks.spawn.entityID.tooltip=Identificatore interno dell'entità, come "minecraft:zombie".
-config.wearablebackpacks.spawn.chance=Possibiltà
-config.wearablebackpacks.spawn.chance.tooltip=Possibilità (1 in x) che l'entità verrà evocata con uno zaino (100 = 1%%, 1000 = 0.1%%). Imposta a 0 per disabilitare.
-config.wearablebackpacks.spawn.backpack=Zaino
-config.wearablebackpacks.spawn.backpack.tooltip=ID dell'oggetto dello zaino da aggiungere all'entità evocata (per esempio "wearablebackpacks:backpack").
-config.wearablebackpacks.spawn.lootTable=Loot Table
-config.wearablebackpacks.spawn.lootTable.tooltip=ID della loot table utilizzata per riempire il backpack (per esempio "wearablebackpacks:backpack/default").
+config.wearablebackpacks.entity.entityID=ID Entità
+config.wearablebackpacks.entity.entityID.tooltip=Identificatore interno dell'entità, come "minecraft:zombie".
+config.wearablebackpacks.entity.chance=Possibiltà
+config.wearablebackpacks.entity.chance.tooltip=Possibilità (1 in x) che l'entità verrà evocata con uno zaino (100 = 1%%, 1000 = 0.1%%). Imposta a 0 per disabilitare.
+config.wearablebackpacks.entity.backpack=Zaino
+config.wearablebackpacks.entity.backpack.tooltip=ID dell'oggetto dello zaino da aggiungere all'entità evocata (per esempio "wearablebackpacks:backpack").
+config.wearablebackpacks.entity.lootTable=Loot Table
+config.wearablebackpacks.entity.lootTable.tooltip=ID della loot table utilizzata per riempire il backpack (per esempio "wearablebackpacks:backpack/default").
 
-config.wearablebackpacks.spawn.status.entityNotFound=L'entità specificata non è stata trovata. La voce sarà ignorata.
+config.wearablebackpacks.entity.status.entityNotFound=L'entità specificata non è stata trovata. La voce sarà ignorata.
 
 config.wearablebackpacks.category.cosmetic=Impostazioni Cosmetiche
 config.wearablebackpacks.category.cosmetic.tooltip=Controlla le impostazioni dell'apparenza (solo client) che non influenzano il gameplay.
