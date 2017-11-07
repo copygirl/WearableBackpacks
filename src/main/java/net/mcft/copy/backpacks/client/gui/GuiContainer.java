@@ -106,6 +106,14 @@ public class GuiContainer extends GuiElementBase {
 		}
 	}
 	
+	/** Called when a child element is moved. */
+	public void onChildMoved(GuiElementBase element) {
+		for (Direction direction : Direction.values()) {
+			updateChildSizes(direction);
+			expandToFitChildren(direction);
+		}
+	}
+	
 	/** Called when a child element is removed. */
 	public void onChildRemoved(GuiElementBase element) {
 		for (Direction direction : Direction.values()) {
@@ -131,6 +139,18 @@ public class GuiContainer extends GuiElementBase {
 		children.add(index, element);
 		_hadChild = true;
 		onChildAdded(element);
+	}
+	
+	/** Moves the element at the specified index to the specified
+	 *  target index in the children list of this container. */
+	public void move(int index, int targetIndex) {
+		if ((index < 0) || (index >= children.size()))
+			throw new IndexOutOfBoundsException("Argument index is out of bounds");
+		if ((targetIndex < 0) || (targetIndex >= children.size()))
+			throw new IndexOutOfBoundsException("Argument targetIndex is out of bounds");
+		GuiElementBase element = children.remove(index);
+		children.add(targetIndex, element);
+		onChildMoved(element);
 	}
 	
 	/** Removes the specified element from this container. */
