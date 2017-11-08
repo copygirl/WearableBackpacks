@@ -1,4 +1,10 @@
 {
+	"display": {
+		"fixed": {
+			"rotation":  [ 0, 180, 0 ],
+			"translation":  [ 0, 2, 0 ]
+		}
+	},
 	"elements": [{
 		"__comment": "top",
 		"from": [  3,  9,  5 ],
@@ -11,9 +17,8 @@
 			"west":  { "uv": [   0, 2.5,  2.5,   4 ], "texture": "#all", "tintindex": 0 },
 			"east":  { "uv": [ 7.5, 2.5,   10,   4 ], "texture": "#all", "tintindex": 0 }
 		}
-	},
-	{
-		"__comment": "topo",
+	}, {
+		"__comment": "top_overlay",
 		"from": [  3,  9,  5 ],
 		"to":   [ 13, 12, 10 ],
 		"faces": {

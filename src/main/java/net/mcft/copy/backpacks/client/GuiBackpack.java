@@ -4,8 +4,12 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import net.mcft.copy.backpacks.container.ContainerBackpack;
 
+@SideOnly(Side.CLIENT)
 public class GuiBackpack extends GuiContainer {
 	
 	private static final GuiTextureResource CONTAINER_TEX =
@@ -19,6 +23,13 @@ public class GuiBackpack extends GuiContainer {
 		_container = container;
 		xSize = container.getWidth();
 		ySize = container.getHeight();
+	}
+	
+	@Override
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		drawDefaultBackground();
+		super.drawScreen(mouseX, mouseY, partialTicks);
+		renderHoveredToolTip(mouseX, mouseY);
 	}
 	
 	@Override

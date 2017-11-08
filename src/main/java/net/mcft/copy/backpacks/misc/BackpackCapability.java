@@ -17,6 +17,7 @@ import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackType;
+import net.mcft.copy.backpacks.api.BackpackRegistry.BackpackEntry;
 import net.mcft.copy.backpacks.misc.util.MiscUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils.NbtType;
@@ -28,6 +29,7 @@ public class BackpackCapability implements IBackpack {
 	public static final String TAG_STACK = "stack";
 	public static final String TAG_TYPE  = "type";
 	public static final String TAG_DATA  = "data";
+	public static final String TAG_MAY_DESPAWN = "mayDespawn";
 	
 	public static final ResourceLocation IDENTIFIER =
 		new ResourceLocation("wearablebackpacks:backpack");
@@ -35,14 +37,18 @@ public class BackpackCapability implements IBackpack {
 	
 	public final EntityLivingBase entity;
 	
-	public ItemStack stack = ItemStack.EMPTY;
+	public ItemStack stack    = ItemStack.EMPTY;
 	public IBackpackData data = null;
-	public int playersUsing = 0;
-	public int lidTicks = 0;
-	public int prevLidTicks = 0;
+	public int playersUsing   = 0;
+	public int lidTicks       = 0;
+	public int prevLidTicks   = 0;
 	
-	// This is also null if the backpack is not equipped to the chestplate slot.
+	/** This is also null if the backpack is not equipped to the chestplate slot. */
 	public IBackpackType lastType = null;
+	/** Set to a backpack registry entry if the entity is meant to be spawned with a backpack. */
+	public BackpackEntry spawnWith = null;
+	/** Set to true if the backpack may despawn once placed down as a tile entity. */
+	public boolean mayDespawn = false;
 	
 	public BackpackCapability(EntityLivingBase entity) { this.entity = entity; }
 	
@@ -63,35 +69,28 @@ public class BackpackCapability implements IBackpack {
 	
 	@Override
 	public void setStack(ItemStack value) {
-		ItemStack lastStack = stack;
-		boolean chestArmorChanged = false;
+		boolean setChestArmor = !value.isEmpty()
+			// If backpack is being set, use equipAsChestArmor to
+			// determine whether the chest armor slot is set or not.
+			? BackpackHelper.equipAsChestArmor
+			// If being removed, use whether it actually is equipped there.
+			: isChestArmor();
 		
-		// Remove previous backpack from chest armor slot, if any.
-		if (isChestArmor()) {
-			entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStack.EMPTY);
-			chestArmorChanged = true;
-		}
-		
-		// Equip backpack to chest armor slot if config option is set to enabled.
-		if (BackpackHelper.equipAsChestArmor) {
+		if (setChestArmor) {
 			stack = ItemStack.EMPTY;
-			lastType = ((!value.isEmpty()) ? BackpackHelper.getBackpackType(value) : null);
+			lastType = BackpackHelper.getBackpackType(value);
 			entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, value);
-			chestArmorChanged = true;
-		// Otherwise store it inside the capability.
+			
+			// Send the updated equipment to all players.
+			if (entity instanceof EntityPlayer)
+				((EntityPlayer)entity).inventoryContainer.detectAndSendChanges();
 		} else {
 			stack = value;
 			lastType = null;
-		}
-		
-		if (!entity.world.isRemote) {
-			// If chest armor was changed and this is a player, send the updated stack.
-			if (chestArmorChanged && (entity instanceof EntityPlayer))
-				((EntityPlayer)entity).inventoryContainer.detectAndSendChanges();
-			// If backpack capability stack was changed, send it to everyone who can see the entity.
-			if (stack != lastStack)
-				WearableBackpacks.CHANNEL.sendToAllTracking(
-					MessageBackpackUpdate.stack(entity, stack), entity, true);
+			
+			// Send new value to everyone who can see the entity.
+			WearableBackpacks.CHANNEL.sendToAllTracking(
+				MessageBackpackUpdate.stack(entity, stack), entity, true);
 		}
 	}
 	
@@ -111,6 +110,7 @@ public class BackpackCapability implements IBackpack {
 			WearableBackpacks.CHANNEL.sendToAllTracking(
 				MessageBackpackUpdate.open(entity, (value > 0)), entity, true);
 		playersUsing = value;
+		mayDespawn = false;
 	}
 	
 	@Override
@@ -130,20 +130,19 @@ public class BackpackCapability implements IBackpack {
 		
 		final BackpackCapability backpack;
 		
-		public Provider(EntityLivingBase entity) { backpack = new BackpackCapability(entity); }
+		public Provider(EntityLivingBase entity)
+			{ backpack = new BackpackCapability(entity); }
 		
 		// ICapabilityProvider implementation
 		
 		@Override
-		public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-			return (capability == IBackpack.CAPABILITY);
-		}
+		public boolean hasCapability(Capability<?> capability, EnumFacing facing)
+			{ return (capability == IBackpack.CAPABILITY); }
 		
 		@Override
 		@SuppressWarnings("unchecked")
-		public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-			return ((capability == IBackpack.CAPABILITY) ? (T)backpack : null);
-		}
+		public <T> T getCapability(Capability<T> capability, EnumFacing facing)
+			{ return ((capability == IBackpack.CAPABILITY) ? (T)backpack : null); }
 		
 		// INBTSerializable implementation
 		
@@ -171,6 +170,8 @@ public class BackpackCapability implements IBackpack {
 			NBTBase dataTag = compound.getTag(TAG_DATA);
 			if ((backpack.data != null) && (dataTag != null))
 				backpack.data.deserializeNBT(dataTag);
+			
+			backpack.mayDespawn = compound.getBoolean(TAG_MAY_DESPAWN);
 		}
 		
 		@Override
@@ -179,7 +180,8 @@ public class BackpackCapability implements IBackpack {
 				TAG_STACK, ((!backpack.stack.isEmpty()) ? backpack.stack.serializeNBT() : null),
 				// If the backpack is stored in the chest armor slot, we need to save the item. See deserializeNBT.
 				TAG_TYPE, (backpack.isChestArmor() ? backpack.getStack().getItem().getRegistryName().toString() : null),
-				TAG_DATA, ((backpack.data != null) ? backpack.data.serializeNBT() : null));
+				TAG_DATA, ((backpack.data != null) ? backpack.data.serializeNBT() : null),
+				TAG_MAY_DESPAWN, (backpack.mayDespawn ? (byte)1 : null));
 		}
 		
 	}
@@ -192,7 +194,8 @@ public class BackpackCapability implements IBackpack {
 			return ((backpack.stack.isEmpty()) && (backpack.data == null)) ? null
 				: NbtUtils.createCompound(
 					TAG_STACK, ((!backpack.stack.isEmpty()) ? backpack.stack.serializeNBT() : null),
-					TAG_DATA, ((backpack.data != null) ? backpack.data.serializeNBT() : null));
+					TAG_DATA, ((backpack.data != null) ? backpack.data.serializeNBT() : null),
+					TAG_MAY_DESPAWN, (backpack.mayDespawn ? (byte)1 : null));
 		}
 		
 		@Override
@@ -216,6 +219,8 @@ public class BackpackCapability implements IBackpack {
 			NBTBase dataTag = compound.getTag(TAG_DATA);
 			if (dataTag != null) data.deserializeNBT(dataTag);
 			backpack.setData(data);
+			
+			backpack.mayDespawn = compound.getBoolean(TAG_MAY_DESPAWN);
 		}
 		
 	}

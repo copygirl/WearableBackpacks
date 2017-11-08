@@ -1,5 +1,6 @@
 package net.mcft.copy.backpacks.misc.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.input.Keyboard;
@@ -22,22 +23,44 @@ public final class LangUtils {
 	private LangUtils() {  }
 	
 	
+	/** Formats a language key and returns it as a list. */
+	@SideOnly(Side.CLIENT)
+	public static List<String> format(String langKey, Object... args)
+		{ return formatPrepend("", langKey, args); }
+	/** Formats a language key and adds it to the specified
+	 *  list, prepending each line with the specified string. */
+	@SideOnly(Side.CLIENT)
+	public static void format(List<String> list, String langKey, Object... args)
+		{ formatPrepend(list, "", langKey, args); }
+	
+	/** Formats a language key and returns it as a list. */
+	@SideOnly(Side.CLIENT)
+	public static List<String> formatPrepend(String prepend, String langKey, Object... args) {
+		ArrayList<String> list = new ArrayList<String>();
+		formatPrepend(list, prepend, langKey, args);
+		return list;
+	}
+	/** Formats a language key and adds it to the specified
+	 *  list, prepending each line with the specified string. */
+	@SideOnly(Side.CLIENT)
+	public static void formatPrepend(List<String> list, String prepend, String langKey, Object... args) {
+		String translated = I18n.format(langKey, args);
+		for (String line : translated.split("\\\\n"))
+			list.add(prepend + line);
+	}
+	
+	
 	/** Formats a tooltip translation key (<code> "tooltip.modid.key" </code>)
 	 *  and adds it to the tooltip list. Used in {@link Item#addInformation}. */
 	@SideOnly(Side.CLIENT)
-	public static void formatTooltip(List<String> tooltip, String langKey, Object... args) {
-		formatTooltipPrepend(tooltip, "", langKey, args);
-	}
+	public static void formatTooltip(List<String> tooltip, String tooltipKey, Object... args)
+		{ format(tooltip, "tooltip." + WearableBackpacks.MOD_ID + "." + tooltipKey, args); }
 	/** Formats a tooltip translation key (<code> "tooltip.modid.key" </code>)
 	 *  and adds it to the tooltip list, prepending each line with the specified
 	 *  string. Used in {@link Item#addInformation}. */
 	@SideOnly(Side.CLIENT)
-	public static void formatTooltipPrepend(List<String> tooltip, String prepend, String langKey, Object... args) {
-		String translated = I18n.format(
-			"tooltip." + WearableBackpacks.MOD_ID + "." + langKey, args);
-		for (String line : translated.split("\\\\n"))
-			tooltip.add(prepend + line);
-	}
+	public static void formatTooltipPrepend(List<String> tooltip, String prepend, String tooltipKey, Object... args)
+		{ formatPrepend(tooltip, prepend, "tooltip." + WearableBackpacks.MOD_ID + "." + tooltipKey, args); }
 	
 	/** Formats a tooltip translation key containing a single
 	 *  key binding argument and adds it to the tooltip list.

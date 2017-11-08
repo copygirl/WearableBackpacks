@@ -25,7 +25,7 @@ public class MessageSyncSettings implements IMessage {
 		MessageSyncSettings message = new MessageSyncSettings();
 		message._data = new NBTTagCompound();
 		for (Setting<?> setting : WearableBackpacks.CONFIG.getSettings())
-			if (setting.doesSync() && setting.isRequiredEnabled())
+			if (setting.doesSync() && setting.isEnabled())
 				message._data.setTag(setting.getFullName(), setting.writeSynced());
 		return message;
 	}

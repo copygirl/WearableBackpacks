@@ -3,7 +3,7 @@
   "modList": [{
     "modid": "wearablebackpacks",
     "name": "Wearable Backpacks",
-    "description": "Minecraft mod which adds beautiful, balanced backpacks ",
+    "description": "Minecraft mod which adds beautiful, balanced backpacks",
     "authorList": [ "copygirl", "asiekierka" ],
     "credits": "",
     
@@ -11,7 +11,7 @@
     "mcversion": "${minecraft_version}",
     "dependencies": [  ],
     
-    "url": "https://github.com/copygirl/WearableBackpacks",
+    "url": "https://copy.mcft.net/mc/WearableBackpacks",
     "updateUrl": "",
     "logoFile": "",
     "screenshots": [  ]

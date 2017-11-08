@@ -48,30 +48,29 @@ public final class BackpackHelper {
 	public static IBackpack getBackpack(Entity entity) {
 		if (entity == null) return null;
 		IBackpack backpack = entity.getCapability(IBackpack.CAPABILITY, null);
-		return (((backpack != null) && !backpack.getStack().isEmpty()) ? backpack : null);
+		return ((backpack != null) && !backpack.getStack().isEmpty()) ? backpack : null;
 	}
 	
 	/** Returns the tile entity's backpack capability. */
-	public static IBackpack getBackpack(TileEntity entity) {
-		return ((entity != null) ? entity.getCapability(IBackpack.CAPABILITY, null) : null);
-	}
+	public static IBackpack getBackpack(TileEntity entity)
+		{ return (entity != null) ? entity.getCapability(IBackpack.CAPABILITY, null) : null; }
 	
 	/** Returns the backpack type of an item stack, or null if it isn't a backpack. */
-	public static IBackpackType getBackpackType(ItemStack stack) {
-		return (!stack.isEmpty() ? getBackpackType(stack.getItem()) : null);
-	}
+	public static IBackpackType getBackpackType(ItemStack stack)
+		{ return !stack.isEmpty() ? getBackpackType(stack.getItem()) : null; }
 	/** Returns the backpack type of an item, or null if it doesn't implement IBackpackType. */
-	public static IBackpackType getBackpackType(Item item) {
-		return ((item instanceof IBackpackType) ? (IBackpackType)item : null);
-	}
+	public static IBackpackType getBackpackType(Item item)
+		{ return (item instanceof IBackpackType) ? (IBackpackType)item : null; }
 	
 	/** Returns if the entity can equip a backpack right now.
 	 *  Requires the entity to be able to wear backpacks, not currently have a backpack equipped, and
 	 *  if {@link equipAsChestArmor} is true and the entity is a player, an empty chest armor slot. */
 	public static boolean canEquipBackpack(EntityLivingBase entity) {
-		return (BackpackRegistry.canEntityWearBackpacks(entity) && (getBackpack(entity) == null) &&
-		        !(equipAsChestArmor && (entity instanceof EntityPlayer) &&
-		          !entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST).isEmpty()));
+		return (entity.getCapability(IBackpack.CAPABILITY, null) != null) // Has backpack capability.
+			&& (getBackpack(entity) == null)                              // Doesn't currently have backpack equipped.
+			&& !(equipAsChestArmor && (entity instanceof EntityPlayer)    // Isn't wearing a chestplate while equipAsChestArmor is on.
+				&& !entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST).isEmpty());
+		// FIXME: How does this work with non-player entities? Do / should they always wear backpacks as armor or what?
 	}
 	
 	/** Sets the entity's equipped backpack and data. */
@@ -94,7 +93,7 @@ public final class BackpackHelper {
 		if ((backpack == null) || !player.isEntityAlive() || !carrier.isEntityAlive()) return false;
 		if (player == carrier) return true;
 		
-		double distance = player.getDistanceToEntity(carrier);
+		double distance = player.getDistance(carrier);
 		// Calculate angle between player and carrier.
 		double angle = Math.toDegrees(Math.atan2(carrier.posZ - player.posZ, carrier.posX - player.posX));
 		// Calculate difference between angle and the direction the carrier entity is looking.
@@ -121,8 +120,8 @@ public final class BackpackHelper {
 	
 	/** Attempts to place down a backpack, unequipping it
 	 *  if the specified entity is currently wearing it. */
-	public static boolean placeBackpack(World world, BlockPos pos,
-	                                    ItemStack stack, EntityLivingBase entity) {
+	public static boolean placeBackpack(World world, BlockPos pos, ItemStack stack,
+	                                    EntityLivingBase entity, boolean ignoreEntities) {
 		
 		EntityPlayer player = ((entity instanceof EntityPlayer) ? (EntityPlayer)entity : null);
 		if ((player != null) && !player.canPlayerEdit(pos, EnumFacing.UP, stack))
@@ -134,7 +133,8 @@ public final class BackpackHelper {
 		// Would use this instead, but gotta avoid depending on the rest of WearableBackpacks.
 		//Block block = MiscUtils.getBlockFromItem(item);
 		Block block = Block.REGISTRY.getObject(item.getRegistryName());
-		if (!world.mayPlace(block, pos, false, EnumFacing.UP, null))
+		if (ignoreEntities ? !block.canPlaceBlockAt(world, pos)
+		                   : !world.mayPlace(block, pos, false, EnumFacing.UP, null))
 			return false;
 		
 		// Actually go ahead and try to set the block in the world.
@@ -145,16 +145,19 @@ public final class BackpackHelper {
 		    (world.getBlockState(pos).getBlock() != block)) return false;
 		block.onBlockPlacedBy(world, pos, state, entity, stack);
 		
-		SoundType sound = block.getSoundType(state, world, pos, player);
-		world.playSound(player, pos, sound.getPlaceSound(), SoundCategory.BLOCKS,
-		                (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
+		double x = pos.getX() + 0.5;
+		double y = pos.getY() + 0.5;
+		double z = pos.getZ() + 0.5;
+		SoundType sound = block.getSoundType(state, world, pos, entity);
+		world.playSound(x, y, z, sound.getPlaceSound(), SoundCategory.BLOCKS,
+		                (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F, false);
 		
 		TileEntity tileEntity = world.getTileEntity(pos);
 		if (tileEntity == null) return true;
 		IBackpack placedBackpack = BackpackHelper.getBackpack(tileEntity);
 		if (placedBackpack == null) return true;
 		
-		IBackpack carrierBackpack = BackpackHelper.getBackpack(player);
+		IBackpack carrierBackpack = BackpackHelper.getBackpack(entity);
 		boolean isEquipped = ((carrierBackpack != null) && (carrierBackpack.getStack() == stack));
 		
 		ItemStack stackOrig = stack;

@@ -1,10 +1,19 @@
 package net.mcft.copy.backpacks.item;
 
 import java.util.List;
+import java.util.Random;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -14,15 +23,18 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
+import net.mcft.copy.backpacks.api.BackpackRegistry;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackType;
@@ -35,7 +47,6 @@ import net.mcft.copy.backpacks.misc.util.LangUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
 import net.mcft.copy.backpacks.misc.util.WorldUtils;
 
-// TODO: Support armor enchantments like on BetterStorage backpacks? (Delayed to 1.11 version due to lack of enchantment hooks.)
 // TODO: Implement additional enchantments?
 //       - Holding: Increases backpack size (dungeon loot only?)
 //       - Supply I: Automatically fills up stackable items from backpack
@@ -45,8 +56,11 @@ import net.mcft.copy.backpacks.misc.util.WorldUtils;
 public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, ISpecialArmor {
 	
 	public static final int DEFAULT_COLOR = 0xA06540;
+	public static final ResourceLocation LOOT_TABLE =
+		new ResourceLocation(WearableBackpacks.MOD_ID, "backpack/default");
 	
-	public static final String[] TAG_CUSTOM_SIZE = { "backpack", "size" };
+	public static final String[] TAG_CUSTOM_ARMOR = { "backpack", "armor" };
+	public static final String[] TAG_CUSTOM_SIZE  = { "backpack", "size" };
 	
 	
 	public ItemBackpack() {
@@ -56,15 +70,38 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	}
 	
 	/** Returns the damage reduction amount. Functions identically to the Vanilla ItemArmor value. */
-	public int getDamageReductionAmount(ItemStack stack) { return 3; }
+	public int getDamageReductionAmount(ItemStack stack) {
+		int defaultArmor = WearableBackpacks.CONFIG.backpack.armor.get();
+		return NbtUtils.get(stack, defaultArmor, TAG_CUSTOM_ARMOR);
+	}
 	
 	// Item properties
 	
 	@Override
+	public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+		// Returns is the specified repair item is
+		// registered in the ore dictionary as leather.
+		int leatherOreID = OreDictionary.getOreID("leather");
+		return ArrayUtils.contains(OreDictionary.getOreIDs(repair), leatherOreID);
+	}
+	
+	@Override
+	public boolean isEnchantable(ItemStack stack) {
+		// Only enchantable if backpack is equipped as chest armor.
+		// Otherwise unbreaking and protection enchantments are useless.
+		return BackpackHelper.equipAsChestArmor;
+		// Also needs to be overridden because otherwise 0
+		// durability considers the backpack unenchantable.
+	}
+	
+	@Override
+	public int getItemEnchantability() { return 12; }
+	
+	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		
-		IBackpack backpack = BackpackHelper.getBackpack(playerIn);
+		IBackpack backpack = BackpackHelper.getBackpack(Minecraft.getMinecraft().player);
 		boolean isEquipped = ((backpack != null) && (backpack.getStack() == stack));
 		
 		// If the shift key is held down, display equip / unequip hints,
@@ -92,7 +129,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		
 		
 		// Only display the following information if advanced tooltips are enabled.
-		if (!advanced) return;
+		if (!flagIn.isAdvanced()) return;
 		
 		NBTBase customSize = NbtUtils.get(stack, TAG_CUSTOM_SIZE);
 		if (customSize != null)
@@ -104,7 +141,8 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	// Item events
 	
 	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand,
+	                                  EnumFacing facing, float hitX, float hitY, float hitZ) {
 		IBlockState state = worldIn.getBlockState(pos);
 		// If the block is replaceable, keep the placing position
 		// the same but check the block below for solidity.
@@ -118,15 +156,65 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		
 		// Check if the side is solid and try to place the backpack.
 		return (state.isSideSolid(worldIn, pos, EnumFacing.UP) &&
-		        BackpackHelper.placeBackpack(worldIn, pos, player.getHeldItem(hand), player))
+		        BackpackHelper.placeBackpack(worldIn, pos, player.getHeldItem(hand), player, false))
 			? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
+	}
+	
+	@Override
+	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn,
+	                                        EntityLivingBase target, EnumHand hand) {
+		// When right clicking a non-player entity with a backpack in
+		// creative, make the target entity equip the held backpack.
+		if (playerIn.world.isRemote || !playerIn.isCreative() ||
+		    !BackpackRegistry.canEntityWearBackpacks(target) ||
+		    (target instanceof EntityPlayer)) return false;
+		
+		// If the target entity is already wearing a backpack, call
+		// onFaultyRemoval, which may for example drop the backpack's items.
+		IBackpack backpack = BackpackHelper.getBackpack(target);
+		if (backpack != null) backpack.getType().onFaultyRemoval(target, backpack);
+		
+		stack = stack.splitStack(1); // This reduces the held stack's size while
+		                             // giving us a copy with a stack size of 1.
+		// (Not necessary since in creative, but this is the right way to do things!)
+		IBackpackData data = BackpackHelper.getBackpackType(stack).createBackpackData(stack);
+		BackpackHelper.setEquippedBackpack(target, stack, data);
+		
+		return true;
+	}
+	
+	@Override
+	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+		// Allow armor enchantments on top of anything supported by default.
+		return (super.canApplyAtEnchantingTable(stack, enchantment) ||
+		        ((enchantment.type == EnumEnchantmentType.ARMOR) && BackpackHelper.equipAsChestArmor));
 	}
 	
 	// IBackpackType implementation
 	
 	@Override
-	public void onSpawnedWith(EntityLivingBase entity, IBackpack backpack) {
-		// TODO: Fill backpack with random items.
+	public void onSpawnedWith(EntityLivingBase entity, IBackpack backpack, String lootTable) {
+		
+		// If backpack is equipped in chestplate slot, set drop chance to 100%.
+		if ((entity instanceof EntityLiving) &&
+		    (entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST) == backpack.getStack()))
+			((EntityLiving)entity).setDropChance(EntityEquipmentSlot.CHEST, 1.0F);
+		
+		Random rnd = entity.world.rand;
+		double dyedChance = 0.15; // 15% chance for backpack to be colored.
+		if (canDye(backpack.getStack()) && (rnd.nextDouble() < dyedChance)) {
+			int g = rnd.nextInt(192) + 32;
+			int b = rnd.nextInt(192) + 32;
+			int r = rnd.nextInt(192) + 32;
+			int color = (r << 16) | (g << 8) | b;
+			NbtUtils.set(backpack.getStack(), color, "display", "color");
+		}
+		
+		// Set backpack's loot table.
+		IBackpackData data = backpack.getData();
+		if ((lootTable != null) && (data instanceof BackpackDataItems))
+			((BackpackDataItems)data).setLootTable(lootTable, rnd.nextLong());
+		
 	}
 	
 	@Override
@@ -164,7 +252,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	public void onDeath(EntityLivingBase entity, IBackpack backpack) {
 		if (!(backpack.getData() instanceof BackpackDataItems)) return;
 		BackpackDataItems dataItems = (BackpackDataItems)backpack.getData();
-		WorldUtils.dropStacksFromEntity(entity, dataItems.items, 4.0F);
+		WorldUtils.dropStacksFromEntity(entity, dataItems.getItems(entity.world, null), 4.0F);
 	}
 	
 	@Override
@@ -181,7 +269,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	public void onBlockBreak(TileEntity tileEntity, IBackpack backpack) {
 		if (!(backpack.getData() instanceof BackpackDataItems)) return;
 		BackpackDataItems dataItems = (BackpackDataItems)backpack.getData();
-		WorldUtils.dropStacksFromBlock(tileEntity, dataItems.items);
+		WorldUtils.dropStacksFromBlock(tileEntity, dataItems.getItems(tileEntity.getWorld(), null));
 	}
 	
 	@Override

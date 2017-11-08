@@ -1,41 +1,46 @@
 package net.mcft.copy.backpacks.config;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.function.Consumer;
 
 import net.minecraft.nbt.NBTBase;
 
-import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import net.mcft.copy.backpacks.client.gui.config.EntrySetting;
+import net.mcft.copy.backpacks.config.Status.Severity;
 
 /** Represents a single configuration setting. */
 public abstract class Setting<T> {
+	
+	/** Controls whether get() returns getEntryValue() or the setting's value. */
+	private static boolean _checkEntryValue = false;
+	
 	
 	/** Default value, used when no config file is present. */
 	private final T _defaultValue;
 	/** Loaded "own" value, directly from the config file (or using the default). */
 	private T _value;
 	
-	/** Holds the setting's Forge Configuration. */
-	private Configuration _config;
-	/** Holds the setting's Forge Configuration Property. */
-	private Property _property = null;
+	/** Holds the setting's current entry instance in the config GUI (if open). */
+	@SideOnly(Side.CLIENT)
+	private EntrySetting<T> _entry;
 	
 	/** The setting category, for example "general". */
 	private String _category;
 	/** The setting name, for example "equipAsChestArmor". */
 	private String _name;
 	
-	/** Stores a different setting which is required for this one to function. */
-	private Setting<Boolean> _requiredSetting = null;
-	/** Whether changing the setting requires rejoining the current world. */
-	private boolean _requiresWorldRejoin = false;
-	/** Whether changing the setting requires restarting the Minecraft instance. */
-	private boolean _requiresMinecraftRestart = false;
+	/** Stores the action required after changing this setting. */
+	private ChangeRequiredAction _changeRequiredAction = ChangeRequiredAction.None;
 	
-	/** The setting's valid values as a string array, or null if none. */
-	private T[] _validValues = null;
+	/** Stores a list of functions which get called to handle hints, warnings and errors. */
+	private List<Supplier<Status>> _statusFuncs = new ArrayList<Supplier<Status>>();
 	
 	/** Stores whether the setting will be synced to players joining a world. */
 	private boolean _doesSync = false;
@@ -45,49 +50,52 @@ public abstract class Setting<T> {
 	private T _syncedValue = null;
 	
 	/** Action fired when setting is updated (synced or changed ingame), null if none. */
-	private Consumer<T> _updateAction = null;
+	private Consumer<Setting<T>> _updateAction = null;
 	
 	/** Holds the setting's custom config entry class to use in place of the default, if any. */
-	private String _entryClass = null;
+	private String _configEntryClass = null;
 	/** The setting's comment used in the config file, if any. */
 	private String _comment = null;
 	
 	
-	public Setting(T defaultValue) {
-		_defaultValue = defaultValue;
-	}
+	public Setting(T defaultValue)
+		{ _defaultValue = defaultValue; }
 	
-	/** Set the setting's configuration, category and name.
+	/** Set the setting's category and name.
 	 *  This is called automatically. Category and name are taken from
 	 *  reflected field names. Keeps the constructor short and simple. */
-	protected void init(Configuration config, String category, String name) {
-		_config = config;
-		_category = category;
-		_name = name;
-	}
+	protected void init(String category, String name)
+		{ _category = category; _name = name; }
 	
-	/** Sets the specified setting to be required for this setting. */
-	public Setting<T> setRequired(Setting<Boolean> setting) { _requiredSetting = setting; return this; }
+	/** Adds a function to this setting that may return a status to hint,
+	 *  warn or error about the state of the setting or other factors. */
+	public final Setting<T> addStatusFunc(Supplier<Status> func)
+		{ _statusFuncs.add(func); return this; }
+		/** Sets the specified setting to be required for this setting to be valid. */
+	public final Setting<T> setRequired(Setting<Boolean> setting)
+		{ return addStatusFunc(() -> !setting.get() ? Status.REQUIRED(setting) : Status.NONE); }
+	/** Sets the specified setting to be recommended for this setting. */
+	public final Setting<T> setRecommended(Setting<Boolean> setting, String key)
+		{ return addStatusFunc(() -> !setting.get() ? Status.RECOMMENDED(setting, key) : Status.NONE); }
+	
 	/** Sets the setting to require rejoining the world after being changed. */
-	public Setting<T> setRequiresWorldRejoin() { _requiresWorldRejoin = true; return this; }
+	public Setting<T> setRequiresWorldRejoin()
+		{ _changeRequiredAction = ChangeRequiredAction.RejoinWorld; return this; }
 	/** Sets the setting to require restarting the game after being changed. */
-	public Setting<T> setRequiresMinecraftRestart() { _requiresMinecraftRestart = true; return this; }
-	
-	/** Sets the valid values for this setting. */
-	@SafeVarargs
-	public final Setting<T> setValidValues(T... values) { _validValues = values; return this; }
+	public Setting<T> setRequiresMinecraftRestart()
+		{ _changeRequiredAction = ChangeRequiredAction.RestartMinecraft; return this; }
 	
 	/** Sets the setting to be synchronized to players joining a world. */
 	public Setting<T> setSynced() { _doesSync = true; return this; }
 	/** Sets the setting to be synchronized to players joining a world.
 	 *  The specified action is fired when the setting is synced on the receiving player's side. */
-	public Setting<T> setSynced(Consumer<T> action) { setSynced(); return setUpdate(action); }
+	public Setting<T> setSynced(Consumer<Setting<T>> action) { setSynced(); return setUpdate(action); }
 	
 	/** Sets the update function to be fired when the setting is updated (config changed or syncronized). */
-	public Setting<T> setUpdate(Consumer<T> action) { _updateAction = action; return this; }
+	public Setting<T> setUpdate(Consumer<Setting<T>> action) { _updateAction = action; return this; }
 	
 	/** Sets the setting's config entry class, to be used in place of the default. */
-	public Setting<T> setConfigEntryClass(String entryClass) { _entryClass = entryClass; return this; }
+	public Setting<T> setConfigEntryClass(String entryClass) { _configEntryClass = entryClass; return this; }
 	/** Sets the setting's comment, to be used in the config file. */
 	public Setting<T> setComment(String comment) { _comment = comment; return this; }
 	
@@ -102,16 +110,42 @@ public abstract class Setting<T> {
 	/** Returns the setting's default value. */
 	public T getDefault() { return _defaultValue; }
 	/** Returns the setting's current value. */
-	public T get() { return (_isSynced ? _syncedValue : _value); }
+	public T get() { return (_checkEntryValue ? getEntryValue() : (_isSynced ? _syncedValue : getOwn())); }
+	/** Returns the setting's own, actual value, regardless
+	 *  of config GUI or client-server syncronization. */
+	public T getOwn() { return _value; }
+	/** Sets the setting's current value. */
+	public void set(T value) { _value = value; }
 	
-	/** Returns the setting required for this setting, or null if none. */
-	public Setting<?> getRequired() { return _requiredSetting; }
-	/** Returns if there's no required setting or it is enabled. */
-	public boolean isRequiredEnabled() { return ((_requiredSetting == null) || _requiredSetting.get()); }
+	/** Returns this setting's current status regarding its value / requirements. */
+	public List<Status> getStatus() { return _statusFuncs.stream().map(Supplier::get).collect(Collectors.toList()); }
+	/** Returns this setting's current status regarding its value / requirements.
+	 *  (Using the current config entry values.) */
+	@SideOnly(Side.CLIENT)
+	public List<Status> getStatusConfig() {
+		_checkEntryValue = true;
+		List<Status> list = getStatus();
+		_checkEntryValue = false;
+		return list;
+	}
+	
+	/** Returns if this setting is enabled based on its requirements / status functions. */
+	public boolean isEnabled()
+		{ return Severity.ERROR != Status.getSeverity(getStatus()); }
+	/** Returns if this setting is enabled based on its requirements (uses config entry values). */
+	@SideOnly(Side.CLIENT)
+	public boolean isEnabledConfig()
+		{ return Severity.ERROR != Status.getSeverity(getStatusConfig()); }
+	
+	/** Returns the required action after changing this
+	 *  setting (such as world rejoin or Minecraft restart). */
+	public ChangeRequiredAction getChangeRequiredAction() { return _changeRequiredAction; }
 	/** Returns whether changing the setting requires a world rejoin. */
-	public boolean requiresWorldRejoin() { return _requiresWorldRejoin; }
+	public boolean requiresWorldRejoin()
+		{ return (getChangeRequiredAction() != ChangeRequiredAction.None); }
 	/** Returns whether changing the setting requires Minecraft to be restarted. */
-	public boolean requiresMinecraftRestart() { return _requiresMinecraftRestart; }
+	public boolean requiresMinecraftRestart()
+		{ return (getChangeRequiredAction() == ChangeRequiredAction.RestartMinecraft); }
 	
 	/** Returns if the setting is synced to players when they join a (multiplayer/LAN) world. */
 	public boolean doesSync() { return _doesSync; }
@@ -120,56 +154,31 @@ public abstract class Setting<T> {
 	public boolean isSynced() { return _isSynced; }
 	
 	/** Sets the setting's config entry class, to be used in place of the default. */
-	public String getConfigEntryClass() { return _entryClass; }
+	public String getConfigEntryClass() { return _configEntryClass; }
 	/** Returns the setting's comment, as used in the config file. */
 	public String getComment() { return _comment; }
 	
+	/** Returns the setting's current entry value in the config GUI. */
+	private T getEntryValue() { return _entry.getValue().get(); }
+	/** Sets the setting's current config entry in the config GUI to the specified entry.
+	 *  Used for disabling config entries dynamically based on which settings they require. */
+	@SideOnly(Side.CLIENT)
+	public void setEntry(EntrySetting<T> entry) { _entry = entry; }
+	/** Resets the setting's current config entry in the config GUI. */
+	@SideOnly(Side.CLIENT)
+	public void resetEntry() { _entry = null; }
 	
-	/** Calls the update action if present
-	 *  and any required setting is enabled. */
-	public void update() {
-		if ((_updateAction != null) && isRequiredEnabled())
-			_updateAction.accept(_value);
-	}
+	
+	/** Calls the update action if present. */
+	public void update() { if (_updateAction != null) _updateAction.accept(this); }
 	
 	
 	// Forge Configuration related
 	
-	/** Grabs the Property object from the Forge Configuration object. */
-	protected abstract Property getPropertyFromConfig(Configuration config);
-	
-	/** Returns the Forge config Property associated with this setting. */
-	public Property getProperty() {
-		if (_property == null) {
-			// Initialize the property if it hasn't been already.
-			_property = getPropertyFromConfig(_config);
-			_property.setRequiresWorldRestart(_requiresWorldRejoin);
-			_property.setRequiresMcRestart(_requiresMinecraftRestart);
-			if (_validValues != null)
-				_property.setValidValues(
-					(String[])Arrays.stream(_validValues)
-						.map(Object::toString).toArray());
-		}
-		return _property;
-	}
-	
-	
-	/** Returns the value from the Forge Property. */
-	protected abstract T getFromProperty();
-	
-	/** Called when the Configuration is loaded. */
-	protected void onPropertyLoaded() {
-		_value = getFromProperty();
-	}
-	
-	/** Called when the Property is changed,
-	 *  for example through the config GUI. */
-	protected void onPropertyChanged() {
-		if (_requiresMinecraftRestart) return;
-		T previous = _value;
-		_value = getFromProperty();
-		if (!Objects.equals(_value, previous)) update();
-	}
+	/** Loads the setting's value from the specified Configuration. */
+	protected abstract void loadFromConfiguration(Configuration config);
+	/** Saves the setting's value to the specified Configuration. */
+	protected abstract void saveToConfiguration(Configuration config);
 	
 	
 	// Synchronization
@@ -178,8 +187,7 @@ public abstract class Setting<T> {
 	public void readSynced(NBTBase tag) {
 		_isSynced = true;
 		_syncedValue = read(tag);
-		if (_updateAction != null)
-			_updateAction.accept(_syncedValue);
+		update();
 	}
 	/** Writes the own value to an NBT tag, returning it. */
 	public NBTBase writeSynced() { return write(_value); }
@@ -189,5 +197,12 @@ public abstract class Setting<T> {
 	
 	public abstract T read(NBTBase tag);
 	public abstract NBTBase write(T value);
+	
+	
+	public enum ChangeRequiredAction {
+		None,
+		RejoinWorld,
+		RestartMinecraft
+	}
 	
 }

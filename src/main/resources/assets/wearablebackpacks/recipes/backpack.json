@@ -1,0 +1,14 @@
+{
+	"type": "forge:ore_shaped",
+	"pattern": [
+		"LGL",
+		"LWL",
+		"LLL"
+	],
+	"key": {
+		"L": { "type": "forge:ore_dict", "ore": "leather" },
+		"G": { "type": "forge:ore_dict", "ore": "ingotGold" },
+		"W": { "item": "minecraft:wool", "data": 32767 }
+	},
+	"result": { "item": "wearablebackpacks:backpack" }
+}

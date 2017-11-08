@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 
@@ -27,7 +26,7 @@ public final class DyeUtils {
 		// Collect dye colors into map using the ore dictionary name as a key.
 		for (EnumDyeColor color : EnumDyeColor.values()) {
 			String name = "dye" + nameLookup[color.getDyeDamage()];
-			float[] values = EntitySheep.getDyeRgb(color);
+			float[] values = color.getColorComponentValues();
 			int r = (int)(values[0] * 255);
 			int g = (int)(values[1] * 255);
 			int b = (int)(values[2] * 255);
