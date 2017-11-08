@@ -43,10 +43,10 @@ config.wearablebackpacks.backpack.size.tooltip=Imposta la grandezza dell'immagaz
 
 config.wearablebackpacks.category.entity=Impostazioni di Evocazione
 config.wearablebackpacks.category.entity.tooltip=Imposta l'evocazione di mob con gli zaini
-# config.wearablebackpacks.entity.spawnNaturally=Evocazione Naturale
-# config.wearablebackpacks.entity.spawnNaturally.tooltip=Imposta se i mostri spawnati naturalmente possono nascere con uno zaino
-# config.wearablebackpacks.entity.spawnFromSpawners=Evocazione da Mob spawner
-# config.wearablebackpacks.entity.spawnFromSpawners.tooltip=Imposta se i mostri spawnati da un Mob Spawner possono nascere con uno zaino
+config.wearablebackpacks.entity.spawnNaturally=Evocazione Naturale
+config.wearablebackpacks.entity.spawnNaturally.tooltip=Imposta se i mostri spawnati naturalmente possono nascere con uno zaino
+config.wearablebackpacks.entity.spawnFromSpawners=Evocazione da Mob spawner
+config.wearablebackpacks.entity.spawnFromSpawners.tooltip=Imposta se i mostri spawnati da un Mob Spawner possono nascere con uno zaino
 config.wearablebackpacks.entity.translate=Posizione
 config.wearablebackpacks.entity.translate.tooltip=Imposta la posizione dello zaino visualizzata sull'entità
 config.wearablebackpacks.entity.scale=Scala
