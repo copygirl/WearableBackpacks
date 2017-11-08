@@ -201,8 +201,7 @@ public class GuiSlider extends GuiElementBase {
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
 		if (!isVisible()) return;
-		// TODO: Shouldn't be highlighted if another element is being dragged.
-		boolean isHighlighted = (isEnabled() && isDragged() || contains(mouseX, mouseY));
+		boolean isHighlighted = isHighlighted(mouseX, mouseY);
 		drawSliderBackground(isHighlighted, partialTicks);
 		drawSliderBar(isHighlighted, partialTicks);
 		drawSliderForeground(isHighlighted, partialTicks);

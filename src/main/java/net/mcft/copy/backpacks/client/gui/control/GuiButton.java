@@ -88,7 +88,7 @@ public class GuiButton extends GuiElementBase {
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTicks) {
 		if (!isVisible()) return;
-		boolean isHighlighted = (isEnabled() && isDragged() || contains(mouseX, mouseY));
+		boolean isHighlighted = isHighlighted(mouseX, mouseY);
 		drawButtonBackground(isHighlighted, partialTicks);
 		drawButtonForeground(isHighlighted, partialTicks);
 	}

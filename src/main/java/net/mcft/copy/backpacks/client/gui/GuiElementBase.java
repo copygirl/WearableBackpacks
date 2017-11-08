@@ -270,7 +270,15 @@ public abstract class GuiElementBase {
 	public boolean contains(int x, int y)
 		{ return regionContains(0, 0, getWidth(), getHeight(), x, y); }
 	
-		
+	/** Returns whether this element should be appear highlighted when drawn.
+	 *  By default, the element must either be pressed down, or no other
+	 *  element must be pressed down be while the cursor is over it. */
+	public boolean isHighlighted(int mouseX, int mouseY) {
+		GuiElementBase pressed = getContext().getPressed();
+		return isEnabled() && (pressed == this)
+		    || (pressed == null) && contains(mouseX, mouseY);
+	}
+	
 	public static Minecraft getMC() { return Minecraft.getMinecraft(); }
 	public static void display(GuiScreen screen) { getMC().displayGuiScreen(screen); }
 	public static GuiScreen getCurrentScreen() { return getMC().currentScreen; }
