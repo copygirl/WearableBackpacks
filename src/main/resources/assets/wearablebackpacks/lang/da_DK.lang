@@ -41,8 +41,8 @@ config.wearablebackpacks.backpack.armor.tooltip=Armor point for normale rygsækk
 config.wearablebackpacks.backpack.size=Opbevarelsesplads
 config.wearablebackpacks.backpack.size.tooltip=Styrer opbevarelsespladsen for normale rygsække. Ændrer ikke rygsække som allerede er på ryggen eller på jorden. Lav dem tilbage til en item for at få ændringerne med.
 
-config.wearablebackpacks.category.entity=Spawn-Instillinger
-config.wearablebackpacks.category.entity.tooltip=Styrer instillinger omkring mobs, der spawner med rygsække
+config.wearablebackpacks.category.entity=Mob Instillinger
+config.wearablebackpacks.category.entity.tooltip=Styrer instillinger for mobs med rygsække på
 config.wearablebackpacks.entity.spawnNaturally=Spawn Naturligt
 config.wearablebackpacks.entity.spawnNaturally.tooltip=Styrer om mobs, der spawner naturligt, kan spawne med rygsække på
 config.wearablebackpacks.entity.spawnFromSpawners=Spawn fra Spawners
