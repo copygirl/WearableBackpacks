@@ -323,14 +323,26 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 				fieldLootTable.setEnabled(!_isDefault);
 				buttonRemove.setEnabled(!_isDefault);
 				
-				// This is ugly but I'm too lazy to make it not so.
-				fieldChance.setTextAndBorderColor(Severity.ERROR.foregroundColor, fieldChance.getText().isEmpty());
+				if (fieldChance.getText().isEmpty()) {
+					fieldChance.setTextColor(Severity.ERROR.foregroundColor);
+					fieldChance.setBorderColor(Severity.ERROR.foregroundColor);
+				} else {
+					fieldChance.resetTextColor();
+					fieldChance.resetBorderColor();
+				}
 				int backpackColor = fieldBackpack.getText().isEmpty() ? Severity.ERROR.foregroundColor
 					: itemBackpack.getStack().isEmpty() ? Severity.WARN.foregroundColor
 					: !(itemBackpack.getStack().getItem() instanceof ItemBackpack) ? Severity.ERROR.foregroundColor
 					: -1;
-				fieldBackpack.setTextAndBorderColor(backpackColor, (backpackColor != -1));
-				itemBackpack.setBorderColor((backpackColor != -1) ? backpackColor : GuiField.COLOR_BORDER_DEFAULT);
+				if (backpackColor != -1) {
+					fieldBackpack.setTextColor(backpackColor);
+					fieldBackpack.setBorderColor(backpackColor);
+					itemBackpack.setBorderColor(backpackColor);
+				} else {
+					fieldBackpack.resetTextColor();
+					fieldBackpack.resetBorderColor();
+					itemBackpack.resetBorderColor();
+				}
 				
 				super.draw(mouseX, mouseY, partialTicks);
 			}
@@ -366,7 +378,10 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 			}
 			
 			public void setBackgroundColor(int value) { _colorBackground = value; }
+			public void resetBackgroundColor() { setBackgroundColor(0xFF333333); }
+			
 			public void setBorderColor(int value) { _colorBorder = value; }
+			public void resetBorderColor() { setBorderColor(GuiField.COLOR_BORDER_DEFAULT); }
 			
 			@Override
 			public void draw(int mouseX, int mouseY, float partialTicks) {
