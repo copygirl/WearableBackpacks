@@ -1,7 +1,6 @@
 package net.mcft.copy.backpacks.item;
 
 import java.util.List;
-import java.util.Random;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -200,20 +199,10 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		    (entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST) == backpack.getStack()))
 			((EntityLiving)entity).setDropChance(EntityEquipmentSlot.CHEST, 1.0F);
 		
-		Random rnd = entity.world.rand;
-		double dyedChance = 0.15; // 15% chance for backpack to be colored.
-		if (canDye(backpack.getStack()) && (rnd.nextDouble() < dyedChance)) {
-			int g = rnd.nextInt(192) + 32;
-			int b = rnd.nextInt(192) + 32;
-			int r = rnd.nextInt(192) + 32;
-			int color = (r << 16) | (g << 8) | b;
-			NbtUtils.set(backpack.getStack(), color, "display", "color");
-		}
-		
 		// Set backpack's loot table.
 		IBackpackData data = backpack.getData();
 		if ((lootTable != null) && (data instanceof BackpackDataItems))
-			((BackpackDataItems)data).setLootTable(lootTable, rnd.nextLong());
+			((BackpackDataItems)data).setLootTable(lootTable, entity.world.rand.nextLong());
 		
 	}
 	

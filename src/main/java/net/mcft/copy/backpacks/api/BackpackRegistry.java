@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -251,11 +252,35 @@ public final class BackpackRegistry {
 	public static final class ColorRange {
 		
 		public static final ColorRange DEFAULT = new ColorRange(0x202020, 0xD0D0D0);
+		private static final Random rnd = new Random();
 		
 		public final int min, max;
 		
 		public ColorRange(int min, int max)
 			{ this.min = min; this.max = max; }
+		
+		public boolean isValid() {
+			int minR = min >> 16 & 0xFF;
+			int minG = min >> 8 & 0xFF;
+			int minB = min & 0xFF;
+			int maxR = max >> 16 & 0xFF;
+			int maxG = max >> 8 & 0xFF;
+			int maxB = max & 0xFF;
+			return (minR <= maxR) && (minG <= maxG) && (minB <= maxB);
+		}
+		
+		public int getRandom() {
+			int minR = min >> 16 & 0xFF;
+			int minG = min >> 8 & 0xFF;
+			int minB = min & 0xFF;
+			int maxR = max >> 16 & 0xFF;
+			int maxG = max >> 8 & 0xFF;
+			int maxB = max & 0xFF;
+			int r = (maxR - minR + 1 >= 0) ? minR + rnd.nextInt(maxR - minR + 1) : minR;
+			int g = (maxG - minG + 1 >= 0) ? minG + rnd.nextInt(maxG - minG + 1) : minG;
+			int b = (maxB - minB + 1 >= 0) ? minB + rnd.nextInt(maxB - minB + 1) : minB;
+			return r << 16 | g << 8 | b;
+		}
 		
 		@Override
 		public boolean equals(Object obj) {

@@ -115,6 +115,9 @@ public class ProxyCommon {
 	private void onSpawnedWith(EntityLivingBase entity, BackpackCapability backpack, BackpackEntry entry) {
 		ItemStack stack = new ItemStack(entry.getBackpackItem());
 		
+		if (entry.colorRange != null) // Set a random color!
+			NbtUtils.set(stack, entry.colorRange.getRandom(), "display", "color");
+		
 		// Set damage to a random amount (25% - 75%).
 		int maxDamage = stack.getMaxDamage();
 		int damage = maxDamage / 4 + ((maxDamage / 2 > 0)
