@@ -4,9 +4,10 @@ import net.minecraft.client.gui.GuiScreen;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
+import net.mcft.copy.backpacks.client.GuiTextureResource;
 import net.mcft.copy.backpacks.client.gui.*;
 import net.mcft.copy.backpacks.client.gui.control.*;
+import net.mcft.copy.backpacks.client.gui.control.GuiButtonIcon.Icon;
 
 @SideOnly(Side.CLIENT)
 public class GuiTestScreen extends GuiContainerScreen {
@@ -219,7 +220,9 @@ public class GuiTestScreen extends GuiContainerScreen {
 					setFillHorizontal();
 					setHeight(100);
 					setPadding(8);
-					add(new GuiButton("Scroll!") {{ setPosition(0, 0); }});
+					Icon icon = new Icon(new GuiTextureResource("config_icons", 64, 64), 36, 0, 8, 16);
+					add(new GuiButtonIcon(icon, "Scroll!") {{ setPosition(0, 0); }});
+					add(new GuiButtonIcon(icon) {{ setPosition(0, 24); }});
 					add(new GuiButton("You found me!") {{ setPosition(300, 200); }});
 				}});
 				

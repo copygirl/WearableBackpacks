@@ -2,6 +2,7 @@ package net.mcft.copy.backpacks.client.gui.control;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -9,7 +10,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class GuiButtonGlyph extends GuiButton {
 	
 	public static final int GLYPH_SPACING = getStringWidth(" ");
-	public static final int DEFAULT_WIDTH = 20;
+	public static final int DEFAULT_WIDTH = DEFAULT_HEIGHT;
 	public static final float DEFAULT_GLYPH_SCALE = 2.0f;
 	
 	private String _glyph;
@@ -32,7 +33,7 @@ public class GuiButtonGlyph extends GuiButton {
 		{ this(width, DEFAULT_HEIGHT, glyph, text); }
 	public GuiButtonGlyph(int width, int height, String glyph, String text)
 		{ this(width, height, glyph, DEFAULT_GLYPH_SCALE, text); }
-		
+	
 	public GuiButtonGlyph(int width, String glyph, float glyphScale, String text)
 		{ this(width, DEFAULT_HEIGHT, glyph, glyphScale, text); }
 	public GuiButtonGlyph(int width, int height, String glyph, float glyphScale, String text)
