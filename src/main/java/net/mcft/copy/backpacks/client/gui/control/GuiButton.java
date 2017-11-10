@@ -2,6 +2,7 @@ package net.mcft.copy.backpacks.client.gui.control;
 
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
 
@@ -25,6 +26,8 @@ public class GuiButton extends GuiElementBase {
 	private int _textColor   = -1;
 	private Runnable _action = null;
 	
+	private boolean _isSwitch = false;
+	private boolean _switchOn = false;
 	
 	public GuiButton() { this(DEFAULT_WIDTH); }
 	public GuiButton(int width) { this(width, DEFAULT_HEIGHT); }
@@ -37,11 +40,8 @@ public class GuiButton extends GuiElementBase {
 	public GuiButton(int width, int height, String text)
 		{ this(0, 0, width, height, text); }
 	
-	public GuiButton(int x, int y, int width, int height, String text) {
-		setPosition(x, y);
-		setSize(width, height);
-		setText(text);
-	}
+	public GuiButton(int x, int y, int width, int height, String text)
+		{ setPosition(x, y); setSize(width, height); setText(text); }
 	
 	
 	public String getText() { return _text; }
@@ -64,12 +64,12 @@ public class GuiButton extends GuiElementBase {
 	public final void unsetTextColor() { setTextColor(-1); }
 	public void setTextColor(int value) { _textColor = value; }
 	
-	public void setAction(Runnable value) { _action = value; }
+	public boolean isSwitch() { return _isSwitch; }
+	public boolean isSwitchOn() { return _switchOn; }
+	public void setSwitch() { setSwitch(false); }
+	public void setSwitch(boolean value) { _isSwitch = true; _switchOn = value; }
 	
-	public void playPressSound() {
-		getMC().getSoundHandler().playSound(
-			PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-	}
+	public void setAction(Runnable value) { _action = value; }
 	
 	
 	@Override
@@ -79,7 +79,13 @@ public class GuiButton extends GuiElementBase {
 	public void onPressed(int mouseX, int mouseY) {
 		if (!isEnabled()) return;
 		playPressSound();
+		if (isSwitch()) setSwitch(!isSwitchOn());
 		if (_action != null) _action.run();
+	}
+	
+	public void playPressSound() {
+		getMC().getSoundHandler().playSound(
+			PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 	}
 	
 	
@@ -89,8 +95,23 @@ public class GuiButton extends GuiElementBase {
 	public void draw(int mouseX, int mouseY, float partialTicks) {
 		if (!isVisible()) return;
 		boolean isHighlighted = isHighlighted(mouseX, mouseY);
-		drawButtonBackground(isHighlighted, partialTicks);
-		drawButtonForeground(isHighlighted, partialTicks);
+		if (isSwitchOn()) {
+			GlStateManager.disableCull();
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(0, getHeight(), 0);
+			GlStateManager.scale(1, -1, 1);
+			drawButtonBackground(isHighlighted, partialTicks);
+			GlStateManager.popMatrix();
+			GlStateManager.enableCull();
+			
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(0, 1, 0);
+			drawButtonForeground(isHighlighted, partialTicks);
+			GlStateManager.popMatrix();
+		} else {
+			drawButtonBackground(isHighlighted, partialTicks);
+			drawButtonForeground(isHighlighted, partialTicks);
+		}
 	}
 	
 	/** Draws the actual button texture. */
