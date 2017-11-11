@@ -3,16 +3,18 @@ container.wearablebackpacks.backpack=Рюкзак
 item.wearablebackpacks.backpack.name=Рюкзак
 
 tooltip.wearablebackpacks.moreInfo=Удерживайте %1$s для подробностей.
-tooltip.wearablebackpacks.openHint=Нажмите %1$s чтобы открыть надетым.
+tooltip.wearablebackpacks.openHint=Нажмите %1$s чтобы открыть надетый.
 tooltip.wearablebackpacks.equipHint=Поставьте на землю, присядьте и\nсломайте чтобы надеть.
-tooltip.wearablebackpacks.equipHint.extended=Присесть и сломать чтобы надеть.\nПрисесть и правый клик по земле\nпустой рукой чтобы снять.
-tooltip.wearablebackpacks.unequipHint=Присесть и правый клик по земле\nпустой рукой чтобы поставить.
+tooltip.wearablebackpacks.equipHint.extended=Присесть и сломать, чтобы надеть.\nПрисесть и правый клик по земле\nпустой рукой, чтобы снять.
+tooltip.wearablebackpacks.unequipHint=Присесть и правый клик по земле\nпустой рукой, чтобы поставить.
 tooltip.wearablebackpacks.used=Уже используется другим игроком.
 
 chat.wearablebackpacks.cantEquip=На вас уже надет другой рюкзак.
 chat.wearablebackpacks.cantEquip.chestplate=Вы не можете надеть рюкзак одновременно с бронёй.
 
 key.wearablebackpacks.open=Открыть рюкзак
+
+config.wearablebackpacks.gui.cancel=Отмена
 
 config.wearablebackpacks.general.equipAsChestArmor=Надевать как нагрудную броню
 config.wearablebackpacks.general.equipAsChestArmor.tooltip=Разрешает надевать рюкзак в слот для брони.
@@ -23,55 +25,53 @@ config.wearablebackpacks.general.enableSelfInteraction.tooltip=Разрешае�
 config.wearablebackpacks.general.dropAsBlockOnDeath=Ставить на землю как блок после смерти
 config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Разрешает рюкзаку падать на землю при смерти игрока целиком, а не разбрасывать своё содержимое.
 
-# config.wearablebackpacks.general.status.outOfRange=Value is out of range (%1$s - %1$s).
-# config.wearablebackpacks.general.status.required=Setting "%1$s" is required for this setting.
-# config.wearablebackpacks.general.status.chestplate=No effect if not equipped as armor. [general.equipAsChestArmor = false]
+config.wearablebackpacks.general.status.outOfRange=Значение выходит за диапазон (%1$s - %1$s).
+config.wearablebackpacks.general.status.required=Для этого параметра требуется установка "%1$s".
+config.wearablebackpacks.general.status.chestplate=Не действует, если не надето в слот брони. [general.equipAsChestArmor = false]
 
 config.wearablebackpacks.category.backpack=Настройки рюкзака
-config.wearablebackpacks.category.backpack.tooltip=Управляет настройками рюкзаков.
+config.wearablebackpacks.category.backpack.tooltip=Управляет настройками обычных рюкзаков.
 config.wearablebackpacks.backpack.enabled=Разрешено
 config.wearablebackpacks.backpack.enabled.tooltip=Разрешает рюкзаки.
 config.wearablebackpacks.backpack.durability=Прочность
 config.wearablebackpacks.backpack.durability.tooltip=Задаёт прочность рюкзака (0 - неразрушимый). Может вызывать проблемы с уже существующими повреждёнными рюкзаками.
-config.wearablebackpacks.backpack.durability.hint=Не действует если не надето в слот брони.
 config.wearablebackpacks.backpack.armor=Защита
 config.wearablebackpacks.backpack.armor.tooltip=Очки защиты рюкзака.
-config.wearablebackpacks.backpack.armor.hint=Не действует если не надето в слот брони.
 config.wearablebackpacks.backpack.size=Вместимость
-config.wearablebackpacks.backpack.size.tooltip=Задаёт вместимость рюкзака. Не влияет на уже существующие поставленные или надетые рюкзаки.
+config.wearablebackpacks.backpack.size.tooltip=Задаёт вместимость рюкзака. Не влияет на уже существующие поставленные или надетые рюкзаки, нужно взять в руки для изменения.
 
-# config.wearablebackpacks.category.entity=Entity Settings
-# config.wearablebackpacks.category.entity.tooltip=Controls settings regarding entities wearing backpacks
-# config.wearablebackpacks.entity.spawnNaturally=Spawn Naturally
-# config.wearablebackpacks.entity.spawnNaturally.tooltip=Controls whether mobs spawned naturally can randomly be wearing backpacks
-# config.wearablebackpacks.entity.spawnFromSpawners=Spawn From Spawners
-# config.wearablebackpacks.entity.spawnFromSpawners.tooltip=Controls whether mobs spawned from spawners can randomly be wearing backpacks
-# config.wearablebackpacks.entity.list=Entity Entries
-# config.wearablebackpacks.entity.entry=%1$s entries
-# config.wearablebackpacks.entity.entry.0=No entries!
-# config.wearablebackpacks.entity.entry.1=1 entry
+config.wearablebackpacks.category.entity=Настройки мобов
+config.wearablebackpacks.category.entity.tooltip=Управляет настройками носимых рюкзаков
+config.wearablebackpacks.entity.spawnNaturally=Появление мобов в мире
+config.wearablebackpacks.entity.spawnNaturally.tooltip=Задаёт, могут ли случайные мобы в мире появляться с рюкзаками
+config.wearablebackpacks.entity.spawnFromSpawners=Появление мобов от спаунера
+config.wearablebackpacks.entity.spawnFromSpawners.tooltip=Задаёт, могут ли случайные мобы из спаунеров появляться с рюкзаками
+config.wearablebackpacks.entity.list=Список мобов
+config.wearablebackpacks.entity.entry=%1$s мобов
+config.wearablebackpacks.entity.entry.0=Нет записей!
+config.wearablebackpacks.entity.entry.1=1 моб
 
-# config.wearablebackpacks.entity.entityID=Entity ID
-# config.wearablebackpacks.entity.entityID.tooltip=Internal identifier of the entity, such as "minecraft:zombie".
-# config.wearablebackpacks.entity.renderOptions=Render Options
-# config.wearablebackpacks.entity.renderOptions.tooltip=Controls the position, rotation and scale of the backpack on this entity.
-# config.wearablebackpacks.entity.chance=Chance
-# config.wearablebackpacks.entity.chance.tooltip=Chance of 1 in X that an entity spawns with this backpack (100 = 1%%, 1000 = 0.1%%). Set to 0 to disable.
-# config.wearablebackpacks.entity.backpack=Backpack
-# config.wearablebackpacks.entity.backpack.tooltip=Item ID of the backpack to spawn on the entity.
-# config.wearablebackpacks.entity.lootTable=Loot Table
-# config.wearablebackpacks.entity.lootTable.tooltip=ID of the loot table used to fill this backpack.
+config.wearablebackpacks.entity.entityID=Идентификатор моба
+config.wearablebackpacks.entity.entityID.tooltip=Идентификатор моба, например "minecraft:zombie".
+config.wearablebackpacks.entity.renderOptions=Настройки отображения
+config.wearablebackpacks.entity.renderOptions.tooltip=Контролирует положение, поворот и масштаб рюкзака на этом мобе.
+config.wearablebackpacks.entity.chance=Шанс
+config.wearablebackpacks.entity.chance.tooltip=Шанс 1 на X, что моб появится с рюкзаком (100 = 1%%, 1000 = 0.1%%). 0 - чтобы отключить.
+config.wearablebackpacks.entity.backpack=Рюкзак
+config.wearablebackpacks.entity.backpack.tooltip=Идентификатор рюкзака моба.
+config.wearablebackpacks.entity.lootTable=Таблица лута
+config.wearablebackpacks.entity.lootTable.tooltip=Идентификатор таблицы лута рюкзака.
 
-# config.wearablebackpacks.entity.translate=Position
-# config.wearablebackpacks.entity.translate.tooltip=Controls the render position of the backpack on this entity
-# config.wearablebackpacks.entity.rotate=Rotation
-# config.wearablebackpacks.entity.rotate.tooltip=Controls the render rotation of the backpack on this entity
-# config.wearablebackpacks.entity.scale=Scale
-# config.wearablebackpacks.entity.scale.tooltip=Controls the render scale (size) of the backpack on this entity
+config.wearablebackpacks.entity.translate=Позиция
+config.wearablebackpacks.entity.translate.tooltip=Управляет положением рюкзака на этом мобе
+config.wearablebackpacks.entity.rotate=Поворот
+config.wearablebackpacks.entity.rotate.tooltip=Управляет поворотом рюкзака на этом мобе
+config.wearablebackpacks.entity.scale=Масштаб
+config.wearablebackpacks.entity.scale.tooltip=Управляет масштабом рюкзака на этом мобе
 
-# config.wearablebackpacks.entity.status.entityNotFound=The specified entity couldn't be found. Entry will be ignored.
+config.wearablebackpacks.entity.status.entityNotFound=Не удается найти указанный моб. Запись будет игнорироваться.
 
 config.wearablebackpacks.category.cosmetic=Настройки отображения
 config.wearablebackpacks.category.cosmetic.tooltip=Настройки отображения (только клиент), которые не влияют на игровой процесс.
-config.wearablebackpacks.cosmetic.enchantEffectOpacity=Зачарования
+config.wearablebackpacks.cosmetic.enchantEffectOpacity=Прозрачность эффекта чар
 config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Контролирует отображение зачарований на одетых и поставленных рюказках, если есть.
