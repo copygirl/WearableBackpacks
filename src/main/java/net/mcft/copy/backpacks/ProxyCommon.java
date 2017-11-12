@@ -109,6 +109,7 @@ public class ProxyCommon {
 			// Set the backpack capability of the entity to spawn with the specified backpack.
 			// This will be delayed until the first update tick to fire after armor has been generated.
 			backpack.spawnWith = entry;
+			break;
 		}
 	}
 	/** Called when a mob spawns with a backpack with a 1 tick delay. */
