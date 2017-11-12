@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
@@ -51,6 +52,8 @@ import net.mcft.copy.backpacks.misc.util.NbtUtils;
 
 @SideOnly(Side.CLIENT)
 public class ScreenEntityEntry extends BaseConfigScreen {
+	
+	public static final long UPDATE_TIMESPAN = 1600;
 	
 	private final EntryListEntities _owningList;
 	private final Optional<EntryListEntities.Entry> _entry;
@@ -272,7 +275,7 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 			
 			public String id;
 			private boolean _isDefault;
-			private int _ticks = 0;
+			private long _lastUpdateTime = Long.MIN_VALUE;
 			private ItemStack _backpack;
 			
 			public final GuiField fieldChance;
@@ -398,7 +401,6 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 					insertWeighted(3, fieldBackpack);
 					insertWeighted(4, fieldLootTable);
 				}
-				updateBackpackItem();
 			}
 			
 			private void onColorOnPressed() {
@@ -406,6 +408,7 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 				switchColorOn.setIcon(on ? ICON_COLOR_ON : ICON_COLOR_OFF);
 				fieldColorMin.setEnabled(on);
 				fieldColorMax.setEnabled(on);
+				updateBackpackItem();
 			}
 			
 			@Override
@@ -427,7 +430,11 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 			
 			@Override
 			public void draw(int mouseX, int mouseY, float partialTicks) {
-				if (++_ticks % 20 == 0) updateBackpackItem();
+				long currentTime = Minecraft.getSystemTime();
+				if (currentTime > _lastUpdateTime + UPDATE_TIMESPAN) {
+					updateBackpackItem();
+					_lastUpdateTime = currentTime;
+				}
 				
 				setTextAndBorderColorIf(fieldChance.getText().isEmpty(), fieldChance, Severity.ERROR.foregroundColor);
 				
@@ -447,8 +454,11 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 					               Integer.parseInt(fieldColorMax.getText(), 16)).isValid();
 				setTextAndBorderColorIf(!valid, fieldColorMin, Severity.ERROR.foregroundColor);
 				setTextAndBorderColorIf(!valid, fieldColorMax, Severity.ERROR.foregroundColor);
-				labelColor.setColor(valid ? GuiUtils.getColorCode('7', true) : Severity.ERROR.foregroundColor);
-				labelColorCenter.setColor(valid ? GuiUtils.getColorCode('7', true) : Severity.ERROR.foregroundColor);
+				int color = !colorOn ? GuiUtils.getColorCode('8', true)
+				             : valid ? GuiUtils.getColorCode('7', true)
+				                     : Severity.ERROR.foregroundColor;
+				labelColor.setColor(color);
+				labelColorCenter.setColor(color);
 				
 				super.draw(mouseX, mouseY, partialTicks);
 			}

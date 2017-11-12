@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -35,7 +36,8 @@ public class ScreenRenderOptions extends BaseConfigScreen {
 	private final IConfigValue<RenderOptions> _element;
 	private final List<BackpackEntry> _backpacks;
 	private ItemStack _stack;
-	private int _ticks;
+	private int _index = 0;
+	private long _lastUpdateTime = Long.MIN_VALUE;
 	
 	public final BaseEntry.Value<List<Double>> entryTranslate;
 	public final BaseEntry.Value<Double> entryRotate;
@@ -106,9 +108,11 @@ public class ScreenRenderOptions extends BaseConfigScreen {
 	private final IBackpack _backpack = new IBackpack.Impl();
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		if (_ticks++ % 20 == 0) {
-			int index = (_ticks / 20) % _backpacks.size();
-			BackpackEntry entry = _backpacks.get(index);
+		long currentTime = Minecraft.getSystemTime();
+		if (currentTime > _lastUpdateTime + ScreenEntityEntry.UPDATE_TIMESPAN) {
+			_lastUpdateTime = currentTime;
+			_index = (_index + 1) % _backpacks.size();
+			BackpackEntry entry = _backpacks.get(_index);
 			Item item = Item.getByNameOrId(entry.backpack);
 			_stack = (item != null) ? new ItemStack(item) : ItemStack.EMPTY;
 			if (entry.colorRange != null)
