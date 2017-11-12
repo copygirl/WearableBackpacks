@@ -5,15 +5,16 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.mcft.copy.backpacks.BackpacksContent;
 import net.mcft.copy.backpacks.ProxyClient;
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.IBackpack;
+import net.mcft.copy.backpacks.api.BackpackRegistry.BackpackEntry;
 import net.mcft.copy.backpacks.api.BackpackRegistry.RenderOptions;
 import net.mcft.copy.backpacks.client.RendererBackpack;
 import net.mcft.copy.backpacks.client.gui.GuiElementBase;
@@ -26,22 +27,28 @@ import net.mcft.copy.backpacks.client.gui.config.EntryValueField;
 import net.mcft.copy.backpacks.client.gui.config.EntryValueSlider;
 import net.mcft.copy.backpacks.client.gui.config.IConfigEntry;
 import net.mcft.copy.backpacks.client.gui.config.IConfigValue;
+import net.mcft.copy.backpacks.misc.util.NbtUtils;
 
 @SideOnly(Side.CLIENT)
 public class ScreenRenderOptions extends BaseConfigScreen {
 	
-	private IConfigValue<RenderOptions> _element;
+	private final IConfigValue<RenderOptions> _element;
+	private final List<BackpackEntry> _backpacks;
+	private ItemStack _stack;
+	private int _ticks;
 	
 	public final BaseEntry.Value<List<Double>> entryTranslate;
 	public final BaseEntry.Value<Double> entryRotate;
 	public final BaseEntry.Value<Double> entryScale;
 	
-	public ScreenRenderOptions(IConfigValue<RenderOptions> element, Class<? extends EntityLivingBase> entityClass) {
+	public ScreenRenderOptions(IConfigValue<RenderOptions> element, List<BackpackEntry> backpacks,
+	                           Class<? extends EntityLivingBase> entityClass) {
 		super(GuiElementBase.getCurrentScreen(), Stream.concat(
 				((BaseConfigScreen)GuiElementBase.getCurrentScreen()).getTitleLines().stream().skip(1),
 				Stream.of("config." + WearableBackpacks.MOD_ID + ".entity.renderOptions")
 			).toArray(String[]::new));
-		_element = element;
+		_element   = element;
+		_backpacks = backpacks;
 		
 		if (entityClass != null) {
 			scrollableContent.entryList = null; // Prevent automatic resizing.
@@ -99,11 +106,19 @@ public class ScreenRenderOptions extends BaseConfigScreen {
 	private final IBackpack _backpack = new IBackpack.Impl();
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		if (_ticks++ % 20 == 0) {
+			int index = (_ticks / 20) % _backpacks.size();
+			BackpackEntry entry = _backpacks.get(index);
+			Item item = Item.getByNameOrId(entry.backpack);
+			_stack = (item != null) ? new ItemStack(item) : ItemStack.EMPTY;
+			if (entry.colorRange != null)
+				NbtUtils.set(_stack, entry.colorRange.getRandom(), "display", "color");
+		}
+		
 		buttonDone.setEnabled(listEntries.getEntries().allMatch(IConfigEntry::isValid));
 		buttonUndo.setEnabled(listEntries.getEntries().anyMatch(IConfigEntry::isChanged));
 		
-		// TODO: Cycle through random (wearable) backpack items and colors.
-		_backpack.setStack(new ItemStack(BackpacksContent.BACKPACK));
+		_backpack.setStack(_stack);
 		RendererBackpack.Layer.setOverride(_backpack, getValue());
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		RendererBackpack.Layer.resetOverride();
