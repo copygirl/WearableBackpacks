@@ -2,7 +2,6 @@ package net.mcft.copy.backpacks.network;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
@@ -48,14 +47,8 @@ public class MessageSyncSettings implements IMessage {
 		public boolean isScheduled() { return false; }
 		@Override
 		@SideOnly(Side.CLIENT)
-		public void handle(MessageSyncSettings message, MessageContext ctx) {
-			for (String key : message._data.getKeySet()) {
-				NBTBase tag = message._data.getTag(key);
-				Setting<?> setting = WearableBackpacks.CONFIG.getSetting(key);
-				if ((setting != null) && setting.doesSync())
-					setting.readSynced(tag);
-			}
-		}
+		public void handle(MessageSyncSettings message, MessageContext ctx)
+			{ WearableBackpacks.CONFIG.syncSettings(message._data); }
 	}
 	
 }

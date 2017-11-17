@@ -12,6 +12,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 
 import net.minecraftforge.common.config.Configuration;
@@ -19,6 +21,7 @@ import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEve
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -230,10 +233,37 @@ public class BackpacksConfig {
 		WearableBackpacks.CHANNEL.sendTo(MessageSyncSettings.create(), event.player);
 	}
 	
+	
+	@SideOnly(Side.CLIENT)
+	private boolean _connected;
+	
 	/** Resets all synced values of the settings after disconnecting. */
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void onDisconnectedFromServer(ClientDisconnectionFromServerEvent event)
-		{ getSettings().forEach(Setting::resetSynced); }
+	public void onDisconnectedFromServer(ClientConnectedToServerEvent event)
+		{ _connected = true; }
+	
+	/** Syncronizes the client settings to the ones specified
+	 *  in the compound tag. (Called by MessageSyncSettings.) */
+	@SideOnly(Side.CLIENT)
+	public void syncSettings(NBTTagCompound data) {
+		if (!_connected) return;
+		for (String key : data.getKeySet()) {
+			NBTBase tag = data.getTag(key);
+			Setting<?> setting = getSetting(key);
+			if ((setting != null) && setting.doesSync())
+				setting.readSynced(tag);
+		}
+	}
+	
+	/** Resets all synced values of the settings after disconnecting. */
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void onDisconnectedFromServer(ClientDisconnectionFromServerEvent event) {
+		if (!_connected) return;
+		getSettings().forEach(Setting::resetSynced);
+		_connected = false;
+	}
 	
 	
 	private static MinecraftServer getServerInstance()
