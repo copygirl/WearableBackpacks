@@ -13,7 +13,7 @@ option unlike any other!
 ## What's so great?
 
 - **There can be only one!**  
-  Other mods allow you to carry multiple backpacks in your inventory. **WB** doesn't.
+  Other mods allow you to carry multiple backpacks in your inventory. **WBs** doesn't.
   This design, as well as the resulting implementation has been carried over from its
   predecessor. But what the mod is lacking in convenience, it's trying to make up in
   charm and configurability.
@@ -49,7 +49,7 @@ option unlike any other!
   ![](docs/picture_3.png)
 
 - **Configuration Nation**  
-  Not sure if **WB** will fit your play style? Don't worry! This mod is meant to be
+  Not sure if **WBs** will fit your play style? Don't worry! This mod is meant to be
   incredibly configurable with its [easy-to-use ingame config menu][CONF]. This allows
   backpacks to be balanced, regardless of whether they're used in a personal hand-picked
   pack, a huge kitchen sink modpack or a deadly hardcore-massacre-of-doom experience with
@@ -106,6 +106,8 @@ treated the same.
 - Custom backpack size can be set using NBT tag `backpack:{size:[x,y]}`.
 - Custom armor value can be set using NBT tag `backpack:{armor:x}`.
 - Default backpack loot table `wearablebackpacks:backpack/default` can be overridden.
+- Backpack spawn settings can be modified: Edit chance, loot table and color.
+- Custom entities can be [configured to spawn with backpacks](https://twitter.com/koppeh/status/932956969425653761)!
 
 ## Credits
 
@@ -118,7 +120,7 @@ treated the same.
 ### Localization
 
 In the order of their [pull requests][PR] being submitted, here are the lovely people who
-provided their translation superpowers to make **WB** available in other languages:
+provided their translation superpowers to make **WBs** available in other languages:
 
 - **German** (de_DE): [Vexatos](https://github.com/Vexatos)
 - **Chinese** (zh_CN): [3TUSK](https://github.com/3TUSK)
@@ -130,6 +132,8 @@ provided their translation superpowers to make **WB** available in other languag
 - **Portuguese** (pt_BR): [wenlfs](https://github.com/wenlfs),
                           [eduardogomesv](https://github.com/eduardogomesv)
 - **Spanish** (es_MX): [Dorzar](https://github.com/Dorzar)
+- **Italian** (it_IT): [Insane-96](https://github.com/Insane-96)
+- **Danish** (da_DK): [Zerotiger](https://github.com/Zerotiger)
 
 ### Special thanks to ...
 
