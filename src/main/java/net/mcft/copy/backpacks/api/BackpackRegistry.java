@@ -106,7 +106,10 @@ public final class BackpackRegistry {
 		mergeEntityEntriesWithDefault(_entities, value);
 		_entityEntryLookupCache = null;
 	}
-	public static void mergeEntityEntriesWithDefault(List<BackpackEntityEntry> dest, List<BackpackEntityEntry> value) {
+	public static List<BackpackEntityEntry> mergeEntityEntriesWithDefault(List<BackpackEntityEntry> value)
+		{ return mergeEntityEntriesWithDefault(new ArrayList<>(), value); }
+	public static List<BackpackEntityEntry> mergeEntityEntriesWithDefault(
+			List<BackpackEntityEntry> dest, List<BackpackEntityEntry> value) {
 		dest.clear();
 		_defaultEntities.stream().map(BackpackEntityEntry::new).forEach(dest::add);
 		
@@ -127,6 +130,8 @@ public final class BackpackRegistry {
 				}
 			} else dest.add(entityEntry);
 		}
+		
+		return dest;
 	}
 	
 	public static List<BackpackEntry> getBackpackEntries(Class<? extends EntityLivingBase> entityClass) {

@@ -33,11 +33,11 @@ public class SettingListEntities extends Setting<List<BackpackEntityEntry>> {
 	
 	@Override
 	protected void loadFromConfiguration(Configuration config) {
-		set(config.getCategoryNames().stream()
+		set(BackpackRegistry.mergeEntityEntriesWithDefault(config.getCategoryNames().stream()
 			.filter(name -> name.startsWith(getCategory() + Configuration.CATEGORY_SPLITTER))
 			.sorted(Comparator.comparingInt(category -> config.get(category, "index", Integer.MAX_VALUE).getInt()))
 			.map(category -> loadEntity(config, category))
-			.collect(Collectors.toList()));
+			.collect(Collectors.toList())));
 	}
 	
 	@Override
