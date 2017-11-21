@@ -165,7 +165,7 @@ public abstract class Setting<T> {
 	@SideOnly(Side.CLIENT)
 	public void setEntry(EntrySetting<T> entry) { _entry = entry; }
 	/** Resets the setting's current config entry in the config GUI. */
-	@SideOnly(Side.CLIENT)
+	@SideOnly(Side.CLIENT) // TODO: This is never actually called.
 	public void resetEntry() { _entry = null; }
 	
 	

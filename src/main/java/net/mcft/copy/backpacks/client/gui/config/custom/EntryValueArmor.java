@@ -22,8 +22,8 @@ public class EntryValueArmor extends EntryValueSlider.RangeInteger {
 		
 		for (int i = 0; i < 10; i++, x += 8) {
 			int tx = (i * 2 + 1 < armor)  ? 34
-					: (i * 2 + 1 == armor) ? 25
-											: 16;
+			       : (i * 2 + 1 == armor) ? 25
+			                              : 16;
 			drawRect(x, y, tx, 9, 9, 9, 256);
 		}
 	}

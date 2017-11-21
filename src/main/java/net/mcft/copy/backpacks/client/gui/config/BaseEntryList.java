@@ -24,19 +24,19 @@ import net.mcft.copy.backpacks.config.Status.Severity;
 @SideOnly(Side.CLIENT)
 public abstract class BaseEntryList<T> extends GuiLayout implements IConfigEntry {
 	
-	protected final List<T> previousValue;
 	protected final List<T> defaultValue;
+	protected final List<T> previousValue;
 	
 	public final GuiLayout layoutList;
 	public final GuiButton buttonAdd;
 	
 	
-	public BaseEntryList(int width, List<T> previousValue, List<T> defaultValue) {
+	public BaseEntryList(int width, List<T> defaultValue, List<T> previousValue) {
 		super(Direction.VERTICAL);
 		setCenteredHorizontal(width);
 		
-		this.previousValue = previousValue;
 		this.defaultValue  = defaultValue;
+		this.previousValue = previousValue;
 		
 		layoutList = new GuiLayout(Direction.VERTICAL);
 		layoutList.setFillHorizontal();

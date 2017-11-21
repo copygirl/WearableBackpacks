@@ -83,7 +83,7 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 		entryRenderOptions = new EntryButtonRenderOptions(entryEntityID,
 			_entry.map(e -> e.getValue().renderOptions), this::getBackpackEntries);
 		entryRenderOptions.setLabelAndTooltip("entity.renderOptions");
-		listBackpack = new EntryListBackpack(entries, defaults);
+		listBackpack = new EntryListBackpack(defaults, entries);
 		
 		listEntries.addFixed(entryEntityID);
 		listEntries.addFixed(entryRenderOptions);
@@ -147,8 +147,8 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 		public Optional<EntityEntry> entityEntry;
 		
 		public EntryEntityID(ScreenEntityEntry owningScreen) {
-			super(new EntryValueField.Text(), owningScreen._entry
-				.map(e -> e.getValue().entityID), Optional.empty());
+			super(new EntryValueField.Text(), Optional.empty(),
+			      owningScreen._entry.map(e -> e.getValue().entityID));
 			setLabelAndTooltip("entity.entityID");
 			((EntryValueField.Text)control).setChangedAction(this::onChanged);
 			_owningScreen = owningScreen;
@@ -230,8 +230,8 @@ public class ScreenEntityEntry extends BaseConfigScreen {
 		
 		public static final int CHANCE_WIDTH = 42;
 		
-		public EntryListBackpack(List<BackpackEntry> previousValue, List<BackpackEntry> defaultValue) {
-			super(300, previousValue, defaultValue);
+		public EntryListBackpack(List<BackpackEntry> defaultValue, List<BackpackEntry> previousValue) {
+			super(300, defaultValue, previousValue);
 			
 			GuiLayout entryHeader = new GuiLayout(Direction.HORIZONTAL);
 			entryHeader.setFillHorizontal();

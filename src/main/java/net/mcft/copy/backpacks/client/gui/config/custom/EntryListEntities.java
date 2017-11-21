@@ -39,7 +39,7 @@ public class EntryListEntities extends BaseEntryList<BackpackEntityEntry> {
 	public EntryListEntities(SettingListEntities setting) {
 		// Use getDefaultEntityEntries instead of getDefault because
 		// it will only be populated after CONFIG has been initialized.
-		super(260, setting.getOwn(), BackpackRegistry.getDefaultEntityEntries());
+		super(260, BackpackRegistry.getDefaultEntityEntries(), setting.getOwn());
 		_setting = setting;
 		
 		GuiContainer entryLabel = new GuiContainer();

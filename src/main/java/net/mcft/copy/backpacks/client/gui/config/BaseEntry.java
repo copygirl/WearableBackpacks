@@ -121,16 +121,16 @@ public abstract class BaseEntry extends GuiLayout implements IConfigEntry {
 	public static class Value<T> extends BaseEntry {
 		
 		protected IConfigValue<T> control;
-		public final Optional<T> previousValue;
 		public final Optional<T> defaultValue;
+		public final Optional<T> previousValue;
 		
-		public Value(IConfigValue<T> control, T currentValue, T defaultValue)
-			{ this(control, Optional.ofNullable(currentValue), Optional.ofNullable(defaultValue)); }
-		public Value(IConfigValue<T> control, Optional<T> currentValue, Optional<T> defaultValue) {
+		public Value(IConfigValue<T> control, T defaultValue, T currentValue)
+			{ this(control, Optional.ofNullable(defaultValue), Optional.ofNullable(currentValue)); }
+		public Value(IConfigValue<T> control, Optional<T> defaultValue, Optional<T> currentValue) {
 			if (control == null) throw new NullPointerException("control must not be null");
 			this.control       = control;
-			this.previousValue = currentValue;
 			this.defaultValue  = defaultValue;
+			this.previousValue = currentValue;
 			
 			setSpacing(4, 8, 6, 4);
 			addFixed(iconStatus);

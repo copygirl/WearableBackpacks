@@ -72,9 +72,9 @@ public class ScreenRenderOptions extends BaseConfigScreen {
 		
 		RenderOptions value = element.getValue().get();
 		entryTranslate = new BaseEntry.Value<>(new EntryValueMulti<>(2, EntryValueField.Decimal.class),
-		                                       Arrays.asList(value.y, value.z), null);
-		entryRotate    = new BaseEntry.Value<>(new EntryValueSlider.RangeDouble(-90, 90, 5), value.rotate, null);
-		entryScale     = new BaseEntry.Value<>(new EntryValueField.Decimal(), value.scale, null);
+		                                       null, Arrays.asList(value.y, value.z));
+		entryRotate    = new BaseEntry.Value<>(new EntryValueSlider.RangeDouble(-90, 90, 5), null, value.rotate);
+		entryScale     = new BaseEntry.Value<>(new EntryValueField.Decimal(), null, value.scale);
 		
 		entryTranslate.setLabelAndTooltip("entity.translate");
 		entryRotate.setLabelAndTooltip("entity.rotate");
