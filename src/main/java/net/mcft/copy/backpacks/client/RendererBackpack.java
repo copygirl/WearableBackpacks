@@ -176,13 +176,13 @@ public final class RendererBackpack {
 		Minecraft mc = Minecraft.getMinecraft();
 		float glintStrength = WearableBackpacks.CONFIG.cosmetic.enchantEffectOpacity.get().floatValue();
 		if (glintStrength <= 0) return;
-		float glintScale = 0.5F;
+		float glintScale   = 1.5F;
 		float animProgress = ticks / 10;
 		
 		int color = IntermodUtils.getRuneColor(backpack.getStack());
 		float r = (color >> 16 & 0xFF) / 255.0F * glintStrength;
-		float g = (color >> 8 & 0xFF) / 255.0F * glintStrength;
-		float b = (color & 0xFF) / 255.0F * glintStrength;
+		float g = (color >>  8 & 0xFF) / 255.0F * glintStrength;
+		float b = (color       & 0xFF) / 255.0F * glintStrength;
 		
 		mc.getTextureManager().bindTexture(ENCHANTED_ITEM_GLINT);
 		mc.entityRenderer.setupFogColor(true);
