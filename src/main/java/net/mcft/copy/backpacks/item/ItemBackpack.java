@@ -1,7 +1,10 @@
 package net.mcft.copy.backpacks.item;
 
 import java.util.List;
+import java.util.UUID;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.block.state.IBlockState;
@@ -14,6 +17,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -68,11 +73,12 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		setCreativeTab(CreativeTabs.TOOLS); // TODO: Use our own creative tab?
 	}
 	
-	/** Returns the damage reduction amount. Functions identically to the Vanilla ItemArmor value. */
-	public int getDamageReductionAmount(ItemStack stack) {
+	public int getArmorDamageReductionAmount(ItemStack stack) {
 		int defaultArmor = WearableBackpacks.CONFIG.backpack.armor.get();
 		return NbtUtils.get(stack, defaultArmor, TAG_CUSTOM_ARMOR);
 	}
+	
+	public float getArmorToughness(ItemStack stack) { return 0; }
 	
 	// Item properties
 	
@@ -245,14 +251,12 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	}
 	
 	@Override
-	public void onEquippedBroken(EntityLivingBase entity, IBackpack backpack) {
-		onDeath(entity, backpack);
-	}
+	public void onEquippedBroken(EntityLivingBase entity, IBackpack backpack)
+		{ onDeath(entity, backpack); }
 	
 	@Override
-	public void onFaultyRemoval(EntityLivingBase entity, IBackpack backpack) {
-		onDeath(entity, backpack);
-	}
+	public void onFaultyRemoval(EntityLivingBase entity, IBackpack backpack)
+		{ onDeath(entity, backpack); }
 	
 	@Override
 	public void onBlockBreak(TileEntity tileEntity, IBackpack backpack) {
@@ -277,16 +281,11 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	// ISpecialArmor implementation
 	
-	public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage, int slot) {
-		if (source.isUnblockable()) return new ArmorProperties(0, 0.0, 0);
-		int reductionAmount = ((ItemBackpack)armor.getItem()).getDamageReductionAmount(armor);
-		int maxDamage = armor.getMaxDamage() + 1 - armor.getItemDamage();
-		return new ArmorProperties(0, reductionAmount / 25.0, maxDamage);
-	}
+	public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage, int slot)
+		{ return new ArmorProperties(0, 0.0, 0); }
 	
-	public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot) {
-		return ((ItemBackpack)armor.getItem()).getDamageReductionAmount(armor);
-	}
+	public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot)
+		{ return 0; }
 	
 	public void damageArmor(EntityLivingBase entity, ItemStack stack,
 	                        DamageSource source, int damage, int slot) {
@@ -297,6 +296,24 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		IBackpack backpack = BackpackHelper.getBackpack(entity);
 		if (backpack == null) return;
 		backpack.getType().onEquippedBroken(entity, backpack);
+	}
+	
+	@Override
+	public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
+		// Since we implement ISpecialArmor, this should have no effect on
+		// the actual defensive value, but it will provide a proper tooltip!
+		Multimap<String, AttributeModifier> modifiers = HashMultimap.create();
+		boolean equipAsChestArmor = WearableBackpacks.CONFIG.equipAsChestArmor.get();
+		if (equipAsChestArmor && (slot == EntityEquipmentSlot.CHEST)) {
+			ItemBackpack backpack = (ItemBackpack)stack.getItem();
+			modifiers.put(SharedMonsterAttributes.ARMOR.getName(), new AttributeModifier(
+				UUID.fromString("E8B05077-6027-49D5-A895-9E37D20E45DC"),
+				"Armor modifier", backpack.getArmorDamageReductionAmount(stack), 0));
+			modifiers.put(SharedMonsterAttributes.ARMOR_TOUGHNESS.getName(), new AttributeModifier(
+				UUID.fromString("5131DA7B-E863-4E7F-B9A1-493F72A55DE2"),
+				"Armor toughness", backpack.getArmorToughness(stack), 0));
+		}
+		return modifiers;
 	}
 	
 }
