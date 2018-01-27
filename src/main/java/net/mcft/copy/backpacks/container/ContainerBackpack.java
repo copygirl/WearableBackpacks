@@ -1,6 +1,6 @@
 package net.mcft.copy.backpacks.container;
 
-// import invtweaks.api.container.ChestContainer;
+import invtweaks.api.container.ChestContainer;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -20,7 +20,7 @@ import net.mcft.copy.backpacks.misc.BackpackDataItems;
 import net.mcft.copy.backpacks.misc.BackpackSize;
 import net.mcft.copy.backpacks.network.MessageOpenGui;
 
-// @ChestContainer
+@ChestContainer
 public abstract class ContainerBackpack extends Container {
 	
 	public static final String TAG_SIZE      = "size";
@@ -184,7 +184,7 @@ public abstract class ContainerBackpack extends Container {
 	
 	// Inventory Tweaks support
 	
-	// @ChestContainer.RowSizeCallback
-	// public int getRowSize() { return size.getColumns(); }
+	@ChestContainer.RowSizeCallback
+	public int getRowSize() { return size.getColumns(); }
 	
 }

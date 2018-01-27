@@ -23,14 +23,16 @@ minecraft {
 	
 	replace "@VERSION@", project.version
 }
-/*
+
 repositories {
-	maven { url "http://mvn.rx14.co.uk/repo" }
+	ivy {
+		name 'asie dependency mirror'
+		artifactPattern "http://asie.pl/javadeps/[module]-[revision](-[classifier]).[ext]"
+	}
 }
 dependencies {
-	deobfCompile "inventorytweaks:InventoryTweaks:${invtweaks_version}:api"
+	deobfCompile name: "InventoryTweaks", version: "${invtweaks_version}-api"
 }
-*/
 
 processResources {
 	inputs.property "mod_version", project.version
