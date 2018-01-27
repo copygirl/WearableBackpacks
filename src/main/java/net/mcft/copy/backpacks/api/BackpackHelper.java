@@ -1,5 +1,6 @@
 package net.mcft.copy.backpacks.api;
 
+import net.minecraft.item.ItemBlock;
 import net.minecraft.util.EnumHand;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -151,7 +152,10 @@ public final class BackpackHelper {
 		SoundType sound = block.getSoundType(state, world, pos, entity);
 		world.playSound(x, y, z, sound.getPlaceSound(), SoundCategory.BLOCKS,
 		                (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F, false);
-		
+
+		// This is used to transfer the BlockEntityTag from Ctrl+pick-blocking to the world.
+		boolean alreadyConfigured = ItemBlock.setTileEntityNBT(world, player, pos, stack);
+
 		TileEntity tileEntity = world.getTileEntity(pos);
 		if (tileEntity == null) return true;
 		IBackpack placedBackpack = BackpackHelper.getBackpack(tileEntity);
@@ -165,27 +169,29 @@ public final class BackpackHelper {
 		stack = stack.copy();
 		stack.setCount(1);
 		placedBackpack.setStack(stack);
-		
-		// If the carrier had the backpack equipped, transfer data and unequip.
-		if (isEquipped) {
-			
-			IBackpackType type = carrierBackpack.getType();
-			IBackpackData data = carrierBackpack.getData();
-			if ((data == null) && !world.isRemote) {
-				LOG.error("Backpack data was null when placing down equipped backpack");
-				data = type.createBackpackData(stack);
-			}
-			
-			placedBackpack.setData(data);
-			
-			if (!world.isRemote)
-				BackpackHelper.setEquippedBackpack(entity, ItemStack.EMPTY, null);
-			
-			type.onUnequip(entity, tileEntity, placedBackpack);
-		
-		// Otherwise create a fresh backpack data on the server.
-		} else if (!world.isRemote) placedBackpack.setData(
-			placedBackpack.getType().createBackpackData(stack));
+
+		if (!alreadyConfigured) {
+			// If the carrier had the backpack equipped, transfer data and unequip.
+			if (isEquipped) {
+
+				IBackpackType type = carrierBackpack.getType();
+				IBackpackData data = carrierBackpack.getData();
+				if ((data == null) && !world.isRemote) {
+					LOG.error("Backpack data was null when placing down equipped backpack");
+					data = type.createBackpackData(stack);
+				}
+
+				placedBackpack.setData(data);
+
+				if (!world.isRemote)
+					BackpackHelper.setEquippedBackpack(entity, ItemStack.EMPTY, null);
+
+				type.onUnequip(entity, tileEntity, placedBackpack);
+
+				// Otherwise create a fresh backpack data on the server.
+			} else if (!world.isRemote) placedBackpack.setData(
+					placedBackpack.getType().createBackpackData(stack));
+		}
 		
 		// We only shrink the original stack here instead of earlier
 		// as its information is still needed for other checks, and
