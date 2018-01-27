@@ -99,12 +99,11 @@ public class BlockBackpack extends BlockContainer {
 	
 	// TODO: Fixed crash, but still doesn't return functioning ItemStack.
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target,
-	                              World world, BlockPos pos, EntityPlayer player) {
+	public ItemStack getItem(World world, BlockPos pos, IBlockState state) {
 		IBackpack backpack = BackpackHelper.getBackpack(world.getTileEntity(pos));
 		return (backpack != null)
 			? backpack.getStack().copy()
-			: super.getPickBlock(state, target, world, pos, player);
+			: super.getItem(world, pos, state);
 	}
 	
 	@Override
