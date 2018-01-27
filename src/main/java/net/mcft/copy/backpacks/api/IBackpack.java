@@ -11,7 +11,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 public interface IBackpack {
 	
 	@CapabilityInject(IBackpack.class)
-	public static Capability<IBackpack> CAPABILITY = null;
+	Capability<IBackpack> CAPABILITY = null;
 	
 	ItemStack getStack();
 	void setStack(ItemStack value);
