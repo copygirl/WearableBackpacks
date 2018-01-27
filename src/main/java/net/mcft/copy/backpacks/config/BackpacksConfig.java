@@ -45,7 +45,10 @@ public class BackpacksConfig {
 	
 	public final Setting<Boolean> enableEquippedInteraction = new SettingBoolean(true)
 		.setComment("If enabled, allows equipped backpacks to be opened by other players by right clicking the target's back. Default: true.");
-	
+
+	public final Setting<Boolean> enableMachineInteraction = new SettingBoolean(false)
+			.setComment("If enabled, allows machines to interact with placed backpacks. Default: false.");
+
 	public final Setting<Boolean> enableSelfInteraction = new SettingBoolean(false).setSynced()
 		.setComment("If enabled, allows players to open their own equipped backpack without requiring it to be placed first using a keybind. Default: false.");
 	

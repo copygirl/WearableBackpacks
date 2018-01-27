@@ -1,5 +1,8 @@
 package net.mcft.copy.backpacks.block.entity;
 
+import net.mcft.copy.backpacks.WearableBackpacks;
+import net.mcft.copy.backpacks.config.BackpacksConfig;
+import net.mcft.copy.backpacks.misc.BackpackDataItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -17,6 +20,7 @@ import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.block.BlockBackpack;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 // TODO: Implement ItemStackHandler (only for bottom side)?
 public class TileEntityBackpack extends TileEntity implements ITickable, IBackpack {
@@ -168,13 +172,23 @@ public class TileEntityBackpack extends TileEntity implements ITickable, IBackpa
 	
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		return (capability == IBackpack.CAPABILITY);
+		if (capability == IBackpack.CAPABILITY) {
+			return true;
+		} else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			return WearableBackpacks.CONFIG.enableMachineInteraction.get() && getData() instanceof BackpackDataItems;
+		} else {
+			return false;
+		}
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		return ((capability == IBackpack.CAPABILITY) ? (T)this : null);
+		if (capability == IBackpack.CAPABILITY) {
+			return IBackpack.CAPABILITY.cast(this);
+		} else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(((BackpackDataItems) getData()).getItems());
+		} else {
+			return null;
+		}
 	}
-	
 }
