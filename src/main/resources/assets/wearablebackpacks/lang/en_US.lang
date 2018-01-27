@@ -23,6 +23,8 @@ config.wearablebackpacks.general.enableEquippedInteraction=Enable Equipped Inter
 config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Controls whether players can access equipped backpacks on other players (and entities).
 config.wearablebackpacks.general.enableSelfInteraction=Enable Self Interaction
 config.wearablebackpacks.general.enableSelfInteraction.tooltip=Controls whether players can access their own equipped backpack using a keybind.
+config.wearablebackpacks.general.enableMachineInteraction=Enable Machine Interaction
+config.wearablebackpacks.general.enableMachineInteraction.tooltip=Controls whether machines (such as hoppers) can interact with placed backpacks.
 config.wearablebackpacks.general.dropAsBlockOnDeath=Drop as Block on Death
 config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Controls whether backpacks place themselves down upon death, instead of scattering their contents.
 

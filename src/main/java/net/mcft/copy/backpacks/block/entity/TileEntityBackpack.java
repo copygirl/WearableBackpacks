@@ -1,8 +1,5 @@
 package net.mcft.copy.backpacks.block.entity;
 
-import net.mcft.copy.backpacks.WearableBackpacks;
-import net.mcft.copy.backpacks.config.BackpacksConfig;
-import net.mcft.copy.backpacks.misc.BackpackDataItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -14,13 +11,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
 
+import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
 import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.block.BlockBackpack;
+import net.mcft.copy.backpacks.misc.BackpackDataItems;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
-import net.minecraftforge.items.CapabilityItemHandler;
 
 // TODO: Implement ItemStackHandler (only for bottom side)?
 public class TileEntityBackpack extends TileEntity implements ITickable, IBackpack {
@@ -118,15 +117,12 @@ public class TileEntityBackpack extends TileEntity implements ITickable, IBackpa
 	}
 	
 	@Override
-	public final NBTTagCompound getUpdateTag() {
-		return writeNBT(super.writeToNBT(new NBTTagCompound()), true);
-	}
+	public final NBTTagCompound getUpdateTag()
+		{ return writeNBT(super.writeToNBT(new NBTTagCompound()), true); }
 	
 	@Override
-	public final void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		readNBT(pkt.getNbtCompound(), true);
-	}
-	
+	public final void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt)
+		{ readNBT(pkt.getNbtCompound(), true); }
 	
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
@@ -166,29 +162,27 @@ public class TileEntityBackpack extends TileEntity implements ITickable, IBackpa
 	@Override
 	public int getPrevLidTicks() { return _prevLidTicks; }
 	@Override
-	public void setLidTicks(int value) { _prevLidTicks = _lidTicks; _lidTicks = value; }
+	public void setLidTicks(int value)
+		{ _prevLidTicks = _lidTicks; _lidTicks = value; }
 	
 	// Capability overrides
 	
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if (capability == IBackpack.CAPABILITY) {
-			return true;
-		} else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-			return WearableBackpacks.CONFIG.enableMachineInteraction.get() && getData() instanceof BackpackDataItems;
-		} else {
-			return false;
-		}
+		return (capability == IBackpack.CAPABILITY)
+			|| ((capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+				&& WearableBackpacks.CONFIG.enableMachineInteraction.get()
+				&& (getData() instanceof BackpackDataItems))
+			|| super.hasCapability(capability, facing);
 	}
 	
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if (capability == IBackpack.CAPABILITY) {
-			return IBackpack.CAPABILITY.cast(this);
-		} else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-			return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(((BackpackDataItems) getData()).getItems());
-		} else {
-			return null;
-		}
+		if (!hasCapability(capability, facing)) return null;
+		return (capability == IBackpack.CAPABILITY)
+				? IBackpack.CAPABILITY.cast(this)
+			: ((capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY))
+				? CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(((BackpackDataItems)getData()).getItems())
+			: super.getCapability(capability, facing);
 	}
 }

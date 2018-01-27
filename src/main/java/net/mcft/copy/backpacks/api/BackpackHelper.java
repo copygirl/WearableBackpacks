@@ -1,7 +1,5 @@
 package net.mcft.copy.backpacks.api;
 
-import net.minecraft.item.ItemBlock;
-import net.minecraft.util.EnumHand;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,9 +13,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -169,28 +169,28 @@ public final class BackpackHelper {
 		stack = stack.copy();
 		stack.setCount(1);
 		placedBackpack.setStack(stack);
-
+		
 		if (!alreadyConfigured) {
 			// If the carrier had the backpack equipped, transfer data and unequip.
 			if (isEquipped) {
-
+				
 				IBackpackType type = carrierBackpack.getType();
 				IBackpackData data = carrierBackpack.getData();
 				if ((data == null) && !world.isRemote) {
 					LOG.error("Backpack data was null when placing down equipped backpack");
 					data = type.createBackpackData(stack);
 				}
-
+				
 				placedBackpack.setData(data);
-
+				
 				if (!world.isRemote)
 					BackpackHelper.setEquippedBackpack(entity, ItemStack.EMPTY, null);
-
+				
 				type.onUnequip(entity, tileEntity, placedBackpack);
-
-				// Otherwise create a fresh backpack data on the server.
+				
+			// Otherwise create a fresh backpack data on the server.
 			} else if (!world.isRemote) placedBackpack.setData(
-					placedBackpack.getType().createBackpackData(stack));
+				placedBackpack.getType().createBackpackData(stack));
 		}
 		
 		// We only shrink the original stack here instead of earlier

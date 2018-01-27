@@ -19,7 +19,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
@@ -97,7 +96,6 @@ public class BlockBackpack extends BlockContainer {
 	
 	// Block methods / events
 	
-	// TODO: Fixed crash, but still doesn't return functioning ItemStack.
 	@Override
 	public ItemStack getItem(World world, BlockPos pos, IBlockState state) {
 		IBackpack backpack = BackpackHelper.getBackpack(world.getTileEntity(pos));
