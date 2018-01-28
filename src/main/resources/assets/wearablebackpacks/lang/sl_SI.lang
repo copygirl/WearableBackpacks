@@ -23,8 +23,8 @@ config.wearablebackpacks.general.enableEquippedInteraction=Omogoči uporabljanje
 config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Omogoči igralcem, da odprejo nahrbtnik, ki ga nosijo druge entitete.
 config.wearablebackpacks.general.enableSelfInteraction=Omogoči odpiraje nahrbtnika, ki ga nosiš
 config.wearablebackpacks.general.enableSelfInteraction.tooltip=Omogoči igralcem dostop, do njihovega nahrbtnika medtem ko ga nosijo, s tipko.
-+config.wearablebackpacks.general.enableMachineInteraction=Omogoči interakcijo s stroji
-+config.wearablebackpacks.general.enableMachineInteraction.tooltip=Omogoči lijakom(ter strojem), da lahko iz postavljenega nahrbtnika vzamejo in vstavijo stvari.
+config.wearablebackpacks.general.enableMachineInteraction=Omogoči interakcijo s stroji
+config.wearablebackpacks.general.enableMachineInteraction.tooltip=Omogoči lijakom(ter strojem), da lahko iz postavljenega nahrbtnika vzamejo in vstavijo stvari.
 config.wearablebackpacks.general.dropAsBlockOnDeath=Po smrti postavi nahrbtnik
 config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Odloči če se nahrbtnik postavi na tla po smrti(Se ne raztrosijo stvari v nahrbtniku po tleh)
 
