@@ -134,6 +134,7 @@ provided their translation superpowers to make **WBs** available in other langua
 - **Spanish** (es_MX): [Dorzar](https://github.com/Dorzar)
 - **Italian** (it_IT): [Insane-96](https://github.com/Insane-96)
 - **Danish** (da_DK): [Zerotiger](https://github.com/Zerotiger)
+- **Slovenian** (sl_SI): [SFort](https://github.com/SFort)
 
 ### Special thanks to ...
 
