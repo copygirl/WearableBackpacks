@@ -281,11 +281,19 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	// ISpecialArmor implementation
 	
-	public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage, int slot)
-		{ return new ArmorProperties(0, 0.0, 0); }
+	public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor,
+	                                     DamageSource source, double damage, int slot) {
+		ArmorProperties prop = new ArmorProperties(0, 0.0, 0);
+		ItemBackpack backpack = (ItemBackpack)armor.getItem();
+		prop.Armor       = backpack.getArmorDamageReductionAmount(armor);
+		prop.Toughness   = backpack.getArmorToughness(armor);
+		prop.AbsorbRatio = prop.Armor / 25.0;
+		prop.AbsorbMax   = armor.getMaxDamage() - armor.getItemDamage() + 1;
+		return prop;
+	}
 	
 	public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot)
-		{ return 0; }
+		{ return ((ItemBackpack)armor.getItem()).getArmorDamageReductionAmount(armor); }
 	
 	public void damageArmor(EntityLivingBase entity, ItemStack stack,
 	                        DamageSource source, int damage, int slot) {
@@ -298,10 +306,12 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		backpack.getType().onEquippedBroken(entity, backpack);
 	}
 	
+	// Can't really use attribute modifiers and ISpecialArmor together T_T
+	// All we need from ISpecialArmor is damageArmor. A similar damageItem method on
+	// Item which includes the entity that is wearing the backpack would work, too.
+	/*
 	@Override
 	public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
-		// Since we implement ISpecialArmor, this should have no effect on
-		// the actual defensive value, but it will provide a proper tooltip!
 		Multimap<String, AttributeModifier> modifiers = HashMultimap.create();
 		boolean equipAsChestArmor = WearableBackpacks.CONFIG.equipAsChestArmor.get();
 		if (equipAsChestArmor && (slot == EntityEquipmentSlot.CHEST)) {
@@ -315,5 +325,6 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		}
 		return modifiers;
 	}
+	*/
 	
 }
