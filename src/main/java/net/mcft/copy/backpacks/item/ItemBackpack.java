@@ -223,9 +223,10 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		if (player.world.isRemote) return;
 		new ContainerBackpack(player, backpack) {
 			@Override public boolean canInteractWith(EntityPlayer player) {
-				return (player.isEntityAlive() && !tileEntity.isInvalid() &&
-						(player.world.getTileEntity(tileEntity.getPos()) == tileEntity) &&
-						(player.getDistanceSq(tileEntity.getPos()) <= 64));
+				return player.isEntityAlive()
+					&& !tileEntity.isInvalid()
+					&& (player.world.getTileEntity(tileEntity.getPos()) == tileEntity)
+					&& (player.getDistanceSq(tileEntity.getPos()) <= 64);
 			}
 		}.open();
 	}
@@ -234,9 +235,8 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	public void onEquippedInteract(EntityPlayer player, EntityLivingBase target, IBackpack backpack) {
 		if (player.world.isRemote) return;
 		new ContainerBackpack(player, backpack) {
-			@Override public boolean canInteractWith(EntityPlayer player) {
-				return BackpackHelper.canInteractWithEquippedBackpack(player, target);
-			}
+			@Override public boolean canInteractWith(EntityPlayer player)
+				{ return BackpackHelper.canInteractWithEquippedBackpack(player, target); }
 		}.open();
 	}
 	
@@ -288,7 +288,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		prop.Armor       = backpack.getArmorDamageReductionAmount(armor);
 		prop.Toughness   = backpack.getArmorToughness(armor);
 		prop.AbsorbRatio = prop.Armor / 25.0;
-		prop.AbsorbMax   = armor.getMaxDamage() - armor.getItemDamage() + 1;
+		prop.AbsorbMax   = Math.max(1, armor.getMaxDamage() - armor.getItemDamage() + 1);
 		return prop;
 	}
 	
@@ -297,7 +297,6 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	public void damageArmor(EntityLivingBase entity, ItemStack stack,
 	                        DamageSource source, int damage, int slot) {
-		// TODO: There's still a lack of sound / particles when armor breaks in 1.11..?
 		stack.damageItem(damage, entity);
 		if (!stack.isEmpty()) return;
 		// If backpack breaks while equipped, call onEquippedBroken.
@@ -326,5 +325,38 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		return modifiers;
 	}
 	*/
+	
+	// When changing the maximum backpack durability in WBs' config to 0,
+	// any already damaged backpacks would simply turn invalid due to their
+	// damage value being above zero.
+	// 
+	// This little hack makes it so when durability is set to 0, it fakes
+	// the durability to be very high, instead. And any attempt to get or
+	// set damage will simply return or set it to 0.
+	
+	// TODO: This won't work with multiple backpack types. Somehow associate item with backpack category?
+	
+	@Override
+	public boolean isDamageable()
+		{ return !isInvulnurable(); }
+	@Override
+	public boolean isDamaged(ItemStack stack)
+		{ return isInvulnurable() ? false : super.isDamaged(stack); }
+	
+	@Override
+	public int getMaxDamage(ItemStack stack)
+		{ return isInvulnurable() ? Short.MAX_VALUE : super.getMaxDamage(stack); }
+	@Override
+	public int getDamage(ItemStack stack)
+		{ return isInvulnurable() ? 0 : super.getDamage(stack); }
+	@Override
+	public void setDamage(ItemStack stack, int damage) {
+		if (isInvulnurable()) damage = 0;
+		super.setDamage(stack, damage);
+	}
+	
+	/** Returns if this backpack can't be damaged. */
+	private boolean isInvulnurable()
+		{ return (WearableBackpacks.CONFIG.backpack.durability.get() == 0); }
 	
 }

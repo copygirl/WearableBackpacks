@@ -66,8 +66,7 @@ public class BackpacksConfig {
 		public final Setting<Integer> durability = new SettingInteger(214).setValidRange(0, Integer.MAX_VALUE)
 			.setRequired(enabled).setRecommended(equipAsChestArmor, "chestplate")
 			.setSynced(setting -> BackpacksContent.BACKPACK.setMaxDamage(setting.get()))
-			.setComment("Durability of a normal backpack. Set to 0 for unbreakable. Default: 214.\n" +
-			            "Lowering this (including setting to 0) can cause issues with already damaged backpacks.");
+			.setComment("Durability of a normal backpack. Set to 0 for unbreakable. Default: 214.");
 		
 		public final Setting<Integer> armor = new SettingInteger(2).setValidRange(0, 20)
 			.setRequired(enabled).setRecommended(equipAsChestArmor, "chestplate").setSynced()
