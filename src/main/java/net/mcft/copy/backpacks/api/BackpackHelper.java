@@ -168,6 +168,9 @@ public final class BackpackHelper {
 		// Create a copy of the stack with stackSize set to 1 and transfer it.
 		stack = stack.copy();
 		stack.setCount(1);
+		if (stack.hasTagCompound() && stack.getTagCompound().hasKey("BlockEntityTag")) {
+			stack.getTagCompound().removeTag("BlockEntityTag");
+		}
 		placedBackpack.setStack(stack);
 		
 		if (!alreadyConfigured) {
