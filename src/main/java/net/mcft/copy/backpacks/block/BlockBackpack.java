@@ -6,9 +6,13 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.StatList;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -26,6 +30,8 @@ import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
 import net.mcft.copy.backpacks.misc.util.LangUtils;
 import net.mcft.copy.backpacks.misc.util.MiscUtils;
 import net.mcft.copy.backpacks.misc.util.WorldUtils;
+
+import javax.annotation.Nullable;
 
 public class BlockBackpack extends BlockContainer {
 	
@@ -159,48 +165,45 @@ public class BlockBackpack extends BlockContainer {
 			// if the player is sneaking while breaking it.
 			BackpackHelper.equipBackpack(player, worldIn.getTileEntity(pos));
 	}
-	
-	@Override
-	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos,
-	                               EntityPlayer player, boolean willHarvest) {
-		// The super method will set the block to air before getDrops.
-		// But we need the tile entity there to drop the backpack item.
-		
-		// Fun fact:
-		//   "willHarvest" depends on if the block can be harvested with the current tool.
-		//   For example stone can only be harvested with a pick. Without, harvestBlock and
-		//   therefore getDrops aren't called and no items are dropped. This will always be
-		//   true since we don't require a specific tool, but for correctness' sake, ...
-		
-		if (willHarvest) {
-			// Super method calls this usually, we need to do it manually.
-			onBlockHarvested(world, pos, state, player);
-			return true;
-		} else return super.removedByPlayer(state, world, pos, player, willHarvest);
+
+	protected void dropBackpack(World worldIn, BlockPos pos) {
+		dropBackpack(worldIn, pos, worldIn.getTileEntity(pos));
 	}
-	
-	@Override
-	public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos,
-	                         IBlockState state, TileEntity entity, ItemStack stack) {
-		// The super method calls getDrops and spawns the items in-world.
-		super.harvestBlock(worldIn, player, pos, state, entity, stack);
-		worldIn.setBlockToAir(pos); // Set block to air, as it was delayed from removedByPlayer.
-	}
-	
-	@Override
-	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		// This is called when the block is set to air by any means.
-		// Afterward, the tile entity is also removed automatically.
-		TileEntity entity = worldIn.getTileEntity(pos);
-		IBackpack backpack = BackpackHelper.getBackpack(entity);
-		if ((backpack != null) && (backpack.getType() != null)) {
-			// Drop backpack item if it hasn't been equipped (getStack is empty).
-			WorldUtils.dropStackFromBlock(worldIn, pos, backpack.getStack());
-			// This would drop the contents of a normal backpack.
-			backpack.getType().onBlockBreak(entity, backpack);
+
+	protected void dropBackpack(World worldIn, BlockPos pos, TileEntity entity) {
+		if (!worldIn.isRemote) {
+			IBackpack backpack = BackpackHelper.getBackpack(entity);
+			if ((backpack != null) && (backpack.getType() != null) && !(backpack.getStack().isEmpty())) {
+				// This would drop the contents of a normal backpack.
+				backpack.getType().onBlockBreak(entity, backpack);
+				// This will drop the backpack itself, as the above method clears it.
+				WorldUtils.dropStackFromBlock(worldIn, pos, backpack.getStack());
+			}
 		}
 	}
-	
+
+	@Override
+	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+		// No-op, we handle drops ourselves
+	}
+
+	@Override
+	public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {
+		if (chance > 0.0f) {
+			dropBackpack(worldIn, pos);
+		}
+	}
+
+	@Override
+	public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
+		player.addStat(StatList.getBlockStats(this));
+		player.addExhaustion(0.005F);
+
+		harvesters.set(player);
+		dropBackpack(worldIn, pos, te);
+		harvesters.set(null);
+	}
+
 	public void onBlockExploded(World world, BlockPos pos, Explosion explosion) {
 		// Only destroy the backpack block if its age isn't negative.
 		// (Age is set to -EXPLOSION_RESIST_TICKS after being dropped on death.)

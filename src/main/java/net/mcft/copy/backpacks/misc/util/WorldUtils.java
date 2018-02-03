@@ -49,7 +49,10 @@ public final class WorldUtils {
 	}
 	/** Spawns multiple ItemStacks dropping from a destroyed block. */
 	public static void dropStacksFromBlock(World world, BlockPos pos, ItemStackHandler items) {
-		for (int i = 0; i < items.getSlots(); i++) dropStackFromBlock(world, pos, items.getStackInSlot(i));
+		for (int i = 0; i < items.getSlots(); i++) {
+			dropStackFromBlock(world, pos, items.getStackInSlot(i));
+			items.setStackInSlot(i, ItemStack.EMPTY);
+		}
 	}
 	
 	/** Spawns multiple ItemStacks dropping from a destroyed block. */
@@ -58,7 +61,10 @@ public final class WorldUtils {
 	}
 	/** Spawns multiple ItemStacks dropping from a destroyed block. */
 	public static void dropStacksFromBlock(TileEntity entity, ItemStackHandler items) {
-		for (int i = 0; i < items.getSlots(); i++) dropStackFromBlock(entity, items.getStackInSlot(i));
+		for (int i = 0; i < items.getSlots(); i++) {
+			dropStackFromBlock(entity, items.getStackInSlot(i));
+			items.setStackInSlot(i, ItemStack.EMPTY);
+		}
 	}
 	
 	/** Spawns an ItemStack as if it was dropped from an entity on death. */
