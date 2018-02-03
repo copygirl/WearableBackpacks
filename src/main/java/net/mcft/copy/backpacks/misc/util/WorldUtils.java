@@ -51,7 +51,6 @@ public final class WorldUtils {
 	public static void dropStacksFromBlock(World world, BlockPos pos, ItemStackHandler items) {
 		for (int i = 0; i < items.getSlots(); i++) {
 			dropStackFromBlock(world, pos, items.getStackInSlot(i));
-			items.setStackInSlot(i, ItemStack.EMPTY);
 		}
 	}
 	
@@ -63,7 +62,6 @@ public final class WorldUtils {
 	public static void dropStacksFromBlock(TileEntity entity, ItemStackHandler items) {
 		for (int i = 0; i < items.getSlots(); i++) {
 			dropStackFromBlock(entity, items.getStackInSlot(i));
-			items.setStackInSlot(i, ItemStack.EMPTY);
 		}
 	}
 	
