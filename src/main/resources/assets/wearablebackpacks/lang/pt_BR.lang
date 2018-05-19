@@ -6,8 +6,8 @@ tooltip.wearablebackpacks.moreInfo=Pressione %1$s para saber mais.
 tooltip.wearablebackpacks.openHint=Pressione %1$s para abrir a mochila ao carregá-la.
 tooltip.wearablebackpacks.equipHint=Ponha-a no chão e quebre-a\nao agachar-se para carregá-la.
 tooltip.wearablebackpacks.equipHint.extended=Agache-se e quebre-a para carregá-la.\nAgache-se e clique com o botão direito no solo\ncom a mão vazia para largá-la.
-tooltip.wearablebackpacks.unequipHint=Agache-se e clique com o botão direito no solo\ncom a mão para largá-la.
-tooltip.wearablebackpacks.used=Está com um jogador.
+tooltip.wearablebackpacks.unequipHint=Agache-se e clique com o botão direito no chão\ncom a mão para largá-la.
+tooltip.wearablebackpacks.used=A mochila está com um jogador.
 
 chat.wearablebackpacks.cantEquip=Você já está levando uma mochila.
 chat.wearablebackpacks.cantEquip.chestplate=Você não pode carregar uma mochila com um peitoral.
@@ -22,7 +22,7 @@ config.wearablebackpacks.general.enableEquippedInteraction=Permitir interações
 config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Permitir que jogadores possam acessar as mochilas levadas por outros jogadores (e entidades).
 config.wearablebackpacks.general.enableSelfInteraction=Permitir autointerações
 config.wearablebackpacks.general.enableSelfInteraction.tooltip=Permitir que jogadores possam acessar as mochilas deles usando teclas de atalho.
-config.wearablebackpacks.general.enableMachineInteraction=Permitir interação de máquinas
+config.wearablebackpacks.general.enableMachineInteraction=Permitir interações de máquinas
 config.wearablebackpacks.general.enableMachineInteraction.tooltip=Permitir que máquinas (como funis) possam interagir com mochilas postas no chão.
 config.wearablebackpacks.general.dropAsBlockOnDeath=Largar antes de morrer
 config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Largar as mochilas antes de morrer, ao invés de descartar os seus conteúdos.
@@ -31,7 +31,7 @@ config.wearablebackpacks.general.status.outOfRange=O valor está fora de alcance
 config.wearablebackpacks.general.status.required=Requer a configuração "%1$s" para esta opção.
 config.wearablebackpacks.general.status.chestplate=Não há efeito se não estiver sendo carregada como armadura. [general.equipAsChestArmor = false]
 
-config.wearablebackpacks.category.backpack=Opções da mochila
+config.wearablebackpacks.category.backpack=Configurações da mochila
 config.wearablebackpacks.category.backpack.tooltip=Alterar configurações de mochilas comuns.
 config.wearablebackpacks.backpack.enabled=Ativada
 config.wearablebackpacks.backpack.enabled.tooltip=Ativar ou desativar o uso de mochilas.
@@ -61,8 +61,8 @@ config.wearablebackpacks.entity.chance=Chance
 config.wearablebackpacks.entity.chance.tooltip=Chance de 1 em X para que uma entidade seja gerada com esta mochila (100 = 1%%, 1000 = 0.1%%). 0 para desativar.
 config.wearablebackpacks.entity.backpack=Mochila
 config.wearablebackpacks.entity.backpack.tooltip=ID de item na mochila a ser gerado com a entidade.
-config.wearablebackpacks.entity.lootTable=Conjunto de itens
-config.wearablebackpacks.entity.lootTable.tooltip=ID do conjunto de itens dentro desta mochila.
+config.wearablebackpacks.entity.lootTable=Tabela de itens
+config.wearablebackpacks.entity.lootTable.tooltip=ID da tabela de itens dentro desta mochila.
 
 config.wearablebackpacks.entity.translate=Posição
 config.wearablebackpacks.entity.translate.tooltip=Alterar a posição de renderização da mochila nesta entidade
