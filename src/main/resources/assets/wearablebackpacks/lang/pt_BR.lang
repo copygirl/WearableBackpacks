@@ -4,8 +4,8 @@ item.wearablebackpacks.backpack.name=Mochila
 
 tooltip.wearablebackpacks.moreInfo=Pressione %1$s para saber mais.
 tooltip.wearablebackpacks.openHint=Pressione %1$s para abrir a mochila ao carregá-la.
-tooltip.wearablebackpacks.equipHint=Ponha-a no chão e quebre-a\nao agachar-se para carregá-la.
-tooltip.wearablebackpacks.equipHint.extended=Agache-se e quebre-a para carregá-la.\nAgache-se e clique com o botão direito no solo\ncom a mão vazia para largá-la.
+tooltip.wearablebackpacks.equipHint=Ponha a mochila no chão e quebre-a com a mão\nao agachar-se para carregá-la.
+tooltip.wearablebackpacks.equipHint.extended=Agache-se e quebre-a para carregá-la.\nAgache-se e clique com o botão direito no chão\ncom a mão vazia para largá-la.
 tooltip.wearablebackpacks.unequipHint=Agache-se e clique com o botão direito no chão\ncom a mão para largá-la.
 tooltip.wearablebackpacks.used=A mochila está com um jogador.
 
