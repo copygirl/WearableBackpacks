@@ -4,48 +4,48 @@ item.wearablebackpacks.backpack.name=Mochila
 
 tooltip.wearablebackpacks.moreInfo=Pressione %1$s para saber mais.
 tooltip.wearablebackpacks.openHint=Pressione %1$s para abrir a mochila ao carregá-la.
-tooltip.wearablebackpacks.equipHint=Ponha a mochila no chão e quebre-a com a mão\nao agachar-se para carregá-la.
-tooltip.wearablebackpacks.equipHint.extended=Agache-se e quebre-a para carregá-la.\nAgache-se e clique com o botão direito no chão\ncom a mão vazia para largá-la.
-tooltip.wearablebackpacks.unequipHint=Agache-se e clique com o botão direito no chão\ncom a mão para largá-la.
-tooltip.wearablebackpacks.used=A mochila está com um jogador.
+tooltip.wearablebackpacks.equipHint=Para equipar a mochila, coloque-a no chão e quebre-a\nao agachar-se.
+tooltip.wearablebackpacks.equipHint.extended=Agache-se e quebre-a para carregá-la.\nAgache-se e clique com o botão direito no chão\ncom a mão vazia para soltá-la.
+tooltip.wearablebackpacks.unequipHint=Agache-se e clique com o botão direito no chão\ncom a mão para soltá-la.
+tooltip.wearablebackpacks.used=Está em uso por um jogador, no momento.
 
 chat.wearablebackpacks.cantEquip=Você já está levando uma mochila.
-chat.wearablebackpacks.cantEquip.chestplate=Você não pode carregar uma mochila com um peitoral.
+chat.wearablebackpacks.cantEquip.chestplate=Você não pode carregar uma mochila vestido com um peitoral.
 
 key.wearablebackpacks.open=Abrir mochila
 
 config.wearablebackpacks.gui.cancel=Cancelar
 
 config.wearablebackpacks.general.equipAsChestArmor=Carregar como armadura frontal
-config.wearablebackpacks.general.equipAsChestArmor.tooltip=Carregar mochilas ocupando a barra do equipamento de armadura frontal.
+config.wearablebackpacks.general.equipAsChestArmor.tooltip=Carregar mochilas ocupando o espaço do equipamento de armadura frontal.
 config.wearablebackpacks.general.enableEquippedInteraction=Permitir interações
-config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Permitir que jogadores possam acessar as mochilas levadas por outros jogadores (e entidades).
+config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Permitir que jogadores possam acessar as mochilas levadas por outros jogadores e/ou entidades.
 config.wearablebackpacks.general.enableSelfInteraction=Permitir autointerações
 config.wearablebackpacks.general.enableSelfInteraction.tooltip=Permitir que jogadores possam acessar as mochilas deles usando teclas de atalho.
 config.wearablebackpacks.general.enableMachineInteraction=Permitir interações de máquinas
-config.wearablebackpacks.general.enableMachineInteraction.tooltip=Permitir que máquinas (como funis) possam interagir com mochilas postas no chão.
+config.wearablebackpacks.general.enableMachineInteraction.tooltip=Permitir que máquinas (como funis) possam interagir com mochilas colocadas no chão.
 config.wearablebackpacks.general.dropAsBlockOnDeath=Largar antes de morrer
 config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Largar as mochilas antes de morrer, ao invés de descartar os seus conteúdos.
 
-config.wearablebackpacks.general.status.outOfRange=O valor está fora de alcance (%1$s - %1$s).
-config.wearablebackpacks.general.status.required=Requer a configuração "%1$s" para esta opção.
-config.wearablebackpacks.general.status.chestplate=Não há efeito se não estiver sendo carregada como armadura. [general.equipAsChestArmor = false]
+config.wearablebackpacks.general.status.outOfRange=O valor está fora do intervalo (%1$s - %1$s).
+config.wearablebackpacks.general.status.required=A configuração "%1$s" é necessária para essa opção.
+config.wearablebackpacks.general.status.chestplate=Não há efeito se não estiver sendo levada como armadura. [general.equipAsChestArmor = false]
 
-config.wearablebackpacks.category.backpack=Configurações da mochila
+config.wearablebackpacks.category.backpack=Opções da mochila
 config.wearablebackpacks.category.backpack.tooltip=Alterar configurações de mochilas comuns.
 config.wearablebackpacks.backpack.enabled=Ativada
-config.wearablebackpacks.backpack.enabled.tooltip=Ativar ou desativar o uso de mochilas.
-config.wearablebackpacks.backpack.durability=Duração
-config.wearablebackpacks.backpack.durability.tooltip=Alterar a duração de mochilas comuns (0 para inquebrável).
+config.wearablebackpacks.backpack.enabled.tooltip=Ativar ou desativar o uso de mochilas comuns.
+config.wearablebackpacks.backpack.durability=Durabilidade
+config.wearablebackpacks.backpack.durability.tooltip=Alterar a durabilidade de mochilas comuns (0 para inquebrabilidade).
 config.wearablebackpacks.backpack.armor=Armadura
 config.wearablebackpacks.backpack.armor.tooltip=Pontos de armadura de mochilas comuns.
 config.wearablebackpacks.backpack.size=Tam. de armazenamento
-config.wearablebackpacks.backpack.size.tooltip=Alterar o tamanho de armazenamento de mochilas comuns. Isto não afeta mochilas carregadas ou não levadas. Deixe-as de volta como itens para aplicar as alterações.
+config.wearablebackpacks.backpack.size.tooltip=Alterar o tamanho de armazenamento de mochilas comuns. Isso não afeta mochilas carregadas ou não levadas. Deixe-as de volta como itens para aplicar as alterações.
 
 config.wearablebackpacks.category.entity=Configurações de entidades
-config.wearablebackpacks.category.entity.tooltip=Alterar configurações de entidades levando mochilas
+config.wearablebackpacks.category.entity.tooltip=Alterar configurações de entidades levando mochilas.
 config.wearablebackpacks.entity.spawnNaturally=Geração espontânea
-config.wearablebackpacks.entity.spawnNaturally.tooltip=Permitir geração natural de entidades levando mochilas com itens aleatórios.
+config.wearablebackpacks.entity.spawnNaturally.tooltip=Permitir a geração natural de entidades levando mochilas com itens aleatórios.
 config.wearablebackpacks.entity.spawnFromSpawners=Geração controlada
 config.wearablebackpacks.entity.spawnFromSpawners.tooltip=Permitir que entidades geradas por geradores possam vir com mochilas.
 config.wearablebackpacks.entity.list=Entradas de entidades
@@ -54,26 +54,26 @@ config.wearablebackpacks.entity.entry.0=Nenhuma entrada!
 config.wearablebackpacks.entity.entry.1=1 entrada
 
 config.wearablebackpacks.entity.entityID=ID da entidade
-config.wearablebackpacks.entity.entityID.tooltip=Identificador interno da entidade, p. ex. "minecraft:zombie".
+config.wearablebackpacks.entity.entityID.tooltip=O identificador interno da entidade, p. ex. "minecraft:zombie".
 config.wearablebackpacks.entity.renderOptions=Opções de renderização
-config.wearablebackpacks.entity.renderOptions.tooltip=Alterar a posição, rotação e escala da mochila nesta entidade.
+config.wearablebackpacks.entity.renderOptions.tooltip=Alterar a posição, rotação e escala da mochila nessa entidade.
 config.wearablebackpacks.entity.chance=Chance
 config.wearablebackpacks.entity.chance.tooltip=Chance de 1 em X para que uma entidade seja gerada com esta mochila (100 = 1%%, 1000 = 0.1%%). 0 para desativar.
 config.wearablebackpacks.entity.backpack=Mochila
-config.wearablebackpacks.entity.backpack.tooltip=ID de item na mochila a ser gerado com a entidade.
+config.wearablebackpacks.entity.backpack.tooltip=ID de item da mochila a ser gerado com a entidade.
 config.wearablebackpacks.entity.lootTable=Tabela de itens
-config.wearablebackpacks.entity.lootTable.tooltip=ID da tabela de itens dentro desta mochila.
+config.wearablebackpacks.entity.lootTable.tooltip=ID da tabela de itens para esta mochila.
 
 config.wearablebackpacks.entity.translate=Posição
-config.wearablebackpacks.entity.translate.tooltip=Alterar a posição de renderização da mochila nesta entidade
+config.wearablebackpacks.entity.translate.tooltip=Alterar a posição de renderização da mochila nesta entidade.
 config.wearablebackpacks.entity.rotate=Rotação
-config.wearablebackpacks.entity.rotate.tooltip=Alterar a rotação de renderização da mochila nesta entidade
+config.wearablebackpacks.entity.rotate.tooltip=Alterar a rotação de renderização da mochila nesta entidade.
 config.wearablebackpacks.entity.scale=Escala
-config.wearablebackpacks.entity.scale.tooltip=Alterar a escala de renderização (tamanho) da mochila nesta entidade
+config.wearablebackpacks.entity.scale.tooltip=Alterar a escala de renderização (tamanho) da mochila nesta entidade.
 
 config.wearablebackpacks.entity.status.entityNotFound=A entidade especificada não foi encontrada. Portanto, a entrada será ignorada.
 
 config.wearablebackpacks.category.cosmetic=Opções de acessórios
-config.wearablebackpacks.category.cosmetic.tooltip=Alterar opções de acessórios (apenas do cliente) que não afetam o modo de jogo.
+config.wearablebackpacks.category.cosmetic.tooltip=Alterar opções de acessórios (apenas do cliente) que não afetam a jogabilidade.
 config.wearablebackpacks.cosmetic.enchantEffectOpacity=Opacidade do efeito de encant.
 config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Alterar a opacidade/visibilidade do efeito de encantamento nas mochilas carregadas ou não levadas, se houver.
