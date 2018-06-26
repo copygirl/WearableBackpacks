@@ -3,9 +3,13 @@ package net.mcft.copy.backpacks.client;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -79,6 +83,13 @@ public final class RendererBackpack {
 		private static IBackpack _overrideBackpack = null;
 		private static RenderOptions _overrideRenderOptions = null;
 		
+		protected final RenderLivingBase<?> livingEntityRenderer;
+		
+		public Layer(RenderLivingBase<?> livingEntityRendererIn)
+	    {
+	        this.livingEntityRenderer = livingEntityRendererIn;
+	    }
+		
 		public boolean shouldCombineTextures() { return false; }
 		
 		public void doRenderLayer(EntityLivingBase entity, float limbSwing, float limbSwingAmount,
@@ -103,18 +114,31 @@ public final class RendererBackpack {
 				GlStateManager.translate(0.0F, 24.0F * scale, 0.0F);
 			}
 			
-			// Make backpack swing with body as players swing their arms.
-			float swingProgress = entity.getSwingProgress(partialTicks);
-			float swingAngle = MathHelper.sin(MathHelper.sqrt(swingProgress) * ((float)Math.PI * 2.0F)) * 0.2F;
-			if ((entity.swingingHand == EnumHand.OFF_HAND) ^
-			    (entity.getPrimaryHand() == EnumHandSide.LEFT)) swingAngle *= -1;
-			if (swingAngle != 0) GlStateManager.rotate((float)Math.toDegrees(swingAngle), 0.0F, 1.0F, 0.0F);
-			
-			// Rotate backpack if entity is sneaking.
-			if (entity.isSneaking()) {
-				// FIXME: Can be sneaking while flying with the elytra, then backpack is misaligned..?
-				GlStateManager.translate(0.0F, 0.2F, 0.0F);
-				GlStateManager.rotate(90.0F / (float)Math.PI, 1.0F, 0.0F, 0.0F);
+			ModelBase modelBase = this.livingEntityRenderer.getMainModel();
+			if (modelBase instanceof ModelBiped) {
+				ModelRenderer bipedBody = ((ModelBiped) modelBase).bipedBody;
+				
+				if (entity.isSneaking()) {
+					// FIXME: Can be sneaking while flying with the elytra, then backpack is misaligned..?
+					GlStateManager.translate(0.0F, 0.2F, 0.0F);
+				}
+				
+				bipedBody.postRender(scale);
+			} else {
+				// Fallback to the custom way of transforming the backpack.
+				// Make backpack swing with body as players swing their arms.
+				float swingProgress = entity.getSwingProgress(partialTicks);
+				float swingAngle = MathHelper.sin(MathHelper.sqrt(swingProgress) * ((float)Math.PI * 2.0F)) * 0.2F;
+				if ((entity.swingingHand == EnumHand.OFF_HAND) ^
+				    (entity.getPrimaryHand() == EnumHandSide.LEFT)) swingAngle *= -1;
+				if (swingAngle != 0) GlStateManager.rotate((float)Math.toDegrees(swingAngle), 0.0F, 1.0F, 0.0F);
+				
+				// Rotate backpack if entity is sneaking.
+				if (entity.isSneaking()) {
+					// FIXME: Can be sneaking while flying with the elytra, then backpack is misaligned..?
+					GlStateManager.translate(0.0F, 0.2F, 0.0F);
+					GlStateManager.rotate(90.0F / (float)Math.PI, 1.0F, 0.0F, 0.0F);
+				}
 			}
 			
 			GlStateManager.scale(renderOptions.scale, renderOptions.scale, renderOptions.scale);
