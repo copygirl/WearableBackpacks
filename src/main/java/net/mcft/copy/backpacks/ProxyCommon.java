@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import net.mcft.copy.backpacks.misc.util.MiscUtils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,10 +24,12 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -257,7 +260,6 @@ public class ProxyCommon {
 	
 	@SubscribeEvent
 	public void onLivingDeath(LivingDeathEvent event) {
-		
 		// If an entity wearing a backpack dies, try
 		// to place it as a block, or drop the items.
 		
@@ -269,12 +271,11 @@ public class ProxyCommon {
 			.getCapability(IBackpack.CAPABILITY, null);
 		if ((backpack == null) || backpack.getStack().isEmpty()) return;
 		
-		// If keep inventory is on, keep the backpack capability so we
-		// can copy it over to the new player entity in onPlayerClone.
-		EntityPlayer player = ((entity instanceof EntityPlayer) ? (EntityPlayer)entity : null);
-		boolean keepInventory = world.getGameRules().getBoolean("keepInventory");
-		if ((player != null) && keepInventory) return;
-		
+		// If keep inventory (or other item keeping method) is on,
+		// keep the backpack capability so we can copy it over to the new player
+		// entity in onPlayerClone.
+		if (MiscUtils.shouldKeepItem(entity, backpack.getStack())) return;
+
 		// Attempt to place the backpack as a block instead of dropping the items.
 		if (WearableBackpacks.CONFIG.dropAsBlockOnDeath.get()) {
 			
@@ -321,8 +322,8 @@ public class ProxyCommon {
 		if (!backpack.getStack().isEmpty())
 			WorldUtils.dropStackFromEntity(entity, backpack.getStack(), 4.0F);
 		BackpackHelper.setEquippedBackpack(entity, ItemStack.EMPTY, null);
-		
 	}
+
 	// Would use a method local class but "extractRangemapReplacedMain" gradle task doesn't like that.
 	private static class BlockCoord extends MutableBlockPos {
 		public double distance;
