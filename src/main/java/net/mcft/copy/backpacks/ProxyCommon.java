@@ -43,7 +43,7 @@ import net.mcft.copy.backpacks.api.IBackpackData;
 import net.mcft.copy.backpacks.api.IBackpackType;
 import net.mcft.copy.backpacks.api.BackpackRegistry.BackpackEntry;
 import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
-import net.mcft.copy.backpacks.container.SlotArmorBackpack;
+import net.mcft.copy.backpacks.container.SlotBackpackWrapper;
 import net.mcft.copy.backpacks.item.DyeWashingHandler;
 import net.mcft.copy.backpacks.misc.BackpackCapability;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
@@ -58,6 +58,7 @@ public class ProxyCommon {
 		MinecraftForge.EVENT_BUS.register(WearableBackpacks.CONTENT);
 		MinecraftForge.EVENT_BUS.register(new DyeWashingHandler());
 		
+		// FIXME: BackpackCapability requires an entity for its constructor. WHAT WAS I THINKING?
 		CapabilityManager.INSTANCE.register(IBackpack.class,
 			new BackpackCapability.Storage(), BackpackCapability::new);
 	}
@@ -242,7 +243,7 @@ public class ProxyCommon {
 			
 		if (backpack.isChestArmor()) {
 			if (entity instanceof EntityPlayer)
-				SlotArmorBackpack.replace((EntityPlayer)entity);
+				SlotBackpackWrapper.replace((EntityPlayer)entity, backpack.getStack());
 			
 			if (!hasBackpack) {
 				// Backpack has been removed somehow.
