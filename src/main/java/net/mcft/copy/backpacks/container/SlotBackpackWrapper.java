@@ -36,8 +36,8 @@ public class SlotBackpackWrapper extends Slot {
 			
 			Slot newSlot = new SlotBackpackWrapper(slot);
 			newSlot.slotNumber = slot.slotNumber;
-			player.inventoryContainer.inventorySlots.set(slot.slotNumber, newSlot);
-			return;
+			container.inventorySlots.set(slot.slotNumber, newSlot);
+			// Keep going, there may be more slots to fix!
 		}
 	}
 	

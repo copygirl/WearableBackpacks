@@ -36,7 +36,7 @@ public final class MiscUtils {
 
 		// Ender IO: Check for Soulbound
 		// (at least when you stop rearranging items, that is)
-		
+
 		/* Enchantment soulboundEnchantment = ForgeRegistries.ENCHANTMENTS.getValue(new ResourceLocation("enderio:soulbound"));
 		if (soulboundEnchantment != null && EnchantmentHelper.getEnchantmentLevel(soulboundEnchantment, stack) > 0) return true; */
 
