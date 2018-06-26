@@ -88,8 +88,7 @@ public class ProxyClient extends ProxyCommon {
 		
 		RenderManager manager = mc.getRenderManager();
 		Map<String, RenderPlayer> skinMap = manager.getSkinMap();
-		for (RenderPlayer renderer : skinMap.values())
-		{
+		for (RenderPlayer renderer : skinMap.values()) {
 			renderer.addLayer(new RendererBackpack.Layer(renderer));
 		}
 	}
