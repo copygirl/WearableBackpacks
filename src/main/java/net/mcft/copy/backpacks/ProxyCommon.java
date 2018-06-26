@@ -56,7 +56,7 @@ public class ProxyCommon {
 		MinecraftForge.EVENT_BUS.register(new DyeWashingHandler());
 		
 		CapabilityManager.INSTANCE.register(IBackpack.class,
-			new BackpackCapability.Storage(), BackpackCapability.class);
+			new BackpackCapability.Storage(), BackpackCapability::new);
 	}
 	
 	public void init() {  }

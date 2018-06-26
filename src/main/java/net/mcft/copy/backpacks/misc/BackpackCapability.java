@@ -49,7 +49,11 @@ public class BackpackCapability implements IBackpack {
 	public BackpackEntry spawnWith = null;
 	/** Set to true if the backpack may despawn once placed down as a tile entity. */
 	public boolean mayDespawn = false;
-	
+
+	public BackpackCapability() {
+		throw new RuntimeException("Not supported!");
+	}
+
 	public BackpackCapability(EntityLivingBase entity) { this.entity = entity; }
 	
 	/** Returns if the entity is wearing the backpack in the chest armor slot. */

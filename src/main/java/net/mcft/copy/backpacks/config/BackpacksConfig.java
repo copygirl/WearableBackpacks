@@ -63,7 +63,7 @@ public class BackpacksConfig {
 		public final Setting<Boolean> enabled = new SettingBoolean(true)
 			.setRequiresMinecraftRestart();
 		
-		public final Setting<Integer> durability = new SettingInteger(214).setValidRange(0, Integer.MAX_VALUE)
+		public final Setting<Integer> durability = new SettingInteger(214).setValidRange(0, 32000)
 			.setRequired(enabled).setRecommended(equipAsChestArmor, "chestplate")
 			.setSynced(setting -> BackpacksContent.BACKPACK.setMaxDamage(setting.get()))
 			.setComment("Durability of a normal backpack. Set to 0 for unbreakable. Default: 214.");

@@ -64,7 +64,8 @@ public abstract class BaseEntryList<T> extends GuiLayout implements IConfigEntry
 		layoutList.addFixed(entry);
 		return entry;
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public Stream<Entry<T>> getEntries() {
 		return layoutList.getChildren().stream()
 			.filter(Entry.class::isInstance)

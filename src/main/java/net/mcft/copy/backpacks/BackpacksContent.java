@@ -2,6 +2,7 @@ package net.mcft.copy.backpacks;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.loot.LootTableList;
 
 import net.minecraftforge.event.RegistryEvent;
@@ -31,7 +32,7 @@ public class BackpacksContent {
 		if (BACKPACK != null) {
 			event.getRegistry().register(
 				new BlockBackpack().setRegistryName(WearableBackpacks.MOD_ID, "backpack"));
-			GameRegistry.registerTileEntity(TileEntityBackpack.class, WearableBackpacks.MOD_ID + ":backpack");
+			GameRegistry.registerTileEntity(TileEntityBackpack.class, new ResourceLocation(WearableBackpacks.MOD_ID, "backpack"));
 		}
 	}
 	
