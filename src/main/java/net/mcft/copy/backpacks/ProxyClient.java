@@ -88,8 +88,9 @@ public class ProxyClient extends ProxyCommon {
 		
 		RenderManager manager = mc.getRenderManager();
 		Map<String, RenderPlayer> skinMap = manager.getSkinMap();
-		skinMap.get("default").addLayer(new RendererBackpack.Layer());
-		skinMap.get("slim").addLayer(new RendererBackpack.Layer());
+		for (RenderPlayer renderer : skinMap.values()) {
+			renderer.addLayer(new RendererBackpack.Layer(renderer));
+		}
 	}
 	
 	@Override
@@ -108,7 +109,7 @@ public class ProxyClient extends ProxyCommon {
 		RenderManager manager = Minecraft.getMinecraft().getRenderManager();
 		Render<?> render = manager.getEntityClassRenderObject(entityClass);
 		if (!(render instanceof RenderLivingBase)) return;
-		((RenderLivingBase<?>)render).addLayer(new RendererBackpack.Layer());
+		((RenderLivingBase<?>)render).addLayer(new RendererBackpack.Layer((RenderLivingBase<?>)render));
 	}
 	
 	
