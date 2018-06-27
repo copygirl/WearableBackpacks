@@ -84,6 +84,8 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	@Override
 	public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+		if (repair.isEmpty()) return false;
+
 		// Returns is the specified repair item is
 		// registered in the ore dictionary as leather.
 		int leatherOreID = OreDictionary.getOreID("leather");

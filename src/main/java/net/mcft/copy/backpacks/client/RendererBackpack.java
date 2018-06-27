@@ -180,7 +180,7 @@ public final class RendererBackpack {
 		// FIXME: Allow for custom, adjustable lid position.
 		float lidYOffset = 9 / 16.0F;
 		float lidZOffset = 5 / 16.0F;
-		
+
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(0.0F, lidYOffset, lidZOffset);
 		GlStateManager.rotate(lidAngle, -1.0F, 0.0F, 0.0F);
