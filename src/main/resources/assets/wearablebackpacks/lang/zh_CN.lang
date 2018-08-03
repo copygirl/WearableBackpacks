@@ -23,6 +23,8 @@ config.wearablebackpacks.general.enableEquippedInteraction=玩家间可互相交
 config.wearablebackpacks.general.enableEquippedInteraction.tooltip=启用此选项后，玩家可直接打开其他玩家或实体身上的背包。
 config.wearablebackpacks.general.enableSelfInteraction=快速访问背包
 config.wearablebackpacks.general.enableSelfInteraction.tooltip=启用此选项后，玩家可利用快捷键打开自己身上的背包。
+config.wearablebackpacks.general.enableMachineInteraction=与机械结构交互
+config.wearablebackpacks.general.enableMachineInteraction.tooltip=启用此选项后，诸如漏斗这样的设备可以直接与放置在地上的背包方块交互。
 config.wearablebackpacks.general.dropAsBlockOnDeath=玩家死亡时以方块形式出现
 config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=启用此选项后，背包会在玩家死亡时以方块形式出现，其中物品。
 
@@ -48,16 +50,16 @@ config.wearablebackpacks.entity.spawnNaturally.tooltip=设定自然生成生物�
 config.wearablebackpacks.entity.spawnFromSpawners=刷怪笼生成设定
 config.wearablebackpacks.entity.spawnFromSpawners.tooltip=设定刷怪笼生成生物是否随机穿戴背包
 config.wearablebackpacks.entity.list=实体条目
-config.wearablebackpacks.entity.entry=%1$s 实体
+config.wearablebackpacks.entity.entry=%1$s 个实体
 config.wearablebackpacks.entity.entry.0=没有实体！
-config.wearablebackpacks.entity.entry.1=1个实体
+config.wearablebackpacks.entity.entry.1=1 个实体
 
 config.wearablebackpacks.entity.entityID=实体 ID
 config.wearablebackpacks.entity.entityID.tooltip=实体的内部标识符，比如“minecraft:zombie”。
 config.wearablebackpacks.entity.renderOptions=渲染选项
 config.wearablebackpacks.entity.renderOptions.tooltip=设置实体穿戴背包的位置，角度和大小。
 config.wearablebackpacks.entity.chance=几率
-config.wearablebackpacks.entity.chance.tooltip=生成的实体有1/x的几率穿戴背包（100 = 1%%，1000 = 0.1%%）。设置为0禁止生成穿戴背包的生物。
+config.wearablebackpacks.entity.chance.tooltip=生成的实体有 1/x 的几率穿戴背包（100 = 1%%，1000 = 0.1%%）。设置为 0 禁止生成穿戴背包的生物。
 config.wearablebackpacks.entity.backpack=背包
 config.wearablebackpacks.entity.backpack.tooltip=生成的穿戴背包的实体，其背包中的物品ID。
 config.wearablebackpacks.entity.lootTable=战利品表
