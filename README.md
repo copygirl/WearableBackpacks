@@ -133,7 +133,8 @@ provided their translation superpowers to make **WBs** available in other langua
                        [raspopov](https://github.com/raspopov)
 - **Korean** (ko_KR): [tinywolf3](https://github.com/tinywolf3)
 - **Portuguese** (pt_BR): [wenlfs](https://github.com/wenlfs),
-                          [eduardogomesv](https://github.com/eduardogomesv)
+                          [eduardogomesv](https://github.com/eduardogomesv),
+                          [DaDodger](https://github.com/DaDodger)
 - **Spanish** (es_MX): [Dorzar](https://github.com/Dorzar)
 - **Italian** (it_IT): [Insane-96](https://github.com/Insane-96)
 - **Danish** (da_DK): [Zerotiger](https://github.com/Zerotiger)
