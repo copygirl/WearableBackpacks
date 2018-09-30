@@ -208,7 +208,7 @@ public class GuiEntityRender extends GuiElementBase {
 		@Override protected boolean isChunkLoaded(int x, int z, boolean allowEmpty) { return false; }
 		
 		// These use chunk provider
-		@Override public Chunk getChunkFromChunkCoords(int chunkX, int chunkZ) { return null; }
+		@Override public Chunk getChunk(int chunkX, int chunkZ) { return null; }
 		@Override public boolean isBlockNormalCube(BlockPos pos, boolean _default) { return false; }
 		
 		// These use getChunkFromChunkCoords

@@ -47,9 +47,9 @@ public class BlockBackpack extends BlockContainer {
 	}
 	
 	@Override
-	public String getUnlocalizedName() {
+	public String getTranslationKey() {
 		// Just use the item's unlocalized name for this block.
-		return MiscUtils.getItemFromBlock(this).getUnlocalizedName();
+		return MiscUtils.getItemFromBlock(this).getTranslationKey();
 	}
 	
 	@Override
@@ -91,7 +91,7 @@ public class BlockBackpack extends BlockContainer {
 		float h = getBoundsHeight();
 		float d = getBoundsDepth();
 		for (int i = 0; i < _boundsFromFacing.length; i++) {
-			EnumFacing facing = EnumFacing.getFront(i + 2);
+			EnumFacing facing = EnumFacing.byIndex(i + 2);
 			_boundsFromFacing[i] = ((facing.getAxis() == Axis.Z)
 				? new AxisAlignedBB(0.5F - w / 2, 0.0F, 0.5F - d / 2, 0.5F + w / 2, h, 0.5F + d / 2)
 				: new AxisAlignedBB(0.5F - d / 2, 0.0F, 0.5F - w / 2, 0.5F + d / 2, h, 0.5F + w / 2));

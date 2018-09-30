@@ -1,24 +1,28 @@
 package net.mcft.copy.backpacks.item;
 
-import java.util.List;
-import java.util.UUID;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import org.apache.commons.lang3.ArrayUtils;
-
+import net.mcft.copy.backpacks.WearableBackpacks;
+import net.mcft.copy.backpacks.api.BackpackHelper;
+import net.mcft.copy.backpacks.api.BackpackRegistry;
+import net.mcft.copy.backpacks.api.IBackpack;
+import net.mcft.copy.backpacks.api.IBackpackData;
+import net.mcft.copy.backpacks.api.IBackpackType;
+import net.mcft.copy.backpacks.client.KeyBindingHandler;
+import net.mcft.copy.backpacks.container.ContainerBackpack;
+import net.mcft.copy.backpacks.misc.BackpackDataItems;
+import net.mcft.copy.backpacks.misc.BackpackSize;
+import net.mcft.copy.backpacks.misc.util.LangUtils;
+import net.mcft.copy.backpacks.misc.util.NbtUtils;
+import net.mcft.copy.backpacks.misc.util.WorldUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -30,26 +34,13 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.ArrayUtils;
 
-import net.mcft.copy.backpacks.WearableBackpacks;
-import net.mcft.copy.backpacks.api.BackpackHelper;
-import net.mcft.copy.backpacks.api.BackpackRegistry;
-import net.mcft.copy.backpacks.api.IBackpack;
-import net.mcft.copy.backpacks.api.IBackpackData;
-import net.mcft.copy.backpacks.api.IBackpackType;
-import net.mcft.copy.backpacks.client.KeyBindingHandler;
-import net.mcft.copy.backpacks.container.ContainerBackpack;
-import net.mcft.copy.backpacks.item.IDyeableItem;
-import net.mcft.copy.backpacks.misc.BackpackDataItems;
-import net.mcft.copy.backpacks.misc.BackpackSize;
-import net.mcft.copy.backpacks.misc.util.LangUtils;
-import net.mcft.copy.backpacks.misc.util.NbtUtils;
-import net.mcft.copy.backpacks.misc.util.WorldUtils;
+import java.util.List;
 
 // TODO: Implement additional enchantments?
 //       - Holding: Increases backpack size (dungeon loot only?)
@@ -68,7 +59,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	
 	
 	public ItemBackpack() {
-		setUnlocalizedName("wearablebackpacks.backpack");
+		setTranslationKey("wearablebackpacks.backpack");
 		setMaxStackSize(1);
 		setCreativeTab(CreativeTabs.TOOLS); // TODO: Use our own creative tab?
 	}

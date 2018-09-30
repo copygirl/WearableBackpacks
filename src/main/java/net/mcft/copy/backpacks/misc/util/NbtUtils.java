@@ -138,7 +138,7 @@ public final class NbtUtils {
 		NBTTagCompound compound = stack.getTagCompound();
 		remove(compound, tags);
 		// If compound is empty, remove it from the stack.
-		if (compound.hasNoTags())
+		if (compound.isEmpty())
 			stack.setTagCompound(null);
 	}
 	/** Removes a certain NBT tag from the specified compound tag.
@@ -154,7 +154,7 @@ public final class NbtUtils {
 			NBTTagCompound subCompound = (NBTTagCompound)tag;
 			remove(subCompound, (String[])Arrays.copyOfRange(tags, 1, tags.length));
 			// If subCompound is empty, remove it from the parent compound.
-			if (!subCompound.hasNoTags()) return;
+			if (!subCompound.isEmpty()) return;
 		}
 		compound.removeTag(tags[0]);
 	}
@@ -220,7 +220,7 @@ public final class NbtUtils {
 	
 	/** Reads an item stack from an NBT compound. */
 	public static ItemStack readItem(NBTTagCompound compound) {
-		return ((compound != null) && !compound.hasNoTags())
+		return ((compound != null) && !compound.isEmpty())
 				? new ItemStack(compound) : ItemStack.EMPTY;
 	}
 	

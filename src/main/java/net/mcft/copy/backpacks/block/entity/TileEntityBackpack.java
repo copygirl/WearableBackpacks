@@ -86,7 +86,7 @@ public class TileEntityBackpack extends TileEntity implements ITickable, IBackpa
 	
 	public void readNBT(NBTTagCompound compound, boolean isClient) {
 		_age = (!isClient ? compound.getInteger(TAG_AGE) : 0);
-		facing = EnumFacing.getFront(NbtUtils.get(compound, (byte)0, TAG_FACING) + 2);
+		facing = EnumFacing.byIndex(NbtUtils.get(compound, (byte)0, TAG_FACING) + 2);
 		
 		_stack = NbtUtils.readItem(compound.getCompoundTag(TAG_STACK));
 		if (_stack.isEmpty() || isClient) { _data = null; return; }
