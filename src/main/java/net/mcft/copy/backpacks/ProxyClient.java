@@ -193,7 +193,7 @@ public class ProxyClient extends ProxyCommon {
 		NbtUtils.get(stack, ItemBackpack.DEFAULT_COLOR, "display", "color");
 	
 	public static final IBlockColor BLOCK_COLOR = (state, world, pos, tintIndex) -> {
-		ItemStack stack = null;
+		ItemStack stack = ItemStack.EMPTY;
 		if ((world != null) && (pos != null)) {
 			IBackpack backpack = BackpackHelper.getBackpack(world.getTileEntity(pos));
 			if (backpack != null) stack = backpack.getStack();
