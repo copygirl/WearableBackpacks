@@ -1,69 +1,41 @@
 buildscript {
   repositories {
-    jcenter()
-    maven { url = 'http://files.minecraftforge.net/maven' }
+    mavenCentral()
+    maven {
+      name = 'fabricmc.net'
+      url = 'https://maven.fabricmc.net'
+    }
   }
   dependencies {
-    classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+    classpath "net.fabricmc:fabric-loom:$loom"
   }
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'java'
+apply plugin: 'fabric-loom'
 
-version = mod_version
-group = 'net.mcft.copy.backpacks'
-archivesBaseName = "${rootProject.name}-$mc_version"
-sourceCompatibility = JavaVersion.VERSION_1_8
-
-minecraft {
-  version = forge_version
-  mappings = mcp_mappings
-  runDir = 'run'
-  replace '@VERSION@', project.version
-}
-
-jar {
-  from sourceSets.main.output
-  from sourceSets.api.output
-}
-
-repositories {
-  ivy {
-    name 'asie dependency mirror'
-    artifactPattern 'http://asie.pl/javadeps/[module]-[revision](-[classifier]).[ext]'
-  }
-}
+archivesBaseName = rootProject.name
+group = 'net.mcft.copy'
+version = mod
+sourceCompatibility = 1.8
 
 dependencies {
-  deobfCompile name: 'InventoryTweaks', version: "$invtweaks_version-api"
+  minecraft "com.mojang:minecraft:$game"
+  mappings "net.fabricmc:yarn:$game+$mappings"
+  modCompile "net.fabricmc:fabric-loader:$loader"
+  modCompile "net.fabricmc:fabric:$api"
+  implementation "com.google.code.findbugs:jsr305:$findbugs"
 }
 
 processResources {
-  inputs.property 'mod_version', project.version
-  inputs.property "mc_version", mc_version
-
-  from(sourceSets.main.resources.srcDirs) {
-    include 'mcmod.info'
-    expand mod_version: project.version, mc_version: mc_version
+  def metadata = ['fabric.mod.json', 'pack.mcmeta']
+  sourceSets.main.resources.srcDirs.with {
+    from(it) {
+      include metadata
+      expand version: version
+    }
+    from(it) {
+      exclude metadata
+    }
   }
-
-  from(sourceSets.main.resources.srcDirs) {
-    exclude "mcmod.info"
-  }
-}
-
-task sourcesJar(type: Jar) {
-  classifier = 'sources'
-  from sourceSets.main.allJava
-  from sourceSets.api.allJava
-}
-
-task apiJar(type: Jar) {
-  classifier = 'api'
-  from sourceSets.api.output
-}
-
-artifacts {
-  archives sourcesJar
-  archives apiJar
 }
