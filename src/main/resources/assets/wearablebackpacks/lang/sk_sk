@@ -1,0 +1,80 @@
+container.wearablebackpacks.backpack=Ruksak
+
+item.wearablebackpacks.backpack.name=Ruksak
+
+tooltip.wearablebackpacks.moreInfo=Podrž %1$s pre viac info.
+tooltip.wearablebackpacks.openHint=Stlač %1$s pre otvorenie,\npokiaľ máš ruksak na sebe.
+tooltip.wearablebackpacks.equipHint=Polož a rozbi\npokiaľ sa krčíš, pre nasadenie.
+tooltip.wearablebackpacks.equipHint.extended=Pokrč sa a rozbi na nasadenie.\nPokrč sa a klikni pravym na zem\ns prázdnou rukou pre zloženie.
+tooltip.wearablebackpacks.unequipHint=Pokrč sa a klikni pravym na zem\ns prazdnou rukou pre zloženie.
+tooltip.wearablebackpacks.used=Momentálne je používaný hráčom.
+
+chat.wearablebackpacks.cantEquip=Už máš nasadený ruksak!.
+chat.wearablebackpacks.cantEquip.chestplate=Nemôžeš si nasadiť ruksak, pokiaľ máš na sebe Chestplate.
+
+key.wearablebackpacks.open=Otvoriť ruksak
+
+
+config.wearablebackpacks.gui.cancel=Zrušiť
+
+config.wearablebackpacks.general.equipAsChestArmor=Nasadiť ako Hrudníkové Brnenie
+config.wearablebackpacks.general.equipAsChestArmor.tooltip=Ovláda či nasadený ruksak zaberá slot brnenie alebo nie.
+config.wearablebackpacks.general.enableEquippedInteraction=Zapnúť Interakciu pri Nasadení
+config.wearablebackpacks.general.enableEquippedInteraction.tooltip=Ovláda či hráč môže pristupovať do nasadeného ruksaku ostatných hráčov (a entít).
+config.wearablebackpacks.general.enableSelfInteraction=Zapnúť Interakciu so Samým Sebou
+config.wearablebackpacks.general.enableSelfInteraction.tooltip=Ovláda či si hráč môže pristupovať do svojho ruksaku pomocou tlačítka.
+config.wearablebackpacks.general.enableMachineInteraction=Zapnúť Interakciu so Strojmi
+config.wearablebackpacks.general.enableMachineInteraction.tooltip=Ovláda či stroje (ako napríklad hopper) môžu interagovať s ruksakmi.
+config.wearablebackpacks.general.dropAsBlockOnDeath=Odhodiť ako Blok pri Smrti
+config.wearablebackpacks.general.dropAsBlockOnDeath.tooltip=Ovláda či sa ruksak položí na zem pri smrti, namiesto rozsypania obsahu.
+
+config.wearablebackpacks.general.status.outOfRange=Hodnota je mimo rozsahu (%1$s - %1$s).
+config.wearablebackpacks.general.status.required=Nastavenie "%1$s" je potrebné pre toto nastavenie.
+config.wearablebackpacks.general.status.chestplate=Žiadny efekt ak nie je nasadený v slote Brnenia. [general.equipAsChestArmor = false]
+
+config.wearablebackpacks.category.backpack=Možnosti Ruksaku
+config.wearablebackpacks.category.backpack.tooltip=Ovláda nastavenia týkajúce sa klasických ruksakov.
+config.wearablebackpacks.backpack.enabled=Povolené
+config.wearablebackpacks.backpack.enabled.tooltip=Ovláda či je klasický ruksak Povolený.
+config.wearablebackpacks.backpack.durability=Výdrž
+config.wearablebackpacks.backpack.durability.tooltip=Ovláda výdrž klasického ruksaku. (0 pre nezničiteľný).
+config.wearablebackpacks.backpack.armor=Brnenie
+config.wearablebackpacks.backpack.armor.tooltip=Body Brnenia klasického Ruksaku.
+config.wearablebackpacks.backpack.size=Veľkosť úložného priestoru
+config.wearablebackpacks.backpack.size.tooltip=Ovláda úložný priestor klasického ruksaku. Neovplyvni už položené alebo nasadené ruksaky, zmeň ich znova na item pre aplikovanie zmien.
+
+config.wearablebackpacks.category.entity=Nastavenia Entít
+config.wearablebackpacks.category.entity.tooltip=Ovláda nastavenia týkajúce sa entít nosiacih ruksak.
+config.wearablebackpacks.entity.spawnNaturally=Prirodzený Spawn
+config.wearablebackpacks.entity.spawnNaturally.tooltip=Ovláda či prirodzene spawnutý mob môže mať náhodnú šancu pre nosenie ruksaku.
+config.wearablebackpacks.entity.spawnFromSpawners=Spawn Zo Spawnerov
+config.wearablebackpacks.entity.spawnFromSpawners.tooltip=Ovláda či Mob spawnutý zo spawnera, môže mať šancu pre nosenie ruksaku.
+config.wearablebackpacks.entity.list=Záznamy o Entitách
+config.wearablebackpacks.entity.entry=%1$s entít
+config.wearablebackpacks.entity.entry.1=1 ent
+config.wearablebackpacks.entity.entry.0=Žiadne entity!
+
+config.wearablebackpacks.entity.entityID=ID Entity
+config.wearablebackpacks.entity.entityID.tooltip=Interný identifikátor entity, napríklad "minecraft:zombie".
+config.wearablebackpacks.entity.renderOptions=Nastavenie Vykresľovania
+config.wearablebackpacks.entity.renderOptions.tooltip=Ovláda pozíciu, rotáciu a veľkosť of ruksaku na tejto entite.
+config.wearablebackpacks.entity.chance=Šanca
+config.wearablebackpacks.entity.chance.tooltip=Šanca 1 z X, že entita sa spawne s ruksakom (100 = 1%%, 1000 = 0.1%%). Nastav na 0 pre vypnutie.
+config.wearablebackpacks.entity.backpack=Ruksak
+config.wearablebackpacks.entity.backpack.tooltip=ID itemu ruksaku, ktorý sa má spawnuť na entite.
+config.wearablebackpacks.entity.lootTable=Loot Tabuľka
+config.wearablebackpacks.entity.lootTable.tooltip=ID "Loot" tabuľky použitej na naplnenie ruksaku.
+
+config.wearablebackpacks.entity.translate=Pozícia
+config.wearablebackpacks.entity.translate.tooltip=Ovláda vykresľovanú pozíciu ruksaku na tejto entite
+config.wearablebackpacks.entity.rotate=Rotácia
+config.wearablebackpacks.entity.rotate.tooltip=Ovláda vykresĺovanú rotáciu ruksaku na tejto entite
+config.wearablebackpacks.entity.scale=Veľkosť
+config.wearablebackpacks.entity.scale.tooltip=Ovláda vykresľovanú veľkosť ruksaku na tejto entite
+
+config.wearablebackpacks.entity.status.entityNotFound=Špecifikovaná entita nemohla byť nájdená. Entita bude ingnorovaná.
+
+config.wearablebackpacks.category.cosmetic=Kozmetické Nastavenia
+config.wearablebackpacks.category.cosmetic.tooltip=Ovláda kozmetické (ovplyvňuje len klienta) nastavenia, ktorá neovplyvňujú hrateľnosť.
+config.wearablebackpacks.cosmetic.enchantEffectOpacity=Priehľadnosť Enchant Effektu
+config.wearablebackpacks.cosmetic.enchantEffectOpacity.tooltip=Ovláda priehľadnosť / viditeľnosť "enchant" effektu na nasadenom alebo položenom ruksaku, ak sa tu nachádza.
