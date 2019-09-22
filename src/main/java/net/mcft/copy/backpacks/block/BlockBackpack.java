@@ -180,15 +180,25 @@ public class BlockBackpack extends BlockContainer {
 		}
 	}
 
+	protected boolean preventExplosionDestroy(World world, BlockPos pos) {
+		// (Age is set to -EXPLOSION_RESIST_TICKS after being dropped on death.)
+		TileEntity entity = world.getTileEntity(pos);
+		return (entity instanceof TileEntityBackpack) &&
+				(((TileEntityBackpack)entity).getAge() < 0);
+	}
+
 	@Override
 	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
 		// No-op, we handle drops ourselves
 	}
 
+	//this is only called by explosion and harvest block (which we override)
 	@Override
-	public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {
-		if (chance > 0.0f) {
-			dropBackpack(worldIn, pos);
+	public void dropBlockAsItemWithChance(World world, BlockPos pos, IBlockState state, float chance, int fortune) {
+		// Only drop the backpack block if its age isn't negative.
+		// Otherwise we would cause a dupe, as below, the block is kept if age is negative,
+		if (!preventExplosionDestroy(world, pos) && chance > 0.0f) {
+			dropBackpack(world, pos);
 		}
 	}
 
@@ -204,10 +214,7 @@ public class BlockBackpack extends BlockContainer {
 
 	public void onBlockExploded(World world, BlockPos pos, Explosion explosion) {
 		// Only destroy the backpack block if its age isn't negative.
-		// (Age is set to -EXPLOSION_RESIST_TICKS after being dropped on death.)
-		TileEntity entity = world.getTileEntity(pos);
-		if ((entity instanceof TileEntityBackpack) &&
-		    (((TileEntityBackpack)entity).getAge() < 0)) return;
+		if (preventExplosionDestroy(world, pos)) return;
 		super.onBlockExploded(world, pos, explosion);
 	}
 	
