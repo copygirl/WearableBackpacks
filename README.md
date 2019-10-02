@@ -7,48 +7,48 @@ option unlike any other!
 
 ![Backpacks!](docs/header.png)
 
-*"Backpacks are love. Backpacks are life."* -asiekierka  
-*"copy-who?"* -MindlessPuppetz  
+*"Backpacks are love. Backpacks are life."* -asiekierka
+*"copy-who?"* -MindlessPuppetz
 
 ## What's so great?
 
-- **There can be only one!**  
+- **There can be only one!**
   Other mods allow you to carry multiple backpacks in your inventory. **WBs** doesn't.
   This design, as well as the resulting implementation has been carried over from its
   predecessor. But what the mod is lacking in convenience, it's trying to make up in
   charm and configurability.
-  
+
   ![](docs/picture_1.png)
 
-- **Armor up, or storage up?**  
+- **Armor up, or storage up?**
   With the default settings, backpacks will function as armor, taking up the chest armor
   equipment slot, protecting from as well as taking damage just like leather armor. This
   way, you have to *choose* between more protection or more storage. This can be turned
   off though, in case you don't like it.
 
-- **Play with friends, share backpacks!**  
+- **Play with friends, share backpacks!**
   Having a backpack on your back looks cool and all, but if only you could do something
   with that beauty. Well, lucky you! Other players (hopefully, without ill intentions)
   can open your backpack and borrow a pick and some torches on a mining trip. This of
   course only works as long as your back is facing towards them.
-  
+
   ![](docs/picture_2.png)
 
-- **Dying is [FUN][FUN]!**  
+- **Dying is [FUN][FUN]!**
   Sick of losing all your valuables when you make a small little misstep into the nearest
   pool of lava? Don't worry, the items inside your backpack will be... mostly safe. While
   the backpack itself is not immune to explosions or being broken by other players, after
   death it will gently place itself down near your point of failure, ready to be
   retrieved.
 
-- **Dyeing is fun~!**  
+- **Dyeing is fun~!**
   Backpacks can be colored using Minecraft's *fantastic* dyeing system. Unlike some silly
   mods that only allow the 16 base colors, with our pretties you can mix and match your
   dyes to customize them in any way you like!
-  
+
   ![](docs/picture_3.png)
 
-- **Configuration Nation**  
+- **Configuration Nation**
   Not sure if **WBs** will fit your play style? Don't worry! This mod is meant to be
   incredibly configurable with its [easy-to-use ingame config menu][CONF]. This allows
   backpacks to be balanced, regardless of whether they're used in a personal hand-picked
@@ -88,7 +88,7 @@ which you can find in the controls menu (default: `B`).
 
 ## Download
 
-Available right here through [GitHub Releases][DL] or on [CurseForge][CF].  
+Available right here through [GitHub Releases][DL] or on [CurseForge][CF].
 All profits gained through Curse's reward system go directly to [Child's Play][CPC] charity.
 
 ## License & Permissions
@@ -112,7 +112,7 @@ treated the same.
 ## Credits
 
 **Authors:** [copygirl](https://github.com/copygirl),
-             [asiekierka](https://github.com/asiekierka)  
+             [asiekierka](https://github.com/asiekierka)
 **Contributors:**
 - [InsomniaKitten](https://github.com/InsomniaKitten)
   ([#33](https://github.com/copygirl/WearableBackpacks/pull/33),
@@ -139,6 +139,7 @@ provided their translation superpowers to make **WBs** available in other langua
 - **Italian** (it_IT): [Insane-96](https://github.com/Insane-96)
 - **Danish** (da_DK): [Zerotiger](https://github.com/Zerotiger)
 - **Slovenian** (sl_SI): [SFort](https://github.com/SFort)
+- **Slovak** (sk_SK): [rufo123](https://github.com/rufo123)
 
 ### Special thanks to ...
 
