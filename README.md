@@ -113,10 +113,11 @@ treated the same.
 
 **Authors:** [copygirl](https://github.com/copygirl),
              [asiekierka](https://github.com/asiekierka)
+
 **Contributors:**
-- [InsomniaKitten](https://github.com/InsomniaKitten)
+- [ChloeDawn](https://github.com/ChloeDawn)
   ([#33](https://github.com/copygirl/WearableBackpacks/pull/33),
-   [#50](https://github.com/copygirl/WearableBackpacks/pull/50))
+   [#50](https://github.com/copygirl/WearableBackpacks/pull/50) and more)
 - [IwoPlaza](https://github.com/iwoplaza)
   ([#82](https://github.com/copygirl/WearableBackpacks/pull/82))
 - [ichttt](https://github.com/ichttt)
