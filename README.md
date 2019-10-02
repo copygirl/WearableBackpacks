@@ -119,6 +119,8 @@ treated the same.
    [#50](https://github.com/copygirl/WearableBackpacks/pull/50))
 - [IwoPlaza](https://github.com/iwoplaza)
   ([#82](https://github.com/copygirl/WearableBackpacks/pull/82))
+- [ichttt](https://github.com/ichttt)
+  ([#119](https://github.com/copygirl/WearableBackpacks/pull/119))
 
 ### Localization
 
