@@ -142,6 +142,7 @@ provided their translation superpowers to make **WBs** available in other langua
 - **Italian** (it_IT): [Insane-96](https://github.com/Insane-96)
 - **Danish** (da_DK): [Zerotiger](https://github.com/Zerotiger)
 - **Slovenian** (sl_SI): [SFort](https://github.com/SFort)
+- **Polish** (pl_PL): [Pabilo8](https://github.com/Pabilo8)
 - **Slovak** (sk_SK): [rufo123](https://github.com/rufo123)
 
 ### Special thanks to ...
