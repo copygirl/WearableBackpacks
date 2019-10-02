@@ -1,20 +1,25 @@
-# eclipse
-.classpath/
-.metadata/
-.project/
-.settings/
-*.launch
-bin/
-eclipse/
+# Eclipse
+/.metadata/
+/.settings/
+/bin/
+/*.launch
+/.classpath
+/.project
 
-# idea
-.idea/
+# IDEA
+/.idea/
+/out/
+/*.ipr
+/*.iws
 *.iml
-*.ipr
-*.iws
-out/
 
-# gradle
-.gradle/
-build/
-run/
+# VS Code
+/.vscode/
+
+# Gradle
+/.gradle/
+/build/
+
+# Other
+/eclipse/
+/run/
