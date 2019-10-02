@@ -21,6 +21,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.IBackpack;
@@ -32,51 +33,51 @@ import net.mcft.copy.backpacks.misc.util.WorldUtils;
 import javax.annotation.Nullable;
 
 public class BlockBackpack extends BlockContainer {
-	
+
 	/** Number of ticks a backpack will be resistant
 	 *  to explosions for after being placed. */
 	public static final int EXPLOSION_RESIST_TICKS = 10;
-	
+
 	private final AxisAlignedBB[] _boundsFromFacing = new AxisAlignedBB[4];
-	
+
 	public BlockBackpack() {
 		super(Material.CLOTH);
 		setSoundType(SoundType.SNOW);
 		setHardness(1.5F);
 		initBlockBounds();
 	}
-	
+
 	@Override
 	public String getTranslationKey() {
 		// Just use the item's unlocalized name for this block.
 		return MiscUtils.getItemFromBlock(this).getTranslationKey();
 	}
-	
+
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
 		return new TileEntityBackpack();
 	}
-	
+
 	// Block properties
-	
+
 	@Override
 	public int quantityDropped(Random random) { return 0; }
-	
+
 	@Override
 	public boolean isOpaqueCube(IBlockState state) { return false; }
-	
+
 	@Override
 	public boolean isFullCube(IBlockState state) { return false; }
-	
+
 	@Override
 	public EnumBlockRenderType getRenderType(IBlockState state) { return EnumBlockRenderType.INVISIBLE; }
-	
+
 	// Block bounds
-	
+
 	protected float getBoundsWidth() { return 12 / 16.0F; }
 	protected float getBoundsHeight() { return 13 / 16.0F; }
 	protected float getBoundsDepth() { return 10 / 16.0F; }
-	
+
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		TileEntity entity = source.getTileEntity(pos);
@@ -85,7 +86,7 @@ public class BlockBackpack extends BlockContainer {
 			: EnumFacing.NORTH;
 		return _boundsFromFacing[facing.ordinal() - 2];
 	}
-	
+
 	private void initBlockBounds() {
 		float w = getBoundsWidth();
 		float h = getBoundsHeight();
@@ -97,17 +98,17 @@ public class BlockBackpack extends BlockContainer {
 				: new AxisAlignedBB(0.5F - d / 2, 0.0F, 0.5F - w / 2, 0.5F + d / 2, h, 0.5F + w / 2));
 		}
 	}
-	
+
 	// Block methods / events
-	
+
 	@Override
-	public ItemStack getItem(World world, BlockPos pos, IBlockState state) {
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
 		IBackpack backpack = BackpackHelper.getBackpack(world.getTileEntity(pos));
 		return (backpack != null)
 			? backpack.getStack().copy()
-			: super.getItem(world, pos, state);
+			: super.getPickBlock(state, target, world, pos, player);
 	}
-	
+
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state,
 	                            EntityLivingBase placer, ItemStack stack) {
@@ -116,7 +117,7 @@ public class BlockBackpack extends BlockContainer {
 		if (tileEntity instanceof TileEntityBackpack)
 			((TileEntityBackpack)tileEntity).facing = placer.getHorizontalFacing();
 	}
-	
+
 	@Override
 	@SuppressWarnings("deprecation")
 	public float getPlayerRelativeBlockHardness(IBlockState state, EntityPlayer player, World worldIn, BlockPos pos) {
@@ -129,7 +130,7 @@ public class BlockBackpack extends BlockContainer {
 			? -1.0F /* Unbreakable */
 			: (hardness * (sneaking ? 4 : 1));
 	}
-	
+
 	private long _lastHelpMessage = System.currentTimeMillis();
 	@Override
 	public void onBlockClicked(World world, BlockPos pos, EntityPlayer player) {
@@ -141,7 +142,7 @@ public class BlockBackpack extends BlockContainer {
 			_lastHelpMessage = System.currentTimeMillis();
 		}
 	}
-	
+
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state,
 	                                EntityPlayer player, EnumHand hand,
@@ -152,9 +153,9 @@ public class BlockBackpack extends BlockContainer {
 		if (backpack != null) backpack.getType().onPlacedInteract(player, entity, backpack);
 		return true;
 	}
-	
+
 	// Equipping / block breaking / drops related
-	
+
 	@Override
 	public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player) {
 		if (!worldIn.isRemote && player.isSneaking() &&
@@ -217,5 +218,5 @@ public class BlockBackpack extends BlockContainer {
 		if (preventExplosionDestroy(world, pos)) return;
 		super.onBlockExploded(world, pos, explosion);
 	}
-	
+
 }

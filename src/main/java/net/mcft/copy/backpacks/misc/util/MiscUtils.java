@@ -1,27 +1,24 @@
 package net.mcft.copy.backpacks.misc.util;
 
 import net.minecraft.block.Block;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public final class MiscUtils {
-	
+
 	private MiscUtils() {  }
-	
-	
+
+
 	/** Returns the block associated with the specified resource location. */
 	public static Block getBlockFromName(ResourceLocation location) { return Block.REGISTRY.getObject(location); }
 	/** Returns the block associated with the specified resource location name (for example "minecraft:cobblestone"). */
 	public static Block getBlockFromName(String name) { return getBlockFromName(new ResourceLocation(name)); }
 	/** Returns the block associated with the specified item. */
 	public static Block getBlockFromItem(Item item) { return getBlockFromName(item.getRegistryName()); }
-	
+
 	/** Returns the item associated with the specified resource location. */
 	public static Item getItemFromName(ResourceLocation location) { return Item.REGISTRY.getObject(location); }
 	/** Returns the item associated with the specified resource location name (for example "minecraft:stick"). */
