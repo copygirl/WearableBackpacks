@@ -7,7 +7,7 @@ option unlike any other!
 
 ![Backpacks!](docs/header.png)
 
-*"Backpacks are love. Backpacks are life."* -asiekierka
+*"Backpacks are love. Backpacks are life."* -asiekierka  
 *"copy-who?"* -MindlessPuppetz
 
 ## What's so great?
@@ -88,7 +88,7 @@ which you can find in the controls menu (default: `B`).
 
 ## Download
 
-Available right here through [GitHub Releases][DL] or on [CurseForge][CF].
+Available right here through [GitHub Releases][DL] or on [CurseForge][CF].  
 All profits gained through Curse's reward system go directly to [Child's Play][CPC] charity.
 
 ## License & Permissions
