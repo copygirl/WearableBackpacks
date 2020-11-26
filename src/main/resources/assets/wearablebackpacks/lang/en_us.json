@@ -1,0 +1,10 @@
+{
+  "advancements.wearablebackpacks.deeper_pockets.title": "Deeper Pockets",
+  "advancements.wearablebackpacks.deeper_pockets.description": "Equip a wearable backpack",
+  "advancements.wearablebackpacks.bursting_with_color.title": "Bursting With Color",
+  "advancements.wearablebackpacks.bursting_with_color.description": "Dye a wearable backpack",
+  "container.wearablebackpacks": "Backpack",
+  "block.wearablebackpacks.backpack": "Backpack",
+  "key.wearablebackpacks.backpack": "Open/Close Backpack",
+  "stat.wearablebackpacks.open_backpack": "Backpacks Opened"
+}

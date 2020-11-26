@@ -1,0 +1,28 @@
+{
+  "parent": "minecraft:story/root",
+  "display": {
+    "icon": {
+      "item": "wearablebackpacks:backpack"
+    },
+    "title": {
+      "translate": "advancements.wearablebackpacks.deeper_pockets.title"
+    },
+    "description": {
+      "translate": "advancements.wearablebackpacks.deeper_pockets.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "backpack_equipped": {
+      "trigger": "wearablebackpacks:backpack_equipped"
+    }
+  },
+  "requirements": [
+    [
+      "backpack_equipped"
+    ]
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "required": true,
+  "package": "dev.sapphic.wearablebackpacks.client.mixin",
+  "client": [
+    "BERDispatcherMixin",
+    "BlockColorsMixin",
+    "GameOptionsMixin",
+    "ItemColorsMixin",
+    "MenuScreenAccessor",
+    "MenuScreensMixin",
+    "MinecraftClientMixin",
+    "ModelLoaderMixin",
+    "PacketListenerMixin"
+  ],
+  "refmap": "mixins/wearablebackpacks/refmap.json",
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

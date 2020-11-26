@@ -1,6 +1,6 @@
 {
   "pack": {
-    "pack_format": 3,
-    "description": "Wearable Backpacks assets"
+    "pack_format": 5,
+    "description": "The default data for Wearable Backpacks"
   }
 }

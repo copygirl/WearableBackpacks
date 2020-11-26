@@ -1,0 +1,27 @@
+{
+  "textures": {
+    "overlay": "wearablebackpacks:block/backpack_overlay",
+    "particle": "wearablebackpacks:block/backpack"
+  },
+  "elements": [
+    {
+      "from": [ 3, 9, 6 ],
+      "to": [ 13, 12, 11 ],
+      "faces": {
+        "down": { "uv": [ 7.5, 0, 12.5, 2.5 ], "texture": "#particle", "rotation": 180, "tintindex": 0 },
+        "up": { "uv": [ 2.5, 0, 7.5, 2.5 ], "texture": "#particle", "rotation": 180, "tintindex": 0 },
+        "north": { "uv": [ 2.5, 2.5, 7.5, 4 ], "texture": "#particle", "tintindex": 0 },
+        "south": { "uv": [ 10, 2.5, 15, 4 ], "texture": "#particle", "tintindex": 0 },
+        "west": { "uv": [ 7.5, 2.5, 10, 4 ], "texture": "#particle", "tintindex": 0 },
+        "east": { "uv": [ 0, 2.5, 2.5, 4 ], "texture": "#particle", "tintindex": 0 }
+      }
+    },
+    {
+      "from": [ 3, 9, 6 ],
+      "to": [ 13, 12, 11 ],
+      "faces": {
+        "north": { "uv": [ 2.5, 2.5, 7.5, 4 ], "texture": "#overlay" }
+      }
+    }
+  ]
+}

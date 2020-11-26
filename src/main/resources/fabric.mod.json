@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "id": "wearablebackpacks",
+  "name": "Wearable Backpacks",
+  "version": "$version",
+  "description": "Adds beautiful, balanced backpacks",
+  "license": "Apache-2.0",
+  "depends": {
+    "fabricloader": ">=0.9.3"
+  },
+  "entrypoints": {
+    "client": [
+      "dev.sapphic.wearablebackpacks.client.BackpacksClient"
+    ],
+    "main": [
+      "dev.sapphic.wearablebackpacks.Backpacks",
+      "dev.sapphic.wearablebackpacks.advancement.BackpackCriteriaTriggers",
+      "dev.sapphic.wearablebackpacks.loot.BackpackLootFunctions",
+      "dev.sapphic.wearablebackpacks.stat.BackpackStats"
+    ]
+  },
+  "mixins": [
+    "mixins/wearablebackpacks/mixins.client.json",
+    "mixins/wearablebackpacks/mixins.server.json"
+  ],
+  "authors": [
+    {
+      "name": "Chloe Dawn",
+      "contact": {
+        "email": "chloe@sapphic.dev",
+        "homepage": "https://sapphic.dev"
+      }
+    },
+    {
+      "name": "copygirl",
+      "contact": {
+        "email": "copygirl@mcft.net",
+        "website": "https://copy.mcft.net"
+      }
+    },
+    {
+      "name": "asie",
+      "contact": {
+        "email": "kontakt@asie.pl",
+        "website": "https://asie.pl"
+      }
+    }
+  ],
+  "contact": {
+    "homepage": "https://bit.ly/33owdaZ",
+    "sources": "https://git.io/fjskt",
+    "issues": "https://git.io/fjskq"
+  }
+}

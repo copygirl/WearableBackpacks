@@ -1,69 +1,94 @@
-buildscript {
-  repositories {
-    jcenter()
-    maven { url = 'http://files.minecraftforge.net/maven' }
-  }
-  dependencies {
-    classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-  }
+import java.nio.file.Files
+import java.nio.file.Paths
+
+plugins {
+  id 'fabric-loom' version '0.5.28'
+  id 'signing'
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
+group = 'dev.sapphic'
+version = '1.0.0'
 
-version = mod_version
-group = 'net.mcft.copy.backpacks'
-archivesBaseName = "${rootProject.name}-$mc_version"
-sourceCompatibility = JavaVersion.VERSION_1_8
+signing {
+  useGpgCmd()
+}
 
 minecraft {
-  version = forge_version
-  mappings = mcp_mappings
-  runDir = 'run'
-  replace '@VERSION@', project.version
-}
-
-jar {
-  from sourceSets.main.output
-  from sourceSets.api.output
-}
-
-repositories {
-  ivy {
-    name 'asie dependency mirror'
-    artifactPattern 'http://asie.pl/javadeps/[module]-[revision](-[classifier]).[ext]'
-  }
+  accessWidener = file '.accesswidener'
+  refmapName = 'mixins/wearablebackpacks/refmap.json'
 }
 
 dependencies {
-  deobfCompile name: 'InventoryTweaks', version: "$invtweaks_version-api"
+  minecraft 'com.mojang:minecraft:1.16.3'
+  mappings 'net.fabricmc:yarn:1.16.3+build.31:v2'
+  modImplementation 'net.fabricmc:fabric-loader:0.10.0+'
+
+  implementation 'com.google.code.findbugs:jsr305:3.0.2'
+  implementation 'org.jetbrains:annotations:20.1.0'
+  implementation 'org.checkerframework:checker-qual:3.6.1'
+
+  def embeddedFabricApiModule = { module ->
+    modImplementation include(fabricApi.module(
+      "fabric-$module", '0.23.0+build.410-1.16'
+    ))
+  }
+
+  embeddedFabricApiModule 'api-base'
+  embeddedFabricApiModule 'networking-v0'
+  embeddedFabricApiModule 'networking-blockentity-v0'
+  embeddedFabricApiModule 'registry-sync-v0'
+  embeddedFabricApiModule 'resource-loader-v0'
+}
+
+compileJava {
+  options.release.set(8)
+  options.fork = true
+  options.deprecation = true
+  options.encoding = 'UTF-8'
+  options.compilerArgs = ['-Xlint:all', '-parameters']
 }
 
 processResources {
-  inputs.property 'mod_version', project.version
-  inputs.property "mc_version", mc_version
-
-  from(sourceSets.main.resources.srcDirs) {
-    include 'mcmod.info'
-    expand mod_version: project.version, mc_version: mc_version
-  }
-
-  from(sourceSets.main.resources.srcDirs) {
-    exclude "mcmod.info"
+  filesMatching('/fabric.mod.json') {
+    expand version: version
   }
 }
 
-task sourcesJar(type: Jar) {
-  classifier = 'sources'
-  from sourceSets.main.allJava
-  from sourceSets.api.allJava
+jar {
+  from '/LICENSE'
+  manifest.attributes(
+    'Specification-Title': project.group,
+    'Specification-Vendor': project.group,
+    'Specification-Version': '1.0.0',
+    'Implementation-Title': project.name,
+    'Implementation-Version': project.version,
+    'Implementation-Vendor': project.group,
+    'Sealed': 'true'
+  )
 }
 
-task apiJar(type: Jar) {
-  classifier = 'api'
-  from sourceSets.api.output
+task signJar(type: Jar) {
+  dependsOn remapJar
+  final alias = project.property 'signing.mods.keyalias'
+  final keystore = project.property 'signing.mods.keystore'
+  final password = project.property 'signing.mods.password'
+
+  doLast {
+    final artifacts = Files.createDirectories(Paths.get("$buildDir/libs")).toAbsolutePath()
+    for (artifact in Files.newDirectoryStream(artifacts, '*.jar')) {
+      ant.signJar(
+        'destDir': artifacts,
+        'jar': artifact,
+        'alias': alias,
+        'storepass': password,
+        'keystore': keystore,
+        'storetype': 'jks'
+      )
+      signing.sign(artifact.toFile())
+    }
+  }
 }
 
-artifacts {
-  archives sourcesJar
-  archives apiJar
+assemble {
+  dependsOn signJar
 }

@@ -1,0 +1,29 @@
+{
+  "parent": "minecraft:story/root",
+  "display": {
+    "icon": {
+      "item": "wearablebackpacks:backpack",
+      "nbt": "{\"display\":{\"color\":8439583}}"
+    },
+    "title": {
+      "translate": "advancements.wearablebackpacks.bursting_with_color.title"
+    },
+    "description": {
+      "translate": "advancements.wearablebackpacks.bursting_with_color.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "backpack_dyed": {
+      "trigger": "wearablebackpacks:backpack_dyed"
+    }
+  },
+  "requirements": [
+    [
+      "backpack_dyed"
+    ]
+  ]
+}

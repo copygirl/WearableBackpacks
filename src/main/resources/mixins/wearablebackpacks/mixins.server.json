@@ -1,0 +1,21 @@
+{
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "required": true,
+  "package": "dev.sapphic.wearablebackpacks.mixin",
+  "mixins": [
+    "BlockSettingsAccessor",
+    "BucketItemAccessor",
+    "CauldronBlockMixin",
+    "DyeColorAccessor",
+    "InventoryMixin",
+    "MenuTypeMixin",
+    "MenuTypeAccessor",
+    "CriteriaTriggersAccessor",
+    "ServerPlayerMixin"
+  ],
+  "refmap": "mixins/wearablebackpacks/refmap.json",
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,25 +1,30 @@
-# Eclipse
-/.metadata/
-/.settings/
-/bin/
-/*.launch
-/.classpath
-/.project
-
-# IDEA
-/.idea/
-/out/
-/*.ipr
-/*.iws
+*.bak
+*.code-workspace
 *.iml
-
-# VS Code
-/.vscode/
-
-# Gradle
-/.gradle/
-/build/
-
-# Other
-/eclipse/
-/run/
+*.ipr
+*.iws
+*.launch
+*.swp
+*.tmp
+*~
+*~.nib
+.DS_Store
+._*
+.classpath/
+.directory
+.fuse_hidden*
+.gradle/
+.idea/
+.metadata/
+.project/
+.settings/
+.vscode/*
+Thumbs.db
+Thumbs.db:encryptable
+bin/
+build/
+eclipse/
+out/
+run/
+src_old/
+tmp/

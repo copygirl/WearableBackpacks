@@ -1,0 +1,4 @@
+accessWidener v1 named
+accessible class net/minecraft/client/gui/screen/ingame/HandledScreens$Provider
+accessible class net/minecraft/screen/ScreenHandlerType$Factory
+accessible method net/minecraft/screen/ScreenHandlerType <init> (Lnet/minecraft/screen/ScreenHandlerType$Factory;)V
