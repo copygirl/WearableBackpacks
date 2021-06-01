@@ -4,15 +4,10 @@
   "required": true,
   "package": "dev.sapphic.wearablebackpacks.mixin",
   "mixins": [
-    "BlockSettingsAccessor",
     "BucketItemAccessor",
     "CauldronBlockMixin",
     "DyeColorAccessor",
-    "InventoryMixin",
-    "MenuTypeMixin",
-    "MenuTypeAccessor",
-    "CriteriaTriggersAccessor",
-    "ServerPlayerMixin"
+    "PlayerInventoryMixin"
   ],
   "refmap": "mixins/wearablebackpacks/refmap.json",
   "injectors": {

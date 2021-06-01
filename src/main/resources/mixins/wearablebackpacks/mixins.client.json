@@ -4,15 +4,9 @@
   "required": true,
   "package": "dev.sapphic.wearablebackpacks.client.mixin",
   "client": [
-    "BERDispatcherMixin",
-    "BlockColorsMixin",
-    "GameOptionsMixin",
-    "ItemColorsMixin",
-    "MenuScreenAccessor",
-    "MenuScreensMixin",
+    "DrawableHelperAccessor",
     "MinecraftClientMixin",
-    "ModelLoaderMixin",
-    "PacketListenerMixin"
+    "ModelLoaderMixin"
   ],
   "refmap": "mixins/wearablebackpacks/refmap.json",
   "injectors": {

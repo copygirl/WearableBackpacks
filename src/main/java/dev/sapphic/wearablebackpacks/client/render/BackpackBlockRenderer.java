@@ -1,7 +1,5 @@
 package dev.sapphic.wearablebackpacks.client.render;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
 import dev.sapphic.wearablebackpacks.client.BackpacksClient;
 import net.fabricmc.api.EnvType;
@@ -23,17 +21,8 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.AxisDirection;
 import net.minecraft.util.math.Quaternion;
 
-import java.util.Arrays;
-import java.util.function.Function;
-
 @Environment(EnvType.CLIENT)
 public final class BackpackBlockRenderer extends BlockEntityRenderer<BackpackBlockEntity> {
-  @SuppressWarnings("UnstableApiUsage")
-  private static final ImmutableMap<Direction, Vector3f> UNIT_VECTORS = Arrays.stream(Direction.values())
-    .filter(Direction.Type.HORIZONTAL).collect(Maps.toImmutableEnumMap(Function.<Direction>identity(), direction ->
-      direction.rotateYClockwise().getUnitVector() // Mutable, but immediately destructured in Quaternion
-    ));
-
   private final MinecraftClient client = MinecraftClient.getInstance();
 
   public BackpackBlockRenderer(final BlockEntityRenderDispatcher dispatcher) {
@@ -52,7 +41,8 @@ public final class BackpackBlockRenderer extends BlockEntityRenderer<BackpackBlo
     final VertexConsumer pipeline = pipelines.getBuffer(TexturedRenderLayers.getEntityCutout());
     final BakedModel backpackModel = models.getModel(backpack.getCachedState());
     final BakedModel lidModel = models.getModelManager().getModel(BackpacksClient.getLidModel(facing));
-    final Quaternion rotation = UNIT_VECTORS.get(facing).getDegreesQuaternion(45.0F * backpack.getLidDelta(tickDelta));
+    final Vector3f unitVector = facing.rotateYClockwise().getUnitVector();
+    final Quaternion rotation = unitVector.getDegreesQuaternion(45.0F * backpack.getLidDelta(tickDelta));
 
     final int color = backpack.getColor();
     final float red = ((color >> 16) & 0xFF) / 255.0F;

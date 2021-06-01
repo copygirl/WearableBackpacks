@@ -4,11 +4,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import dev.sapphic.wearablebackpacks.Backpack;
 import dev.sapphic.wearablebackpacks.advancement.BackpackCriteriaTriggers;
-import dev.sapphic.wearablebackpacks.stat.BackpackStats;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import dev.sapphic.wearablebackpacks.mixin.BucketItemAccessor;
 import dev.sapphic.wearablebackpacks.mixin.DyeColorAccessor;
+import dev.sapphic.wearablebackpacks.stat.BackpackStats;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -93,26 +93,6 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
 
   @Override
   @Deprecated
-  public BlockState rotate(final BlockState state, final BlockRotation rotation) {
-    return state.with(FACING, rotation.rotate(state.get(FACING)));
-  }
-
-  @Override
-  @Deprecated
-  public BlockState mirror(final BlockState state, final BlockMirror mirror) {
-    return state.rotate(mirror.getRotation(state.get(FACING)));
-  }
-
-  @Override
-  @Deprecated
-  public VoxelShape getOutlineShape(
-    final BlockState state, final BlockView view, final BlockPos pos, final ShapeContext context
-  ) {
-    return SHAPES.get(state.get(FACING));
-  }
-
-  @Override
-  @Deprecated
   public void onStateReplaced(
     final BlockState state, final World world, final BlockPos pos, final BlockState next, final boolean moved
   ) {
@@ -128,29 +108,21 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
 
   @Override
   @Deprecated
-  public float calcBlockBreakingDelta(
-    final BlockState state, final PlayerEntity player, final BlockView world, final BlockPos pos
-  ) {
-    if (player.isSneaking() && !(player.getEquippedStack(EquipmentSlot.CHEST).getItem() instanceof BackpackItem)) {
-      return super.calcBlockBreakingDelta(state, player, world, pos);
-    }
-    return 0.005F;
-  }
-
-  @Override
-  @Deprecated
   public ActionResult onUse(
     final BlockState state, final World world, final BlockPos pos, final PlayerEntity player, final Hand hand,
     final BlockHitResult hit
   ) {
-    if (!world.isClient) {
-      final @Nullable BlockEntity be = world.getBlockEntity(pos);
-      if (be instanceof BackpackBlockEntity) {
-        final ItemStack stack = player.getStackInHand(hand);
-        final Backpack backpack = (Backpack) be;
-        if (stack.getItem() instanceof DyeItem) {
+    final @Nullable BlockEntity be = world.getBlockEntity(pos);
+    if (be instanceof BackpackBlockEntity) {
+      final ItemStack stack = player.getStackInHand(hand);
+      final Backpack backpack = (Backpack) be;
+      if (stack.getItem() instanceof DyeItem) {
+        if (!world.isClient) {
           final int newColor = this.getBlendedColor(backpack, (DyeItem) stack.getItem());
           if (!backpack.hasColor() || (backpack.getColor() != newColor)) {
+            if (!world.canPlayerModifyAt(player, pos)) {
+              return ActionResult.FAIL;
+            }
             backpack.setColor(newColor);
             world.playSound(null, pos, SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM, player.getSoundCategory(),
               0.5F, (player.world.random.nextFloat() * 0.1F) + 0.9F
@@ -159,72 +131,31 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
               stack.decrement(1);
             }
             BackpackCriteriaTriggers.DYED.trigger((ServerPlayerEntity) player);
-            return ActionResult.CONSUME;
           }
         }
-        if (backpack.hasColor() && (stack.getItem() instanceof BucketItem)) {
-          //noinspection CastToIncompatibleInterface
-          final BucketItemAccessor bucket = (BucketItemAccessor) stack.getItem();
-          if (bucket.getFluid().isIn(FluidTags.WATER)) {
+        return ActionResult.success(world.isClient);
+      }
+      if (backpack.hasColor() && (stack.getItem() instanceof BucketItem)) {
+        //noinspection CastToIncompatibleInterface
+        final BucketItemAccessor bucket = (BucketItemAccessor) stack.getItem();
+        if (bucket.getFluid().isIn(FluidTags.WATER)) {
+          if (!world.canPlayerModifyAt(player, pos)) {
+            return ActionResult.FAIL;
+          }
+          if (!world.isClient) {
             player.setStackInHand(hand, bucket.callGetEmptiedStack(stack, player));
             bucket.invokePlayEmptyingSound(null, world, pos);
             backpack.clearColor();
             player.incrementStat(BackpackStats.CLEANED);
-            return ActionResult.CONSUME;
           }
+          return ActionResult.success(world.isClient);
         }
-        player.openHandledScreen((NamedScreenHandlerFactory) be);
-        player.incrementStat(BackpackStats.OPENED);
       }
+      player.openHandledScreen((NamedScreenHandlerFactory) be);
+      player.incrementStat(BackpackStats.OPENED);
+      return ActionResult.success(world.isClient);
     }
-    return ActionResult.SUCCESS;
-  }
-
-  private int getBlendedColor(final Backpack backpack, final DyeItem dye) {
-    if (backpack.hasColor()) {
-      final ItemStack tmp = new ItemStack(this);
-      final DyeableItem item = (DyeableItem) tmp.getItem();
-      item.setColor(tmp, backpack.getColor());
-      return item.getColor(DyeableItem.blendAndSetColor(tmp, ImmutableList.of(dye)));
-    }
-    //noinspection ConstantConditions
-    return ((DyeColorAccessor) (Object) dye.getColor()).getColor();
-  }
-
-  @Override
-  public @Nullable BlockState getPlacementState(final ItemPlacementContext context) {
-    final Direction facing = context.getPlayerFacing().getOpposite();
-    final Fluid fluid = context.getWorld().getFluidState(context.getBlockPos()).getFluid();
-    return this.getDefaultState().with(FACING, facing).with(WATERLOGGED, fluid == Fluids.WATER);
-  }
-
-  @Override
-  public void afterBreak(
-    final World world, final PlayerEntity player, final BlockPos pos, final BlockState state,
-    final @Nullable BlockEntity be, final ItemStack stack
-  ) {
-    player.incrementStat(Stats.MINED.getOrCreateStat(this));
-    player.addExhaustion(0.005F);
-    if ((be instanceof BackpackBlockEntity) && player.isSneaking() && !player.hasStackEquipped(EquipmentSlot.CHEST)) {
-      player.equipStack(EquipmentSlot.CHEST, this.getPickStack(be, world, pos, state));
-    } else {
-      dropStacks(state, world, pos, be, player, stack);
-    }
-  }
-
-  @Override
-  public ItemStack getPickStack(final BlockView world, final BlockPos pos, final BlockState state) {
-    return this.getPickStack(world.getBlockEntity(pos), world, pos, state);
-  }
-
-  private ItemStack getPickStack(
-    final @Nullable BlockEntity be, final BlockView world, final BlockPos pos, final BlockState state
-  ) {
-    final ItemStack stack = super.getPickStack(world, pos, state);
-    if (be instanceof BackpackBlockEntity) {
-      ((BackpackBlockEntity) be).saveTo(stack);
-    }
-    return stack;
+    return ActionResult.FAIL;
   }
 
   @Override
@@ -241,8 +172,67 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
 
   @Override
   @Deprecated
+  public BlockState rotate(final BlockState state, final BlockRotation rotation) {
+    return state.with(FACING, rotation.rotate(state.get(FACING)));
+  }
+
+  @Override
+  @Deprecated
+  public BlockState mirror(final BlockState state, final BlockMirror mirror) {
+    return state.rotate(mirror.getRotation(state.get(FACING)));
+  }
+
+  @Override
+  @Deprecated
   public int getComparatorOutput(final BlockState state, final World world, final BlockPos pos) {
     return ScreenHandler.calculateComparatorOutput(world.getBlockEntity(pos));
+  }
+
+  @Override
+  @Deprecated
+  public VoxelShape getOutlineShape(
+    final BlockState state, final BlockView view, final BlockPos pos, final ShapeContext context
+  ) {
+    return SHAPES.get(state.get(FACING));
+  }
+
+  @Override
+  @Deprecated
+  public float calcBlockBreakingDelta(
+    final BlockState state, final PlayerEntity player, final BlockView world, final BlockPos pos
+  ) {
+    if (player.isSneaking() && !(player.getEquippedStack(EquipmentSlot.CHEST).getItem() instanceof BackpackItem)) {
+      return super.calcBlockBreakingDelta(state, player, world, pos);
+    }
+    return 0.005F;
+  }
+
+  @Override
+  public @Nullable BlockState getPlacementState(final ItemPlacementContext context) {
+    final Direction facing = context.getPlayerFacing().getOpposite();
+    final Fluid fluid = context.getWorld().getFluidState(context.getBlockPos()).getFluid();
+    return this.getDefaultState().with(FACING, facing).with(WATERLOGGED, fluid == Fluids.WATER);
+  }
+
+  @Override
+  public void afterBreak(final World world, final PlayerEntity player, final BlockPos pos, final BlockState state, final @org.jetbrains.annotations.Nullable BlockEntity blockEntity, final ItemStack stack) {
+    player.incrementStat(Stats.MINED.getOrCreateStat(this));
+    player.addExhaustion(0.005F);
+  }
+
+  @Override
+  public ItemStack getPickStack(final BlockView world, final BlockPos pos, final BlockState state) {
+    return this.getPickStack(world.getBlockEntity(pos), world, pos, state);
+  }
+
+  @Override
+  public void onBreak(final World world, final BlockPos pos, final BlockState state, final PlayerEntity player) {
+    final @Nullable BlockEntity be = world.getBlockEntity(pos);
+    if ((be instanceof BackpackBlockEntity) && player.isSneaking() && !player.hasStackEquipped(EquipmentSlot.CHEST)) {
+      player.equipStack(EquipmentSlot.CHEST, this.getPickStack(be, world, pos, state));
+      world.removeBlockEntity(pos);
+    }
+    super.onBreak(world, pos, state, player);
   }
 
   @Override
@@ -258,5 +248,26 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
   @Override
   public BlockEntity createBlockEntity(final BlockView view) {
     return new BackpackBlockEntity();
+  }
+
+  private int getBlendedColor(final Backpack backpack, final DyeItem dye) {
+    if (backpack.hasColor()) {
+      final ItemStack tmp = new ItemStack(this);
+      final DyeableItem item = (DyeableItem) tmp.getItem();
+      item.setColor(tmp, backpack.getColor());
+      return item.getColor(DyeableItem.blendAndSetColor(tmp, ImmutableList.of(dye)));
+    }
+    //noinspection ConstantConditions
+    return ((DyeColorAccessor) (Object) dye.getColor()).getColor();
+  }
+
+  private ItemStack getPickStack(
+    final @Nullable BlockEntity be, final BlockView world, final BlockPos pos, final BlockState state
+  ) {
+    final ItemStack stack = super.getPickStack(world, pos, state);
+    if (be instanceof BackpackBlockEntity) {
+      ((BackpackBlockEntity) be).saveTo(stack);
+    }
+    return stack;
   }
 }

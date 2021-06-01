@@ -1,51 +1,49 @@
-import java.nio.file.Files
-import java.nio.file.Paths
-
 plugins {
-  id 'fabric-loom' version '0.5.28'
-  id 'signing'
+  id 'fabric-loom' version '0.7.30'
 }
 
 group = 'dev.sapphic'
 version = '1.0.0'
 
-signing {
-  useGpgCmd()
-}
-
-minecraft {
+loom {
   accessWidener = file '.accesswidener'
   refmapName = 'mixins/wearablebackpacks/refmap.json'
 }
 
 dependencies {
-  minecraft 'com.mojang:minecraft:1.16.3'
-  mappings 'net.fabricmc:yarn:1.16.3+build.31:v2'
-  modImplementation 'net.fabricmc:fabric-loader:0.10.0+'
+  minecraft 'com.mojang:minecraft:1.16.5'
+  mappings 'net.fabricmc:yarn:1.16.5+build.9:v2'
+  modImplementation 'net.fabricmc:fabric-loader:0.11.3'
 
   implementation 'com.google.code.findbugs:jsr305:3.0.2'
-  implementation 'org.jetbrains:annotations:20.1.0'
-  implementation 'org.checkerframework:checker-qual:3.6.1'
+  implementation 'org.jetbrains:annotations:21.0.1'
+  implementation 'org.checkerframework:checker-qual:3.13.0'
+  
+  final modInclude = { modImplementation include(it) }
+  final fabricApi = 'net.fabricmc.fabric-api:fabric'
 
-  def embeddedFabricApiModule = { module ->
-    modImplementation include(fabricApi.module(
-      "fabric-$module", '0.23.0+build.410-1.16'
-    ))
-  }
-
-  embeddedFabricApiModule 'api-base'
-  embeddedFabricApiModule 'networking-v0'
-  embeddedFabricApiModule 'networking-blockentity-v0'
-  embeddedFabricApiModule 'registry-sync-v0'
-  embeddedFabricApiModule 'resource-loader-v0'
+  modInclude "$fabricApi-api-base:0.3.0+c88702897d"
+  modInclude "$fabricApi-events-interaction-v0:0.4.2+ca58154a7d"
+  modInclude "$fabricApi-key-binding-api-v1:1.0.4+9354966b7d"
+  modInclude "$fabricApi-lifecycle-events-v1:1.2.1+ca58154a7d"
+  modInclude "$fabricApi-networking-api-v1:1.0.3+e3c9d0627d"
+  modInclude "$fabricApi-networking-blockentity-v0:0.2.8+ca58154a7d"
+  modInclude "$fabricApi-object-builder-api-v1:1.9.5+c88702897d"
+  modInclude "$fabricApi-registry-sync-v0:0.7.4+ca58154a7d"
+  modInclude "$fabricApi-renderer-registries-v1:2.3.0+2868a2287d"
+  modInclude "$fabricApi-rendering-v1:1.6.0+2868a2287d"
+  modInclude "$fabricApi-resource-loader-v0:0.4.6+2868a2287d"
+  modInclude "$fabricApi-screen-handler-api-v1:1.1.5+9354966b7d"
 }
 
 compileJava {
-  options.release.set(8)
-  options.fork = true
-  options.deprecation = true
-  options.encoding = 'UTF-8'
-  options.compilerArgs = ['-Xlint:all', '-parameters']
+  options.with {
+    it.release.set(8)
+    it.fork = true
+    it.deprecation = true
+    it.encoding = 'UTF-8'
+    it.compilerArgs = ['-Xlint:all', '-parameters']
+  }
 }
 
 processResources {
@@ -65,30 +63,4 @@ jar {
     'Implementation-Vendor': project.group,
     'Sealed': 'true'
   )
-}
-
-task signJar(type: Jar) {
-  dependsOn remapJar
-  final alias = project.property 'signing.mods.keyalias'
-  final keystore = project.property 'signing.mods.keystore'
-  final password = project.property 'signing.mods.password'
-
-  doLast {
-    final artifacts = Files.createDirectories(Paths.get("$buildDir/libs")).toAbsolutePath()
-    for (artifact in Files.newDirectoryStream(artifacts, '*.jar')) {
-      ant.signJar(
-        'destDir': artifacts,
-        'jar': artifact,
-        'alias': alias,
-        'storepass': password,
-        'keystore': keystore,
-        'storetype': 'jks'
-      )
-      signing.sign(artifact.toFile())
-    }
-  }
-}
-
-assemble {
-  dependsOn signJar
 }

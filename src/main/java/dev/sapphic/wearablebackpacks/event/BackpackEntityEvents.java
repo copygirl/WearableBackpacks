@@ -1,0 +1,75 @@
+package dev.sapphic.wearablebackpacks.event;
+
+import dev.sapphic.wearablebackpacks.Backpacks;
+import dev.sapphic.wearablebackpacks.inventory.WornBackpack;
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUsageContext;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.world.World;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+public final class BackpackEntityEvents implements ModInitializer {
+  public static final double MIN_REQUIRED_DISTANCE = 1.8;
+  public static final double ANGLE_BOUNDS = 110;
+
+  private static ActionResult tryPlaceBackpack(
+    final PlayerEntity player, final World world, final Hand hand, final BlockHitResult hit
+  ) {
+    if (player.isSneaking() && player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty()) {
+      final ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
+      if (stack.getItem() == Backpacks.ITEM) {
+        final ItemUsageContext context = new ItemUsageContext(player, hand, hit);
+        if (stack.useOnBlock(context).isAccepted()) {
+          if (!player.abilities.creativeMode) {
+            stack.decrement(1);
+          }
+          return ActionResult.SUCCESS;
+        }
+      }
+    }
+    return ActionResult.PASS;
+  }
+
+  private static ActionResult tryOpenBackpack(
+    final PlayerEntity self, final World world, final Hand hand, final Entity wearer,
+    final @Nullable EntityHitResult hit
+  ) {
+    if (!(wearer instanceof LivingEntity)) {
+      return ActionResult.PASS;
+    }
+    final ItemStack stack = ((LivingEntity) wearer).getEquippedStack(EquipmentSlot.CHEST);
+    if ((stack.getItem() == Backpacks.ITEM) && canOpenBackpack(self, (LivingEntity) wearer)) {
+      if (world.isClient) {
+        final float pitch = (self.world.random.nextFloat() * 0.1F) + 0.9F;
+        self.playSound(SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F, pitch);
+      } else {
+        self.openHandledScreen(WornBackpack.of((LivingEntity) wearer, stack));
+      }
+      return ActionResult.SUCCESS;
+    }
+    return ActionResult.PASS;
+  }
+
+  private static boolean canOpenBackpack(final PlayerEntity player, final LivingEntity entity) {
+    double angle = Math.toDegrees(StrictMath.atan2(entity.getZ() - player.getZ(), entity.getX() - player.getX()));
+    angle = ((((angle - entity.bodyYaw - 90) % 360) + 540) % 360) - 180;
+    return (player.distanceTo(entity) <= MIN_REQUIRED_DISTANCE) && (Math.abs(angle) < (ANGLE_BOUNDS / 2));
+  }
+
+  @Override
+  public void onInitialize() {
+    UseBlockCallback.EVENT.register(BackpackEntityEvents::tryPlaceBackpack);
+    UseEntityCallback.EVENT.register(BackpackEntityEvents::tryOpenBackpack);
+  }
+}

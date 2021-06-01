@@ -2,7 +2,7 @@ package dev.sapphic.wearablebackpacks.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.sapphic.wearablebackpacks.Backpacks;
-import dev.sapphic.wearablebackpacks.client.BackpacksClient;
+import dev.sapphic.wearablebackpacks.client.mixin.DrawableHelperAccessor;
 import dev.sapphic.wearablebackpacks.inventory.BackpackMenu;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -19,8 +19,16 @@ public final class BackpackScreen extends HandledScreen<BackpackMenu> {
 
   public BackpackScreen(final BackpackMenu menu, final PlayerInventory inventory, final Text name) {
     super(menu, inventory, name);
-    this.backgroundWidth = menu.getColumns() * 18;
-    // todo menu height, fix menu width to include padding
+    this.backgroundWidth = (7 * 2) + (Math.max(menu.getColumns(), 9) * 18);
+    this.backgroundHeight = 114 + (menu.getRows() * 18);
+    this.playerInventoryTitleY = this.backgroundHeight - 94;
+  }
+
+  private static void drawTexture(
+    final MatrixStack stack, final int x, final int y, final int z, final int w, final int h,
+    final float u, final float v, final int rw, final int rh, final int tw, final int th
+  ) {
+    DrawableHelperAccessor.invokeDrawTexture(stack, x, x + w, y, y + h, z, rw, rh, u, v, tw, th);
   }
 
   @Override
@@ -31,30 +39,31 @@ public final class BackpackScreen extends HandledScreen<BackpackMenu> {
   }
 
   @Override
-  protected void drawForeground(final MatrixStack stack, final int mouseX, final int mouseY) {
-    this.textRenderer.draw(stack, this.title, 8.0F, 6.0F, 0x404040);
-    final Text inventoryName = this.playerInventory.getDisplayName();
-    this.textRenderer.draw(stack, inventoryName, 8.0F, (this.backgroundHeight - 96) + 2, 0x404040);
-  }
-
-  @Override
   protected void drawBackground(final MatrixStack stack, final float tickDelta, final int mx, final int my) {
     RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
     //noinspection ConstantConditions
     this.client.getTextureManager().bindTexture(TEXTURE);
-    // TODO
-    for (final Slot slot : this.getScreenHandler().slots) {
-      this.drawTexture(stack, (this.x + slot.x) - 1, (this.y + slot.y) - 1, 7, 17, 18, 18);
-    }
-  }
 
-  @Override
-  public boolean keyPressed(final int keyCode, final int scanCode, final int modifiers) {
-    super.keyPressed(keyCode, scanCode, modifiers); // Can't check this, Mojang always return true >:(
-    if (BackpacksClient.isBackpackKeyBinding(keyCode, scanCode)) {
-      //noinspection ConstantConditions
-      this.client.player.closeHandledScreen();
+    final int bgW = this.x + this.backgroundWidth;
+    final int bgH = this.y + this.backgroundHeight;
+    final int fillW = this.backgroundWidth - (4 * 2);
+    final int fillH = this.backgroundHeight - (4 * 2);
+
+    drawTexture(stack, this.x, this.y, this.getZOffset(), 18.0F, 0.0F, 4, 10, 64, 64); // TOP LEFT
+    drawTexture(stack, bgW - 4, this.y, this.getZOffset(), 18.0F + 14.0F, 0.0F, 4, 10, 64, 64); // TOP RIGHT
+    drawTexture(stack, this.x, bgH - 4, this.getZOffset(), 18.0F, 14.0F, 4, 10, 64, 64); //BOTTOM LEFT
+    drawTexture(stack, bgW - 4, bgH - 4, this.getZOffset(), 18.0F + 14.0F, 14.0F, 4, 10, 64, 64); // BOTTOM RIGHT
+    // FIXME Respect Z offset of the GUI (currently delegates to private method with depth of 0)
+    drawTexture(stack, this.x + 4, this.y, this.getZOffset(), fillW, 4, 18.0F + 4.0F, 0.0F, 10, 4, 64, 64); // TOP
+    drawTexture(stack, this.x, this.y + 4, this.getZOffset(), 4, fillH, 18.0F, 4.0F, 4, 10, 64, 64); // LEFT
+    drawTexture(stack, this.x + 4, bgH - 4, this.getZOffset(), fillW, 4, 18.0F + 4.0F, 14.0F, 10, 4, 64, 64); // BOTTOM
+    drawTexture(stack, bgW - 4, this.y + 4, this.getZOffset(), 4, fillH, 18.0F + 14.0F, 4.0F, 4, 10, 64, 64); // RIGHT
+    drawTexture(stack, this.x + 4, this.y + 4, this.getZOffset(), fillW, fillH, 22.0F, 4.0F, 10, 10, 64, 64); // FILL
+
+    for (final Slot slot : this.getScreenHandler().slots) {
+      final int x = (this.x + slot.x) - 1;
+      final int y = (this.y + slot.y) - 1;
+      drawTexture(stack, x, y, this.getZOffset(), 0.0F, 0.0F, 18, 18, 64, 64);
     }
-    return true;
   }
 }

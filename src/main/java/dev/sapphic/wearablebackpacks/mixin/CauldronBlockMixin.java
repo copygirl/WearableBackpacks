@@ -31,12 +31,9 @@ abstract class CauldronBlockMixin {
     final BlockState state, final World world, final BlockPos pos, final PlayerEntity player, final Hand hand,
     final BlockHitResult hit, final CallbackInfoReturnable<? super ActionResult> cir
   ) {
-    // this.setLevel(world, pos, state, level - 1);
     if (player.getStackInHand(hand).getItem() instanceof BackpackItem) {
       player.incrementStat(BackpackStats.CLEANED);
-      cir.setReturnValue(ActionResult.SUCCESS); // return ActionResult.SUCCESS;
+      cir.setReturnValue(ActionResult.SUCCESS);
     }
-    // player.incrementStat(Stats.CLEAN_ARMOR);
-    // return ActionResult.SUCCESS;
   }
 }

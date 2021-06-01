@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerInventory.class)
-abstract class InventoryMixin implements Inventory, Nameable {
+abstract class PlayerInventoryMixin implements Inventory, Nameable {
   @Shadow @Final public PlayerEntity player;
 
   @Inject(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)

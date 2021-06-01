@@ -13,25 +13,25 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
 public final class BackpackOptions {
-  private static final int MIN_ROWS = 1;
-  private static final int DEFAULT_ROWS = 3;
-  private static final int MAX_ROWS = 6;
+  public static final int MIN_ROWS = 1;
+  public static final int DEFAULT_ROWS = 3;
+  public static final int MAX_ROWS = 6;
 
-  private static final int MIN_COLUMNS = 1;
-  private static final int DEFAULT_COLUMNS = 9;
-  private static final int MAX_COLUMNS = 18;
+  public static final int MIN_COLUMNS = 1;
+  public static final int DEFAULT_COLUMNS = 9;
+  public static final int MAX_COLUMNS = 18;
 
-  private static final int MIN_DAMAGE = 0;
-  private static final int DEFAULT_MAX_DAMAGE = 240;
-  private static final int MAX_DAMAGE = 495;
+  public static final int MIN_DAMAGE = 0;
+  public static final int DEFAULT_MAX_DAMAGE = 240;
+  public static final int MAX_DAMAGE = 495;
 
-  private static final int MIN_DEFENSE = 0;
-  private static final int DEFAULT_DEFENSE = 5;
-  private static final int MAX_DEFENSE = 6;
+  public static final int MIN_DEFENSE = 0;
+  public static final int DEFAULT_DEFENSE = 5;
+  public static final int MAX_DEFENSE = 6;
 
-  private static final float MIN_TOUGHNESS = 0.0F;
-  private static final float DEFAULT_TOUGHNESS = 0.0F;
-  private static final float MAX_TOUGHNESS = 2.0F;
+  public static final float MIN_TOUGHNESS = 0.0F;
+  public static final float DEFAULT_TOUGHNESS = 0.0F;
+  public static final float MAX_TOUGHNESS = 2.0F;
 
   private static final Logger LOGGER = LogManager.getLogger();
 

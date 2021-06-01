@@ -4,6 +4,7 @@ import dev.sapphic.wearablebackpacks.Backpack;
 import dev.sapphic.wearablebackpacks.BackpackOptions;
 import dev.sapphic.wearablebackpacks.Backpacks;
 import dev.sapphic.wearablebackpacks.block.BackpackBlock;
+import dev.sapphic.wearablebackpacks.inventory.BackpackContainer;
 import dev.sapphic.wearablebackpacks.inventory.BackpackMenu;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.util.NbtType;
@@ -26,7 +27,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 
 public final class BackpackBlockEntity extends LootableContainerBlockEntity
-  implements Backpack, Tickable, BlockEntityClientSerializable {
+  implements Backpack, Tickable, BlockEntityClientSerializable, BackpackContainer {
   private static final int NO_DAMAGE = 0;
   private static final int NO_COLOR = 0xFFFFFF + 1;
 
@@ -113,6 +114,17 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity
   }
 
   @Override
+  protected DefaultedList<ItemStack> getInvStackList() {
+    return this.contents;
+  }
+
+  @Override
+  @Deprecated
+  protected void setInvStackList(final DefaultedList<ItemStack> inventory) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public int size() {
     return this.rows * this.columns;
   }
@@ -144,17 +156,6 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity
         );
       }
     }
-  }
-
-  @Override
-  protected DefaultedList<ItemStack> getInvStackList() {
-    return this.contents;
-  }
-
-  @Override
-  @Deprecated
-  protected void setInvStackList(final DefaultedList<ItemStack> inventory) {
-    throw new UnsupportedOperationException();
   }
 
   public void saveTo(final ItemStack stack) {
