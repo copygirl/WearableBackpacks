@@ -215,9 +215,12 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
   }
 
   @Override
-  public void afterBreak(final World world, final PlayerEntity player, final BlockPos pos, final BlockState state, final @org.jetbrains.annotations.Nullable BlockEntity blockEntity, final ItemStack stack) {
+  public void afterBreak(final World world, final PlayerEntity player, final BlockPos pos, final BlockState state, final @Nullable BlockEntity be, final ItemStack stack) {
     player.incrementStat(Stats.MINED.getOrCreateStat(this));
     player.addExhaustion(0.005F);
+    if (!player.isSneaking()) {
+      dropStacks(state, world, pos, be, player, stack);
+    }
   }
 
   @Override
