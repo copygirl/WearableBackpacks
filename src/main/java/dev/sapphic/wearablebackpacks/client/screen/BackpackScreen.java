@@ -53,7 +53,6 @@ public final class BackpackScreen extends HandledScreen<BackpackMenu> {
     drawTexture(stack, bgW - 4, this.y, this.getZOffset(), 18.0F + 14.0F, 0.0F, 4, 10, 64, 64); // TOP RIGHT
     drawTexture(stack, this.x, bgH - 4, this.getZOffset(), 18.0F, 14.0F, 4, 10, 64, 64); //BOTTOM LEFT
     drawTexture(stack, bgW - 4, bgH - 4, this.getZOffset(), 18.0F + 14.0F, 14.0F, 4, 10, 64, 64); // BOTTOM RIGHT
-    // FIXME Respect Z offset of the GUI (currently delegates to private method with depth of 0)
     drawTexture(stack, this.x + 4, this.y, this.getZOffset(), fillW, 4, 18.0F + 4.0F, 0.0F, 10, 4, 64, 64); // TOP
     drawTexture(stack, this.x, this.y + 4, this.getZOffset(), 4, fillH, 18.0F, 4.0F, 4, 10, 64, 64); // LEFT
     drawTexture(stack, this.x + 4, bgH - 4, this.getZOffset(), fillW, 4, 18.0F + 4.0F, 14.0F, 10, 4, 64, 64); // BOTTOM

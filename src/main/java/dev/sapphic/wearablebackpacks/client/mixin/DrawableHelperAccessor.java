@@ -8,7 +8,8 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(DrawableHelper.class)
 public interface DrawableHelperAccessor {
   /**
-   * Draws a textured rectangle onto the screen
+   * Draws a textured rectangle onto the screen. This is the only method in the GUI library that allows
+   * for both texture regions and screen depth to be defined, but it is private, necessitating this hook
    *
    * @param stack Matrix stack to be peeked
    * @param x0    Leftmost position of the rectangle
