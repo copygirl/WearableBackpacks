@@ -2,6 +2,7 @@ package dev.sapphic.wearablebackpacks.event;
 
 import dev.sapphic.wearablebackpacks.Backpacks;
 import dev.sapphic.wearablebackpacks.inventory.WornBackpack;
+import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -9,8 +10,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -29,8 +30,8 @@ public final class BackpackEntityEvents implements ModInitializer {
     if (player.isSneaking() && player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty()) {
       final ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
       if (stack.getItem() == Backpacks.ITEM) {
-        final ItemUsageContext context = new ItemUsageContext(player, hand, hit);
-        if (stack.useOnBlock(context).isAccepted()) {
+        final ItemPlacementContext context = new ItemPlacementContext(player, hand, stack, hit);
+        if (((BackpackItem) stack.getItem()).place(context).isAccepted()) {
           if (!player.abilities.creativeMode) {
             stack.decrement(1);
           }
