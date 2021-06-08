@@ -89,9 +89,7 @@ public final class BackpacksClient implements ClientModInitializer {
     KeyBindingHelper.registerKeyBinding(BACKPACK_KEY_BINDING);
     ClientTickEvents.END_CLIENT_TICK.register(BackpacksClient::pollBackpackKey);
     BlockEntityRendererRegistry.INSTANCE.register(Backpacks.BLOCK_ENTITY, BackpackBlockRenderer::new);
-    ColorProviderRegistry.BLOCK.register((state, world, pos, tint) -> {
-      return ((world != null) && (pos != null)) ? Backpack.getColor(world, pos) : Backpack.DEFAULT_COLOR;
-    }, Backpacks.BLOCK);
-    ColorProviderRegistry.ITEM.register((stack, tintIndex) -> Backpack.getColor(stack), Backpacks.ITEM);
+    ColorProviderRegistry.BLOCK.register((state, world, pos, tint) -> Backpack.getColor(world, pos), Backpacks.BLOCK);
+    ColorProviderRegistry.ITEM.register((stack, tint) -> Backpack.getColor(stack), Backpacks.ITEM);
   }
 }

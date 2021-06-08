@@ -93,10 +93,12 @@ public interface Backpack {
     }
   }
 
-  static int getColor(final BlockView world, final BlockPos pos) {
-    final @Nullable BlockEntity be = world.getBlockEntity(pos);
-    if (be instanceof BackpackBlockEntity) {
-      return ((Backpack) be).getColor();
+  static int getColor(final @Nullable BlockView world, final @Nullable BlockPos pos) {
+    if ((world != null) && (pos != null)) {
+      final @Nullable BlockEntity be = world.getBlockEntity(pos);
+      if (be instanceof BackpackBlockEntity) {
+        return ((Backpack) be).getColor();
+      }
     }
     return DEFAULT_COLOR;
   }
