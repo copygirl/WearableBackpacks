@@ -70,24 +70,28 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
   public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
 
   private static final Map<Direction, VoxelShape> SHAPES = ImmutableMap.of(
-    Direction.NORTH, VoxelShapes.union(cube(3.0, 0.0, 6.0, 13.0, 12.0, 11.0), cube(4.0, 1.0, 4.0, 12.0, 7.0, 6.0)),
-    Direction.EAST, VoxelShapes.union(cube(5.0, 0.0, 3.0, 10.0, 12.0, 13.0), cube(10.0, 1.0, 4.0, 12.0, 7.0, 12.0)),
-    Direction.SOUTH, VoxelShapes.union(cube(3.0, 0.0, 5.0, 13.0, 12.0, 10.0), cube(4.0, 1.0, 10.0, 12.0, 7.0, 12.0)),
-    Direction.WEST, VoxelShapes.union(cube(6.0, 0.0, 3.0, 11.0, 12.0, 13.0), cube(4.0, 1.0, 4.0, 6.0, 7.0, 12.0))
+    Direction.NORTH, VoxelShapes.union(
+      VoxelShapes.cuboid(0.1875, 0.0, 0.375, 0.8125, 0.75, 0.6875),
+      VoxelShapes.cuboid(0.25, 0.0625, 0.25, 0.75, 0.4375, 0.375)
+    ),
+    Direction.EAST, VoxelShapes.union(
+      VoxelShapes.cuboid(0.3125, 0.0, 0.1875, 0.625, 0.75, 0.8125),
+      VoxelShapes.cuboid(0.625, 0.0625, 0.25, 0.75, 0.4375, 0.75)
+    ),
+    Direction.SOUTH, VoxelShapes.union(
+      VoxelShapes.cuboid(0.1875, 0.0, 0.3125, 0.8125, 0.75, 0.625),
+      VoxelShapes.cuboid(0.25, 0.0625, 0.625, 0.75, 0.4375, 0.75)
+    ),
+    Direction.WEST, VoxelShapes.union(
+      VoxelShapes.cuboid(0.375, 0.0, 0.1875, 0.6875, 0.75, 0.8125),
+      VoxelShapes.cuboid(0.25, 0.0625, 0.25, 0.375, 0.4375, 0.75)
+    )
   );
 
   public BackpackBlock(final Settings settings) {
     super(settings);
     this.setDefaultState(this.stateManager.getDefaultState()
       .with(FACING, Direction.NORTH).with(WATERLOGGED, false));
-  }
-
-  // Block.createCuboidShape but a sane, concise name
-  private static VoxelShape cube(
-    final double x0, final double y0, final double z0, final double x1, final double y1, final double z1
-  ) {
-    final double v = 16.0;
-    return VoxelShapes.cuboid(x0 / v, y0 / v, z0 / v, x1 / v, y1 / v, z1 / v);
   }
 
   @Override
