@@ -17,6 +17,7 @@ public interface Backpack {
   String COLUMNS = "Columns";
   String DAMAGE = "Damage";
   String COLOR = "Color";
+  String EMPTY = "Empty";
 
   int DEFAULT_COLOR = 0xA06540;
 

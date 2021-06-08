@@ -28,7 +28,6 @@ import net.minecraft.util.math.MathHelper;
 
 public final class BackpackBlockEntity extends LootableContainerBlockEntity
   implements Backpack, Tickable, BlockEntityClientSerializable, BackpackContainer {
-  private static final String EMPTY = "Empty";
 
   private static final int NO_DAMAGE = 0;
   private static final int NO_COLOR = 0xFFFFFF + 1;
