@@ -19,16 +19,18 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public final class WornBackpack implements BackpackContainer {
   private final int rows;
   private final int columns;
-  private final ItemStack backpack;
+
   private final @Nullable LivingEntity wearer;
+  private final ItemStack backpack;
+
   private final DefaultedList<ItemStack> contents;
 
-  private WornBackpack(final @Nullable LivingEntity wearer, final ItemStack backpack) {
+  public WornBackpack(final @Nullable LivingEntity wearer, final ItemStack backpack) {
     this.rows = Backpack.getRows(backpack);
     this.columns = Backpack.getColumns(backpack);
     this.contents = DefaultedList.ofSize(this.rows * this.columns, ItemStack.EMPTY);
-    this.backpack = backpack;
     this.wearer = wearer;
+    this.backpack = backpack;
     Inventories.fromTag(this.backpack.getOrCreateSubTag("BlockEntityTag"), this.contents);
   }
 
@@ -69,7 +71,12 @@ public final class WornBackpack implements BackpackContainer {
 
   @Override
   public boolean isEmpty() {
-    return this.contents.stream().allMatch(ItemStack::isEmpty);
+    for (final ItemStack stack : this.contents) {
+      if (!stack.isEmpty()) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Override
@@ -96,6 +103,7 @@ public final class WornBackpack implements BackpackContainer {
       return ItemStack.EMPTY;
     }
     this.contents.set(slot, ItemStack.EMPTY);
+    this.markDirty();
     return stack;
   }
 
@@ -110,6 +118,7 @@ public final class WornBackpack implements BackpackContainer {
 
   @Override
   public void markDirty() {
+    Inventories.toTag(this.backpack.getOrCreateSubTag("BlockEntityTag"), this.contents);
   }
 
   @Override
@@ -122,10 +131,11 @@ public final class WornBackpack implements BackpackContainer {
 
   @Override
   public void onClose(final PlayerEntity player) {
-    Inventories.toTag(this.backpack.getOrCreateSubTag("BlockEntityTag"), this.contents);
-    player.world.playSound(null, player.getX(), player.getY(), player.getZ(),
-      SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, player.getSoundCategory(),
-      0.5F, (player.world.random.nextFloat() * 0.1F) + 0.9F
+    this.markDirty();
+    final LivingEntity source = (this.wearer != null) ? this.wearer : player;
+    source.world.playSound(null, source.getX(), source.getY(), source.getZ(),
+      SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, source.getSoundCategory(),
+      0.5F, (source.world.random.nextFloat() * 0.1F) + 0.9F
     );
   }
 

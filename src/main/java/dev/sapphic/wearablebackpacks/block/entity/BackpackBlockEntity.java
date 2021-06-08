@@ -28,6 +28,8 @@ import net.minecraft.util.math.MathHelper;
 
 public final class BackpackBlockEntity extends LootableContainerBlockEntity
   implements Backpack, Tickable, BlockEntityClientSerializable, BackpackContainer {
+  private static final String EMPTY = "Empty";
+
   private static final int NO_DAMAGE = 0;
   private static final int NO_COLOR = 0xFFFFFF + 1;
 
@@ -42,6 +44,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity
   private int damage = NO_DAMAGE;
   private int color = NO_COLOR;
   private int lastColor = NO_COLOR;
+  private boolean empty = true;
 
   private LidState lidState = LidState.CLOSED;
   private float lidDelta = 0.0F;
@@ -103,14 +106,22 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity
     return this.contents;
   }
 
-  public Direction getFacing() {
-    if (this.hasWorld()) {
-      final BlockState state = this.getCachedState();
-      if (state.getBlock() instanceof BackpackBlock) {
-        return state.get(BackpackBlock.FACING);
-      }
-    }
-    return Direction.NORTH;
+  @Override
+  public boolean isEmpty() {
+    return this.empty;
+  }
+
+  @Override
+  public ItemStack removeStack(final int slot, final int amount) {
+    final ItemStack stack = super.removeStack(slot, amount);
+    this.checkEmpty();
+    return stack;
+  }
+
+  @Override
+  public void setStack(final int slot, final ItemStack stack) {
+    super.setStack(slot, stack);
+    this.checkEmpty();
   }
 
   @Override
@@ -122,6 +133,31 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity
   @Deprecated
   protected void setInvStackList(final DefaultedList<ItemStack> inventory) {
     throw new UnsupportedOperationException();
+  }
+
+  public Direction getFacing() {
+    if (this.hasWorld()) {
+      final BlockState state = this.getCachedState();
+      if (state.getBlock() instanceof BackpackBlock) {
+        return state.get(BackpackBlock.FACING);
+      }
+    }
+    return Direction.NORTH;
+  }
+
+  @Override
+  public boolean onSyncedBlockEvent(final int type, final int data) {
+    if (type == 1) {
+      this.openCount = data;
+      if (data == 0) {
+        this.lidState = LidState.CLOSING;
+      }
+      if (data == 1) {
+        this.lidState = LidState.OPENING;
+      }
+      return true;
+    }
+    return super.onSyncedBlockEvent(type, data);
   }
 
   @Override
@@ -186,21 +222,6 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity
   }
 
   @Override
-  public boolean onSyncedBlockEvent(final int type, final int data) {
-    if (type == 1) {
-      this.openCount = data;
-      if (data == 0) {
-        this.lidState = LidState.CLOSING;
-      }
-      if (data == 1) {
-        this.lidState = LidState.OPENING;
-      }
-      return true;
-    }
-    return super.onSyncedBlockEvent(type, data);
-  }
-
-  @Override
   public void fromTag(final BlockState state, final CompoundTag nbt) {
     super.fromTag(state, nbt);
     this.loadDimensions(nbt);
@@ -233,17 +254,27 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity
   public void fromClientTag(final CompoundTag nbt) {
     this.loadColor(nbt);
     this.loadDamage(nbt);
+    this.loadEmpty(nbt);
   }
 
   @Override
   public CompoundTag toClientTag(final CompoundTag nbt) {
     this.saveColor(nbt);
     this.saveDamage(nbt);
+    this.saveEmpty(nbt);
     return nbt;
   }
 
   public float getLidDelta(final float tickDelta) {
     return MathHelper.lerp(tickDelta, this.lastLidDelta, this.lidDelta);
+  }
+
+  private void checkEmpty() {
+    final boolean empty = super.isEmpty();
+    if (this.empty != empty) {
+      this.empty = empty;
+      this.trySync();
+    }
   }
 
   private void trySync() {
@@ -299,6 +330,14 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity
     if (this.hasColor()) {
       nbt.putInt(Backpack.COLOR, this.color);
     }
+  }
+
+  private void loadEmpty(final CompoundTag nbt) {
+    this.empty = nbt.getBoolean(EMPTY);
+  }
+
+  private void saveEmpty(final CompoundTag nbt) {
+    nbt.putBoolean(EMPTY, this.empty);
   }
 
   private void lidTick() {

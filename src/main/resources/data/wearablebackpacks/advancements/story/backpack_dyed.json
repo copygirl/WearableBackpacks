@@ -3,7 +3,7 @@
   "display": {
     "icon": {
       "item": "wearablebackpacks:backpack",
-      "nbt": "{\"display\":{\"color\":8439583}}"
+      "nbt": "{\"display\":{\"color\":8991416}}"
     },
     "title": {
       "translate": "advancements.wearablebackpacks.bursting_with_color.title"

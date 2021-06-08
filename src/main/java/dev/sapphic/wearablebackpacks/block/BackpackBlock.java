@@ -3,12 +3,15 @@ package dev.sapphic.wearablebackpacks.block;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import dev.sapphic.wearablebackpacks.Backpack;
+import dev.sapphic.wearablebackpacks.Backpacks;
 import dev.sapphic.wearablebackpacks.advancement.BackpackCriteriaTriggers;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import dev.sapphic.wearablebackpacks.mixin.BucketItemAccessor;
 import dev.sapphic.wearablebackpacks.mixin.DyeColorAccessor;
 import dev.sapphic.wearablebackpacks.stat.BackpackStats;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -16,17 +19,20 @@ import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.Waterloggable;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.DyeableItem;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -37,11 +43,15 @@ import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.tag.FluidTags;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -52,6 +62,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.List;
 import java.util.Map;
 
 public final class BackpackBlock extends BlockWithEntity implements Waterloggable {
@@ -201,6 +212,10 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
   public float calcBlockBreakingDelta(
     final BlockState state, final PlayerEntity player, final BlockView world, final BlockPos pos
   ) {
+    final @Nullable BlockEntity be = world.getBlockEntity(pos);
+    if ((be instanceof BackpackBlockEntity) && ((Inventory) be).isEmpty()) {
+      return super.calcBlockBreakingDelta(state, player, world, pos);
+    }
     if (player.isSneaking() && !(player.getEquippedStack(EquipmentSlot.CHEST).getItem() instanceof BackpackItem)) {
       return super.calcBlockBreakingDelta(state, player, world, pos);
     }
@@ -241,6 +256,32 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
   @Override
   protected void appendProperties(final StateManager.Builder<Block, BlockState> builder) {
     builder.add(FACING, WATERLOGGED);
+  }
+
+  @Override
+  @Environment(EnvType.CLIENT)
+  public void appendTooltip(
+    final ItemStack stack, final @Nullable BlockView world, final List<Text> tooltip, final TooltipContext options
+  ) {
+    super.appendTooltip(stack, world, tooltip, options);
+    final @Nullable CompoundTag tag = stack.getSubTag("BlockEntityTag");
+    if (tag != null) {
+      boolean hasItems = tag.contains("LootTable", 8);
+      if (!hasItems && tag.contains("Items", 9)) {
+        final DefaultedList<ItemStack> contents = DefaultedList.ofSize(27, ItemStack.EMPTY);
+        Inventories.fromTag(tag, contents);
+        for (final ItemStack contentsStack : contents) {
+          if (!contentsStack.isEmpty()) {
+            hasItems = true;
+            break;
+          }
+        }
+        if (hasItems) {
+          tooltip.add(new TranslatableText("container." + Backpacks.ID + ".items").formatted(Formatting.GOLD));
+        }
+      }
+    }
+
   }
 
   @Override

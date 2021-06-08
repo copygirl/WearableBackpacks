@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import dev.sapphic.wearablebackpacks.Backpack;
 import dev.sapphic.wearablebackpacks.Backpacks;
 import dev.sapphic.wearablebackpacks.block.BackpackBlock;
+import dev.sapphic.wearablebackpacks.client.mixin.ModelLoaderAccessor;
 import dev.sapphic.wearablebackpacks.client.render.BackpackBlockRenderer;
 import dev.sapphic.wearablebackpacks.client.screen.BackpackScreen;
 import dev.sapphic.wearablebackpacks.inventory.BackpackMenu;
@@ -54,14 +55,18 @@ public final class BackpacksClient implements ClientModInitializer {
 
   private static final PacketByteBuf EMPTY_PACKET_BUFFER = new PacketByteBuf(Unpooled.EMPTY_BUFFER);
 
-  public static void addLidStates(final ImmutableMap.Builder<Identifier, StateManager<Block, BlockState>> states) {
-    states.put(BACKPACK_LID, new StateManager.Builder<Block, BlockState>(Blocks.AIR)
-      .add(BackpackBlock.FACING).build(Block::getDefaultState, BlockState::new)
-    );
-  }
-
   public static ModelIdentifier getLidModel(final Direction facing) {
     return LID_MODELS.getOrDefault(facing, ModelLoader.MISSING);
+  }
+
+  private static void addLidStateDefinitions() {
+    ModelLoaderAccessor.setStaticDefinitions(
+      ImmutableMap.<Identifier, StateManager<Block, BlockState>>builder()
+        .putAll(ModelLoaderAccessor.getStaticDefinitions())
+        .put(BACKPACK_LID, new StateManager.Builder<Block, BlockState>(Blocks.AIR)
+          .add(BackpackBlock.FACING).build(Block::getDefaultState, BlockState::new)
+        ).build()
+    );
   }
 
   private static void pollBackpackKey(final MinecraftClient client) {
@@ -79,6 +84,7 @@ public final class BackpacksClient implements ClientModInitializer {
 
   @Override
   public void onInitializeClient() {
+    addLidStateDefinitions();
     ScreenRegistry.register(BackpackMenu.TYPE, BackpackScreen::new);
     KeyBindingHelper.registerKeyBinding(BACKPACK_KEY_BINDING);
     ClientTickEvents.END_CLIENT_TICK.register(BackpacksClient::pollBackpackKey);

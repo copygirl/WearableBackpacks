@@ -6,7 +6,7 @@
   "client": [
     "DrawableHelperAccessor",
     "MinecraftClientMixin",
-    "ModelLoaderMixin"
+    "ModelLoaderAccessor"
   ],
   "refmap": "mixins/wearablebackpacks/refmap.json",
   "injectors": {

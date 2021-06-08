@@ -118,14 +118,15 @@ public final class BackpackItem extends DyeableArmorItem {
         final int size = nbt.getList("Items", NbtType.COMPOUND).size();
         final DefaultedList<ItemStack> stacks = DefaultedList.ofSize(size, ItemStack.EMPTY);
         Inventories.fromTag(nbt, stacks);
+        boolean hasContents = false;
         for (final ItemStack stack : stacks) {
           if (!stack.isEmpty()) {
-            ItemScatterer.spawn(world, entity.getBlockPos(), stacks);
-            backpack.removeSubTag("BlockEntityTag");
-            entity.dropStack(backpack);
-            ((PlayerEntity) entity).inventory.setStack(slot, ItemStack.EMPTY);
-            break;
+            hasContents = true;
+            ((PlayerEntity) entity).inventory.offerOrDrop(world, stack);
           }
+        }
+        if (hasContents) {
+          backpack.removeSubTag("BlockEntityTag");
         }
       }
     }
@@ -160,7 +161,7 @@ public final class BackpackItem extends DyeableArmorItem {
     return null;
   }
 
-  private ActionResult place(final ItemPlacementContext context) {
+  public ActionResult place(final ItemPlacementContext context) {
     if (!context.canPlace()) {
       return ActionResult.FAIL;
     }
