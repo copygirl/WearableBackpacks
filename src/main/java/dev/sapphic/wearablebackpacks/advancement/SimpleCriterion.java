@@ -8,10 +8,10 @@ import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-public final class SimpleCriteriaTrigger extends AbstractCriterion<SimpleCriteriaTrigger.Conditions> {
+public final class SimpleCriterion extends AbstractCriterion<SimpleCriterion.Conditions> {
   private final Identifier id;
 
-  SimpleCriteriaTrigger(final Identifier id) {
+  SimpleCriterion(final Identifier id) {
     this.id = id;
   }
 
@@ -34,7 +34,7 @@ public final class SimpleCriteriaTrigger extends AbstractCriterion<SimpleCriteri
 
   public final class Conditions extends AbstractCriterionConditions {
     private Conditions(final EntityPredicate.Extended predicate) {
-      super(SimpleCriteriaTrigger.this.id, predicate);
+      super(SimpleCriterion.this.id, predicate);
     }
   }
 }

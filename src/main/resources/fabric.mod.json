@@ -14,7 +14,7 @@
     ],
     "main": [
       "dev.sapphic.wearablebackpacks.Backpacks",
-      "dev.sapphic.wearablebackpacks.advancement.BackpackCriteriaTriggers",
+      "dev.sapphic.wearablebackpacks.advancement.BackpackCriteria",
       "dev.sapphic.wearablebackpacks.event.BackpackEntityEvents",
       "dev.sapphic.wearablebackpacks.loot.BackpackLootFunctions",
       "dev.sapphic.wearablebackpacks.stat.BackpackStats"

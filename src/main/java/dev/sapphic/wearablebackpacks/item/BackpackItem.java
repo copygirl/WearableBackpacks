@@ -1,9 +1,8 @@
 package dev.sapphic.wearablebackpacks.item;
 
-import dev.sapphic.wearablebackpacks.advancement.BackpackCriteriaTriggers;
+import dev.sapphic.wearablebackpacks.advancement.BackpackCriteria;
 import dev.sapphic.wearablebackpacks.block.BackpackBlock;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
-import dev.sapphic.wearablebackpacks.inventory.BackpackMenu;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.util.NbtType;
@@ -25,7 +24,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
@@ -33,7 +31,6 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ModifiableWorld;
@@ -106,10 +103,10 @@ public final class BackpackItem extends DyeableArmorItem {
     }
     if (!world.isClient) {
       if (slot == EquipmentSlot.CHEST.getEntitySlotId()) {
-        BackpackCriteriaTriggers.EQUIPPED.trigger((ServerPlayerEntity) entity);
+        BackpackCriteria.EQUIPPED.trigger((ServerPlayerEntity) entity);
       }
       if (this.hasColor(backpack)) {
-        BackpackCriteriaTriggers.DYED.trigger((ServerPlayerEntity) entity);
+        BackpackCriteria.DYED.trigger((ServerPlayerEntity) entity);
       }
     }
     if ((slot != EquipmentSlot.CHEST.getEntitySlotId()) && !((PlayerEntity) entity).abilities.creativeMode) {

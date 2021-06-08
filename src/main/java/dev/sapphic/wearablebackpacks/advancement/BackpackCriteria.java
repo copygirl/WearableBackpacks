@@ -5,12 +5,12 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.advancement.CriterionRegistry;
 import net.minecraft.util.Identifier;
 
-public class BackpackCriteriaTriggers implements ModInitializer {
-  public static final SimpleCriteriaTrigger EQUIPPED = create("backpack_equipped");
-  public static final SimpleCriteriaTrigger DYED = create("backpack_dyed");
+public class BackpackCriteria implements ModInitializer {
+  public static final SimpleCriterion EQUIPPED = criterion("backpack_equipped");
+  public static final SimpleCriterion DYED = criterion("backpack_dyed");
 
-  private static SimpleCriteriaTrigger create(final String name) {
-    return new SimpleCriteriaTrigger(new Identifier(Backpacks.ID, name));
+  private static SimpleCriterion criterion(final String name) {
+    return new SimpleCriterion(new Identifier(Backpacks.ID, name));
   }
 
   @Override

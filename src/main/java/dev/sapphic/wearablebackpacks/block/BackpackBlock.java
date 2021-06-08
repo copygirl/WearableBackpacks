@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import dev.sapphic.wearablebackpacks.Backpack;
 import dev.sapphic.wearablebackpacks.Backpacks;
-import dev.sapphic.wearablebackpacks.advancement.BackpackCriteriaTriggers;
+import dev.sapphic.wearablebackpacks.advancement.BackpackCriteria;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import dev.sapphic.wearablebackpacks.mixin.BucketItemAccessor;
@@ -145,7 +145,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
             if (!player.abilities.creativeMode) {
               stack.decrement(1);
             }
-            BackpackCriteriaTriggers.DYED.trigger((ServerPlayerEntity) player);
+            BackpackCriteria.DYED.trigger((ServerPlayerEntity) player);
           }
         }
         return ActionResult.success(world.isClient);
