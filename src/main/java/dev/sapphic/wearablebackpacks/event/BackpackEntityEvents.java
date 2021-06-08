@@ -1,6 +1,5 @@
 package dev.sapphic.wearablebackpacks.event;
 
-import dev.sapphic.wearablebackpacks.Backpacks;
 import dev.sapphic.wearablebackpacks.inventory.WornBackpack;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import net.fabricmc.api.ModInitializer;
@@ -29,7 +28,7 @@ public final class BackpackEntityEvents implements ModInitializer {
   ) {
     if (player.isSneaking() && player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty()) {
       final ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
-      if (stack.getItem() == Backpacks.ITEM) {
+      if (stack.getItem() instanceof BackpackItem) {
         final ItemPlacementContext context = new ItemPlacementContext(player, hand, stack, hit);
         if (((BackpackItem) stack.getItem()).place(context).isAccepted()) {
           if (!player.abilities.creativeMode) {
@@ -50,7 +49,7 @@ public final class BackpackEntityEvents implements ModInitializer {
       return ActionResult.PASS;
     }
     final ItemStack stack = ((LivingEntity) wearer).getEquippedStack(EquipmentSlot.CHEST);
-    if ((stack.getItem() == Backpacks.ITEM) && canOpenBackpack(self, (LivingEntity) wearer)) {
+    if ((stack.getItem() instanceof BackpackItem) && canOpenBackpack(self, (LivingEntity) wearer)) {
       if (world.isClient) {
         final float pitch = (self.world.random.nextFloat() * 0.1F) + 0.9F;
         self.playSound(SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F, pitch);

@@ -1,6 +1,6 @@
 package dev.sapphic.wearablebackpacks.mixin;
 
-import dev.sapphic.wearablebackpacks.Backpacks;
+import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -31,7 +31,7 @@ abstract class MobEquipmentMixin extends LivingEntity {
   private void retainBackpackIfNonEmpty(
     final ItemStack newStack, final ItemStack oldStack, final CallbackInfoReturnable<Boolean> cir
   ) {
-    if (oldStack.getItem() == Backpacks.ITEM) {
+    if (oldStack.getItem() instanceof BackpackItem) {
       final @Nullable CompoundTag nbt = oldStack.getSubTag("BlockEntityTag");
       if ((nbt != null) && nbt.contains("Items", NbtType.LIST)) {
         final int size = nbt.getList("Items", NbtType.COMPOUND).size();

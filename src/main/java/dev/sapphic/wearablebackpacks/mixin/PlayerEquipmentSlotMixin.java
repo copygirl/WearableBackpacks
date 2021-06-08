@@ -1,6 +1,6 @@
 package dev.sapphic.wearablebackpacks.mixin;
 
-import dev.sapphic.wearablebackpacks.Backpacks;
+import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
@@ -25,7 +25,7 @@ abstract class PlayerEquipmentSlotMixin extends Slot {
     at = @At(value = "RETURN", ordinal = 1), require = 1, allow = 1, cancellable = true)
   private void retainBackpackIfNonEmpty(final PlayerEntity player, final CallbackInfoReturnable<Boolean> cir) {
     final ItemStack armorStack = this.getStack(); // Cannot capture from LVT (Out of scope?)
-    if (armorStack.getItem() == Backpacks.ITEM) {
+    if (armorStack.getItem() instanceof BackpackItem) {
       final @Nullable CompoundTag nbt = armorStack.getSubTag("BlockEntityTag");
       if ((nbt != null) && nbt.contains("Items", NbtType.LIST)) {
         final int size = nbt.getList("Items", NbtType.COMPOUND).size();
