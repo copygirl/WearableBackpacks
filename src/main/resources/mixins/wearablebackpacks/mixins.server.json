@@ -7,8 +7,10 @@
     "BucketItemAccessor",
     "CauldronBlockMixin",
     "DyeColorAccessor",
+    "LivingEntityMixin",
     "MobEquipmentMixin",
-    "PlayerEquipmentSlotMixin"
+    "PlayerEquipmentSlotMixin",
+    "ServerPlayHandlerMixin"
   ],
   "refmap": "mixins/wearablebackpacks/refmap.json",
   "injectors": {

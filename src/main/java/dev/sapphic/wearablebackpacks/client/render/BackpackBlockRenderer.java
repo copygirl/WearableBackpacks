@@ -1,5 +1,6 @@
 package dev.sapphic.wearablebackpacks.client.render;
 
+import dev.sapphic.wearablebackpacks.block.BackpackBlock;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
 import dev.sapphic.wearablebackpacks.client.BackpacksClient;
 import net.fabricmc.api.EnvType;
@@ -14,12 +15,13 @@ import net.minecraft.client.render.block.BlockModels;
 import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.AxisDirection;
 import net.minecraft.util.math.Quaternion;
+import net.minecraft.util.math.Vec3f;
 
 @Environment(EnvType.CLIENT)
 public final class BackpackBlockRenderer extends BlockEntityRenderer<BackpackBlockEntity> {
@@ -34,14 +36,14 @@ public final class BackpackBlockRenderer extends BlockEntityRenderer<BackpackBlo
     final BackpackBlockEntity backpack, final float tickDelta, final MatrixStack stack,
     final VertexConsumerProvider pipelines, final int light, final int overlay
   ) {
-    final Direction facing = backpack.getFacing();
+    final Direction facing = backpack.getCachedState().get(BackpackBlock.FACING);
     final BlockRenderManager manager = this.client.getBlockRenderManager();
     final BlockModels models = manager.getModels();
     final BlockModelRenderer renderer = manager.getModelRenderer();
-    final VertexConsumer pipeline = pipelines.getBuffer(TexturedRenderLayers.getEntityCutout());
+    final VertexConsumer pipeline = ItemRenderer.getDirectItemGlintConsumer(pipelines, TexturedRenderLayers.getEntityCutout(), true, backpack.hasGlint());
     final BakedModel backpackModel = models.getModel(backpack.getCachedState());
     final BakedModel lidModel = models.getModelManager().getModel(BackpacksClient.getLidModel(facing));
-    final Vector3f unitVector = facing.rotateYClockwise().getUnitVector();
+    final Vec3f unitVector = facing.rotateYClockwise().getUnitVector();
     final Quaternion rotation = unitVector.getDegreesQuaternion(45.0F * backpack.getLidDelta(tickDelta));
 
     final int color = backpack.getColor();

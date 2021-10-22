@@ -2,6 +2,7 @@ package dev.sapphic.wearablebackpacks.inventory;
 
 import dev.sapphic.wearablebackpacks.Backpack;
 import dev.sapphic.wearablebackpacks.Backpacks;
+import dev.sapphic.wearablebackpacks.client.BackpackWearer;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,7 +32,7 @@ public final class WornBackpack implements BackpackContainer {
     this.contents = DefaultedList.ofSize(this.rows * this.columns, ItemStack.EMPTY);
     this.wearer = wearer;
     this.backpack = backpack;
-    Inventories.fromTag(this.backpack.getOrCreateSubTag("BlockEntityTag"), this.contents);
+    Inventories.readNbt(this.backpack.getOrCreateSubTag("BlockEntityTag"), this.contents);
   }
 
   WornBackpack() {
@@ -118,7 +119,7 @@ public final class WornBackpack implements BackpackContainer {
 
   @Override
   public void markDirty() {
-    Inventories.toTag(this.backpack.getOrCreateSubTag("BlockEntityTag"), this.contents);
+    Inventories.writeNbt(this.backpack.getOrCreateSubTag("BlockEntityTag"), this.contents);
   }
 
   @Override
@@ -133,10 +134,13 @@ public final class WornBackpack implements BackpackContainer {
   public void onClose(final PlayerEntity player) {
     this.markDirty();
     final LivingEntity source = (this.wearer != null) ? this.wearer : player;
-    source.world.playSound(null, source.getX(), source.getY(), source.getZ(),
-      SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, source.getSoundCategory(),
-      0.5F, (source.world.random.nextFloat() * 0.1F) + 0.9F
-    );
+    if (!source.world.isClient) {
+      source.world.playSound(null, source.getX(), source.getY(), source.getZ(),
+        SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, source.getSoundCategory(),
+        0.5F, (source.world.random.nextFloat() * 0.1F) + 0.9F
+      );
+      BackpackWearer.getBackpackState(source).closed();
+    }
   }
 
   @Override

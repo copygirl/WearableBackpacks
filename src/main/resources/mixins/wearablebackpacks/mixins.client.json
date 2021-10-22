@@ -4,7 +4,12 @@
   "required": true,
   "package": "dev.sapphic.wearablebackpacks.client.mixin",
   "client": [
+    "ArmorFeatureRendererMixin",
+    "BlockModelRendererMixin",
     "DrawableHelperAccessor",
+    "DualVertexConsumerAccessor",
+    "ItemRendererMixin",
+    "MinecraftClientAccessor",
     "MinecraftClientMixin",
     "ModelLoaderAccessor"
   ],

@@ -1,11 +1,11 @@
 package dev.sapphic.wearablebackpacks.item;
 
+import dev.sapphic.wearablebackpacks.Backpack;
 import dev.sapphic.wearablebackpacks.advancement.BackpackCriteria;
 import dev.sapphic.wearablebackpacks.block.BackpackBlock;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -15,15 +15,13 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventories;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.DyeableArmorItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
@@ -40,7 +38,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public final class BackpackItem extends DyeableArmorItem {
   private final Block block;
@@ -54,21 +51,23 @@ public final class BackpackItem extends DyeableArmorItem {
   private static BlockState getBlockStateFromTag(
     final BlockPos pos, final ModifiableWorld world, final ItemStack stack, final BlockState state
   ) {
-    final @Nullable CompoundTag nbt = stack.getSubTag("BlockStateTag");
-    if (nbt != null) {
-      BlockState actualState = state;
+    final @Nullable NbtCompound blockStateTag = stack.getSubTag("BlockStateTag");
+    if (blockStateTag != null) {
+      BlockState parsedState = state;
       final StateManager<Block, BlockState> container = state.getBlock().getStateManager();
-      for (final String key : nbt.getKeys()) {
-        final @Nullable Property<?> property = container.getProperty(key);
+      for (final String name : blockStateTag.getKeys()) {
+        final @Nullable Property<?> property = container.getProperty(name);
         if (property != null) {
-          final Tag value = Objects.requireNonNull(nbt.get(key));
-          actualState = with(actualState, property, value.asString());
+          final @Nullable NbtElement value = blockStateTag.get(name);
+          if (value != null) {
+            parsedState = with(parsedState, property, value.asString());
+          }
         }
       }
-      if (actualState != state) {
-        world.setBlockState(pos, actualState, 2); // FIXME Use constant
+      if (parsedState != state) {
+        world.setBlockState(pos, parsedState, 2); // FIXME Use constant
       }
-      return actualState;
+      return parsedState;
     }
     return state;
   }
@@ -110,21 +109,16 @@ public final class BackpackItem extends DyeableArmorItem {
       }
     }
     if ((slot != EquipmentSlot.CHEST.getEntitySlotId()) && !((PlayerEntity) entity).abilities.creativeMode) {
-      final @Nullable CompoundTag nbt = backpack.getSubTag("BlockEntityTag");
-      if ((nbt != null) && nbt.contains("Items", NbtType.LIST)) {
-        final int size = nbt.getList("Items", NbtType.COMPOUND).size();
-        final DefaultedList<ItemStack> stacks = DefaultedList.ofSize(size, ItemStack.EMPTY);
-        Inventories.fromTag(nbt, stacks);
-        boolean hasContents = false;
-        for (final ItemStack stack : stacks) {
-          if (!stack.isEmpty()) {
-            hasContents = true;
-            ((PlayerEntity) entity).inventory.offerOrDrop(world, stack);
-          }
+      final DefaultedList<ItemStack> stacks = Backpack.getContents(backpack);
+      boolean hasContents = false;
+      for (final ItemStack stack : stacks) {
+        if (!stack.isEmpty()) {
+          hasContents = true;
+          ((PlayerEntity) entity).inventory.offerOrDrop(world, stack);
         }
-        if (hasContents) {
-          backpack.removeSubTag("BlockEntityTag");
-        }
+      }
+      if (hasContents) {
+        backpack.removeSubTag("BlockEntityTag");
       }
     }
   }
@@ -149,9 +143,9 @@ public final class BackpackItem extends DyeableArmorItem {
   private @Nullable BlockState getPlacementState(final ItemPlacementContext context) {
     final @Nullable BlockState state = this.block.getPlacementState(context);
     if ((state != null) && state.canPlaceAt(context.getWorld(), context.getBlockPos())) {
-      if (context.getWorld().canPlace(state, context.getBlockPos(), Optional.ofNullable(context.getPlayer())
-        .map(ShapeContext::of).orElseGet(ShapeContext::absent))
-      ) {
+      final @Nullable PlayerEntity player = context.getPlayer();
+      final ShapeContext shapeContext = (player != null) ? ShapeContext.of(player) : ShapeContext.absent();
+      if (context.getWorld().canPlace(state, context.getBlockPos(), shapeContext)) {
         return state;
       }
     }
@@ -181,8 +175,8 @@ public final class BackpackItem extends DyeableArmorItem {
       if (!(be instanceof BackpackBlockEntity)) {
         return ActionResult.FAIL;
       }
-      BlockItem.writeTagToBlockEntity(world, player, pos, stack);
-      ((BackpackBlockEntity) be).loadFrom(stack);
+      ((BackpackBlockEntity) be).readFromStack(stack);
+      //BlockItem.writeTagToBlockEntity(world, player, pos, stack);
       block.onPlaced(world, pos, state, player, stack);
       if (player instanceof ServerPlayerEntity) {
         Criteria.PLACED_BLOCK.trigger((ServerPlayerEntity) player, pos, stack);

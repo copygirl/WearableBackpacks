@@ -1,8 +1,10 @@
-pluginManagement{
+pluginManagement {
   repositories {
     gradlePluginPortal()
-    maven { url 'https://maven.fabricmc.net' }
+    maven {
+      url = "https://maven.fabricmc.net"
+    }
   }
 }
 
-rootProject.name = 'WearableBackpacks'
+rootProject.name = "WearableBackpacks"

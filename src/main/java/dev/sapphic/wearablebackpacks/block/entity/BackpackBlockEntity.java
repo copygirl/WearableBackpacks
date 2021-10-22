@@ -3,7 +3,7 @@ package dev.sapphic.wearablebackpacks.block.entity;
 import dev.sapphic.wearablebackpacks.Backpack;
 import dev.sapphic.wearablebackpacks.BackpackOptions;
 import dev.sapphic.wearablebackpacks.Backpacks;
-import dev.sapphic.wearablebackpacks.block.BackpackBlock;
+import dev.sapphic.wearablebackpacks.client.BackpackLid;
 import dev.sapphic.wearablebackpacks.inventory.BackpackContainer;
 import dev.sapphic.wearablebackpacks.inventory.BackpackMenu;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
@@ -14,7 +14,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -23,33 +24,32 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
+import org.apache.logging.log4j.LogManager;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-public final class BackpackBlockEntity extends LootableContainerBlockEntity
-  implements Backpack, Tickable, BlockEntityClientSerializable, BackpackContainer {
+public final class BackpackBlockEntity extends LootableContainerBlockEntity implements
+  BlockEntityClientSerializable, Backpack, BackpackContainer, Tickable {
 
-  private static final int NO_DAMAGE = 0;
+  private static final int OPENS_DATA_TYPE = 0x0;
+  private static final int COLOR_DATA_TYPE = 0x1;
+  private static final int EMPTY_FLAG_TYPE = 0x2;
+  private static final int GLINT_FLAG_TYPE = 0x3;
+
+  private static final int DEFAULT_COLOR = 0xA06540;
   private static final int NO_COLOR = 0xFFFFFF + 1;
 
-  private static final float CLOSED_DELTA = 0.0F;
-  private static final float OPENED_DELTA = 1.0F;
-  private static final float DELTA_STEP = 0.2F;
+  private final BackpackLid lid = new BackpackLid(o -> this.event(OPENS_DATA_TYPE, o.openCount()));
 
-  private int rows = Backpack.getExpectedRows();
-  private int columns = Backpack.getExpectedColumns();
-  private DefaultedList<ItemStack> contents = this.createContents();
+  private int rows = BackpackOptions.DEFAULT_ROWS;
+  private int columns = BackpackOptions.DEFAULT_COLUMNS;
+  private @MonotonicNonNull DefaultedList<ItemStack> contents;
+  private @Nullable NbtList enchantments;
 
-  private int damage = NO_DAMAGE;
   private int color = NO_COLOR;
-  private int lastColor = NO_COLOR;
-  private boolean empty = true;
 
-  private LidState lidState = LidState.CLOSED;
-  private float lidDelta = 0.0F;
-  private float lastLidDelta = 0.0F;
-
-  private int openCount = 0;
+  private boolean empty;
+  private boolean enchanted;
 
   public BackpackBlockEntity() {
     super(Backpacks.BLOCK_ENTITY);
@@ -66,13 +66,16 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity
   }
 
   @Override
-  public int getDamage() {
-    return this.damage;
+  public boolean hasGlint() {
+    return this.enchanted;
   }
 
   @Override
   public int getColor() {
-    return this.hasColor() ? this.color : DEFAULT_COLOR;
+    if (this.color == NO_COLOR) {
+      return DEFAULT_COLOR;
+    }
+    return this.color;
   }
 
   @Override
@@ -82,27 +85,30 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity
 
   @Override
   public void setColor(final int color) {
-    this.lastColor = this.color;
-    this.color = color & 0xFFFFFF;
-    if (this.lastColor != this.color) {
+    if (this.color != (color & 0xFFFFFF)) {
+      this.color = color & 0xFFFFFF;
+      this.event(COLOR_DATA_TYPE, this.color);
       this.markDirty();
-      this.trySync();
     }
   }
 
   @Override
   public void clearColor() {
-    this.lastColor = this.color;
-    this.color = NO_COLOR;
-    if (this.lastColor != this.color) {
+    if (this.color != NO_COLOR) {
+      this.color = NO_COLOR;
+      this.event(COLOR_DATA_TYPE, NO_COLOR);
       this.markDirty();
-      this.trySync();
     }
   }
 
   @Override
   public DefaultedList<ItemStack> getContents() {
     return this.contents;
+  }
+
+  @Override
+  public float getLidDelta(final float tickDelta) {
+    return this.lid.lidDelta(tickDelta);
   }
 
   @Override
@@ -113,14 +119,21 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity
   @Override
   public ItemStack removeStack(final int slot, final int amount) {
     final ItemStack stack = super.removeStack(slot, amount);
-    this.checkEmpty();
+    this.updateEmptyState();
+    return stack;
+  }
+
+  @Override
+  public ItemStack removeStack(final int slot) {
+    final ItemStack stack = super.removeStack(slot);
+    this.updateEmptyState();
     return stack;
   }
 
   @Override
   public void setStack(final int slot, final ItemStack stack) {
     super.setStack(slot, stack);
-    this.checkEmpty();
+    this.updateEmptyState();
   }
 
   @Override
@@ -129,114 +142,87 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity
   }
 
   @Override
-  @Deprecated
-  protected void setInvStackList(final DefaultedList<ItemStack> inventory) {
+  protected void setInvStackList(final DefaultedList<ItemStack> list) {
     throw new UnsupportedOperationException();
   }
 
-  public Direction getFacing() {
-    if (this.hasWorld()) {
-      final BlockState state = this.getCachedState();
-      if (state.getBlock() instanceof BackpackBlock) {
-        return state.get(BackpackBlock.FACING);
-      }
+  public void readFromStack(final ItemStack stack) {
+    this.rows = Backpack.getRows(stack);
+    this.columns = Backpack.getColumns(stack);
+    this.contents = DefaultedList.ofSize(this.size(), ItemStack.EMPTY);
+    final @Nullable NbtCompound tag = stack.getSubTag("BlockEntityTag");
+    if (tag != null) {
+      Inventories.readNbt(tag, this.contents);
     }
-    return Direction.NORTH;
-  }
-
-  @Override
-  public boolean onSyncedBlockEvent(final int type, final int data) {
-    if (type == 1) {
-      this.openCount = data;
-      if (data == 0) {
-        this.lidState = LidState.CLOSING;
-      }
-      if (data == 1) {
-        this.lidState = LidState.OPENING;
-      }
-      return true;
+    if (stack.hasEnchantments()) {
+      this.enchantments = stack.getEnchantments();
     }
-    return super.onSyncedBlockEvent(type, data);
-  }
-
-  @Override
-  public int size() {
-    return this.rows * this.columns;
-  }
-
-  @Override
-  public void onOpen(final PlayerEntity player) {
-    if ((this.world != null) && !player.isSpectator()) {
-      if (this.openCount < 0) {
-        this.openCount = 0;
-      }
-      ++this.openCount;
-      this.world.addSyncedBlockEvent(this.pos, this.getCachedState().getBlock(), 1, this.openCount);
-      if (this.openCount == 1) {
-        this.world.playSound(null, this.pos, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER,
-          SoundCategory.BLOCKS, 0.5F, (this.world.random.nextFloat() * 0.1F) + 0.9F
-        );
-      }
-    }
-  }
-
-  @Override
-  public void onClose(final PlayerEntity player) {
-    if ((this.world != null) && !player.isSpectator()) {
-      --this.openCount;
-      this.world.addSyncedBlockEvent(this.pos, this.getCachedState().getBlock(), 1, this.openCount);
-      if (this.openCount <= 0) {
-        this.world.playSound(null, this.pos, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER,
-          SoundCategory.BLOCKS, 0.5F, (this.world.random.nextFloat() * 0.1F) + 0.9F
-        );
-      }
-    }
-  }
-
-  public void saveTo(final ItemStack stack) {
-    stack.setDamage(this.damage);
-    Inventories.toTag(stack.getOrCreateSubTag("BlockEntityTag"), this.contents);
-    if (this.hasColor()) {
-      Backpack.setColor(stack, this.getColor());
-    }
-    if (this.hasCustomName()) {
-      stack.setCustomName(this.getCustomName());
-    }
-  }
-
-  public void loadFrom(final ItemStack stack) {
-    this.damage = BackpackOptions.getDamage(stack.getDamage());
-    Inventories.fromTag(stack.getOrCreateSubTag("BlockEntityTag"), this.contents);
     if (Backpack.hasColor(stack)) {
-      this.setColor(Backpack.getColor(stack));
+      this.color = Backpack.getColor(stack);
     }
-    if (stack.hasCustomName()) {
-      this.setCustomName(stack.getName());
+    this.enchanted = this.enchantments != null;
+    this.empty = super.isEmpty();
+    this.event(COLOR_DATA_TYPE, this.color);
+    this.event(GLINT_FLAG_TYPE, this.enchanted ? 1 : 0);
+    this.event(EMPTY_FLAG_TYPE, this.empty ? 1 : 0);
+    this.markDirty();
+  }
+
+  public void writeToStack(final ItemStack stack) {
+    if (this.hasColor()) {
+      Backpack.setColor(stack, this.color);
+    }
+    if (this.enchantments != null) {
+      stack.putSubTag("Enchantments", this.enchantments);
+    }
+    final NbtCompound tag = stack.getOrCreateSubTag("BlockEntityTag");
+    tag.putInt("Rows", this.rows);
+    tag.putInt("Columns", this.columns);
+  }
+
+  @Override
+  public void fromTag(final BlockState state, final NbtCompound tag) {
+    super.fromTag(state, tag);
+    if (tag.contains("Rows", NbtType.INT)) {
+      this.rows = BackpackOptions.getRows(tag.getInt("Rows"));
+    }
+    if (tag.contains("Columns", NbtType.INT)) {
+      this.columns = BackpackOptions.getColumns(tag.getInt("Columns"));
+    }
+    this.contents = DefaultedList.ofSize(this.size(), ItemStack.EMPTY);
+    if (!this.deserializeLootTable(tag)) {
+      Inventories.readNbt(tag, this.contents);
+    }
+    this.empty = super.isEmpty();
+    if (tag.contains("Color", NbtType.INT)) {
+      this.color = tag.getInt("Color") & 0xFFFFFF;
+    }
+    if (tag.contains("Enchantments", NbtType.LIST)) {
+      this.enchantments = tag.getList("Enchantments", NbtType.COMPOUND);
+      this.enchanted = true;
     }
   }
 
   @Override
-  public void tick() {
-    this.lidTick();
-  }
-
-  @Override
-  public void fromTag(final BlockState state, final CompoundTag nbt) {
-    super.fromTag(state, nbt);
-    this.loadDimensions(nbt);
-    this.loadInventory(nbt);
-    this.loadDamage(nbt);
-    this.loadColor(nbt);
-  }
-
-  @Override
-  public CompoundTag toTag(final CompoundTag nbt) {
-    super.toTag(nbt);
-    this.saveDimensions(nbt);
-    this.saveInventory(nbt);
-    this.saveDamage(nbt);
-    this.saveColor(nbt);
-    return nbt;
+  public NbtCompound writeNbt(final NbtCompound tag) {
+    super.writeNbt(tag);
+    tag.putInt(Backpack.ROWS, this.rows);
+    tag.putInt(Backpack.COLUMNS, this.columns);
+    if (this.contents != null) {
+      if (!this.serializeLootTable(tag)) {
+        Inventories.writeNbt(tag, this.contents);
+        LogManager.getLogger().warn("Contents are non-null");
+      }
+    } else {
+      LogManager.getLogger().warn("Contents are null");
+    }
+    if (this.hasColor()) {
+      tag.putInt("Color", this.color);
+    }
+    if (this.enchantments != null) {
+      tag.put("Enchantments", this.enchantments);
+    }
+    return tag;
   }
 
   @Override
@@ -250,121 +236,91 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity
   }
 
   @Override
-  public void fromClientTag(final CompoundTag nbt) {
-    this.loadColor(nbt);
-    this.loadDamage(nbt);
-    this.loadEmpty(nbt);
+  public void fromClientTag(final NbtCompound tag) {
+    if (tag.contains("Color", NbtType.INT)) {
+      this.color = tag.getInt("Color") & 0xFFFFFF;
+    }
+    this.empty = tag.getBoolean("Empty");
+    this.enchanted = tag.getBoolean("Enchanted");
   }
 
   @Override
-  public CompoundTag toClientTag(final CompoundTag nbt) {
-    this.saveColor(nbt);
-    this.saveDamage(nbt);
-    this.saveEmpty(nbt);
-    return nbt;
-  }
-
-  public float getLidDelta(final float tickDelta) {
-    return MathHelper.lerp(tickDelta, this.lastLidDelta, this.lidDelta);
-  }
-
-  private void checkEmpty() {
-    final boolean empty = super.isEmpty();
-    if (this.empty != empty) {
-      this.empty = empty;
-      this.trySync();
-    }
-  }
-
-  private void trySync() {
-    if (this.world instanceof ServerWorld) {
-      this.sync();
-    }
-  }
-
-  private DefaultedList<ItemStack> createContents() {
-    return DefaultedList.ofSize(this.size(), ItemStack.EMPTY);
-  }
-
-  private void loadDimensions(final CompoundTag nbt) {
-    this.rows = BackpackOptions.getRows(nbt.getInt(Backpack.ROWS));
-    this.columns = BackpackOptions.getColumns(nbt.getInt(Backpack.COLUMNS));
-  }
-
-  private void saveDimensions(final CompoundTag nbt) {
-    nbt.putInt(Backpack.ROWS, this.rows);
-    nbt.putInt(Backpack.COLUMNS, this.columns);
-  }
-
-  private void loadInventory(final CompoundTag nbt) {
-    this.contents = this.createContents();
-    if (!this.deserializeLootTable(nbt)) {
-      Inventories.fromTag(nbt, ((Backpack) this).getContents());
-    }
-  }
-
-  private void saveInventory(final CompoundTag nbt) {
-    if (!this.serializeLootTable(nbt)) {
-      Inventories.toTag(nbt, this.contents);
-    }
-  }
-
-  private void loadDamage(final CompoundTag nbt) {
-    this.damage = BackpackOptions.getDamage(nbt.getInt(Backpack.DAMAGE));
-  }
-
-  private void saveDamage(final CompoundTag nbt) {
-    nbt.putInt(Backpack.DAMAGE, this.damage);
-  }
-
-  private void loadColor(final CompoundTag nbt) {
-    if (nbt.contains(Backpack.COLOR, NbtType.INT)) {
-      this.color = nbt.getInt(Backpack.COLOR) & 0xFFFFFF;
-    } else {
-      this.color = NO_COLOR;
-    }
-  }
-
-  private void saveColor(final CompoundTag nbt) {
+  public NbtCompound toClientTag(final NbtCompound tag) {
     if (this.hasColor()) {
-      nbt.putInt(Backpack.COLOR, this.color);
+      tag.putInt("Color", this.color);
+    }
+    tag.putBoolean("Empty", this.empty);
+    tag.putBoolean("Enchanted", this.enchanted);
+    return tag;
+  }
+
+  @Override
+  public boolean onSyncedBlockEvent(final int type, final int data) {
+    if (type == OPENS_DATA_TYPE) {
+      this.lid.count(data);
+      return true;
+    }
+    if (type == COLOR_DATA_TYPE) {
+      if (data == NO_COLOR) {
+        this.color = NO_COLOR;
+      } else {
+        this.color = data & 0xFFFFFF;
+      }
+      return true;
+    }
+    if (type == EMPTY_FLAG_TYPE) {
+      this.empty = data == 1;
+      return true;
+    }
+    if (type == GLINT_FLAG_TYPE) {
+      this.enchanted = data == 1;
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public int size() {
+    return this.rows * this.columns;
+  }
+
+  @Override
+  public void onOpen(final PlayerEntity player) {
+    if ((this.world != null) && !player.isSpectator()) {
+      this.lid.opened();
+      if (this.lid.isOpen()) {
+        this.world.playSound(null, this.pos, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER,
+          SoundCategory.BLOCKS, 0.5F, (this.world.random.nextFloat() * 0.1F) + 0.9F
+        );
+      }
     }
   }
 
-  private void loadEmpty(final CompoundTag nbt) {
-    this.empty = nbt.getBoolean(EMPTY);
-  }
-
-  private void saveEmpty(final CompoundTag nbt) {
-    nbt.putBoolean(EMPTY, this.empty);
-  }
-
-  private void lidTick() {
-    this.lastLidDelta = this.lidDelta;
-    switch (this.lidState) {
-      case CLOSED:
-        this.lidDelta = CLOSED_DELTA;
-        break;
-      case OPENING:
-        this.lidDelta += DELTA_STEP;
-        if (this.lidDelta >= OPENED_DELTA) {
-          this.lidState = LidState.OPENED;
-          this.lidDelta = OPENED_DELTA;
-        }
-        break;
-      case CLOSING:
-        this.lidDelta -= DELTA_STEP;
-        if (this.lidDelta <= CLOSED_DELTA) {
-          this.lidState = LidState.CLOSED;
-          this.lidDelta = CLOSED_DELTA;
-        }
-        break;
-      case OPENED:
-        this.lidDelta = OPENED_DELTA;
+  @Override
+  public void onClose(final PlayerEntity player) {
+    if ((this.world != null) && !player.isSpectator()) {
+      this.lid.closed();
+      if (this.lid.isClosed()) {
+        this.world.playSound(null, this.pos, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER,
+          SoundCategory.BLOCKS, 0.5F, (this.world.random.nextFloat() * 0.1F) + 0.9F
+        );
+      }
     }
   }
 
-  private enum LidState {
-    CLOSED, OPENING, OPENED, CLOSING
+  @Override
+  public void tick() {
+    this.lid.tick();
+  }
+
+  private void updateEmptyState() {
+    this.empty = super.isEmpty();
+    this.event(EMPTY_FLAG_TYPE, this.empty ? 1 : 0);
+  }
+
+  private void event(final int type, final int data) {
+    if (this.world instanceof ServerWorld) {
+      this.world.addSyncedBlockEvent(this.pos, this.getCachedState().getBlock(), type, data);
+    }
   }
 }

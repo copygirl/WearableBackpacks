@@ -1,5 +1,6 @@
 package dev.sapphic.wearablebackpacks.event;
 
+import dev.sapphic.wearablebackpacks.client.BackpackWearer;
 import dev.sapphic.wearablebackpacks.inventory.WornBackpack;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import net.fabricmc.api.ModInitializer;
@@ -55,6 +56,7 @@ public final class BackpackEntityEvents implements ModInitializer {
         self.playSound(SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F, pitch);
       } else {
         self.openHandledScreen(WornBackpack.of((LivingEntity) wearer, stack));
+        BackpackWearer.getBackpackState((LivingEntity) wearer).opened();
       }
       return ActionResult.SUCCESS;
     }
@@ -62,9 +64,13 @@ public final class BackpackEntityEvents implements ModInitializer {
   }
 
   private static boolean canOpenBackpack(final PlayerEntity player, final LivingEntity entity) {
-    double angle = Math.toDegrees(StrictMath.atan2(entity.getZ() - player.getZ(), entity.getX() - player.getX()));
-    angle = ((((angle - entity.bodyYaw - 90) % 360) + 540) % 360) - 180;
-    return (player.distanceTo(entity) <= MIN_REQUIRED_DISTANCE) && (Math.abs(angle) < (ANGLE_BOUNDS / 2));
+    if (player.distanceTo(entity) <= MIN_REQUIRED_DISTANCE) {
+      final double theta = StrictMath.atan2(entity.getZ() - player.getZ(), entity.getX() - player.getX());
+      //noinspection OverlyComplexArithmeticExpression
+      final double angle = ((((Math.toDegrees(theta) - entity.bodyYaw - 90) % 360) + 540) % 360) - 180;
+      return Math.abs(angle) < (ANGLE_BOUNDS / 2);
+    }
+    return false;
   }
 
   @Override

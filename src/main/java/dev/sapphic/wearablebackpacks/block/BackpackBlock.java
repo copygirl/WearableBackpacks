@@ -32,7 +32,7 @@ import net.minecraft.item.DyeItem;
 import net.minecraft.item.DyeableItem;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -251,8 +251,13 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
   public void onBreak(final World world, final BlockPos pos, final BlockState state, final PlayerEntity player) {
     final @Nullable BlockEntity be = world.getBlockEntity(pos);
     if ((be instanceof BackpackBlockEntity) && player.isSneaking() && !player.hasStackEquipped(EquipmentSlot.CHEST)) {
-      player.equipStack(EquipmentSlot.CHEST, this.getPickStack(be, world, pos, state));
+      final ItemStack stack = this.getPickStack(be, world, pos, state);
+      final NbtCompound tag = stack.getOrCreateSubTag("BlockEntityTag");
+      Inventories.writeNbt(tag, ((Backpack) be).getContents());
+      player.equipStack(EquipmentSlot.CHEST, stack);
+      super.onBreak(world, pos, state, player);
       world.removeBlockEntity(pos);
+      return;
     }
     super.onBreak(world, pos, state, player);
   }
@@ -268,12 +273,12 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
     final ItemStack stack, final @Nullable BlockView world, final List<Text> tooltip, final TooltipContext options
   ) {
     super.appendTooltip(stack, world, tooltip, options);
-    final @Nullable CompoundTag tag = stack.getSubTag("BlockEntityTag");
+    final @Nullable NbtCompound tag = stack.getSubTag("BlockEntityTag");
     if (tag != null) {
       boolean hasItems = tag.contains("LootTable", 8);
       if (!hasItems && tag.contains("Items", 9)) {
         final DefaultedList<ItemStack> contents = DefaultedList.ofSize(27, ItemStack.EMPTY);
-        Inventories.fromTag(tag, contents);
+        Inventories.readNbt(tag, contents);
         for (final ItemStack contentsStack : contents) {
           if (!contentsStack.isEmpty()) {
             hasItems = true;
@@ -314,7 +319,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
   ) {
     final ItemStack stack = super.getPickStack(world, pos, state);
     if (be instanceof BackpackBlockEntity) {
-      ((BackpackBlockEntity) be).saveTo(stack);
+      ((BackpackBlockEntity) be).writeToStack(stack);
     }
     return stack;
   }

@@ -1,39 +1,72 @@
+import org.gradle.util.GradleVersion
+import java.time.Instant
+
 plugins {
-  id 'fabric-loom' version '0.7.30'
+  id "fabric-loom" version "0.10.21"
+  id "net.nemerosa.versioning" version "2.15.0"
+  id "signing"
 }
 
-group = 'dev.sapphic'
-version = '1.0.0'
+group = "dev.sapphic"
+version = "1.0.0"
+
+java {
+  withSourcesJar()
+}
 
 loom {
-  accessWidener = file '.accesswidener'
-  refmapName = 'mixins/wearablebackpacks/refmap.json'
+  accessWidenerPath.set(file(".accesswidener"))
+
+  mixin {
+    defaultRefmapName.set("mixins/wearablebackpacks/refmap.json")
+  }
+
+  runs {
+    configureEach {
+      property "mixin.debug", "true"
+      property "mixin.debug.export.decompile", "false"
+      property "mixin.debug.verbose", "false"
+      property "mixin.dumpTargetOnFailure", "true"
+      property "mixin.checks", "true"
+      property "mixin.hotSwap", "true"
+    }
+  }
+}
+
+repositories {
+  maven {
+    url = "https://maven.terraformersmc.com"
+    content {
+      includeGroup "com.terraformersmc"
+    }
+  }
 }
 
 dependencies {
-  minecraft 'com.mojang:minecraft:1.16.5'
-  mappings 'net.fabricmc:yarn:1.16.5+build.9:v2'
-  modImplementation 'net.fabricmc:fabric-loader:0.11.3'
+  minecraft "com.mojang:minecraft:1.16.5"
+  mappings "net.fabricmc:yarn:1.16.5+build.10:v2"
+  modImplementation "net.fabricmc:fabric-loader:0.12.2"
 
-  implementation 'com.google.code.findbugs:jsr305:3.0.2'
-  implementation 'org.jetbrains:annotations:21.0.1'
-  implementation 'org.checkerframework:checker-qual:3.13.0'
+  implementation "com.google.code.findbugs:jsr305:3.0.2"
+  implementation "org.jetbrains:annotations:22.0.0"
+  implementation "org.checkerframework:checker-qual:3.18.1"
   
-  final modInclude = { modImplementation include(it) }
-  final fabricApi = 'net.fabricmc.fabric-api:fabric'
+  final String fabricVersion = "0.40.6+1.16"
 
-  modInclude "$fabricApi-api-base:0.3.0+c88702897d"
-  modInclude "$fabricApi-events-interaction-v0:0.4.2+ca58154a7d"
-  modInclude "$fabricApi-key-binding-api-v1:1.0.4+9354966b7d"
-  modInclude "$fabricApi-lifecycle-events-v1:1.2.1+ca58154a7d"
-  modInclude "$fabricApi-networking-api-v1:1.0.3+e3c9d0627d"
-  modInclude "$fabricApi-networking-blockentity-v0:0.2.8+ca58154a7d"
-  modInclude "$fabricApi-object-builder-api-v1:1.9.5+c88702897d"
-  modInclude "$fabricApi-registry-sync-v0:0.7.4+ca58154a7d"
-  modInclude "$fabricApi-renderer-registries-v1:2.3.0+2868a2287d"
-  modInclude "$fabricApi-rendering-v1:1.6.0+2868a2287d"
-  modInclude "$fabricApi-resource-loader-v0:0.4.6+2868a2287d"
-  modInclude "$fabricApi-screen-handler-api-v1:1.1.5+9354966b7d"
+  modImplementation include(fabricApi.module("fabric-api-base", fabricVersion))
+  modImplementation include(fabricApi.module("fabric-events-interaction-v0", fabricVersion))
+  modImplementation include(fabricApi.module("fabric-key-binding-api-v1", fabricVersion))
+  modImplementation include(fabricApi.module("fabric-lifecycle-events-v1", fabricVersion))
+  modImplementation include(fabricApi.module("fabric-networking-api-v1", fabricVersion))
+  modImplementation include(fabricApi.module("fabric-networking-blockentity-v0", fabricVersion))
+  modImplementation include(fabricApi.module("fabric-object-builder-api-v1", fabricVersion))
+  modImplementation include(fabricApi.module("fabric-registry-sync-v0", fabricVersion))
+  modImplementation include(fabricApi.module("fabric-renderer-registries-v1", fabricVersion))
+  modImplementation include(fabricApi.module("fabric-rendering-v1", fabricVersion))
+  modImplementation include(fabricApi.module("fabric-resource-loader-v0", fabricVersion))
+  modImplementation include(fabricApi.module("fabric-screen-handler-api-v1", fabricVersion))
+
+  modImplementation "com.terraformersmc:modmenu:1.16.18"
 }
 
 compileJava {
@@ -41,26 +74,70 @@ compileJava {
     it.release.set(8)
     it.fork = true
     it.deprecation = true
-    it.encoding = 'UTF-8'
-    it.compilerArgs = ['-Xlint:all', '-parameters']
+    it.encoding = "UTF-8"
+    it.compilerArgs.addAll(["-Xlint:all", "-parameters"])
   }
 }
 
 processResources {
-  filesMatching('/fabric.mod.json') {
+  filesMatching("/fabric.mod.json") {
     expand version: version
   }
 }
 
 jar {
-  from '/LICENSE'
+  from "/LICENSE"
+
   manifest.attributes(
-    'Specification-Title': project.group,
-    'Specification-Vendor': project.group,
-    'Specification-Version': '1.0.0',
-    'Implementation-Title': project.name,
-    'Implementation-Version': project.version,
-    'Implementation-Vendor': project.group,
-    'Sealed': 'true'
+    "Build-Timestamp": Instant.now(),
+    "Build-Revision": versioning.info.commit,
+    "Build-Jvm": "" +
+      "${System.getProperty("java.version")} (" +
+      "${System.getProperty("java.vm.vendor")} " +
+      "${System.getProperty("java.vm.version")})",
+    "Built-By": GradleVersion.current(),
+
+    "Implementation-Title": project.name,
+    "Implementation-Version": project.version,
+    "Implementation-Vendor": project.group,
+
+    "Specification-Title": "FabricMod",
+    "Specification-Version": "1.0.0",
+    "Specification-Vendor": "dev.sapphic",
+
+    "Sealed": "true"
   )
+}
+
+remapJar {
+  remapAccessWidener.set(false)
+}
+
+assemble {
+  dependsOn versionFile
+}
+
+if (hasProperty "signing.mods.keyalias") {
+  final String alias = property "signing.mods.keyalias"
+  final String keystore = property "signing.mods.keystore"
+  final String password = property "signing.mods.password"
+
+  ([tasks.remapJar, tasks.remapSourcesJar] as List<Task>).each {
+    it.doLast {
+      if (!project.file(keystore).exists()) {
+        throw IllegalStateException("Missing keystore $keystore")
+      }
+
+      final File file = outputs.files.singleFile
+      ant.signjar(
+        jar: file,
+        alias: alias,
+        storepass: password,
+        keystore: keystore,
+        verbose: true,
+        preservelastmodified: true
+      )
+      signing.sign(file)
+    }
+  }
 }

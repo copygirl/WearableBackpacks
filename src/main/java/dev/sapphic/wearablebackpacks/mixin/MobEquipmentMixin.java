@@ -1,17 +1,13 @@
 package dev.sapphic.wearablebackpacks.mixin;
 
+import dev.sapphic.wearablebackpacks.Backpack;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PiglinEntity;
-import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,19 +27,8 @@ abstract class MobEquipmentMixin extends LivingEntity {
   private void retainBackpackIfNonEmpty(
     final ItemStack newStack, final ItemStack oldStack, final CallbackInfoReturnable<Boolean> cir
   ) {
-    if (oldStack.getItem() instanceof BackpackItem) {
-      final @Nullable CompoundTag nbt = oldStack.getSubTag("BlockEntityTag");
-      if ((nbt != null) && nbt.contains("Items", NbtType.LIST)) {
-        final int size = nbt.getList("Items", NbtType.COMPOUND).size();
-        final DefaultedList<ItemStack> contents = DefaultedList.ofSize(size, ItemStack.EMPTY);
-        Inventories.fromTag(nbt, contents);
-        for (final ItemStack stack : contents) {
-          if (!stack.isEmpty()) {
-            cir.setReturnValue(false);
-            return;
-          }
-        }
-      }
+    if ((oldStack.getItem() instanceof BackpackItem) && !Backpack.isEmpty(oldStack)) {
+      cir.setReturnValue(false);
     }
   }
 }

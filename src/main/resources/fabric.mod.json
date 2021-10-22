@@ -4,19 +4,23 @@
   "name": "Wearable Backpacks",
   "version": "$version",
   "description": "Adds beautiful, balanced backpacks",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "depends": {
-    "fabricloader": ">=0.9.3"
+    "fabricloader": ">=0.11.6",
+    "minecraft": "1.16.5",
+    "java": ">=8"
   },
   "entrypoints": {
     "client": [
-      "dev.sapphic.wearablebackpacks.client.BackpacksClient"
+      "dev.sapphic.wearablebackpacks.client.BackpacksClient",
+      "dev.sapphic.wearablebackpacks.network.BackpackClientNetwork"
     ],
     "main": [
       "dev.sapphic.wearablebackpacks.Backpacks",
       "dev.sapphic.wearablebackpacks.advancement.BackpackCriteria",
       "dev.sapphic.wearablebackpacks.event.BackpackEntityEvents",
       "dev.sapphic.wearablebackpacks.loot.BackpackLootFunctions",
+      "dev.sapphic.wearablebackpacks.network.BackpackServerNetwork",
       "dev.sapphic.wearablebackpacks.stat.BackpackStats"
     ]
   },
@@ -25,27 +29,9 @@
     "mixins/wearablebackpacks/mixins.server.json"
   ],
   "authors": [
-    {
-      "name": "Chloe Dawn",
-      "contact": {
-        "email": "chloe@sapphic.dev",
-        "homepage": "https://sapphic.dev"
-      }
-    },
-    {
-      "name": "copygirl",
-      "contact": {
-        "email": "copygirl@mcft.net",
-        "website": "https://copy.mcft.net"
-      }
-    },
-    {
-      "name": "asie",
-      "contact": {
-        "email": "kontakt@asie.pl",
-        "website": "https://asie.pl"
-      }
-    }
+    "Chloe Dawn",
+    "copygirl",
+    "asie"
   ],
   "contact": {
     "homepage": "https://bit.ly/33owdaZ",

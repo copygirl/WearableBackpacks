@@ -5,7 +5,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.advancement.CriterionRegistry;
 import net.minecraft.util.Identifier;
 
-public class BackpackCriteria implements ModInitializer {
+public final class BackpackCriteria implements ModInitializer {
   public static final SimpleCriterion EQUIPPED = criterion("backpack_equipped");
   public static final SimpleCriterion DYED = criterion("backpack_dyed");
 

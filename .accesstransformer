@@ -1,3 +1,0 @@
-net/minecraft/client/gui/screen/Screens$Provider
-net/minecraft/container/ContainerType$Factory
-net/minecraft/container/ContainerType <init>(Lnet/minecraft/container/ContainerType$Factory;)V
