@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.sound.SoundEvents;
@@ -32,7 +33,10 @@ public final class WornBackpack implements BackpackContainer {
     this.contents = DefaultedList.ofSize(this.rows * this.columns, ItemStack.EMPTY);
     this.wearer = wearer;
     this.backpack = backpack;
-    Inventories.readNbt(this.backpack.getOrCreateSubTag("BlockEntityTag"), this.contents);
+    final @Nullable NbtCompound nbt = backpack.getSubTag("BlockEntityTag");
+    if (nbt != null) {
+      Inventories.readNbt(nbt, this.contents);
+    }
   }
 
   WornBackpack() {
@@ -119,7 +123,11 @@ public final class WornBackpack implements BackpackContainer {
 
   @Override
   public void markDirty() {
-    Inventories.writeNbt(this.backpack.getOrCreateSubTag("BlockEntityTag"), this.contents);
+    if (!this.isEmpty()) {
+      Inventories.writeNbt(this.backpack.getOrCreateSubTag("BlockEntityTag"), this.contents);
+    } else {
+      this.backpack.removeSubTag("BlockEntityTag");
+    }
   }
 
   @Override
