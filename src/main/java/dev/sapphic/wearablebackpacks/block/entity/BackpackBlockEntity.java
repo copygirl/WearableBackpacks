@@ -211,10 +211,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
     if (this.contents != null) {
       if (!this.serializeLootTable(tag)) {
         Inventories.writeNbt(tag, this.contents);
-        LogManager.getLogger().warn("Contents are non-null");
       }
-    } else {
-      LogManager.getLogger().warn("Contents are null");
     }
     if (this.hasColor()) {
       tag.putInt("Color", this.color);
