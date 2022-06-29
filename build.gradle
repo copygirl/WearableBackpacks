@@ -1,10 +1,9 @@
-import org.gradle.util.GradleVersion
 import java.time.Instant
 
 plugins {
-  id "fabric-loom" version "0.10.21"
-  id "net.nemerosa.versioning" version "2.15.0"
-  id "signing"
+  id /*net.fabricmc.*/ "fabric-loom" version "0.12.51"
+  id "net.nemerosa.versioning" version "3.0.0"
+  id "org.gradle.signing"
 }
 
 group = "dev.sapphic"
@@ -25,7 +24,7 @@ loom {
     configureEach {
       property "mixin.debug", "true"
       property "mixin.debug.export.decompile", "false"
-      property "mixin.debug.verbose", "false"
+      property "mixin.debug.verbose", "true"
       property "mixin.dumpTargetOnFailure", "true"
       property "mixin.checks", "true"
       property "mixin.hotSwap", "true"
@@ -45,13 +44,9 @@ repositories {
 dependencies {
   minecraft "com.mojang:minecraft:1.16.5"
   mappings "net.fabricmc:yarn:1.16.5+build.10:v2"
-  modImplementation "net.fabricmc:fabric-loader:0.12.2"
+  modImplementation "net.fabricmc:fabric-loader:0.14.8"
 
-  implementation "com.google.code.findbugs:jsr305:3.0.2"
-  implementation "org.jetbrains:annotations:22.0.0"
-  implementation "org.checkerframework:checker-qual:3.18.1"
-  
-  final String fabricVersion = "0.40.6+1.16"
+  final fabricVersion = "0.42.0+1.16"
 
   modImplementation include(fabricApi.module("fabric-api-base", fabricVersion))
   modImplementation include(fabricApi.module("fabric-events-interaction-v0", fabricVersion))
@@ -66,16 +61,25 @@ dependencies {
   modImplementation include(fabricApi.module("fabric-resource-loader-v0", fabricVersion))
   modImplementation include(fabricApi.module("fabric-screen-handler-api-v1", fabricVersion))
 
-  modImplementation "com.terraformersmc:modmenu:1.16.18"
+  modImplementation "com.terraformersmc:modmenu:1.16.23"
+
+  implementation "com.google.code.findbugs:jsr305:3.0.2"
+  implementation "org.jetbrains:annotations:23.0.0"
+  implementation 'org.checkerframework:checker-qual:3.22.1'
 }
 
 compileJava {
   options.with {
-    it.release.set(8)
-    it.fork = true
     it.deprecation = true
     it.encoding = "UTF-8"
-    it.compilerArgs.addAll(["-Xlint:all", "-parameters"])
+    it.fork = true
+    it.compilerArgs.addAll(
+        ["-Xlint:all", "-Xlint:-processing",
+         // Enable parameter name class metadata 
+         // https://openjdk.java.net/jeps/118
+         "-parameters"]
+    )
+    it.release.set(8)
   }
 }
 
@@ -89,55 +93,61 @@ jar {
   from "/LICENSE"
 
   manifest.attributes(
-    "Build-Timestamp": Instant.now(),
-    "Build-Revision": versioning.info.commit,
-    "Build-Jvm": "" +
-      "${System.getProperty("java.version")} (" +
-      "${System.getProperty("java.vm.vendor")} " +
-      "${System.getProperty("java.vm.version")})",
-    "Built-By": GradleVersion.current(),
+      "Build-Timestamp": Instant.now(),
+      "Build-Revision": versioning.info.commit,
+      "Build-Jvm": ""
+          + "${System.getProperty("java.version")} ("
+          + "${System.getProperty("java.vm.vendor")} "
+          + "${System.getProperty("java.vm.version")})",
+      "Built-By": GradleVersion.current(),
 
-    "Implementation-Title": project.name,
-    "Implementation-Version": project.version,
-    "Implementation-Vendor": project.group,
+      "Implementation-Title": project.name,
+      "Implementation-Version": project.version,
+      "Implementation-Vendor": project.group,
 
-    "Specification-Title": "FabricMod",
-    "Specification-Version": "1.0.0",
-    "Specification-Vendor": "dev.sapphic",
+      "Specification-Title": "FabricMod",
+      "Specification-Version": "1.0.0",
+      "Specification-Vendor": "dev.sapphic",
 
-    "Sealed": "true"
+      "Sealed": "true"
   )
 }
 
-remapJar {
-  remapAccessWidener.set(false)
-}
-
-assemble {
-  dependsOn versionFile
+def antSignJar(task) {
+  for (final file in task.outputs.files) {
+    ant.signjar(
+        jar: file,
+        alias: property("signing.mods.keyalias"),
+        storepass: property("signing.mods.password"),
+        keystore: property("signing.mods.keystore"),
+        verbose: true,
+        preservelastmodified: true
+    )
+  }
 }
 
 if (hasProperty "signing.mods.keyalias") {
-  final String alias = property "signing.mods.keyalias"
-  final String keystore = property "signing.mods.keystore"
-  final String password = property "signing.mods.password"
+  task signJar(type: Sign) {
+    dependsOn remapJar
 
-  ([tasks.remapJar, tasks.remapSourcesJar] as List<Task>).each {
-    it.doLast {
-      if (!project.file(keystore).exists()) {
-        throw IllegalStateException("Missing keystore $keystore")
-      }
-
-      final File file = outputs.files.singleFile
-      ant.signjar(
-        jar: file,
-        alias: alias,
-        storepass: password,
-        keystore: keystore,
-        verbose: true,
-        preservelastmodified: true
-      )
-      signing.sign(file)
+    doFirst {
+      antSignJar remapJar
     }
+
+    sign remapJar
+  }
+
+  task signSourcesJar(type: Sign) {
+    dependsOn remapSourcesJar
+
+    doFirst {
+      antSignJar remapSourcesJar
+    }
+
+    sign remapSourcesJar
+  }
+
+  assemble {
+    dependsOn(signJar, signSourcesJar)
   }
 }
