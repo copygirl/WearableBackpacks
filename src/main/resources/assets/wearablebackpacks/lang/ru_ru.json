@@ -1,0 +1,11 @@
+{
+  "advancements.wearablebackpacks.deeper_pockets.title": "Весьма глубокие карманы",
+  "advancements.wearablebackpacks.deeper_pockets.description": "Снарядить носимый рюкзак.",
+  "advancements.wearablebackpacks.bursting_with_color.title": "Раскрывание со цветом",
+  "advancements.wearablebackpacks.bursting_with_color.description": "Покрась носимый рюкзак.",
+  "container.wearablebackpacks": "Рюкзак",
+  "container.wearablebackpacks.items": "Имеет предметы",
+  "block.wearablebackpacks.backpack": "Рюкзак",
+  "key.wearablebackpacks.backpack": "Открыть/закрыть рюкзак",
+  "stat.wearablebackpacks.open_backpack": "Рюкзаков открыто"
+}
