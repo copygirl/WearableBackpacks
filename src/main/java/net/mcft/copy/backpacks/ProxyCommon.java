@@ -1,16 +1,32 @@
 package net.mcft.copy.backpacks;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import net.mcft.copy.backpacks.api.BackpackHelper;
+import net.mcft.copy.backpacks.api.BackpackRegistry;
+import net.mcft.copy.backpacks.api.BackpackRegistry.BackpackEntry;
+import net.mcft.copy.backpacks.api.IBackpack;
+import net.mcft.copy.backpacks.api.IBackpackData;
+import net.mcft.copy.backpacks.api.IBackpackType;
+import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
+import net.mcft.copy.backpacks.container.SlotBackpackWrapper;
+import net.mcft.copy.backpacks.item.DyeWashingHandler;
+import net.mcft.copy.backpacks.misc.BackpackCapability;
 import net.mcft.copy.backpacks.misc.util.MiscUtils;
+import net.mcft.copy.backpacks.misc.util.NbtUtils;
+import net.mcft.copy.backpacks.misc.util.WorldUtils;
+import net.mcft.copy.backpacks.network.MessageBackpackUpdate;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,34 +35,20 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
-
-import net.mcft.copy.backpacks.WearableBackpacks;
-import net.mcft.copy.backpacks.api.BackpackHelper;
-import net.mcft.copy.backpacks.api.BackpackRegistry;
-import net.mcft.copy.backpacks.api.IBackpack;
-import net.mcft.copy.backpacks.api.IBackpackData;
-import net.mcft.copy.backpacks.api.IBackpackType;
-import net.mcft.copy.backpacks.api.BackpackRegistry.BackpackEntry;
-import net.mcft.copy.backpacks.block.entity.TileEntityBackpack;
-import net.mcft.copy.backpacks.container.SlotBackpackWrapper;
-import net.mcft.copy.backpacks.item.DyeWashingHandler;
-import net.mcft.copy.backpacks.misc.BackpackCapability;
-import net.mcft.copy.backpacks.misc.util.NbtUtils;
-import net.mcft.copy.backpacks.misc.util.WorldUtils;
-import net.mcft.copy.backpacks.network.MessageBackpackUpdate;
 
 public class ProxyCommon {
 
@@ -256,7 +258,30 @@ public class ProxyCommon {
 			BackpackHelper.updateLidTicks(backpack, entity.posX, entity.posY + 1.0, entity.posZ);
 
 	}
-
+	
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void entityDeathDropsEvent(LivingDropsEvent event) {
+		EntityLivingBase entity = event.getEntityLiving();
+		World world = entity.world;
+		if (world.isRemote) return;
+		
+		BackpackCapability backpack = (BackpackCapability)entity.getCapability(IBackpack.CAPABILITY, null);
+		
+		if ((backpack == null) || backpack.getStack().isEmpty()) return;
+		
+		// If keep inventory (or other item keeping method) is on,
+		// keep the backpack capability so we can copy it over to the new player
+		// entity in onPlayerClone.
+		if (MiscUtils.shouldKeepItem(entity, backpack.getStack())) return;
+		
+		//Only do this logic if it's not configured to place as block on death
+		if (!WearableBackpacks.CONFIG.dropAsBlockOnDeath.get()) {
+			
+			backpack.getType().onEntityWearerDeath(event, backpack);
+		}
+		
+		
+	}
 	@SubscribeEvent
 	public void onLivingDeath(LivingDeathEvent event) {
 		// If an entity wearing a backpack dies, try
@@ -313,14 +338,6 @@ public class ProxyCommon {
 			}
 
 		}
-
-		// In the case of regular backpacks, this causes their contents to be dropped.
-		backpack.getType().onDeath(entity, backpack);
-
-		// Drop the backpack as an item and remove it from the entity.
-		if (!backpack.getStack().isEmpty())
-			WorldUtils.dropStackFromEntity(entity, backpack.getStack(), 4.0F);
-		BackpackHelper.setEquippedBackpack(entity, ItemStack.EMPTY, null);
 	}
 
 	// Would use a method local class but "extractRangemapReplacedMain" gradle task doesn't like that.
