@@ -262,7 +262,7 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 			ItemStack stack = dataItems.getItems().getStackInSlot(i);
 			if(!stack.isEmpty()) {
 				//Add some motion logic to make it feel more like normal MC items dropping
-				EntityItem itemEntity = createItemToDropFromEntity(stack, entity);
+				EntityItem itemEntity = WorldUtils.createItemToDropFromEntity(stack, entity);
 				itemsToAdd.add(itemEntity);
 			}
 		}
@@ -273,19 +273,9 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 		
 		// Now add backpack item itself to the drop list
 		if (!backpack.getStack().isEmpty())
-			drops.add(createItemToDropFromEntity(backpack.getStack(), entity));
+			drops.add(WorldUtils.createItemToDropFromEntity(backpack.getStack(), entity));
 		//Remove the Equipped status from the dying entity
 		BackpackHelper.setEquippedBackpack(entity, ItemStack.EMPTY, null);
-	}
-	
-	public static EntityItem createItemToDropFromEntity(ItemStack stack, EntityLivingBase entity) {
-		EntityItem itemEntity = new EntityItem(entity.world,entity.posX,entity.posY+0.3,entity.posZ,stack);
-		float f1 = RandomUtils.getFloat(0.5F);
-		float f2 = RandomUtils.getFloat((float)Math.PI * 2.0F);
-		itemEntity.motionX = -Math.sin(f2) * f1;
-		itemEntity.motionY = 0.2;
-		itemEntity.motionZ = Math.cos(f2) * f1;
-		return itemEntity;
 	}
 	
 	@Override

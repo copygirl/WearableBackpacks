@@ -276,7 +276,6 @@ public class ProxyCommon {
 		
 		//Only do this logic if it's not configured to place as block on death
 		if (!WearableBackpacks.CONFIG.dropAsBlockOnDeath.get()) {
-			
 			backpack.getType().onEntityWearerDeath(event, backpack);
 		}
 		
