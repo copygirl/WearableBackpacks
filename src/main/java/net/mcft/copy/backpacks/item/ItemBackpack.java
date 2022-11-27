@@ -1,5 +1,11 @@
 package net.mcft.copy.backpacks.item;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.mcft.copy.backpacks.WearableBackpacks;
 import net.mcft.copy.backpacks.api.BackpackHelper;
 import net.mcft.copy.backpacks.api.BackpackRegistry;
@@ -12,6 +18,7 @@ import net.mcft.copy.backpacks.misc.BackpackDataItems;
 import net.mcft.copy.backpacks.misc.BackpackSize;
 import net.mcft.copy.backpacks.misc.util.LangUtils;
 import net.mcft.copy.backpacks.misc.util.NbtUtils;
+import net.mcft.copy.backpacks.misc.util.RandomUtils;
 import net.mcft.copy.backpacks.misc.util.WorldUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -21,6 +28,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -35,12 +43,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
-import org.apache.commons.lang3.ArrayUtils;
-
-import java.util.List;
 
 // TODO: Implement additional enchantments?
 //       - Holding: Increases backpack size (dungeon loot only?)
@@ -237,19 +243,48 @@ public class ItemBackpack extends Item implements IBackpackType, IDyeableItem, I
 	public void onEquippedTick(EntityLivingBase entity, IBackpack backpack) {  }
 	
 	@Override
-	public void onDeath(EntityLivingBase entity, IBackpack backpack) {
+	public void onBackpackDeath(EntityLivingBase entity, IBackpack backpack) {
 		if (!(backpack.getData() instanceof BackpackDataItems)) return;
 		BackpackDataItems dataItems = (BackpackDataItems)backpack.getData();
 		WorldUtils.dropStacksFromEntity(entity, dataItems.getItems(entity.world, null), 4.0F);
 	}
 	
 	@Override
+	public void onEntityWearerDeath(LivingDropsEvent event, IBackpack backpack) {
+		EntityLivingBase entity = event.getEntityLiving();
+		
+		if (!(backpack.getData() instanceof BackpackDataItems) || entity == null || entity.world.isRemote) return;
+		
+		Collection<EntityItem> drops = event.getDrops();
+		BackpackDataItems dataItems = (BackpackDataItems)backpack.getData();
+		ArrayList<EntityItem> itemsToAdd = new ArrayList<>();
+		for(int i=0; i < dataItems.getItems().getSlots(); i++) {
+			ItemStack stack = dataItems.getItems().getStackInSlot(i);
+			if(!stack.isEmpty()) {
+				//Add some motion logic to make it feel more like normal MC items dropping
+				EntityItem itemEntity = WorldUtils.createItemToDropFromEntity(stack, entity);
+				itemsToAdd.add(itemEntity);
+			}
+		}
+		
+		if(!itemsToAdd.isEmpty()) {
+			drops.addAll(itemsToAdd);
+		}
+		
+		// Now add backpack item itself to the drop list
+		if (!backpack.getStack().isEmpty())
+			drops.add(WorldUtils.createItemToDropFromEntity(backpack.getStack(), entity));
+		//Remove the Equipped status from the dying entity
+		BackpackHelper.setEquippedBackpack(entity, ItemStack.EMPTY, null);
+	}
+	
+	@Override
 	public void onEquippedBroken(EntityLivingBase entity, IBackpack backpack)
-		{ onDeath(entity, backpack); }
+		{ onBackpackDeath(entity, backpack); }
 	
 	@Override
 	public void onFaultyRemoval(EntityLivingBase entity, IBackpack backpack)
-		{ onDeath(entity, backpack); }
+		{ onBackpackDeath(entity, backpack); }
 	
 	@Override
 	public void onBlockBreak(TileEntity tileEntity, IBackpack backpack) {

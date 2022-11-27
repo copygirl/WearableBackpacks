@@ -4,6 +4,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 
 /** Signalizes that an {@link net.minecraft.item.Item Item} can be equipped as a backpack. */
 public interface IBackpackType {
@@ -42,11 +43,26 @@ public interface IBackpackType {
 	/** Called every game tick when the backpack is equipped, regardless of where. */
 	void onEquippedTick(EntityLivingBase entity, IBackpack backpack);
 	
-	/** Called before the entity wearing this backpack dies and drops the backpack item.
+	/** Called before backpack is broken and should drop as the backpack item.
+	 * <br>
+	 *  Ideally you would make all the items in the backpack drop on the ground, or add them to a container of some kind
+	 *  that drops on the ground.
+	 *  <br>
+	 *  (<b>TheUnderTaker11 note</b>) As far as I can tell, it should be assumed the backpack item itself will be dropped elsewhere.
+	 *  The contents of the bag, not the bag itself, are the only things dropped from this in current implementation.
+	 */
+	void onBackpackDeath(EntityLivingBase entity, IBackpack backpack);
+	
+	/** Called before the Entity dies, ideally you should make 1 of 2 things happen. <br>
+	 * 1. All backpack contents are added to the {@link LivingDropsEvent#getDrops()} collection.
+	 * <br>
+	 * or 2. All backpack contents should be added to an item container, add that container to {@link LivingDropsEvent#getDrops()} collection.
+	 * <p><b>If you do not add the backpack stack itself to the {@link LivingDropsEvent#getDrops()}, it will simply not be dropped! </b>
 	 *  <p>
 	 *  If either the "general.dropAsBlockOnDeath" config setting or "keepInventory"
-	 *  gamerule are enabled, this method won't be called. */
-	void onDeath(EntityLivingBase entity, IBackpack backpack);
+	 *  gamerule are enabled, this method won't be called at all. 
+	 */
+	void onEntityWearerDeath(LivingDropsEvent playerDropsEvent, IBackpack backpack);
 	
 	/** Called when the backpack breaks while being equipped. */
 	void onEquippedBroken(EntityLivingBase entity, IBackpack backpack);

@@ -1,6 +1,7 @@
 package net.mcft.copy.backpacks.misc.util;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -87,6 +88,21 @@ public final class WorldUtils {
 		}
 		return item;
 	}
+	
+	/** Creates an EntityItem with momentum and location as if it was dropped from the given entity on death. 
+	 * <br>
+	 * Does NOT spawn this EntityItem into the world, simply creates the object and gives it Vanilla-like momentum values
+	 */
+	public static EntityItem createItemToDropFromEntity(ItemStack stack, EntityLivingBase entity) {
+		EntityItem itemEntity = new EntityItem(entity.world,entity.posX,entity.posY+0.3,entity.posZ,stack);
+		float f1 = RandomUtils.getFloat(0.5F);
+		float f2 = RandomUtils.getFloat((float)Math.PI * 2.0F);
+		itemEntity.motionX = -Math.sin(f2) * f1;
+		itemEntity.motionY = 0.2;
+		itemEntity.motionZ = Math.cos(f2) * f1;
+		return itemEntity;
+	}
+	
 	/** Spawns multiple ItemStacks as if they were dropped from an entity on death. */
 	public static void dropStacksFromEntity(Entity entity, Iterable<ItemStack> stacks, float speed) {
 		for (ItemStack stack : stacks) dropStackFromEntity(entity, stack, speed);
