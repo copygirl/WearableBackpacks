@@ -1,153 +1,84 @@
-import java.time.Instant
-
 plugins {
-  id /*net.fabricmc.*/ "fabric-loom" version "0.12.51"
-  id "net.nemerosa.versioning" version "3.0.0"
-  id "org.gradle.signing"
+	id 'fabric-loom' version '1.0-SNAPSHOT'
+	id 'maven-publish'
 }
 
-group = "dev.sapphic"
-version = "1.0.0"
-
-java {
-  withSourcesJar()
-}
-
-loom {
-  accessWidenerPath.set(file(".accesswidener"))
-
-  mixin {
-    defaultRefmapName.set("mixins/wearablebackpacks/refmap.json")
-  }
-
-  runs {
-    configureEach {
-      property "mixin.debug", "true"
-      property "mixin.debug.export.decompile", "false"
-      property "mixin.debug.verbose", "true"
-      property "mixin.dumpTargetOnFailure", "true"
-      property "mixin.checks", "true"
-      property "mixin.hotSwap", "true"
-    }
-  }
-}
+version = project.mod_version
+group = project.maven_group
 
 repositories {
-  maven {
-    url = "https://maven.terraformersmc.com"
-    content {
-      includeGroup "com.terraformersmc"
+    maven {
+        name "terraformersmc"
+        url "https://maven.terraformersmc.com"
     }
-  }
+    maven {
+        name "modrinth"
+        url "https://api.modrinth.com/maven"
+    }	
 }
 
 dependencies {
-  minecraft "com.mojang:minecraft:1.19.2"
-  mappings "net.fabricmc:yarn:1.19.2+build.28:v2"
-  modImplementation "net.fabricmc:fabric-loader:0.14.19"
+	// To change the versions see the gradle.properties file
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "maven.modrinth:modmenu:${mod_menu_version}"
 
-  final fabricVersion = "0.76.0+1.19.2"
+	// Fabric API. This is technically optional, but you probably want it anyway.
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-  modImplementation include(fabricApi.module("fabric-api-base", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-events-interaction-v0", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-key-binding-api-v1", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-lifecycle-events-v1", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-networking-api-v1", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-networking-blockentity-v0", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-object-builder-api-v1", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-registry-sync-v0", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-renderer-registries-v1", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-rendering-v1", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-resource-loader-v0", fabricVersion))
-  modImplementation include(fabricApi.module("fabric-screen-handler-api-v1", fabricVersion))
+	// Uncomment the following line to enable the deprecated Fabric API modules. 
+	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
-  modImplementation "com.terraformersmc:modmenu:4.1.2"
-
-  implementation "com.google.code.findbugs:jsr305:3.0.2"
-  implementation "org.jetbrains:annotations:23.0.0"
-  implementation 'org.checkerframework:checker-qual:3.22.1'
+	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
 }
 
-compileJava {
-  options.with {
-    it.deprecation = true
-    it.encoding = "UTF-8"
-    it.fork = true
-    it.compilerArgs.addAll(
-        ["-Xlint:all", "-Xlint:-processing",
-         // Enable parameter name class metadata 
-         // https://openjdk.java.net/jeps/118
-         "-parameters"]
-    )
-    it.release.set(8)
-  }
+base {
+	archivesName = project.archives_base_name
 }
 
 processResources {
-  filesMatching("/fabric.mod.json") {
-    expand version: version
-  }
+	inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
+	it.options.release = 17
+}
+
+java {
+	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+	// if it is present.
+	// If you remove this line, sources will not be generated.
+	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
 
 jar {
-  from "/LICENSE"
-
-  manifest.attributes(
-      "Build-Timestamp": Instant.now(),
-      "Build-Revision": versioning.info.commit,
-      "Build-Jvm": ""
-          + "${System.getProperty("java.version")} ("
-          + "${System.getProperty("java.vm.vendor")} "
-          + "${System.getProperty("java.vm.version")})",
-      "Built-By": GradleVersion.current(),
-
-      "Implementation-Title": project.name,
-      "Implementation-Version": project.version,
-      "Implementation-Vendor": project.group,
-
-      "Specification-Title": "FabricMod",
-      "Specification-Version": "1.0.0",
-      "Specification-Vendor": "dev.sapphic",
-
-      "Sealed": "true"
-  )
+	from("LICENSE") {
+		rename { "${it}_${base.archivesName.get()}"}
+	}
 }
 
-def antSignJar(task) {
-  for (final file in task.outputs.files) {
-    ant.signjar(
-        jar: file,
-        alias: property("signing.mods.keyalias"),
-        storepass: property("signing.mods.password"),
-        keystore: property("signing.mods.keystore"),
-        verbose: true,
-        preservelastmodified: true
-    )
-  }
-}
+// configure the maven publication
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
 
-if (hasProperty "signing.mods.keyalias") {
-  task signJar(type: Sign) {
-    dependsOn remapJar
-
-    doFirst {
-      antSignJar remapJar
-    }
-
-    sign remapJar
-  }
-
-  task signSourcesJar(type: Sign) {
-    dependsOn remapSourcesJar
-
-    doFirst {
-      antSignJar remapSourcesJar
-    }
-
-    sign remapSourcesJar
-  }
-
-  assemble {
-    dependsOn(signJar, signSourcesJar)
-  }
+	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+	repositories {
+		// Add repositories to publish to here.
+		// Notice: This block does NOT have the same function as the block in the top level.
+		// The repositories here will be used for publishing your artifact, not for
+		// retrieving dependencies.
+	}
 }
