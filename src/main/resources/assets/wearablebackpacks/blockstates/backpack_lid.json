@@ -1,8 +1,19 @@
 {
   "variants": {
-    "facing=north": { "model": "wearablebackpacks:block/backpack_lid" },
-    "facing=east": { "model": "wearablebackpacks:block/backpack_lid", "y": 90 },
-    "facing=south": { "model": "wearablebackpacks:block/backpack_lid", "y": 180 },
-    "facing=west": { "model": "wearablebackpacks:block/backpack_lid", "y": 270 }
+    "facing=north": {
+      "model": "wearablebackpacks:block/backpack_lid"
+    },
+    "facing=east": {
+      "model": "wearablebackpacks:block/backpack_lid",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "wearablebackpacks:block/backpack_lid",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "wearablebackpacks:block/backpack_lid",
+      "y": 270
+    }
   }
 }

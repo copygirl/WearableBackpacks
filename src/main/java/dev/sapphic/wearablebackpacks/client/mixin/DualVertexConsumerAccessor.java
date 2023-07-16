@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(VertexConsumers.Dual.class)
 public interface DualVertexConsumerAccessor extends VertexConsumer {
-  @Accessor
-  VertexConsumer getSecond();
+    @Accessor
+    VertexConsumer getSecond();
 }

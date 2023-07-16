@@ -6,9 +6,9 @@
   "description": "Adds beautiful, balanced backpacks",
   "license": "MIT",
   "depends": {
-    "fabricloader": ">=0.11.6",
-    "minecraft": "1.16.5",
-    "java": ">=8"
+    "fabricloader": "*",
+    "minecraft": "1.19.2",
+    "java": ">=17"
   },
   "entrypoints": {
     "client": [

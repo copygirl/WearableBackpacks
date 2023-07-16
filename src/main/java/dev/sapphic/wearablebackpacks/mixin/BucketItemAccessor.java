@@ -13,12 +13,12 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(BucketItem.class)
 public interface BucketItemAccessor {
-  @Accessor
-  Fluid getFluid();
+    @Accessor
+    Fluid getFluid();
 
-  @Invoker
-  ItemStack callGetEmptiedStack(final ItemStack stack, final PlayerEntity player);
+    @Invoker
+    ItemStack callGetEmptiedStack(final ItemStack stack, final PlayerEntity player);
 
-  @Invoker
-  void invokePlayEmptyingSound(final @Nullable PlayerEntity player, final WorldAccess world, final BlockPos pos);
+    @Invoker
+    void invokePlayEmptyingSound(final @Nullable PlayerEntity player, final WorldAccess world, final BlockPos pos);
 }
