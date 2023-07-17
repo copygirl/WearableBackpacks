@@ -14,9 +14,8 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.collection.DefaultedList;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public final class WornBackpack implements BackpackContainer {
     private final int rows;
@@ -33,7 +32,7 @@ public final class WornBackpack implements BackpackContainer {
         this.contents = DefaultedList.ofSize(this.rows * this.columns, ItemStack.EMPTY);
         this.wearer = wearer;
         this.backpack = backpack;
-        final @Nullable NbtCompound nbt = backpack.getSubTag("BlockEntityTag");
+        final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
         if (nbt != null) {
             Inventories.readNbt(nbt, this.contents);
         }
@@ -47,7 +46,7 @@ public final class WornBackpack implements BackpackContainer {
         return new NamedScreenHandlerFactory() {
             @Override
             public Text getDisplayName() {
-                return backpack.hasCustomName() ? backpack.getName() : new TranslatableText("container." + Backpacks.ID);
+                return backpack.hasCustomName() ? backpack.getName() : Text.translatable("container." + Backpacks.ID);
             }
 
             @Override
