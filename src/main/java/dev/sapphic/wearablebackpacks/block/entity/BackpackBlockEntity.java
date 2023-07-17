@@ -147,7 +147,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
         this.rows = Backpack.getRows(stack);
         this.columns = Backpack.getColumns(stack);
         this.contents = DefaultedList.ofSize(this.size(), ItemStack.EMPTY);
-        final @Nullable NbtCompound tag = stack.getSubTag("BlockEntityTag");
+        final @Nullable NbtCompound tag = stack.getSubNbt("BlockEntityTag");
         if (tag != null) {
             Inventories.readNbt(tag, this.contents);
         }
