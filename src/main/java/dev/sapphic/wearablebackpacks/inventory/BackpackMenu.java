@@ -21,10 +21,7 @@ public final class BackpackMenu extends ScreenHandler {
     public static final int SLOT_DIMENSIONS = 18;
 
     public static final int THIN_EDGE = 8;
-
-    public static final ScreenHandlerType<BackpackMenu> TYPE = new ScreenHandlerType<>(BackpackMenu::new);
-
-    private final BackpackContainer backpack;
+    private final BackpackContainer backpack;    public static final ScreenHandlerType<BackpackMenu> TYPE = new ScreenHandlerType<>(BackpackMenu::new);
 
     public BackpackMenu(final int containerId, final PlayerInventory inventory) {
         this(containerId, inventory, new WornBackpack());
@@ -127,4 +124,6 @@ public final class BackpackMenu extends ScreenHandler {
     public boolean canUse(final PlayerEntity player) {
         return this.backpack.canPlayerUse(player);
     }
+
+
 }
