@@ -20,7 +20,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.minecraft.block.Block;
@@ -55,7 +55,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Arrays;
@@ -176,7 +175,7 @@ public final class BackpacksClient implements ClientModInitializer {
         ScreenRegistry.register(BackpackMenu.TYPE, BackpackScreen::new);
         KeyBindingHelper.registerKeyBinding(BACKPACK_KEY_BINDING);
         ClientTickEvents.END_CLIENT_TICK.register(BackpacksClient::pollBackpackKey);
-        BlockEntityRendererRegistry.INSTANCE.register(Backpacks.BLOCK_ENTITY, BackpackBlockRenderer::new);
+        BlockEntityRendererRegistry.register(Backpacks.BLOCK_ENTITY, BackpackBlockRenderer::new);
         ColorProviderRegistry.BLOCK.register((state, world, pos, tint) -> Backpack.getColor(world, pos), Backpacks.BLOCK);
         ColorProviderRegistry.ITEM.register((stack, tint) -> Backpack.getColor(stack), Backpacks.ITEM);
         ClientPlayNetworking.registerGlobalReceiver(BACKPACK_STATE_CHANGED, (client, handler, buf, sender) -> {

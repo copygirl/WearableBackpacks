@@ -18,7 +18,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public final class BackpackEntityEvents implements ModInitializer {
     public static final double MIN_REQUIRED_DISTANCE = 1.8;
@@ -32,7 +31,7 @@ public final class BackpackEntityEvents implements ModInitializer {
             if (stack.getItem() instanceof BackpackItem) {
                 final ItemPlacementContext context = new ItemPlacementContext(player, hand, stack, hit);
                 if (((BackpackItem) stack.getItem()).place(context).isAccepted()) {
-                    if (!player.abilities.creativeMode) {
+                    if (!player.getAbilities().creativeMode) {
                         stack.decrement(1);
                     }
                     return ActionResult.SUCCESS;
