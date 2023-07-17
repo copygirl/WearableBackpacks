@@ -219,7 +219,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
 
     @Override
     protected Text getContainerName() {
-        return new TranslatableText("container." + Backpacks.ID);
+        return Text.translatable("container." + Backpacks.ID);
     }
 
     @Override

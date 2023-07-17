@@ -1,6 +1,5 @@
 package dev.sapphic.wearablebackpacks.client;
 
-import net.minecraft.util.Tickable;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.function.Consumer;
