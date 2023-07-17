@@ -1,7 +1,7 @@
 package dev.sapphic.wearablebackpacks.mixin;
 
-import dev.sapphic.wearablebackpacks.stat.BackpackStats;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
+import dev.sapphic.wearablebackpacks.stat.BackpackStats;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CauldronBlock;
 import net.minecraft.entity.player.PlayerEntity;
