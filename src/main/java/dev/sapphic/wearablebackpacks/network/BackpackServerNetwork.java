@@ -21,7 +21,7 @@ public final class BackpackServerNetwork implements ModInitializer {
 
     public static void backpackUpdated(final LivingEntity entity) {
         final ByteBuf buf = Unpooled.buffer(Integer.BYTES * 2, Integer.BYTES * 2);
-        buf.writeInt(entity.getEntityId());
+        buf.writeInt(entity.getEntityWorld().getNextMapId());
         buf.writeInt(BackpackWearer.getBackpackState(entity).openCount());
         sendToAllPlayers(entity, new PacketByteBuf(buf.asReadOnly()));
     }
@@ -51,7 +51,7 @@ public final class BackpackServerNetwork implements ModInitializer {
         EntityTrackingEvents.START_TRACKING.register((entity, player) -> {
             if (entity instanceof LivingEntity) {
                 final ByteBuf buf = Unpooled.buffer(Integer.BYTES * 2, Integer.BYTES * 2);
-                buf.writeInt(entity.getEntityId());
+                buf.writeInt(entity.getEntityWorld().getNextMapId());
                 buf.writeInt(BackpackWearer.getBackpackState((LivingEntity) entity).openCount());
                 ServerPlayNetworking.send(player, BACKPACK_UPDATED, new PacketByteBuf(buf.asReadOnly()));
             }
