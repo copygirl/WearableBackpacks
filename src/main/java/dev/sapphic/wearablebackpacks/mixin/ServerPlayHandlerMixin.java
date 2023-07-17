@@ -28,7 +28,7 @@ abstract class ServerPlayHandlerMixin {
             final NbtCompound stackNbt, final BlockPos pos, final BlockEntity be, final NbtCompound blockNbt
     ) {
         if ((be instanceof BackpackBlockEntity) && blockNbt.contains("Enchantments", NbtType.LIST)) {
-            stack.putSubTag("Enchantments", blockNbt.getList("Enchantments", NbtType.COMPOUND));
+            stack.setSubNbt("Enchantments", blockNbt.getList("Enchantments", NbtType.COMPOUND));
             blockNbt.remove("Enchantments");
         }
     }
