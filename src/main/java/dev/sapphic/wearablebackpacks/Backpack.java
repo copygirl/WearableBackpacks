@@ -10,7 +10,7 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public interface Backpack {
     String ROWS = "Rows";
@@ -39,7 +39,7 @@ public interface Backpack {
     }
 
     static int getRows(final ItemStack backpack) {
-        final @Nullable NbtCompound nbt = backpack.getSubTag("BlockEntityTag");
+        final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
         if ((nbt != null) && nbt.contains(ROWS, NbtType.INT)) {
             return BackpackOptions.getRows(nbt.getInt(ROWS));
         }
@@ -47,7 +47,7 @@ public interface Backpack {
     }
 
     static int getColumns(final ItemStack backpack) {
-        final @Nullable NbtCompound nbt = backpack.getSubTag("BlockEntityTag");
+        final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
         if ((nbt != null) && nbt.contains(COLUMNS, NbtType.INT)) {
             return BackpackOptions.getColumns(nbt.getInt(COLUMNS));
         }
@@ -82,7 +82,7 @@ public interface Backpack {
 
     static DefaultedList<ItemStack> getContents(final ItemStack backpack) {
         // Minor optimizations over Inventories#readNbt
-        final @Nullable NbtCompound nbt = backpack.getSubTag("BlockEntityTag");
+        final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
 
         if ((nbt != null) && nbt.contains("Items", NbtType.LIST)) {
             final NbtList items = nbt.getList("Items", NbtType.COMPOUND);
@@ -102,7 +102,7 @@ public interface Backpack {
 
     static boolean isEmpty(final ItemStack backpack) {
         // Short-circuiting deserialization
-        final @Nullable NbtCompound nbt = backpack.getSubTag("BlockEntityTag");
+        final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
 
         if ((nbt != null) && nbt.contains("Items", NbtType.LIST)) {
             final NbtList items = nbt.getList("Items", NbtType.COMPOUND);

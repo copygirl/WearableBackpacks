@@ -124,9 +124,9 @@ public final class WornBackpack implements BackpackContainer {
     @Override
     public void markDirty() {
         if (!this.isEmpty()) {
-            Inventories.writeNbt(this.backpack.getOrCreateSubTag("BlockEntityTag"), this.contents);
+            Inventories.writeNbt(this.backpack.getOrCreateSubNbt("BlockEntityTag"), this.contents);
         } else {
-            this.backpack.removeSubTag("BlockEntityTag");
+            this.backpack.removeSubNbt("BlockEntityTag");
         }
     }
 

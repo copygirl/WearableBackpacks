@@ -6,7 +6,6 @@ import dev.sapphic.wearablebackpacks.Backpacks;
 import dev.sapphic.wearablebackpacks.client.BackpackLid;
 import dev.sapphic.wearablebackpacks.inventory.BackpackContainer;
 import dev.sapphic.wearablebackpacks.inventory.BackpackMenu;
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
@@ -16,19 +15,18 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class BackpackBlockEntity extends LootableContainerBlockEntity implements
-        BlockEntityClientSerializable, Backpack, BackpackContainer, Tickable {
+        BlockEntityUpdateS2CPacket, Backpack, BackpackContainer, Tickable {
 
     private static final int OPENS_DATA_TYPE = 0x0;
     private static final int COLOR_DATA_TYPE = 0x1;
@@ -42,7 +40,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
 
     private int rows = BackpackOptions.DEFAULT_ROWS;
     private int columns = BackpackOptions.DEFAULT_COLUMNS;
-    private @MonotonicNonNull DefaultedList<ItemStack> contents;
+    private @NotNull DefaultedList<ItemStack> contents;
     private @Nullable NbtList enchantments;
 
     private int color = NO_COLOR;
@@ -172,16 +170,16 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
             Backpack.setColor(stack, this.color);
         }
         if (this.enchantments != null) {
-            stack.putSubTag("Enchantments", this.enchantments);
+            stack.setSubNbt("Enchantments", this.enchantments);
         }
-        final NbtCompound tag = stack.getOrCreateSubTag("BlockEntityTag");
+        final NbtCompound tag = stack.getOrCreateSubNbt("BlockEntityTag");
         tag.putInt("Rows", this.rows);
         tag.putInt("Columns", this.columns);
     }
 
     @Override
     public void fromTag(final BlockState state, final NbtCompound tag) {
-        super.fromTag(state, tag);
+        super.readNbt(tag);
         if (tag.contains("Rows", NbtType.INT)) {
             this.rows = BackpackOptions.getRows(tag.getInt("Rows"));
         }
@@ -207,10 +205,8 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
         super.writeNbt(tag);
         tag.putInt(Backpack.ROWS, this.rows);
         tag.putInt(Backpack.COLUMNS, this.columns);
-        if (this.contents != null) {
-            if (!this.serializeLootTable(tag)) {
-                Inventories.writeNbt(tag, this.contents);
-            }
+        if (!this.serializeLootTable(tag)) {
+            Inventories.writeNbt(tag, this.contents);
         }
         if (this.hasColor()) {
             tag.putInt("Color", this.color);
