@@ -18,7 +18,7 @@ import net.minecraft.loot.function.ConditionalLootFunction;
 import net.minecraft.loot.function.LootFunctionType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonSerializer;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 

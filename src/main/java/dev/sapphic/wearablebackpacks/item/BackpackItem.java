@@ -30,7 +30,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ModifiableWorld;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.Validate;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -47,7 +47,7 @@ public final class BackpackItem extends DyeableArmorItem {
     private static BlockState getBlockStateFromTag(
             final BlockPos pos, final ModifiableWorld world, final ItemStack stack, final BlockState state
     ) {
-        final @Nullable NbtCompound blockStateTag = stack.getSubTag("BlockStateTag");
+        final @Nullable NbtCompound blockStateTag = stack.getSubNbt("BlockStateTag");
         if (blockStateTag != null) {
             BlockState parsedState = state;
             final StateManager<Block, BlockState> container = state.getBlock().getStateManager();
@@ -104,7 +104,7 @@ public final class BackpackItem extends DyeableArmorItem {
                 BackpackCriteria.DYED.trigger((ServerPlayerEntity) entity);
             }
         }
-        if ((slot != EquipmentSlot.CHEST.getEntitySlotId()) && !((PlayerEntity) entity).abilities.creativeMode) {
+        if ((slot != EquipmentSlot.CHEST.getEntitySlotId()) && !((PlayerEntity) entity).getAbilities().creativeMode) {
             final DefaultedList<ItemStack> stacks = Backpack.getContents(backpack);
             boolean hasContents = false;
             for (final ItemStack stack : stacks) {
@@ -114,7 +114,7 @@ public final class BackpackItem extends DyeableArmorItem {
                 }
             }
             if (hasContents) {
-                backpack.removeSubTag("BlockEntityTag");
+                backpack.removeSubNbt("BlockEntityTag");
             }
         }
     }
@@ -132,7 +132,7 @@ public final class BackpackItem extends DyeableArmorItem {
     @Override
     public void appendStacks(final ItemGroup group, final DefaultedList<ItemStack> stacks) {
         if (this.isIn(group)) {
-            this.block.addStacksForDisplay(group, stacks);
+            this.block.appendStacks(group, stacks);
         }
     }
 
