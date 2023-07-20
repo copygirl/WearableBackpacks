@@ -18,15 +18,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(CauldronBlock.class)
 abstract class CauldronBlockMixin {
-    @Inject(
-            method = "onUse",
-            at = @At(
-                    value = "FIELD",
-                    target = "Lnet/minecraft/stat/Stats;CLEAN_ARMOR:Lnet/minecraft/util/Identifier;",
-                    shift = Shift.BEFORE
-            ),
-            cancellable = true,
-            allow = 1)
+//    @Inject(
+//            method = "onUse",
+//            at = @At(
+//                    value = "FIELD",
+//                    target = "Lnet/minecraft/stat/Stats;CLEAN_ARMOR:Lnet/minecraft/util/Identifier;",
+//                    shift = Shift.BEFORE
+//            ),
+//            cancellable = true,
+//            allow = 1)
     private void tryCleanBackpack(
             final BlockState state, final World world, final BlockPos pos, final PlayerEntity player, final Hand hand,
             final BlockHitResult hit, final CallbackInfoReturnable<? super ActionResult> cir

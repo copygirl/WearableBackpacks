@@ -1,10 +1,15 @@
 package dev.sapphic.wearablebackpacks.client;
 
+import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 
 import java.util.function.Consumer;
 
-public final class BackpackLid implements Tickable {
+public final class BackpackLid implements BlockEntityTicker<BackpackBlockEntity> {
     private static final float CLOSED_DELTA = 0.0F;
     private static final float OPENED_DELTA = 1.0F;
     private static final float DELTA_STEP = 0.2F;
@@ -59,7 +64,7 @@ public final class BackpackLid implements Tickable {
     }
 
     @Override
-    public void tick() {
+    public void tick(World world, BlockPos pos, BlockState state, BackpackBlockEntity blockEntity) {
         this.lastLidDelta = this.lidDelta;
         switch (this.lidState) {
             case CLOSED:
@@ -81,6 +86,7 @@ public final class BackpackLid implements Tickable {
                 break;
             case OPENED:
                 this.lidDelta = OPENED_DELTA;
+
         }
     }
 

@@ -110,7 +110,7 @@ public final class BackpackItem extends DyeableArmorItem {
             for (final ItemStack stack : stacks) {
                 if (!stack.isEmpty()) {
                     hasContents = true;
-                    ((PlayerEntity) entity).inventory.offerOrDrop(world, stack);
+                    ((PlayerEntity) entity).getInventory().offerOrDrop(stack);
                 }
             }
             if (hasContents) {

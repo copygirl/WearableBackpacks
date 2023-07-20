@@ -27,6 +27,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
@@ -127,7 +128,7 @@ public final class BackpacksClient implements ClientModInitializer {
     }
 
     public static void renderBackpackQuad(final MatrixStack.Entry entry, final VertexConsumer pipeline, final float red, final float green, final float blue, final List<BakedQuad> quads, final int light, final int overlay) {
-        final VertexConsumer delegate = ((DualVertexConsumerAccessor) pipeline).getSecond();
+//        final VertexConsumer delegate = ((DualVertexConsumerAccessor) pipeline).getSecond();
         for (final BakedQuad quad : quads) {
             if (quad.hasColor()) {
                 final float quadRed = MathHelper.clamp(red, 0.0F, 1.0F);
@@ -135,7 +136,7 @@ public final class BackpacksClient implements ClientModInitializer {
                 final float quadBlue = MathHelper.clamp(blue, 0.0F, 1.0F);
                 pipeline.quad(entry, quad, quadRed, quadGreen, quadBlue, light, overlay);
             } else {
-                delegate.quad(entry, quad, 1.0F, 1.0F, 1.0F, light, overlay);
+//                delegate.quad(entry, quad, 1.0F, 1.0F, 1.0F, light, overlay);
             }
         }
     }
@@ -172,17 +173,18 @@ public final class BackpacksClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         addLidStateDefinitions();
-        ScreenRegistry.register(BackpackMenu.TYPE, BackpackScreen::new);
+        HandledScreens.register(BackpackMenu.TYPE, BackpackScreen::new);
         KeyBindingHelper.registerKeyBinding(BACKPACK_KEY_BINDING);
         ClientTickEvents.END_CLIENT_TICK.register(BackpacksClient::pollBackpackKey);
-        BlockEntityRendererRegistry.register(Backpacks.BLOCK_ENTITY, BackpackBlockRenderer::new);
+        BlockEntityRendererRegistry.register(Backpacks.BLOCK_ENTITY, (ctx) -> new BackpackBlockRenderer(ctx.getRenderDispatcher()));
+//        BlockEntityRendererRegistry.register(Backpacks.BLOCK_ENTITY, BackpackBlockRenderer::new);
         ColorProviderRegistry.BLOCK.register((state, world, pos, tint) -> Backpack.getColor(world, pos), Backpacks.BLOCK);
         ColorProviderRegistry.ITEM.register((stack, tint) -> Backpack.getColor(stack), Backpacks.ITEM);
         ClientPlayNetworking.registerGlobalReceiver(BACKPACK_STATE_CHANGED, (client, handler, buf, sender) -> {
             final int entityId = buf.readInt();
             final boolean opened = buf.readBoolean();
             client.execute(() -> {
-                final @Nullable Entity entity = client.world.getEntityById(entityId);
+                final Entity entity = client.world.getEntityById(entityId);
                 if (!(entity instanceof BackpackWearer)) {
                     throw new IllegalStateException(String.valueOf(entity));
                 }

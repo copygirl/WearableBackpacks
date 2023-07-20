@@ -32,6 +32,6 @@ abstract class LivingEntityMixin extends Entity implements BackpackWearer {
 
     @Inject(method = "baseTick()V", at = @At("TAIL"))
     private void tickBackpackState(final CallbackInfo ci) {
-        this.backpackState.tick();
+        this.backpackState.tick(null, null, null, null);
     }
 }

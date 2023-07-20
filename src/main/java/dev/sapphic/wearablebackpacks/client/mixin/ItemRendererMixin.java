@@ -25,7 +25,7 @@ abstract class ItemRendererMixin {
             final MatrixStack matrices, final VertexConsumer vertices, final List<BakedQuad> quads, final ItemStack stack, final int light1, final int overlay1
     ) {
         if ((pipeline instanceof DualVertexConsumerAccessor) && (stack.getItem() == Backpacks.ITEM) && !quad.hasColor()) {
-            ((DualVertexConsumerAccessor) pipeline).getSecond().quad(entry, quad, red, green, blue, light, overlay);
+//            ((DualVertexConsumerAccessor) pipeline).getSecond().quad(entry, quad, red, green, blue, light, overlay);
         } else {
             pipeline.quad(entry, quad, red, green, blue, light, overlay);
         }

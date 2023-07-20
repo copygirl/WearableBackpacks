@@ -9,7 +9,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public final class BackpackClientNetwork implements ClientModInitializer {
     static final Identifier OPEN_OWN_BACKPACK = new Identifier(Backpacks.ID, "open_own_backpack");
@@ -29,7 +28,7 @@ public final class BackpackClientNetwork implements ClientModInitializer {
 
                     client.execute(() -> {
                         if (client.world != null) {
-                            final @Nullable Entity entity = client.world.getEntityById(entityId);
+                            final Entity entity = client.world.getEntityById(entityId);
                             if (entity instanceof LivingEntity) {
                                 BackpackWearer.getBackpackState((LivingEntity) entity).count(openCount);
                             }
