@@ -39,7 +39,8 @@ public final class Backpacks implements ModInitializer {
 
         Registry.register(Registry.SCREEN_HANDLER, backpack, BackpackMenu.TYPE);
         Registry.register(Registry.RECIPE_SERIALIZER, BackpackDyeingRecipe.ID, BackpackDyeingRecipe.SERIALIZER);
-    }    public static final BlockEntityType<BackpackBlockEntity> BLOCK_ENTITY = new BlockEntityType<>(BackpackBlockEntity::new, ImmutableSet.of(BLOCK), null);
+    }
+    public static final BlockEntityType<BackpackBlockEntity> BLOCK_ENTITY = new BlockEntityType<>(BackpackBlockEntity::new, ImmutableSet.of(BLOCK), null);
 
 
 

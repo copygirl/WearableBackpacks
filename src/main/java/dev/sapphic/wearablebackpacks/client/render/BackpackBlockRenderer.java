@@ -24,11 +24,10 @@ import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 
 @Environment(EnvType.CLIENT)
-public final class BackpackBlockRenderer extends BlockEntityRenderer<BackpackBlockEntity> {
+public final class BackpackBlockRenderer implements BlockEntityRenderer<BackpackBlockEntity> {
     private final MinecraftClient client = MinecraftClient.getInstance();
 
     public BackpackBlockRenderer(final BlockEntityRenderDispatcher dispatcher) {
-        super(dispatcher);
     }
 
     @Override

@@ -43,7 +43,7 @@ public final class BackpackEntityEvents implements ModInitializer {
 
     private static ActionResult tryOpenBackpack(
             final PlayerEntity self, final World world, final Hand hand, final Entity wearer,
-            final @Nullable EntityHitResult hit
+            final EntityHitResult hit
     ) {
         if (!(wearer instanceof LivingEntity)) {
             return ActionResult.PASS;

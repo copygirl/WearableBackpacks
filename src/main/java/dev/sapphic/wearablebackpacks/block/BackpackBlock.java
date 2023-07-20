@@ -35,7 +35,6 @@ import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.tag.FluidTags;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.*;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
@@ -46,7 +45,8 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import net.minecraft.world.tick.OrderedTick;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -81,15 +81,12 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
     }
 
     @Override
-    @Deprecated
-    public BlockState getStateForNeighborUpdate(
-            final BlockState state, final Direction side, final BlockState neighbor, final WorldAccess world,
-            final BlockPos pos, final BlockPos offset
-    ) {
+    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+
         if (state.get(WATERLOGGED)) {
-            world.getFluidTickScheduler().schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            world.getFluidTickScheduler().scheduleTick(OrderedTick.create(Fluids.WATER, pos));
         }
-        return super.getStateForNeighborUpdate(state, side, neighbor, world, pos, offset);
+        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
 
     @Override
@@ -113,7 +110,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
             final BlockState state, final World world, final BlockPos pos, final PlayerEntity player, final Hand hand,
             final BlockHitResult hit
     ) {
-        final @Nullable BlockEntity be = world.getBlockEntity(pos);
+        final BlockEntity be = world.getBlockEntity(pos);
         if (be instanceof BackpackBlockEntity) {
             final ItemStack stack = player.getStackInHand(hand);
             final Backpack backpack = (Backpack) be;
@@ -128,7 +125,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
                         world.playSound(null, pos, SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM, player.getSoundCategory(),
                                 0.5F, (player.world.random.nextFloat() * 0.1F) + 0.9F
                         );
-                        if (!player.abilities.creativeMode) {
+                        if (!player.getAbilities().creativeMode) {
                             stack.decrement(1);
                         }
                         BackpackCriteria.DYED.trigger((ServerPlayerEntity) player);
@@ -238,7 +235,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
         final @Nullable BlockEntity be = world.getBlockEntity(pos);
         if ((be instanceof BackpackBlockEntity) && player.isSneaking() && !player.hasStackEquipped(EquipmentSlot.CHEST)) {
             final ItemStack stack = this.getPickStack(be, world, pos, state);
-            final NbtCompound tag = stack.getOrCreateSubTag("BlockEntityTag");
+            final NbtCompound tag = stack.getOrCreateSubNbt("BlockEntityTag");
             Inventories.writeNbt(tag, ((Backpack) be).getContents());
             player.equipStack(EquipmentSlot.CHEST, stack);
             super.onBreak(world, pos, state, player);
@@ -259,7 +256,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
             final ItemStack stack, final @Nullable BlockView world, final List<Text> tooltip, final TooltipContext options
     ) {
         super.appendTooltip(stack, world, tooltip, options);
-        final @Nullable NbtCompound tag = stack.getSubTag("BlockEntityTag");
+        final @Nullable NbtCompound tag = stack.getOrCreateSubNbt("BlockEntityTag");
         if (tag != null) {
             boolean hasItems = tag.contains("LootTable", 8);
             if (!hasItems && tag.contains("Items", 9)) {
@@ -272,7 +269,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
                     }
                 }
                 if (hasItems) {
-                    tooltip.add(new TranslatableText("container." + Backpacks.ID + ".items").formatted(Formatting.GOLD));
+                    tooltip.add(Text.translatable("container." + Backpacks.ID + ".items").formatted(Formatting.GOLD));
                 }
             }
         }
@@ -284,9 +281,10 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
         return BlockRenderType.ENTITYBLOCK_ANIMATED;
     }
 
+    @Nullable
     @Override
-    public BlockEntity createBlockEntity(final BlockView view) {
-        return new BackpackBlockEntity();
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new BackpackBlockEntity(pos, state);
     }
 
     private int getBlendedColor(final Backpack backpack, final DyeItem dye) {
@@ -297,11 +295,12 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
             return item.getColor(DyeableItem.blendAndSetColor(tmp, ImmutableList.of(dye)));
         }
         //noinspection ConstantConditions
-        return ((DyeColorAccessor) (Object) dye.getColor()).getColor();
+//        return ((DyeColorAccessor) (Object) dye.getColor()).getColor();
+        return 12345;
     }
 
     private ItemStack getPickStack(
-            final @Nullable BlockEntity be, final BlockView world, final BlockPos pos, final BlockState state
+            final BlockEntity be, final BlockView world, final BlockPos pos, final BlockState state
     ) {
         final ItemStack stack = super.getPickStack(world, pos, state);
         if (be instanceof BackpackBlockEntity) {

@@ -8,6 +8,7 @@ import dev.sapphic.wearablebackpacks.inventory.BackpackContainer;
 import dev.sapphic.wearablebackpacks.inventory.BackpackMenu;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -22,11 +23,12 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class BackpackBlockEntity extends LootableContainerBlockEntity implements
-        BlockEntityUpdateS2CPacket, Backpack, BackpackContainer, Tickable {
+public final class BackpackBlockEntity extends LootableContainerBlockEntity implements Backpack, BackpackContainer, BlockEntityTicker<BackpackBlockEntity> {
 
     private static final int OPENS_DATA_TYPE = 0x0;
     private static final int COLOR_DATA_TYPE = 0x1;
@@ -48,8 +50,8 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
     private boolean empty;
     private boolean enchanted;
 
-    public BackpackBlockEntity() {
-        super(Backpacks.BLOCK_ENTITY);
+    public BackpackBlockEntity(BlockPos pos, BlockState state) {
+        super(Backpacks.BLOCK_ENTITY, pos, state);
     }
 
     @Override
@@ -177,7 +179,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
         tag.putInt("Columns", this.columns);
     }
 
-    @Override
+//    @Override
     public void fromTag(final BlockState state, final NbtCompound tag) {
         super.readNbt(tag);
         if (tag.contains("Rows", NbtType.INT)) {
@@ -200,22 +202,22 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
         }
     }
 
-    @Override
-    public NbtCompound writeNbt(final NbtCompound tag) {
-        super.writeNbt(tag);
-        tag.putInt(Backpack.ROWS, this.rows);
-        tag.putInt(Backpack.COLUMNS, this.columns);
-        if (!this.serializeLootTable(tag)) {
-            Inventories.writeNbt(tag, this.contents);
-        }
-        if (this.hasColor()) {
-            tag.putInt("Color", this.color);
-        }
-        if (this.enchantments != null) {
-            tag.put("Enchantments", this.enchantments);
-        }
-        return tag;
-    }
+//
+//    public NbtCompound writeNbt(final NbtCompound tag) {
+//        super.writeNbt(tag);
+//        tag.putInt(Backpack.ROWS, this.rows);
+//        tag.putInt(Backpack.COLUMNS, this.columns);
+//        if (!this.serializeLootTable(tag)) {
+//            Inventories.writeNbt(tag, this.contents);
+//        }
+//        if (this.hasColor()) {
+//            tag.putInt("Color", this.color);
+//        }
+//        if (this.enchantments != null) {
+//            tag.put("Enchantments", this.enchantments);
+//        }
+//        return tag;
+//    }
 
     @Override
     protected Text getContainerName() {
@@ -227,7 +229,6 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
         return new BackpackMenu(id, inventory, this);
     }
 
-    @Override
     public void fromClientTag(final NbtCompound tag) {
         if (tag.contains("Color", NbtType.INT)) {
             this.color = tag.getInt("Color") & 0xFFFFFF;
@@ -236,7 +237,6 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
         this.enchanted = tag.getBoolean("Enchanted");
     }
 
-    @Override
     public NbtCompound toClientTag(final NbtCompound tag) {
         if (this.hasColor()) {
             tag.putInt("Color", this.color);
@@ -300,10 +300,6 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
         }
     }
 
-    @Override
-    public void tick() {
-        this.lid.tick();
-    }
 
     private void updateEmptyState() {
         this.empty = super.isEmpty();
@@ -314,5 +310,10 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
         if (this.world instanceof ServerWorld) {
             this.world.addSyncedBlockEvent(this.pos, this.getCachedState().getBlock(), type, data);
         }
+    }
+
+    @Override
+    public void tick(World world, BlockPos pos, BlockState state, BackpackBlockEntity blockEntity) {
+
     }
 }

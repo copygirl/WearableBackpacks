@@ -1,3 +1,3 @@
-@DefaultQualifier(NonNull.class)
+//@DefaultQualifier(NonNull.class)
 package dev.sapphic.wearablebackpacks.loot;
 

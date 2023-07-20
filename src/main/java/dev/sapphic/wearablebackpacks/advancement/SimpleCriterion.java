@@ -21,7 +21,7 @@ public final class SimpleCriterion extends AbstractCriterion<SimpleCriterion.Con
     }
 
     public void trigger(final ServerPlayerEntity player) {
-        this.test(player, conditions -> true);
+        this.trigger(player, conditions -> true);
     }
 
     @Override
