@@ -16,7 +16,6 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -28,6 +27,9 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public final class BackpackBlockEntity extends LootableContainerBlockEntity implements Backpack, BackpackContainer, BlockEntityTicker<BackpackBlockEntity> {
 
     private static final int OPENS_DATA_TYPE = 0x0;
@@ -37,6 +39,8 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
 
     private static final int DEFAULT_COLOR = 0xA06540;
     private static final int NO_COLOR = 0xFFFFFF + 1;
+
+    private static final Logger LOGGER = Logger.getLogger(BackpackBlockEntity.class.getName());
 
     private final BackpackLid lid = new BackpackLid(o -> this.event(OPENS_DATA_TYPE, o.openCount()));
 
@@ -52,6 +56,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
 
     public BackpackBlockEntity(BlockPos pos, BlockState state) {
         super(Backpacks.BLOCK_ENTITY, pos, state);
+        LOGGER.log(Level.INFO, "<INIT>>");
     }
 
     @Override
@@ -314,6 +319,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
 
     @Override
     public void tick(World world, BlockPos pos, BlockState state, BackpackBlockEntity blockEntity) {
-
+        LOGGER.log(Level.INFO, "TICK");
+        this.lid.tick(world, pos, state, blockEntity);
     }
 }

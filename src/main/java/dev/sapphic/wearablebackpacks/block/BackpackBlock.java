@@ -14,6 +14,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
@@ -149,7 +151,10 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
                     return ActionResult.success(world.isClient);
                 }
             }
-            player.openHandledScreen((NamedScreenHandlerFactory) be);
+            if (!world.isClient) {
+                NamedScreenHandlerFactory factory = (NamedScreenHandlerFactory) be;
+                player.openHandledScreen(factory);
+            }
             player.incrementStat(BackpackStats.OPENED);
             return ActionResult.success(world.isClient);
         }
@@ -307,5 +312,11 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
             ((BackpackBlockEntity) be).writeToStack(stack);
         }
         return stack;
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return checkType(type, Backpacks.BLOCK_ENTITY, (entityWorld, pos, blockState, blockEntity) -> blockEntity.tick(entityWorld, pos, blockState, blockEntity));
     }
 }
