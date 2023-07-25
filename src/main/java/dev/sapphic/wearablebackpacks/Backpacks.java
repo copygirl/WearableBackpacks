@@ -19,6 +19,8 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import java.util.logging.Logger;
+
 public final class Backpacks implements ModInitializer {
     public static final String ID = "wearablebackpacks";
 

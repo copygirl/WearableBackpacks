@@ -41,10 +41,10 @@ public final class BackpackScreen extends HandledScreen<BackpackMenu> {
     @Override
     protected void drawBackground(final MatrixStack stack, final float tickDelta, final int mx, final int my) {
 //        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.clearColor(1.0F, 1.0F, 1.0F, 1.0F);
+//        RenderSystem.clearColor(1.0F, 1.0F, 1.0F, 1.0F);
         //noinspection ConstantConditions
-        this.client.getTextureManager().bindTexture(TEXTURE);
-
+//        this.client.getTextureManager().bindTexture(TEXTURE);
+        RenderSystem.setShaderTexture(0, TEXTURE);
         final int bgW = this.x + this.backgroundWidth;
         final int bgH = this.y + this.backgroundHeight;
         final int fillW = this.backgroundWidth - (4 * 2);
