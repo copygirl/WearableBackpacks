@@ -184,6 +184,8 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
         tag.putInt("Columns", this.columns);
     }
 
+
+
 //    @Override
     public void fromTag(final BlockState state, final NbtCompound tag) {
         super.readNbt(tag);
@@ -319,7 +321,6 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
 
     @Override
     public void tick(World world, BlockPos pos, BlockState state, BackpackBlockEntity blockEntity) {
-        LOGGER.log(Level.INFO, "TICK");
         this.lid.tick(world, pos, state, blockEntity);
     }
 }
