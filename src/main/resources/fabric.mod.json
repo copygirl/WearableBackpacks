@@ -5,6 +5,7 @@
   "version": "$version",
   "description": "Adds beautiful, balanced backpacks",
   "license": "MIT",
+  "icon": "assets/wearablebackpacks/icon.png",
   "depends": {
     "fabricloader": "*",
     "minecraft": "1.19.2",
@@ -31,7 +32,9 @@
   "authors": [
     "Chloe Dawn",
     "copygirl",
-    "asie"
+    "asie",
+    "DaniKing",
+    "Sunconure11"
   ],
   "contact": {
     "homepage": "https://bit.ly/33owdaZ",
