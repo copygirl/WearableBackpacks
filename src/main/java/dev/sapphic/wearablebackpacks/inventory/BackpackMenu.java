@@ -73,7 +73,9 @@ public final class BackpackMenu extends ScreenHandler {
             final int y = 161 + yOffset;
             this.addSlot(new Slot(inventory, column, x, y));
         }
-    }    public static final ScreenHandlerType<BackpackMenu> TYPE = new ScreenHandlerType<>(BackpackMenu::new);
+    }
+
+    public static final ScreenHandlerType<BackpackMenu> TYPE = new ScreenHandlerType<>(BackpackMenu::new);
 
     public int getRows() {
         return this.backpack.getRows();
@@ -124,8 +126,6 @@ public final class BackpackMenu extends ScreenHandler {
     public boolean canUse(final PlayerEntity player) {
         return this.backpack.canPlayerUse(player);
     }
-
-
 
 
 }
