@@ -16,35 +16,35 @@ public final class BackpackOptions {
   public static final int MIN_ROWS = 1;
   public static final int DEFAULT_ROWS = 3;
   public static final int MAX_ROWS = 6;
-
+  
   public static final int MIN_COLUMNS = 1;
   public static final int DEFAULT_COLUMNS = 9;
   public static final int MAX_COLUMNS = 18;
-
+  
   public static final int MIN_DAMAGE = 0;
   public static final int DEFAULT_MAX_DAMAGE = 240;
   public static final int MAX_DAMAGE = 495;
-
+  
   public static final int MIN_DEFENSE = 0;
   public static final int DEFAULT_DEFENSE = 5;
   public static final int MAX_DEFENSE = 6;
-
+  
   public static final float MIN_TOUGHNESS = 0.0F;
   public static final float DEFAULT_TOUGHNESS = 0.0F;
   public static final float MAX_TOUGHNESS = 2.0F;
-
+  
   private static final Logger LOGGER = LogManager.getLogger();
-
+  
   private static BackpackOptions instance = new BackpackOptions();
-
+  
   private final int rows;
   private final int columns;
   private final int maxDamage;
   private final int defense;
   private final float toughness;
-
+  
   private BackpackOptions(
-          final int rows, final int columns, final int maxDamage, final int defense, final float toughness
+      final int rows, final int columns, final int maxDamage, final int defense, final float toughness
   ) {
     this.rows = getRows(rows);
     this.columns = getColumns(columns);
@@ -52,7 +52,7 @@ public final class BackpackOptions {
     this.defense = getDefense(defense);
     this.toughness = getToughness(toughness);
   }
-
+  
   private BackpackOptions() {
     this.rows = DEFAULT_ROWS;
     this.columns = DEFAULT_COLUMNS;
@@ -60,39 +60,39 @@ public final class BackpackOptions {
     this.defense = DEFAULT_DEFENSE;
     this.toughness = DEFAULT_TOUGHNESS;
   }
-
+  
   static int getRows() {
     return instance.rows;
   }
-
+  
   static int getColumns() {
     return instance.columns;
   }
-
+  
   static int getMaxDamage() {
     return instance.maxDamage;
   }
-
+  
   static int getDefense() {
     return instance.defense;
   }
-
+  
   static float getToughness() {
     return instance.toughness;
   }
-
+  
   public static int getRows(final int rows) {
     return Math.max(Math.min(rows, MAX_ROWS), MIN_ROWS);
   }
-
+  
   public static int getColumns(final int columns) {
     return Math.max(Math.min(columns, MAX_COLUMNS), MIN_COLUMNS);
   }
-
+  
   public static int getDamage(final int damage) {
     return Math.max(Math.min(damage, MAX_DAMAGE), MIN_DAMAGE);
   }
-
+  
   static void init(final Path input) {
     try (final Reader reader = Files.newBufferedReader(input)) {
       final Gson gson = new GsonBuilder().setLenient().create();
@@ -108,11 +108,11 @@ public final class BackpackOptions {
       throw new IllegalStateException("Failed to write options", e);
     }
   }
-
+  
   private static int getDefense(final int defense) {
     return Math.max(Math.min(defense, MAX_DEFENSE), MIN_DEFENSE);
   }
-
+  
   private static float getToughness(final float toughness) {
     if (!Float.isNaN(toughness)) {
       return Math.max(Math.min(toughness, MAX_TOUGHNESS), MIN_TOUGHNESS);

@@ -22,9 +22,9 @@ import net.minecraft.world.World;
 public final class BackpackEntityEvents implements ModInitializer {
   public static final double MIN_REQUIRED_DISTANCE = 1.8;
   public static final double ANGLE_BOUNDS = 110;
-
+  
   private static ActionResult tryPlaceBackpack(
-          final PlayerEntity player, final World world, final Hand hand, final BlockHitResult hit
+      final PlayerEntity player, final World world, final Hand hand, final BlockHitResult hit
   ) {
     if (player.isSneaking() && player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty()) {
       final ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
@@ -40,10 +40,10 @@ public final class BackpackEntityEvents implements ModInitializer {
     }
     return ActionResult.PASS;
   }
-
+  
   private static ActionResult tryOpenBackpack(
-          final PlayerEntity self, final World world, final Hand hand, final Entity wearer,
-          final EntityHitResult hit
+      final PlayerEntity self, final World world, final Hand hand, final Entity wearer,
+      final EntityHitResult hit
   ) {
     if (!(wearer instanceof LivingEntity)) {
       return ActionResult.PASS;
@@ -61,7 +61,7 @@ public final class BackpackEntityEvents implements ModInitializer {
     }
     return ActionResult.PASS;
   }
-
+  
   private static boolean canOpenBackpack(final PlayerEntity player, final LivingEntity entity) {
     if (player.distanceTo(entity) <= MIN_REQUIRED_DISTANCE) {
       final double theta = StrictMath.atan2(entity.getZ() - player.getZ(), entity.getX() - player.getX());
@@ -71,7 +71,7 @@ public final class BackpackEntityEvents implements ModInitializer {
     }
     return false;
   }
-
+  
   @Override
   public void onInitialize() {
     UseBlockCallback.EVENT.register(BackpackEntityEvents::tryPlaceBackpack);

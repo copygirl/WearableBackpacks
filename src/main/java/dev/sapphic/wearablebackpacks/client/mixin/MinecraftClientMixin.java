@@ -32,7 +32,7 @@ abstract class MinecraftClientMixin implements WindowEventHandler {
     }
     return nbt;
   }
-
+  
   //
 //    @Redirect(
 //            method = "addBlockEntityNbt",
