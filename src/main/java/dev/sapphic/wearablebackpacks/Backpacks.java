@@ -19,8 +19,6 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import java.util.logging.Logger;
-
 public final class Backpacks implements ModInitializer {
     public static final String ID = "wearablebackpacks";
 
@@ -42,9 +40,8 @@ public final class Backpacks implements ModInitializer {
         Registry.register(Registry.SCREEN_HANDLER, backpack, BackpackMenu.TYPE);
         Registry.register(Registry.RECIPE_SERIALIZER, BackpackDyeingRecipe.ID, BackpackDyeingRecipe.SERIALIZER);
     }
+
     public static final BlockEntityType<BackpackBlockEntity> BLOCK_ENTITY = new BlockEntityType<>(BackpackBlockEntity::new, ImmutableSet.of(BLOCK), null);
-
-
 
 
 }

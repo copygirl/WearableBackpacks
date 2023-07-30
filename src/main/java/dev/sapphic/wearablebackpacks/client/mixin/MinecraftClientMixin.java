@@ -11,20 +11,13 @@ import net.minecraft.client.WindowEventHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-//import net.minecraft.util.snooper.SnooperListener;
-//import org.checkerframework.checker.nullness.qual.Nullable;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.At.Shift;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.Slice;
+
 // implements SnooperListener,
 @Mixin(MinecraftClient.class)
 @Environment(EnvType.CLIENT)
-abstract class MinecraftClientMixin implements   WindowEventHandler {
-//    @ModifyVariable(
+abstract class MinecraftClientMixin implements WindowEventHandler {
+    //    @ModifyVariable(
 //            method = "addBlockEntityNbt",
 //            at = @At(
 //                    value = "INVOKE_ASSIGN",
@@ -39,7 +32,8 @@ abstract class MinecraftClientMixin implements   WindowEventHandler {
         }
         return nbt;
     }
-//
+
+    //
 //    @Redirect(
 //            method = "addBlockEntityNbt",
 //            at = @At(

@@ -22,9 +22,10 @@ public final class BackpackMenu extends ScreenHandler {
 
     public static final int THIN_EDGE = 8;
     private final BackpackContainer backpack;
+
     public BackpackMenu(final int containerId, final PlayerInventory inventory) {
         this(containerId, inventory, new WornBackpack());
-    }    public static final ScreenHandlerType<BackpackMenu> TYPE = new ScreenHandlerType<>(BackpackMenu::new);
+    }
 
     public BackpackMenu(final int containerId, final PlayerInventory inventory, final BackpackContainer backpack) {
         super(TYPE, containerId);
@@ -72,7 +73,7 @@ public final class BackpackMenu extends ScreenHandler {
             final int y = 161 + yOffset;
             this.addSlot(new Slot(inventory, column, x, y));
         }
-    }
+    }    public static final ScreenHandlerType<BackpackMenu> TYPE = new ScreenHandlerType<>(BackpackMenu::new);
 
     public int getRows() {
         return this.backpack.getRows();

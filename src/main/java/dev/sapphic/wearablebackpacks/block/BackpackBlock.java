@@ -8,7 +8,6 @@ import dev.sapphic.wearablebackpacks.advancement.BackpackCriteria;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import dev.sapphic.wearablebackpacks.mixin.BucketItemAccessor;
-import dev.sapphic.wearablebackpacks.mixin.DyeColorAccessor;
 import dev.sapphic.wearablebackpacks.stat.BackpackStats;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
