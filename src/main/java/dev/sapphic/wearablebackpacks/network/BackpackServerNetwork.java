@@ -38,15 +38,15 @@ public final class BackpackServerNetwork implements ModInitializer {
   @Override
   public void onInitialize() {
     ServerPlayNetworking.registerGlobalReceiver(
-        BackpackClientNetwork.OPEN_OWN_BACKPACK, (server, player, handler, buf, sender) -> {
-          server.execute(() -> {
-            final ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
-            if (stack.getItem() == Backpacks.ITEM) {
-              player.openHandledScreen(WornBackpack.of(player, stack));
-              BackpackWearer.getBackpackState(player).opened();
-            }
-          });
+      BackpackClientNetwork.OPEN_OWN_BACKPACK, (server, player, handler, buf, sender) -> {
+        server.execute(() -> {
+          final ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
+          if (stack.getItem() == Backpacks.ITEM) {
+            player.openHandledScreen(WornBackpack.of(player, stack));
+            BackpackWearer.getBackpackState(player).opened();
+          }
         });
+      });
     
     EntityTrackingEvents.START_TRACKING.register((entity, player) -> {
       if (entity instanceof LivingEntity) {

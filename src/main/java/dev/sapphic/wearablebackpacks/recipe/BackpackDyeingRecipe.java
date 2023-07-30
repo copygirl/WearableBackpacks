@@ -30,7 +30,7 @@ public final class BackpackDyeingRecipe extends SpecialCraftingRecipe {
   public static final Identifier ID = new Identifier(Backpacks.ID, "backpack_dyeing");
   
   public static final SpecialRecipeSerializer<BackpackDyeingRecipe> SERIALIZER =
-      new SpecialRecipeSerializer<>(BackpackDyeingRecipe::new);
+    new SpecialRecipeSerializer<>(BackpackDyeingRecipe::new);
   
   private BackpackDyeingRecipe(final Identifier id) {
     super(id);

@@ -51,7 +51,7 @@ public final class WornBackpack implements BackpackContainer {
       
       @Override
       public ScreenHandler createMenu(
-          final int containerId, final PlayerInventory inventory, final PlayerEntity player
+        final int containerId, final PlayerInventory inventory, final PlayerEntity player
       ) {
         return new BackpackMenu(containerId, inventory, new WornBackpack(wearer, backpack));
       }
@@ -143,8 +143,8 @@ public final class WornBackpack implements BackpackContainer {
     final LivingEntity source = (this.wearer != null) ? this.wearer : player;
     if (!source.world.isClient) {
       source.world.playSound(null, source.getX(), source.getY(), source.getZ(),
-          SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, source.getSoundCategory(),
-          0.5F, (source.world.random.nextFloat() * 0.1F) + 0.9F
+        SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, source.getSoundCategory(),
+        0.5F, (source.world.random.nextFloat() * 0.1F) + 0.9F
       );
       BackpackWearer.getBackpackState(source).closed();
     }

@@ -68,13 +68,13 @@ public final class BackpacksClient implements ClientModInitializer {
   private static final Identifier BACKPACK_LID = new Identifier(Backpacks.ID, "backpack_lid");
   
   private static final KeyBinding BACKPACK_KEY_BINDING =
-      new KeyBinding("key." + Backpacks.ID + ".backpack", GLFW.GLFW_KEY_B, "key.categories.inventory");
+    new KeyBinding("key." + Backpacks.ID + ".backpack", GLFW.GLFW_KEY_B, "key.categories.inventory");
   
   @SuppressWarnings("RedundantTypeArguments")
   private static final ImmutableMap<Direction, ModelIdentifier> LID_MODELS = Arrays.stream(Direction.values())
-                                                                                 .filter(Direction.Type.HORIZONTAL).collect(Maps.toImmutableEnumMap(Function.<Direction>identity(), facing ->
-                                                                                                                                                                                        new ModelIdentifier(BACKPACK_LID, String.format(Locale.ROOT, "facing=%s", facing.asString()))
-      ));
+                                                                               .filter(Direction.Type.HORIZONTAL).collect(Maps.toImmutableEnumMap(Function.<Direction>identity(), facing ->
+                                                                                                                                                                                    new ModelIdentifier(BACKPACK_LID, String.format(Locale.ROOT, "facing=%s", facing.asString()))
+    ));
   
   private static final PacketByteBuf EMPTY_PACKET_BUFFER = new PacketByteBuf(Unpooled.EMPTY_BUFFER);
   
@@ -83,8 +83,8 @@ public final class BackpacksClient implements ClientModInitializer {
   }
   
   public static void renderBackpack(
-      final MatrixStack stack, final VertexConsumerProvider pipelines, final ItemStack backpack,
-      final LivingEntity entity, final int light, final BipedEntityModel<?> model
+    final MatrixStack stack, final VertexConsumerProvider pipelines, final ItemStack backpack,
+    final LivingEntity entity, final int light, final BipedEntityModel<?> model
   ) {
     final BlockRenderManager manager = MinecraftClient.getInstance().getBlockRenderManager();
     final BlockModels models = manager.getModels();
@@ -147,11 +147,11 @@ public final class BackpacksClient implements ClientModInitializer {
   
   private static void addLidStateDefinitions() {
     ModelLoaderAccessor.setStaticDefinitions(
-        ImmutableMap.<Identifier, StateManager<Block, BlockState>>builder()
-            .putAll(ModelLoaderAccessor.getStaticDefinitions())
-            .put(BACKPACK_LID, new StateManager.Builder<Block, BlockState>(Blocks.AIR)
-                                   .add(BackpackBlock.FACING).build(Block::getDefaultState, BlockState::new)
-            ).build()
+      ImmutableMap.<Identifier, StateManager<Block, BlockState>>builder()
+        .putAll(ModelLoaderAccessor.getStaticDefinitions())
+        .put(BACKPACK_LID, new StateManager.Builder<Block, BlockState>(Blocks.AIR)
+                             .add(BackpackBlock.FACING).build(Block::getDefaultState, BlockState::new)
+        ).build()
     );
   }
   

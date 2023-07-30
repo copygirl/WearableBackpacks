@@ -57,28 +57,28 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
   public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
   
   private static final Map<Direction, VoxelShape> SHAPES = ImmutableMap.of(
-      Direction.NORTH, VoxelShapes.union(
-          VoxelShapes.cuboid(0.1875, 0.0, 0.375, 0.8125, 0.75, 0.6875),
-          VoxelShapes.cuboid(0.25, 0.0625, 0.25, 0.75, 0.4375, 0.375)
-      ),
-      Direction.EAST, VoxelShapes.union(
-          VoxelShapes.cuboid(0.3125, 0.0, 0.1875, 0.625, 0.75, 0.8125),
-          VoxelShapes.cuboid(0.625, 0.0625, 0.25, 0.75, 0.4375, 0.75)
-      ),
-      Direction.SOUTH, VoxelShapes.union(
-          VoxelShapes.cuboid(0.1875, 0.0, 0.3125, 0.8125, 0.75, 0.625),
-          VoxelShapes.cuboid(0.25, 0.0625, 0.625, 0.75, 0.4375, 0.75)
-      ),
-      Direction.WEST, VoxelShapes.union(
-          VoxelShapes.cuboid(0.375, 0.0, 0.1875, 0.6875, 0.75, 0.8125),
-          VoxelShapes.cuboid(0.25, 0.0625, 0.25, 0.375, 0.4375, 0.75)
-      )
+    Direction.NORTH, VoxelShapes.union(
+      VoxelShapes.cuboid(0.1875, 0.0, 0.375, 0.8125, 0.75, 0.6875),
+      VoxelShapes.cuboid(0.25, 0.0625, 0.25, 0.75, 0.4375, 0.375)
+    ),
+    Direction.EAST, VoxelShapes.union(
+      VoxelShapes.cuboid(0.3125, 0.0, 0.1875, 0.625, 0.75, 0.8125),
+      VoxelShapes.cuboid(0.625, 0.0625, 0.25, 0.75, 0.4375, 0.75)
+    ),
+    Direction.SOUTH, VoxelShapes.union(
+      VoxelShapes.cuboid(0.1875, 0.0, 0.3125, 0.8125, 0.75, 0.625),
+      VoxelShapes.cuboid(0.25, 0.0625, 0.625, 0.75, 0.4375, 0.75)
+    ),
+    Direction.WEST, VoxelShapes.union(
+      VoxelShapes.cuboid(0.375, 0.0, 0.1875, 0.6875, 0.75, 0.8125),
+      VoxelShapes.cuboid(0.25, 0.0625, 0.25, 0.375, 0.4375, 0.75)
+    )
   );
   
   public BackpackBlock(final Settings settings) {
     super(settings);
     this.setDefaultState(this.stateManager.getDefaultState()
-                             .with(FACING, Direction.NORTH).with(WATERLOGGED, false));
+                           .with(FACING, Direction.NORTH).with(WATERLOGGED, false));
   }
   
   @Override
@@ -93,7 +93,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
   @Override
   @Deprecated
   public void onStateReplaced(
-      final BlockState state, final World world, final BlockPos pos, final BlockState next, final boolean moved
+    final BlockState state, final World world, final BlockPos pos, final BlockState next, final boolean moved
   ) {
     if (state.getBlock() != next.getBlock()) {
       final @Nullable BlockEntity be = world.getBlockEntity(pos);
@@ -108,8 +108,8 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
   @Override
   @Deprecated
   public ActionResult onUse(
-      final BlockState state, final World world, final BlockPos pos, final PlayerEntity player, final Hand hand,
-      final BlockHitResult hit
+    final BlockState state, final World world, final BlockPos pos, final PlayerEntity player, final Hand hand,
+    final BlockHitResult hit
   ) {
     final BlockEntity be = world.getBlockEntity(pos);
     if (be instanceof BackpackBlockEntity) {
@@ -124,7 +124,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
             }
             backpack.setColor(newColor);
             world.playSound(null, pos, SoundEvents.ENTITY_ITEM_FRAME_ADD_ITEM, player.getSoundCategory(),
-                0.5F, (player.world.random.nextFloat() * 0.1F) + 0.9F
+              0.5F, (player.world.random.nextFloat() * 0.1F) + 0.9F
             );
             if (!player.getAbilities().creativeMode) {
               stack.decrement(1);
@@ -193,7 +193,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
   @Override
   @Deprecated
   public VoxelShape getOutlineShape(
-      final BlockState state, final BlockView view, final BlockPos pos, final ShapeContext context
+    final BlockState state, final BlockView view, final BlockPos pos, final ShapeContext context
   ) {
     return SHAPES.get(state.get(FACING));
   }
@@ -201,7 +201,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
   @Override
   @Deprecated
   public float calcBlockBreakingDelta(
-      final BlockState state, final PlayerEntity player, final BlockView world, final BlockPos pos
+    final BlockState state, final PlayerEntity player, final BlockView world, final BlockPos pos
   ) {
     final @Nullable BlockEntity be = world.getBlockEntity(pos);
     if ((be instanceof BackpackBlockEntity) && ((Inventory) be).isEmpty()) {
@@ -257,7 +257,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
   @Override
   @Environment(EnvType.CLIENT)
   public void appendTooltip(
-      final ItemStack stack, final @Nullable BlockView world, final List<Text> tooltip, final TooltipContext options
+    final ItemStack stack, final @Nullable BlockView world, final List<Text> tooltip, final TooltipContext options
   ) {
     super.appendTooltip(stack, world, tooltip, options);
     final @Nullable NbtCompound tag = stack.getOrCreateSubNbt("BlockEntityTag");
@@ -304,7 +304,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
   }
   
   private ItemStack getPickStack(
-      final BlockEntity be, final BlockView world, final BlockPos pos, final BlockState state
+    final BlockEntity be, final BlockView world, final BlockPos pos, final BlockState state
   ) {
     final ItemStack stack = super.getPickStack(world, pos, state);
     if (be instanceof BackpackBlockEntity) {

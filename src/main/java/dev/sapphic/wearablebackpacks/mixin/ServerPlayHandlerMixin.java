@@ -20,8 +20,8 @@ abstract class ServerPlayHandlerMixin {
 //            locals = LocalCapture.CAPTURE_FAILHARD,
 //            require = 1, allow = 1)
   private void extractEnchantments(
-      final CreativeInventoryActionC2SPacket packet, final CallbackInfo ci, final boolean drop, final ItemStack stack,
-      final NbtCompound stackNbt, final BlockPos pos, final BlockEntity be, final NbtCompound blockNbt
+    final CreativeInventoryActionC2SPacket packet, final CallbackInfo ci, final boolean drop, final ItemStack stack,
+    final NbtCompound stackNbt, final BlockPos pos, final BlockEntity be, final NbtCompound blockNbt
   ) {
     if ((be instanceof BackpackBlockEntity) && blockNbt.contains("Enchantments", NbtType.LIST)) {
       stack.setSubNbt("Enchantments", blockNbt.getList("Enchantments", NbtType.COMPOUND));

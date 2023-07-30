@@ -32,8 +32,8 @@ public final class BackpackBlockRenderer implements BlockEntityRenderer<Backpack
   
   @Override
   public void render(
-      final BackpackBlockEntity backpack, final float tickDelta, final MatrixStack stack,
-      final VertexConsumerProvider pipelines, final int light, final int overlay
+    final BackpackBlockEntity backpack, final float tickDelta, final MatrixStack stack,
+    final VertexConsumerProvider pipelines, final int light, final int overlay
   ) {
     final Direction facing = backpack.getCachedState().get(BackpackBlock.FACING);
     final BlockRenderManager manager = this.client.getBlockRenderManager();

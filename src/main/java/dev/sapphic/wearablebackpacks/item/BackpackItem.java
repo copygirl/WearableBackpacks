@@ -45,7 +45,7 @@ public final class BackpackItem extends DyeableArmorItem {
   }
   
   private static BlockState getBlockStateFromTag(
-      final BlockPos pos, final ModifiableWorld world, final ItemStack stack, final BlockState state
+    final BlockPos pos, final ModifiableWorld world, final ItemStack stack, final BlockState state
   ) {
     final @Nullable NbtCompound blockStateTag = stack.getSubNbt("BlockStateTag");
     if (blockStateTag != null) {
@@ -69,7 +69,7 @@ public final class BackpackItem extends DyeableArmorItem {
   }
   
   private static <T extends Comparable<T>> BlockState with(
-      final BlockState state, final Property<T> property, final String value
+    final BlockState state, final Property<T> property, final String value
   ) {
     return property.parse(value).map(v -> state.with(property, v)).orElse(state);
   }
@@ -90,7 +90,7 @@ public final class BackpackItem extends DyeableArmorItem {
   
   @Override
   public void inventoryTick(
-      final ItemStack backpack, final World world, final Entity entity, final int slot, final boolean selected
+    final ItemStack backpack, final World world, final Entity entity, final int slot, final boolean selected
   ) {
     super.inventoryTick(backpack, world, entity, slot, selected);
     if (!(entity instanceof PlayerEntity)) {
@@ -122,8 +122,8 @@ public final class BackpackItem extends DyeableArmorItem {
   @Override
   @Environment(EnvType.CLIENT)
   public void appendTooltip(
-      final ItemStack stack, final @Nullable World world, final List<Text> tooltip,
-      final TooltipContext context
+    final ItemStack stack, final @Nullable World world, final List<Text> tooltip,
+    final TooltipContext context
   ) {
     super.appendTooltip(stack, world, tooltip, context);
     this.block.appendTooltip(stack, world, tooltip, context);
@@ -180,7 +180,7 @@ public final class BackpackItem extends DyeableArmorItem {
     }
     final BlockSoundGroup group = state.getSoundGroup();
     world.playSound(player, pos, group.getPlaceSound(), SoundCategory.BLOCKS,
-        (group.getVolume() + 1.0F) / 2.0F, group.getPitch() * 0.8F
+      (group.getVolume() + 1.0F) / 2.0F, group.getPitch() * 0.8F
     );
     stack.decrement(1);
     return ActionResult.SUCCESS;

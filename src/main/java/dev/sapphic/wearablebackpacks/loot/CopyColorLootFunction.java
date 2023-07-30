@@ -37,7 +37,7 @@ public final class CopyColorLootFunction extends ConditionalLootFunction {
     return new ConditionalLootFunction.Serializer<CopyColorLootFunction>() {
       @Override
       public CopyColorLootFunction fromJson(
-          final JsonObject json, final JsonDeserializationContext context, final LootCondition[] conditions
+        final JsonObject json, final JsonDeserializationContext context, final LootCondition[] conditions
       ) {
         return new CopyColorLootFunction(conditions);
       }

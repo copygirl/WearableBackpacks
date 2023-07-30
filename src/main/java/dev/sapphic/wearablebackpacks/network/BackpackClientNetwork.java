@@ -22,18 +22,18 @@ public final class BackpackClientNetwork implements ClientModInitializer {
   @Override
   public void onInitializeClient() {
     ClientPlayNetworking.registerGlobalReceiver(
-        BackpackServerNetwork.BACKPACK_UPDATED, (client, handler, buf, sender) -> {
-          final int entityId = buf.readInt();
-          final int openCount = buf.readInt();
-          
-          client.execute(() -> {
-            if (client.world != null) {
-              final Entity entity = client.world.getEntityById(entityId);
-              if (entity instanceof LivingEntity) {
-                BackpackWearer.getBackpackState((LivingEntity) entity).count(openCount);
-              }
+      BackpackServerNetwork.BACKPACK_UPDATED, (client, handler, buf, sender) -> {
+        final int entityId = buf.readInt();
+        final int openCount = buf.readInt();
+        
+        client.execute(() -> {
+          if (client.world != null) {
+            final Entity entity = client.world.getEntityById(entityId);
+            if (entity instanceof LivingEntity) {
+              BackpackWearer.getBackpackState((LivingEntity) entity).count(openCount);
             }
-          });
+          }
         });
+      });
   }
 }

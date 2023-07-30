@@ -44,7 +44,7 @@ public final class BackpackOptions {
   private final float toughness;
   
   private BackpackOptions(
-      final int rows, final int columns, final int maxDamage, final int defense, final float toughness
+    final int rows, final int columns, final int maxDamage, final int defense, final float toughness
   ) {
     this.rows = getRows(rows);
     this.columns = getColumns(columns);

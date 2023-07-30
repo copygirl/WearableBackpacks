@@ -21,11 +21,11 @@ abstract class MobEquipmentMixin extends LivingEntity {
   }
   
   @Inject(method = "prefersNewEquipment(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z",
-      at = @At(shift = At.Shift.BEFORE, value = "INVOKE", opcode = Opcodes.INVOKESTATIC,
-          target = "Lnet/minecraft/enchantment/EnchantmentHelper;hasBindingCurse(Lnet/minecraft/item/ItemStack;)Z"),
-      require = 1, allow = 1, cancellable = true)
+    at = @At(shift = At.Shift.BEFORE, value = "INVOKE", opcode = Opcodes.INVOKESTATIC,
+      target = "Lnet/minecraft/enchantment/EnchantmentHelper;hasBindingCurse(Lnet/minecraft/item/ItemStack;)Z"),
+    require = 1, allow = 1, cancellable = true)
   private void retainBackpackIfNonEmpty(
-      final ItemStack newStack, final ItemStack oldStack, final CallbackInfoReturnable<Boolean> cir
+    final ItemStack newStack, final ItemStack oldStack, final CallbackInfoReturnable<Boolean> cir
   ) {
     if ((oldStack.getItem() instanceof BackpackItem) && !Backpack.isEmpty(oldStack)) {
       cir.setReturnValue(false);

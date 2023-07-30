@@ -26,8 +26,8 @@ public final class SimpleCriterion extends AbstractCriterion<SimpleCriterion.Con
   
   @Override
   protected Conditions conditionsFromJson(
-      final JsonObject json, final EntityPredicate.Extended predicate,
-      final AdvancementEntityPredicateDeserializer deserializer
+    final JsonObject json, final EntityPredicate.Extended predicate,
+    final AdvancementEntityPredicateDeserializer deserializer
   ) {
     return new Conditions(predicate);
   }

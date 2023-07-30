@@ -26,8 +26,8 @@ public interface DrawableHelperAccessor {
    */
   @Invoker
   static void invokeDrawTexture(
-      final MatrixStack stack, final int x0, final int x1, final int y0, final int y1, final int z,
-      final int rw, final int rh, final float u, final float v, final int tw, final int th
+    final MatrixStack stack, final int x0, final int x1, final int y0, final int y1, final int z,
+    final int rw, final int rh, final float u, final float v, final int tw, final int th
   ) {
     throw new AssertionError();
   }

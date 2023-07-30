@@ -85,7 +85,7 @@ public final class BackpackMenu extends ScreenHandler {
   
   private int getSlotCount() {
     return HOTBAR_SLOTS + INVENTORY_SLOTS + (this.getColumns() * this.getRows());
-  }  public static final ScreenHandlerType<BackpackMenu> TYPE = new ScreenHandlerType<>(BackpackMenu::new);
+  }
   
   @Override
   public ItemStack transferSlot(final PlayerEntity player, final int index) {
@@ -112,7 +112,7 @@ public final class BackpackMenu extends ScreenHandler {
       slot.onTakeItem(player, stack);
     }
     return original;
-  }
+  }  public static final ScreenHandlerType<BackpackMenu> TYPE = new ScreenHandlerType<>(BackpackMenu::new);
   
   @Override
   public void close(final PlayerEntity player) {

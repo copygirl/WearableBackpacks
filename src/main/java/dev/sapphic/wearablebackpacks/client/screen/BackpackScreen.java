@@ -25,8 +25,8 @@ public final class BackpackScreen extends HandledScreen<BackpackMenu> {
   }
   
   private static void drawTexture(
-      final MatrixStack stack, final int x, final int y, final int z, final int w, final int h,
-      final float u, final float v, final int rw, final int rh, final int tw, final int th
+    final MatrixStack stack, final int x, final int y, final int z, final int w, final int h,
+    final float u, final float v, final int rw, final int rh, final int tw, final int th
   ) {
     DrawableHelperAccessor.invokeDrawTexture(stack, x, x + w, y, y + h, z, rw, rh, u, v, tw, th);
   }

@@ -288,7 +288,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
       this.lid.opened();
       if (this.lid.isOpen()) {
         this.world.playSound(null, this.pos, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER,
-            SoundCategory.BLOCKS, 0.5F, (this.world.random.nextFloat() * 0.1F) + 0.9F
+          SoundCategory.BLOCKS, 0.5F, (this.world.random.nextFloat() * 0.1F) + 0.9F
         );
       }
     }
@@ -300,7 +300,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
       this.lid.closed();
       if (this.lid.isClosed()) {
         this.world.playSound(null, this.pos, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER,
-            SoundCategory.BLOCKS, 0.5F, (this.world.random.nextFloat() * 0.1F) + 0.9F
+          SoundCategory.BLOCKS, 0.5F, (this.world.random.nextFloat() * 0.1F) + 0.9F
         );
       }
     }
