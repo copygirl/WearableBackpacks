@@ -27,77 +27,77 @@ import java.util.List;
  * to {@link BackpackItem} comparisons.
  */
 public final class BackpackDyeingRecipe extends SpecialCraftingRecipe {
-  public static final Identifier ID = new Identifier(Backpacks.ID, "backpack_dyeing");
+public static final Identifier ID = new Identifier(Backpacks.ID, "backpack_dyeing");
 
-  public static final SpecialRecipeSerializer<BackpackDyeingRecipe> SERIALIZER =
-          new SpecialRecipeSerializer<>(BackpackDyeingRecipe::new);
+public static final SpecialRecipeSerializer<BackpackDyeingRecipe> SERIALIZER =
+        new SpecialRecipeSerializer<>(BackpackDyeingRecipe::new);
 
-  private BackpackDyeingRecipe(final Identifier id) {
-    super(id);
-  }
+private BackpackDyeingRecipe(final Identifier id) {
+  super(id);
+}
 
-  @Override
-  public boolean matches(final CraftingInventory matrix, final World world) {
-    ItemStack backpack = ItemStack.EMPTY;
-    final Collection<ItemStack> dyes = new ArrayList<>(1);
-    for (int slot = 0; slot < matrix.size(); ++slot) {
-      final ItemStack stack = matrix.getStack(slot);
-      if (!stack.isEmpty()) {
-        if (stack.getItem() instanceof BackpackItem) {
-          if (!backpack.isEmpty()) {
-            return false;
-          }
-          backpack = stack;
-        } else {
-          if (!(stack.getItem() instanceof DyeItem)) {
-            return false;
-          }
-          dyes.add(stack);
+@Override
+public boolean matches(final CraftingInventory matrix, final World world) {
+  ItemStack backpack = ItemStack.EMPTY;
+  final Collection<ItemStack> dyes = new ArrayList<>(1);
+  for (int slot = 0; slot < matrix.size(); ++slot) {
+    final ItemStack stack = matrix.getStack(slot);
+    if (!stack.isEmpty()) {
+      if (stack.getItem() instanceof BackpackItem) {
+        if (!backpack.isEmpty()) {
+          return false;
         }
-      }
-    }
-    return !backpack.isEmpty() && !dyes.isEmpty();
-  }
-
-  @Override
-  public ItemStack craft(final CraftingInventory matrix) {
-    ItemStack backpack = ItemStack.EMPTY;
-    final List<DyeItem> dyes = new ArrayList<>(1);
-    for (int slot = 0; slot < matrix.size(); ++slot) {
-      final ItemStack stack = matrix.getStack(slot);
-      if (!stack.isEmpty()) {
-        final Item item = stack.getItem();
-        if (item instanceof BackpackItem) {
-          if (!backpack.isEmpty()) {
-            return ItemStack.EMPTY;
-          }
-          backpack = stack.copy();
-        } else {
-          if (!(item instanceof DyeItem)) {
-            return ItemStack.EMPTY;
-          }
-          dyes.add((DyeItem) item);
+        backpack = stack;
+      } else {
+        if (!(stack.getItem() instanceof DyeItem)) {
+          return false;
         }
+        dyes.add(stack);
       }
     }
-    if (!backpack.isEmpty() && !dyes.isEmpty()) {
-      final ItemStack result = DyeableItem.blendAndSetColor(backpack, dyes);
-      if (!result.isEmpty()) {
-        return result;
+  }
+  return !backpack.isEmpty() && !dyes.isEmpty();
+}
+
+@Override
+public ItemStack craft(final CraftingInventory matrix) {
+  ItemStack backpack = ItemStack.EMPTY;
+  final List<DyeItem> dyes = new ArrayList<>(1);
+  for (int slot = 0; slot < matrix.size(); ++slot) {
+    final ItemStack stack = matrix.getStack(slot);
+    if (!stack.isEmpty()) {
+      final Item item = stack.getItem();
+      if (item instanceof BackpackItem) {
+        if (!backpack.isEmpty()) {
+          return ItemStack.EMPTY;
+        }
+        backpack = stack.copy();
+      } else {
+        if (!(item instanceof DyeItem)) {
+          return ItemStack.EMPTY;
+        }
+        dyes.add((DyeItem) item);
       }
     }
-    return ItemStack.EMPTY;
   }
+  if (!backpack.isEmpty() && !dyes.isEmpty()) {
+    final ItemStack result = DyeableItem.blendAndSetColor(backpack, dyes);
+    if (!result.isEmpty()) {
+      return result;
+    }
+  }
+  return ItemStack.EMPTY;
+}
 
-  @Override
-  @Environment(EnvType.CLIENT)
-  public boolean fits(final int width, final int height) {
-    return (width * height) >= 2;
-  }
+@Override
+@Environment(EnvType.CLIENT)
+public boolean fits(final int width, final int height) {
+  return (width * height) >= 2;
+}
 
-  @Override
-  public RecipeSerializer<?> getSerializer() {
-    return SERIALIZER;
-  }
+@Override
+public RecipeSerializer<?> getSerializer() {
+  return SERIALIZER;
+}
 }
 

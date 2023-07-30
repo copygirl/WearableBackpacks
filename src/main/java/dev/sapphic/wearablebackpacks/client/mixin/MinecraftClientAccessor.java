@@ -9,9 +9,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 // SnooperListener,
 @Mixin(MinecraftClient.class)
 public interface MinecraftClientAccessor extends WindowEventHandler {
-  @Accessor
-  float getPausedTickDelta();
+@Accessor
+float getPausedTickDelta();
 
-  @Accessor
-  RenderTickCounter getRenderTickCounter();
+@Accessor
+RenderTickCounter getRenderTickCounter();
 }

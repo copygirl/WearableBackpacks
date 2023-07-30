@@ -13,128 +13,128 @@ import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.Nullable;
 
 public interface Backpack {
-  String ROWS = "Rows";
-  String COLUMNS = "Columns";
+String ROWS = "Rows";
+String COLUMNS = "Columns";
 
-  int DEFAULT_COLOR = 0xA06540;
+int DEFAULT_COLOR = 0xA06540;
 
-  static int getExpectedRows() {
-    return BackpackOptions.getRows();
+static int getExpectedRows() {
+  return BackpackOptions.getRows();
+}
+
+static int getExpectedColumns() {
+  return BackpackOptions.getColumns();
+}
+
+static int getMaxDamage() {
+  return BackpackOptions.getMaxDamage();
+}
+
+static int getDefense() {
+  return BackpackOptions.getDefense();
+}
+
+static float getToughness() {
+  return BackpackOptions.getToughness();
+}
+
+static int getRows(final ItemStack backpack) {
+  final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
+  if ((nbt != null) && nbt.contains(ROWS, NbtType.INT)) {
+    return BackpackOptions.getRows(nbt.getInt(ROWS));
   }
+  return getExpectedRows();
+}
 
-  static int getExpectedColumns() {
-    return BackpackOptions.getColumns();
+static int getColumns(final ItemStack backpack) {
+  final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
+  if ((nbt != null) && nbt.contains(COLUMNS, NbtType.INT)) {
+    return BackpackOptions.getColumns(nbt.getInt(COLUMNS));
   }
+  return getExpectedColumns();
+}
 
-  static int getMaxDamage() {
-    return BackpackOptions.getMaxDamage();
-  }
+static int getColor(final ItemStack stack) {
+  return ((DyeableItem) stack.getItem()).getColor(stack) & 0xFFFFFF;
+}
 
-  static int getDefense() {
-    return BackpackOptions.getDefense();
-  }
+static boolean hasColor(final ItemStack stack) {
+  return ((DyeableItem) stack.getItem()).hasColor(stack);
+}
 
-  static float getToughness() {
-    return BackpackOptions.getToughness();
-  }
+static void setColor(final ItemStack stack, final int color) {
+  ((DyeableItem) stack.getItem()).setColor(stack, color & 0xFFFFFF);
+}
 
-  static int getRows(final ItemStack backpack) {
-    final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
-    if ((nbt != null) && nbt.contains(ROWS, NbtType.INT)) {
-      return BackpackOptions.getRows(nbt.getInt(ROWS));
+static void removeColor(final ItemStack stack) {
+  ((DyeableItem) stack.getItem()).removeColor(stack);
+}
+
+static int getColor(final @Nullable BlockView world, final @Nullable BlockPos pos) {
+  if ((world != null) && (pos != null)) {
+    final @Nullable BlockEntity be = world.getBlockEntity(pos);
+    if (be instanceof BackpackBlockEntity) {
+      return ((Backpack) be).getColor();
     }
-    return getExpectedRows();
   }
+  return DEFAULT_COLOR;
+}
 
-  static int getColumns(final ItemStack backpack) {
-    final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
-    if ((nbt != null) && nbt.contains(COLUMNS, NbtType.INT)) {
-      return BackpackOptions.getColumns(nbt.getInt(COLUMNS));
-    }
-    return getExpectedColumns();
-  }
+static DefaultedList<ItemStack> getContents(final ItemStack backpack) {
+  // Minor optimizations over Inventories#readNbt
+  final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
 
-  static int getColor(final ItemStack stack) {
-    return ((DyeableItem) stack.getItem()).getColor(stack) & 0xFFFFFF;
-  }
+  if ((nbt != null) && nbt.contains("Items", NbtType.LIST)) {
+    final NbtList items = nbt.getList("Items", NbtType.COMPOUND);
+    final DefaultedList<ItemStack> stacks = DefaultedList.ofSize(items.size(), ItemStack.EMPTY);
 
-  static boolean hasColor(final ItemStack stack) {
-    return ((DyeableItem) stack.getItem()).hasColor(stack);
-  }
+    for (int index = 0; index < items.size(); index++) {
+      final NbtCompound item = items.getCompound(index);
 
-  static void setColor(final ItemStack stack, final int color) {
-    ((DyeableItem) stack.getItem()).setColor(stack, color & 0xFFFFFF);
-  }
-
-  static void removeColor(final ItemStack stack) {
-    ((DyeableItem) stack.getItem()).removeColor(stack);
-  }
-
-  static int getColor(final @Nullable BlockView world, final @Nullable BlockPos pos) {
-    if ((world != null) && (pos != null)) {
-      final @Nullable BlockEntity be = world.getBlockEntity(pos);
-      if (be instanceof BackpackBlockEntity) {
-        return ((Backpack) be).getColor();
+      if ((item.getByte("Slot") & 255) < items.size()) {
+        stacks.add(ItemStack.fromNbt(item));
       }
     }
-    return DEFAULT_COLOR;
+    return stacks;
   }
+  return DefaultedList.ofSize(0, ItemStack.EMPTY);
+}
 
-  static DefaultedList<ItemStack> getContents(final ItemStack backpack) {
-    // Minor optimizations over Inventories#readNbt
-    final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
+static boolean isEmpty(final ItemStack backpack) {
+  // Short-circuiting deserialization
+  final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
 
-    if ((nbt != null) && nbt.contains("Items", NbtType.LIST)) {
-      final NbtList items = nbt.getList("Items", NbtType.COMPOUND);
-      final DefaultedList<ItemStack> stacks = DefaultedList.ofSize(items.size(), ItemStack.EMPTY);
+  if ((nbt != null) && nbt.contains("Items", NbtType.LIST)) {
+    final NbtList items = nbt.getList("Items", NbtType.COMPOUND);
 
-      for (int index = 0; index < items.size(); index++) {
-        final NbtCompound item = items.getCompound(index);
+    for (int index = 0; index < items.size(); index++) {
+      final NbtCompound item = items.getCompound(index);
 
-        if ((item.getByte("Slot") & 255) < items.size()) {
-          stacks.add(ItemStack.fromNbt(item));
+      if ((item.getByte("Slot") & 255) < items.size()) {
+        if (!ItemStack.fromNbt(item).isEmpty()) {
+          return false;
         }
       }
-      return stacks;
     }
-    return DefaultedList.ofSize(0, ItemStack.EMPTY);
   }
+  return true;
+}
 
-  static boolean isEmpty(final ItemStack backpack) {
-    // Short-circuiting deserialization
-    final @Nullable NbtCompound nbt = backpack.getSubNbt("BlockEntityTag");
+int getRows();
 
-    if ((nbt != null) && nbt.contains("Items", NbtType.LIST)) {
-      final NbtList items = nbt.getList("Items", NbtType.COMPOUND);
+int getColumns();
 
-      for (int index = 0; index < items.size(); index++) {
-        final NbtCompound item = items.getCompound(index);
+boolean hasGlint();
 
-        if ((item.getByte("Slot") & 255) < items.size()) {
-          if (!ItemStack.fromNbt(item).isEmpty()) {
-            return false;
-          }
-        }
-      }
-    }
-    return true;
-  }
+int getColor();
 
-  int getRows();
+void setColor(final int color);
 
-  int getColumns();
+boolean hasColor();
 
-  boolean hasGlint();
+void clearColor();
 
-  int getColor();
+DefaultedList<ItemStack> getContents();
 
-  void setColor(final int color);
-
-  boolean hasColor();
-
-  void clearColor();
-
-  DefaultedList<ItemStack> getContents();
-
-  float getLidDelta(final float tickDelta);
+float getLidDelta(final float tickDelta);
 }

@@ -13,14 +13,14 @@ import java.util.Map;
 
 @Mixin(ModelLoader.class)
 public interface ModelLoaderAccessor {
-  @Accessor("STATIC_DEFINITIONS")
-  static Map<Identifier, StateManager<Block, BlockState>> getStaticDefinitions() {
-    throw new AssertionError();
-  }
+@Accessor("STATIC_DEFINITIONS")
+static Map<Identifier, StateManager<Block, BlockState>> getStaticDefinitions() {
+  throw new AssertionError();
+}
 
-  @Mutable
-  @Accessor("STATIC_DEFINITIONS")
-  static void setStaticDefinitions(final Map<Identifier, StateManager<Block, BlockState>> map) {
-    throw new AssertionError();
-  }
+@Mutable
+@Accessor("STATIC_DEFINITIONS")
+static void setStaticDefinitions(final Map<Identifier, StateManager<Block, BlockState>> map) {
+  throw new AssertionError();
+}
 }

@@ -25,44 +25,44 @@ import net.minecraft.util.math.Vec3f;
 
 @Environment(EnvType.CLIENT)
 public final class BackpackBlockRenderer implements BlockEntityRenderer<BackpackBlockEntity> {
-  private final MinecraftClient client = MinecraftClient.getInstance();
+private final MinecraftClient client = MinecraftClient.getInstance();
 
-  public BackpackBlockRenderer(final BlockEntityRenderDispatcher dispatcher) {
-  }
+public BackpackBlockRenderer(final BlockEntityRenderDispatcher dispatcher) {
+}
 
-  @Override
-  public void render(
-          final BackpackBlockEntity backpack, final float tickDelta, final MatrixStack stack,
-          final VertexConsumerProvider pipelines, final int light, final int overlay
-  ) {
-    final Direction facing = backpack.getCachedState().get(BackpackBlock.FACING);
-    final BlockRenderManager manager = this.client.getBlockRenderManager();
-    final BlockModels models = manager.getModels();
-    final BlockModelRenderer renderer = manager.getModelRenderer();
-    final VertexConsumer pipeline = ItemRenderer.getDirectItemGlintConsumer(pipelines, TexturedRenderLayers.getEntityCutout(), true, backpack.hasGlint());
-    final BakedModel backpackModel = models.getModel(backpack.getCachedState());
-    final BakedModel lidModel = models.getModelManager().getModel(BackpacksClient.getLidModel(facing));
-    final Vec3f unitVector = facing.rotateYClockwise().getUnitVector();
-    final Quaternion rotation = unitVector.getDegreesQuaternion(45.0F * backpack.getLidDelta(tickDelta));
+@Override
+public void render(
+        final BackpackBlockEntity backpack, final float tickDelta, final MatrixStack stack,
+        final VertexConsumerProvider pipelines, final int light, final int overlay
+) {
+  final Direction facing = backpack.getCachedState().get(BackpackBlock.FACING);
+  final BlockRenderManager manager = this.client.getBlockRenderManager();
+  final BlockModels models = manager.getModels();
+  final BlockModelRenderer renderer = manager.getModelRenderer();
+  final VertexConsumer pipeline = ItemRenderer.getDirectItemGlintConsumer(pipelines, TexturedRenderLayers.getEntityCutout(), true, backpack.hasGlint());
+  final BakedModel backpackModel = models.getModel(backpack.getCachedState());
+  final BakedModel lidModel = models.getModelManager().getModel(BackpacksClient.getLidModel(facing));
+  final Vec3f unitVector = facing.rotateYClockwise().getUnitVector();
+  final Quaternion rotation = unitVector.getDegreesQuaternion(45.0F * backpack.getLidDelta(tickDelta));
 
-    final int color = backpack.getColor();
-    final float red = ((color >> 16) & 0xFF) / 255.0F;
-    final float green = ((color >> 8) & 0xFF) / 255.0F;
-    final float blue = (color & 0xFF) / 255.0F;
+  final int color = backpack.getColor();
+  final float red = ((color >> 16) & 0xFF) / 255.0F;
+  final float green = ((color >> 8) & 0xFF) / 255.0F;
+  final float blue = (color & 0xFF) / 255.0F;
 
-    final boolean xAxis = facing.getAxis() == Direction.Axis.X;
-    final boolean inverse = facing.getDirection() == AxisDirection.NEGATIVE;
-    final double xPivot = (inverse ? (1.0 - 0.3125) : 0.3125) * (xAxis ? 1.0 : 0.0);
-    final double yPivot = 0.5625;
-    final double zPivot = (inverse ? (1.0 - 0.3125) : 0.3125) * (xAxis ? 0.0 : 1.0);
+  final boolean xAxis = facing.getAxis() == Direction.Axis.X;
+  final boolean inverse = facing.getDirection() == AxisDirection.NEGATIVE;
+  final double xPivot = (inverse ? (1.0 - 0.3125) : 0.3125) * (xAxis ? 1.0 : 0.0);
+  final double yPivot = 0.5625;
+  final double zPivot = (inverse ? (1.0 - 0.3125) : 0.3125) * (xAxis ? 0.0 : 1.0);
 
-    renderer.render(stack.peek(), pipeline, null, backpackModel, red, green, blue, light, OverlayTexture.DEFAULT_UV);
+  renderer.render(stack.peek(), pipeline, null, backpackModel, red, green, blue, light, OverlayTexture.DEFAULT_UV);
 
-    stack.push();
-    stack.translate(xPivot, yPivot, zPivot);
-    stack.multiply(rotation);
-    stack.translate(-xPivot, -yPivot, -zPivot);
-    renderer.render(stack.peek(), pipeline, null, lidModel, red, green, blue, light, OverlayTexture.DEFAULT_UV);
-    stack.pop();
-  }
+  stack.push();
+  stack.translate(xPivot, yPivot, zPivot);
+  stack.multiply(rotation);
+  stack.translate(-xPivot, -yPivot, -zPivot);
+  renderer.render(stack.peek(), pipeline, null, lidModel, red, green, blue, light, OverlayTexture.DEFAULT_UV);
+  stack.pop();
+}
 }
