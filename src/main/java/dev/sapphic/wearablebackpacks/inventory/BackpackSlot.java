@@ -6,12 +6,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 
 final class BackpackSlot extends Slot {
-    BackpackSlot(final Inventory container, final int index, final int x, final int y) {
-        super(container, index, x, y);
-    }
+  BackpackSlot(final Inventory container, final int index, final int x, final int y) {
+    super(container, index, x, y);
+  }
 
-    @Override
-    public boolean canInsert(final ItemStack stack) {
-        return !(stack.getItem() instanceof BackpackItem);
-    }
+  @Override
+  public boolean canInsert(final ItemStack stack) {
+    return !(stack.getItem() instanceof BackpackItem);
+  }
 }

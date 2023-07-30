@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(MinecraftClient.class)
 @Environment(EnvType.CLIENT)
 abstract class MinecraftClientMixin implements WindowEventHandler {
-    //    @ModifyVariable(
+  //    @ModifyVariable(
 //            method = "addBlockEntityNbt",
 //            at = @At(
 //                    value = "INVOKE_ASSIGN",
@@ -26,14 +26,14 @@ abstract class MinecraftClientMixin implements WindowEventHandler {
 //                    shift = Shift.AFTER
 //            ),
 //            allow = 1)
-    private NbtCompound stripRedundantColor(final NbtCompound nbt, final ItemStack stack, final BlockEntity be) {
-        if ((be instanceof BackpackBlockEntity) && nbt.contains("Color", NbtType.INT)) {
-            nbt.remove("Color"); // We don't need this, color is defined by DyeableItem
-        }
-        return nbt;
+  private NbtCompound stripRedundantColor(final NbtCompound nbt, final ItemStack stack, final BlockEntity be) {
+    if ((be instanceof BackpackBlockEntity) && nbt.contains("Color", NbtType.INT)) {
+      nbt.remove("Color"); // We don't need this, color is defined by DyeableItem
     }
+    return nbt;
+  }
 
-    //
+  //
 //    @Redirect(
 //            method = "addBlockEntityNbt",
 //            at = @At(
@@ -46,17 +46,17 @@ abstract class MinecraftClientMixin implements WindowEventHandler {
 //                    args = "stringValue=display"
 //            )),
 //            allow = 1, require = 0) // If someone else is redirecting this they likely have similar intentions
-    private void patchDisplayNbt(final ItemStack stack, final String key, final NbtElement nbt) {
-        final NbtCompound existing = stack.getOrCreateSubNbt(key);
-        if ((existing == null) || (stack.getItem() != Backpacks.ITEM)) {
-            // Vanilla logic
+  private void patchDisplayNbt(final ItemStack stack, final String key, final NbtElement nbt) {
+    final NbtCompound existing = stack.getOrCreateSubNbt(key);
+    if ((existing == null) || (stack.getItem() != Backpacks.ITEM)) {
+      // Vanilla logic
 //            stack.putSubTag(key, nbt);
-            return;
-        }
-        // Don't overwrite the existing tag, instead merge into it, so that our color is removed
-        for (final String subKey : ((NbtCompound) nbt).getKeys()) {
-            // We overwrite sub tags; to account for this too would be out of scope for our need
-            existing.put(subKey, ((NbtCompound) nbt).get(subKey));
-        }
+      return;
     }
+    // Don't overwrite the existing tag, instead merge into it, so that our color is removed
+    for (final String subKey : ((NbtCompound) nbt).getKeys()) {
+      // We overwrite sub tags; to account for this too would be out of scope for our need
+      existing.put(subKey, ((NbtCompound) nbt).get(subKey));
+    }
+  }
 }
