@@ -1,122 +1,51 @@
 package dev.sapphic.wearablebackpacks;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
+@Config(name = Backpacks.ID)
+public final class BackpackOptions implements ConfigData {
 
-public final class BackpackOptions {
-  public static final int MIN_ROWS = 1;
-  public static final int DEFAULT_ROWS = 3;
-  public static final int MAX_ROWS = 6;
-  
-  public static final int MIN_COLUMNS = 1;
-  public static final int DEFAULT_COLUMNS = 9;
-  public static final int MAX_COLUMNS = 18;
-  
-  public static final int MIN_DAMAGE = 0;
-  public static final int DEFAULT_MAX_DAMAGE = 240;
-  public static final int MAX_DAMAGE = 495;
-  
-  public static final int MIN_DEFENSE = 0;
-  public static final int DEFAULT_DEFENSE = 5;
-  public static final int MAX_DEFENSE = 6;
-  
-  public static final float MIN_TOUGHNESS = 0.0F;
-  public static final float DEFAULT_TOUGHNESS = 0.0F;
-  public static final float MAX_TOUGHNESS = 2.0F;
-  
+  public static int rows = 3;
+  public static int cols = 9;
+  public static int damage = 240;
+
+  public static int defense = 5;
+  public static float toughness = 0.0f;
+
+  public static boolean enableChestArmorEquip = true;
+
   private static final Logger LOGGER = LogManager.getLogger();
-  
-  private static BackpackOptions instance = new BackpackOptions();
-  
-  private final int rows;
-  private final int columns;
-  private final int maxDamage;
-  private final int defense;
-  private final float toughness;
-  
-  private BackpackOptions(
-    final int rows, final int columns, final int maxDamage, final int defense, final float toughness
-  ) {
-    this.rows = getRows(rows);
-    this.columns = getColumns(columns);
-    this.maxDamage = getDamage(maxDamage);
-    this.defense = getDefense(defense);
-    this.toughness = getToughness(toughness);
-  }
-  
-  private BackpackOptions() {
-    this.rows = DEFAULT_ROWS;
-    this.columns = DEFAULT_COLUMNS;
-    this.maxDamage = DEFAULT_MAX_DAMAGE;
-    this.defense = DEFAULT_DEFENSE;
-    this.toughness = DEFAULT_TOUGHNESS;
-  }
-  
+
+  public static BackpackOptions instance = new BackpackOptions();
+
   static int getRows() {
-    return instance.rows;
+    return rows;
   }
-  
+
   static int getColumns() {
-    return instance.columns;
+    return cols;
   }
-  
+
   static int getMaxDamage() {
-    return instance.maxDamage;
+    return damage;
   }
-  
+
   static int getDefense() {
-    return instance.defense;
+    return defense;
   }
-  
+
   static float getToughness() {
-    return instance.toughness;
+    return toughness;
   }
-  
+
   public static int getRows(final int rows) {
-    return Math.max(Math.min(rows, MAX_ROWS), MIN_ROWS);
+    return Math.max(Math.min(rows, 6), 1);
   }
-  
+
   public static int getColumns(final int columns) {
-    return Math.max(Math.min(columns, MAX_COLUMNS), MIN_COLUMNS);
+    return Math.max(Math.min(columns, 18), 1);
   }
-  
-  public static int getDamage(final int damage) {
-    return Math.max(Math.min(damage, MAX_DAMAGE), MIN_DAMAGE);
-  }
-  
-  static void init(final Path input) {
-    try (final Reader reader = Files.newBufferedReader(input)) {
-      final Gson gson = new GsonBuilder().setLenient().create();
-      instance = gson.fromJson(reader, BackpackOptions.class);
-    } catch (final NoSuchFileException ignored) {
-    } catch (final IOException | IllegalArgumentException e) {
-      LOGGER.warn("Failed to read options", e);
-    }
-    try (final Writer writer = Files.newBufferedWriter(input)) {
-      final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-      gson.toJson(instance, writer);
-    } catch (final IOException e) {
-      throw new IllegalStateException("Failed to write options", e);
-    }
-  }
-  
-  private static int getDefense(final int defense) {
-    return Math.max(Math.min(defense, MAX_DEFENSE), MIN_DEFENSE);
-  }
-  
-  private static float getToughness(final float toughness) {
-    if (!Float.isNaN(toughness)) {
-      return Math.max(Math.min(toughness, MAX_TOUGHNESS), MIN_TOUGHNESS);
-    }
-    return DEFAULT_TOUGHNESS;
-  }
+
 }

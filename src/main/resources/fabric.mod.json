@@ -23,7 +23,8 @@
       "dev.sapphic.wearablebackpacks.loot.BackpackLootFunctions",
       "dev.sapphic.wearablebackpacks.network.BackpackServerNetwork",
       "dev.sapphic.wearablebackpacks.stat.BackpackStats"
-    ]
+    ],
+    "modmenu": ["dev.sapphic.wearablebackpacks.integration.ModMenuIntegration"]
   },
   "mixins": [
     "mixins/wearablebackpacks/mixins.client.json",

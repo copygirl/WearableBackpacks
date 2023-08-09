@@ -6,6 +6,8 @@ import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
 import dev.sapphic.wearablebackpacks.inventory.BackpackMenu;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import dev.sapphic.wearablebackpacks.recipe.BackpackDyeingRecipe;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.loader.api.FabricLoader;
@@ -27,16 +29,13 @@ public final class Backpacks implements ModInitializer {
   
   @Override
   public void onInitialize() {
-    BackpackOptions.init(FabricLoader.getInstance().getConfigDir().resolve(ID + ".json"));
-    
+    AutoConfig.register(BackpackOptions.class, GsonConfigSerializer::new);
+    BackpackOptions.instance = AutoConfig.getConfigHolder(BackpackOptions.class).getConfig();
     final Identifier backpack = new Identifier(ID, "backpack");
-    
     Registry.register(Registry.BLOCK, backpack, BLOCK);
     Registry.register(Registry.BLOCK_ENTITY_TYPE, backpack, BLOCK_ENTITY);
     Registry.register(Registry.ITEM, backpack, ITEM);
-    
     Item.BLOCK_ITEMS.put(BLOCK, ITEM);
-    
     Registry.register(Registry.SCREEN_HANDLER, backpack, BackpackMenu.TYPE);
     Registry.register(Registry.RECIPE_SERIALIZER, BackpackDyeingRecipe.ID, BackpackDyeingRecipe.SERIALIZER);
   }
