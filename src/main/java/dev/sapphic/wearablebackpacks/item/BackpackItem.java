@@ -46,10 +46,11 @@ public final class BackpackItem extends DyeableArmorItem {
   private final Block block;
   
   public BackpackItem(final Block block, final Settings settings) {
-    super(BackpackMaterial.INSTANCE, EquipmentSlot.CHEST, settings);
+    super(BackpackMaterial.INSTANCE, BackpackOptions.enableChestArmorEquip ?  EquipmentSlot.CHEST : EquipmentSlot.MAINHAND, settings);
     Validate.isInstanceOf(BackpackBlock.class, block);
     this.block = block;
   }
+
 
   private static BlockState getBlockStateFromTag(
     final BlockPos pos, final ModifiableWorld world, final ItemStack stack, final BlockState state

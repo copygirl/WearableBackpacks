@@ -10,7 +10,6 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
@@ -26,11 +25,12 @@ public final class Backpacks implements ModInitializer {
   
   public static final Block BLOCK = new BackpackBlock(FabricBlockSettings.of(Material.WOOL, MapColor.CLEAR).strength(0.5F, 0.5F).sounds(BlockSoundGroup.WOOL));
   public static final Item ITEM = new BackpackItem(BLOCK, new Item.Settings().group(ItemGroup.TOOLS));
+  public static BackpackOptions config;
   
   @Override
   public void onInitialize() {
     AutoConfig.register(BackpackOptions.class, GsonConfigSerializer::new);
-    BackpackOptions.instance = AutoConfig.getConfigHolder(BackpackOptions.class).getConfig();
+    config = AutoConfig.getConfigHolder(BackpackOptions.class).getConfig();
     final Identifier backpack = new Identifier(ID, "backpack");
     Registry.register(Registry.BLOCK, backpack, BLOCK);
     Registry.register(Registry.BLOCK_ENTITY_TYPE, backpack, BLOCK_ENTITY);
