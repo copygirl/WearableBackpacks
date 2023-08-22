@@ -44,9 +44,9 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
   
   private final BackpackLid lid = new BackpackLid(o -> this.event(OPENS_DATA_TYPE, o.openCount()));
   
-  private int rows = BackpackOptions.rows;
+  private int rows = Backpacks.config.rows;
 
-  private int columns = BackpackOptions.cols;
+  private int columns = Backpacks.config.cols;
   private @NotNull DefaultedList<ItemStack> contents;
   private @Nullable NbtList enchantments;
   

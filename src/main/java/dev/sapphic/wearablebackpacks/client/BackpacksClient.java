@@ -5,8 +5,8 @@ import com.google.common.collect.Maps;
 import dev.sapphic.wearablebackpacks.Backpack;
 import dev.sapphic.wearablebackpacks.Backpacks;
 import dev.sapphic.wearablebackpacks.block.BackpackBlock;
-import dev.sapphic.wearablebackpacks.client.mixin.MinecraftClientAccessor;
-import dev.sapphic.wearablebackpacks.client.mixin.ModelLoaderAccessor;
+import dev.sapphic.wearablebackpacks.mixin.client.MinecraftClientAccessor;
+import dev.sapphic.wearablebackpacks.mixin.client.ModelLoaderAccessor;
 import dev.sapphic.wearablebackpacks.client.render.BackpackBlockRenderer;
 import dev.sapphic.wearablebackpacks.client.screen.BackpackScreen;
 import dev.sapphic.wearablebackpacks.inventory.BackpackMenu;
@@ -175,9 +175,8 @@ public final class BackpacksClient implements ClientModInitializer {
     KeyBindingHelper.registerKeyBinding(BACKPACK_KEY_BINDING);
     ClientTickEvents.END_CLIENT_TICK.register(BackpacksClient::pollBackpackKey);
     BlockEntityRendererRegistry.register(Backpacks.BLOCK_ENTITY, (ctx) -> new BackpackBlockRenderer(ctx.getRenderDispatcher()));
-//        BlockEntityRendererRegistry.register(Backpacks.BLOCK_ENTITY, BackpackBlockRenderer::new);
     ColorProviderRegistry.BLOCK.register((state, world, pos, tint) -> Backpack.getColor(world, pos), Backpacks.BLOCK);
-    ColorProviderRegistry.ITEM.register((stack, tint) -> Backpack.getColor(stack), Backpacks.ITEM);
+    ColorProviderRegistry.ITEM.register((stack, tint) -> Backpack.getColor(stack), Backpacks.backpackItem);
     ClientPlayNetworking.registerGlobalReceiver(BACKPACK_STATE_CHANGED, (client, handler, buf, sender) -> {
       final int entityId = buf.readInt();
       final boolean opened = buf.readBoolean();

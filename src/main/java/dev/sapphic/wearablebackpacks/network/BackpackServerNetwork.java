@@ -41,7 +41,7 @@ public final class BackpackServerNetwork implements ModInitializer {
       BackpackClientNetwork.OPEN_OWN_BACKPACK, (server, player, handler, buf, sender) -> {
         server.execute(() -> {
           final ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
-          if (stack.getItem() == Backpacks.ITEM) {
+          if (stack.getItem() == Backpacks.backpackItem) {
             player.openHandledScreen(WornBackpack.of(player, stack));
             BackpackWearer.getBackpackState(player).opened();
           }

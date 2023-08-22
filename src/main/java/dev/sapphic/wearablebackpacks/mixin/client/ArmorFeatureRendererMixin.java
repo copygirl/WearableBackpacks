@@ -1,4 +1,4 @@
-package dev.sapphic.wearablebackpacks.client.mixin;
+package dev.sapphic.wearablebackpacks.mixin.client;
 
 import dev.sapphic.wearablebackpacks.client.BackpacksClient;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;

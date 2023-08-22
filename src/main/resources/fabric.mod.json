@@ -27,8 +27,7 @@
     "modmenu": ["dev.sapphic.wearablebackpacks.integration.ModMenuIntegration"]
   },
   "mixins": [
-    "mixins/wearablebackpacks/mixins.client.json",
-    "mixins/wearablebackpacks/mixins.server.json"
+    "wearablebackpacks.mixins.json"
   ],
   "authors": [
     "Chloe Dawn",

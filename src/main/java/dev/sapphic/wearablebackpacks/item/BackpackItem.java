@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import dev.sapphic.wearablebackpacks.Backpack;
 import dev.sapphic.wearablebackpacks.BackpackOptions;
+import dev.sapphic.wearablebackpacks.Backpacks;
 import dev.sapphic.wearablebackpacks.advancement.BackpackCriteria;
 import dev.sapphic.wearablebackpacks.block.BackpackBlock;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
@@ -46,7 +47,7 @@ public final class BackpackItem extends DyeableArmorItem {
   private final Block block;
   
   public BackpackItem(final Block block, final Settings settings) {
-    super(BackpackMaterial.INSTANCE, BackpackOptions.enableChestArmorEquip ?  EquipmentSlot.CHEST : EquipmentSlot.MAINHAND, settings);
+    super(BackpackMaterial.INSTANCE, Backpacks.config.enableChestArmorEquip ?  EquipmentSlot.CHEST : EquipmentSlot.MAINHAND, settings);
     Validate.isInstanceOf(BackpackBlock.class, block);
     this.block = block;
   }

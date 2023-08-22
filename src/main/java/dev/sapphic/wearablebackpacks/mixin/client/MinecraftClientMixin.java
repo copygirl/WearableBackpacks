@@ -1,4 +1,4 @@
-package dev.sapphic.wearablebackpacks.client.mixin;
+package dev.sapphic.wearablebackpacks.mixin.client;
 
 import dev.sapphic.wearablebackpacks.Backpacks;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
@@ -48,7 +48,7 @@ abstract class MinecraftClientMixin implements WindowEventHandler {
 //            allow = 1, require = 0) // If someone else is redirecting this they likely have similar intentions
   private void patchDisplayNbt(final ItemStack stack, final String key, final NbtElement nbt) {
     final NbtCompound existing = stack.getOrCreateSubNbt(key);
-    if ((existing == null) || (stack.getItem() != Backpacks.ITEM)) {
+    if ((existing == null) || (stack.getItem() != Backpacks.backpackItem)) {
       // Vanilla logic
 //            stack.putSubTag(key, nbt);
       return;

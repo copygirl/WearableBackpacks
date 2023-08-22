@@ -19,23 +19,23 @@ public interface Backpack {
   int DEFAULT_COLOR = 0xA06540;
   
   static int getExpectedRows() {
-    return BackpackOptions.rows;
+    return Backpacks.config.rows;
   }
   
   static int getExpectedColumns() {
-    return BackpackOptions.cols;
+    return Backpacks.config.cols;
   }
   
   static int getMaxDamage() {
-    return BackpackOptions.damage;
+    return Backpacks.config.damage;
   }
   
   static int getDefense() {
-    return BackpackOptions.defense;
+    return Backpacks.config.defense;
   }
   
   static float getToughness() {
-    return BackpackOptions.toughness;
+    return Backpacks.config.toughness;
   }
   
   static int getRows(final ItemStack backpack) {

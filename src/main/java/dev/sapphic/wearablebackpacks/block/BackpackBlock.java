@@ -51,11 +51,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class BackpackBlock extends BlockWithEntity implements Waterloggable {
   public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
   public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
-  
+  private static final Logger LOGGER = Logger.getLogger(BackpackBlockEntity.class.getName());
+
   private static final Map<Direction, VoxelShape> SHAPES = ImmutableMap.of(
     Direction.NORTH, VoxelShapes.union(
       VoxelShapes.cuboid(0.1875, 0.0, 0.375, 0.8125, 0.75, 0.6875),
