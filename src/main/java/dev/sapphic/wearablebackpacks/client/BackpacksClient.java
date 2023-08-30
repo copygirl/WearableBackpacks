@@ -40,6 +40,7 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -134,7 +135,7 @@ public final class BackpacksClient implements ClientModInitializer {
         final float quadBlue = MathHelper.clamp(blue, 0.0F, 1.0F);
         pipeline.quad(entry, quad, quadRed, quadGreen, quadBlue, light, overlay);
       } else {
-//                delegate.quad(entry, quad, 1.0F, 1.0F, 1.0F, light, overlay);
+//       delegate.quad(entry, quad, 1.0F, 1.0F, 1.0F, light, overlay);
       }
     }
   }
