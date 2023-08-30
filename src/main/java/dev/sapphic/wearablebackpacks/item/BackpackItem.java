@@ -1,6 +1,10 @@
 package dev.sapphic.wearablebackpacks.item;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import dev.sapphic.wearablebackpacks.Backpack;
+import dev.sapphic.wearablebackpacks.BackpackOptions;
+import dev.sapphic.wearablebackpacks.Backpacks;
 import dev.sapphic.wearablebackpacks.advancement.BackpackCriteria;
 import dev.sapphic.wearablebackpacks.block.BackpackBlock;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
@@ -14,6 +18,8 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
@@ -25,6 +31,8 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ModifiableWorld;
@@ -39,11 +47,12 @@ public final class BackpackItem extends DyeableArmorItem {
   private final Block block;
   
   public BackpackItem(final Block block, final Settings settings) {
-    super(BackpackMaterial.INSTANCE, EquipmentSlot.CHEST, settings);
+    super(BackpackMaterial.INSTANCE, Backpacks.config.enableChestArmorEquip ?  EquipmentSlot.CHEST : EquipmentSlot.MAINHAND, settings);
     Validate.isInstanceOf(BackpackBlock.class, block);
     this.block = block;
   }
-  
+
+
   private static BlockState getBlockStateFromTag(
     final BlockPos pos, final ModifiableWorld world, final ItemStack stack, final BlockState state
   ) {

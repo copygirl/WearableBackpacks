@@ -1,5 +1,7 @@
 package dev.sapphic.wearablebackpacks.event;
 
+import dev.sapphic.wearablebackpacks.BackpackOptions;
+import dev.sapphic.wearablebackpacks.Backpacks;
 import dev.sapphic.wearablebackpacks.client.BackpackWearer;
 import dev.sapphic.wearablebackpacks.inventory.WornBackpack;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
@@ -19,12 +21,14 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 
-public final class BackpackEntityEvents implements ModInitializer {
+import java.util.logging.Logger;
+
+public final class BackpackEntityEvents {
   public static final double MIN_REQUIRED_DISTANCE = 1.8;
   public static final double ANGLE_BOUNDS = 110;
   
-  private static ActionResult tryPlaceBackpack(
-    final PlayerEntity player, final World world, final Hand hand, final BlockHitResult hit
+  public static ActionResult tryPlaceBackpack(
+          final PlayerEntity player, final World world, final Hand hand, final BlockHitResult hit
   ) {
     if (player.isSneaking() && player.getMainHandStack().isEmpty() && player.getOffHandStack().isEmpty()) {
       final ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
@@ -41,9 +45,9 @@ public final class BackpackEntityEvents implements ModInitializer {
     return ActionResult.PASS;
   }
   
-  private static ActionResult tryOpenBackpack(
-    final PlayerEntity self, final World world, final Hand hand, final Entity wearer,
-    final EntityHitResult hit
+  public static ActionResult tryOpenBackpack(
+          final PlayerEntity self, final World world, final Hand hand, final Entity wearer,
+          final EntityHitResult hit
   ) {
     if (!(wearer instanceof LivingEntity)) {
       return ActionResult.PASS;
@@ -70,11 +74,5 @@ public final class BackpackEntityEvents implements ModInitializer {
       return Math.abs(angle) < (ANGLE_BOUNDS / 2);
     }
     return false;
-  }
-  
-  @Override
-  public void onInitialize() {
-    UseBlockCallback.EVENT.register(BackpackEntityEvents::tryPlaceBackpack);
-    UseEntityCallback.EVENT.register(BackpackEntityEvents::tryOpenBackpack);
   }
 }

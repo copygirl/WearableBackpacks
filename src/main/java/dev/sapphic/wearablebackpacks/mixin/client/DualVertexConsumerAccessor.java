@@ -1,4 +1,4 @@
-package dev.sapphic.wearablebackpacks.client.mixin;
+package dev.sapphic.wearablebackpacks.mixin.client;
 
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumers;

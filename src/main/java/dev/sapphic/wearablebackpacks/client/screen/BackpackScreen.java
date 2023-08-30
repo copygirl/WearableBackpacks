@@ -2,7 +2,7 @@ package dev.sapphic.wearablebackpacks.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.sapphic.wearablebackpacks.Backpacks;
-import dev.sapphic.wearablebackpacks.client.mixin.DrawableHelperAccessor;
+import dev.sapphic.wearablebackpacks.mixin.client.DrawableHelperAccessor;
 import dev.sapphic.wearablebackpacks.inventory.BackpackMenu;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

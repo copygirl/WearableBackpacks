@@ -1,4 +1,4 @@
-package dev.sapphic.wearablebackpacks.client.mixin;
+package dev.sapphic.wearablebackpacks.mixin.client;
 
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
