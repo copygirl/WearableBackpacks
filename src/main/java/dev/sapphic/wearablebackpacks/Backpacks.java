@@ -45,14 +45,8 @@ public final class Backpacks implements ModInitializer {
     Item.BLOCK_ITEMS.put(BLOCK, backpackItem);
     Registry.register(Registry.SCREEN_HANDLER, backpack, BackpackMenu.TYPE);
     Registry.register(Registry.RECIPE_SERIALIZER, BackpackDyeingRecipe.ID, BackpackDyeingRecipe.SERIALIZER);
-    LOGGER.info("Wearable Backpacks initializing");
     UseBlockCallback.EVENT.register(BackpackEntityEvents::tryPlaceBackpack);
-    if (Backpacks.config.enableEquippedInteraction) {
-      LOGGER.info("Wearable Backpacks chest armor equip enabled");
-      UseEntityCallback.EVENT.register(BackpackEntityEvents::tryOpenBackpack);
-    } else {
-        LOGGER.info("Wearable Backpacks chest armor equip disabled");
-    }
+    LOGGER.info("Wearable Backpacks initialized!");
   }
 
   public static final BlockEntityType<BackpackBlockEntity> BLOCK_ENTITY = new BlockEntityType<>(BackpackBlockEntity::new, ImmutableSet.of(BLOCK), null);

@@ -15,9 +15,9 @@ public interface BucketItemAccessor {
   @Accessor
   Fluid getFluid();
   
-  @Invoker
-  ItemStack callGetEmptiedStack(final ItemStack stack, final PlayerEntity player);
-  
+//  @Invoker
+//  ItemStack callGetEmptiedStack(final ItemStack stack, final PlayerEntity player);
+//
   @Invoker
   void invokePlayEmptyingSound(final PlayerEntity player, final WorldAccess world, final BlockPos pos);
 }

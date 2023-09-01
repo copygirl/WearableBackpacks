@@ -145,7 +145,8 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
             return ActionResult.FAIL;
           }
           if (!world.isClient) {
-            player.setStackInHand(hand, bucket.callGetEmptiedStack(stack, player));
+//            player.setStackInHand(hand, bucket.callGetEmptiedStack(stack, player));
+            player.setStackInHand(hand, BucketItem.getEmptiedStack(stack, player));
             bucket.invokePlayEmptyingSound(null, world, pos);
             backpack.clearColor();
             player.incrementStat(BackpackStats.CLEANED);
