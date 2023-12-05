@@ -18,6 +18,14 @@ repositories {
         name "modrinth"
         url "https://api.modrinth.com/maven"
     }	
+	maven {
+		name = "TerraformersMC"
+		url = "https://maven.terraformersmc.com/"
+	}
+	maven {
+		name = "Ladysnake Libs"
+		url = 'https://maven.ladysnake.org/releases'
+	}	
 }
 
 dependencies {
