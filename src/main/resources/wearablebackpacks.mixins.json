@@ -16,7 +16,6 @@
     "client.BlockModelRendererMixin",
     "client.DrawableHelperAccessor",
     "client.DualVertexConsumerAccessor",
-    "client.ItemRendererMixin",
     "client.MinecraftClientAccessor",
     "client.MinecraftClientMixin",
     "client.ModelLoaderAccessor"
