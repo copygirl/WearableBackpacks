@@ -57,7 +57,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
   
   public BackpackBlockEntity(BlockPos pos, BlockState state) {
     super(Backpacks.BLOCK_ENTITY, pos, state);
-    LOGGER.log(Level.INFO, "<INIT>>");
+    this.contents = DefaultedList.ofSize(this.rows * this.columns, ItemStack.EMPTY);
   }
   
   @Override
@@ -107,7 +107,7 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
   }
   
   @Override
-  public DefaultedList<ItemStack> getContents() {
+  public @NotNull DefaultedList<ItemStack> getContents() {
     return this.contents;
   }
   
@@ -134,7 +134,20 @@ public final class BackpackBlockEntity extends LootableContainerBlockEntity impl
     this.updateEmptyState();
     return stack;
   }
-  
+
+  @Override
+  public void readNbt(NbtCompound nbt) {
+    this.contents = DefaultedList.ofSize(this.size(), ItemStack.EMPTY);//updates the inventory
+    Inventories.readNbt(nbt, this.contents);
+    super.readNbt(nbt);
+  }
+
+  @Override
+  protected void writeNbt(NbtCompound nbt) {
+    super.writeNbt(nbt);
+    Inventories.writeNbt(nbt, this.contents);
+  }
+
   @Override
   public void setStack(final int slot, final ItemStack stack) {
     super.setStack(slot, stack);

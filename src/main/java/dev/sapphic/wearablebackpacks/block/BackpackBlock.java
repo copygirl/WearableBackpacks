@@ -118,6 +118,7 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
     if (be instanceof BackpackBlockEntity) {
       final ItemStack stack = player.getStackInHand(hand);
       final Backpack backpack = (Backpack) be;
+      player.incrementStat(BackpackStats.OPENED);
       if (stack.getItem() instanceof DyeItem) {
         if (!world.isClient) {
           final int newColor = this.getBlendedColor(backpack, (DyeItem) stack.getItem());
@@ -154,14 +155,11 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
           return ActionResult.success(world.isClient);
         }
       }
-      if (!world.isClient) {
-        NamedScreenHandlerFactory factory = (NamedScreenHandlerFactory) be;
-        player.openHandledScreen(factory);
-      }
-      player.incrementStat(BackpackStats.OPENED);
-      return ActionResult.success(world.isClient);
+      var factory = (NamedScreenHandlerFactory) be;
+      player.openHandledScreen(factory);
+      return ActionResult.SUCCESS;
     }
-    return ActionResult.FAIL;
+    return ActionResult.PASS;
   }
   
   @Override
