@@ -25,6 +25,9 @@ public class BackpackOptions implements ConfigData {
   @Comment("Enable other players to open your backpacks when equipped. (Requires restart)")
   public boolean enableEquippedInteraction = true;
 
+  @Comment("Whether it is possible to place the backpack on a Trinket slot (if installed).")
+  public boolean allowBackpackOnTrinketSlot = true;
+
   public static int getRows(final int rows) {
     return Math.max(Math.min(rows, 6), 1);
   }

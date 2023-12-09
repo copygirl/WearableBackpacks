@@ -8,6 +8,7 @@ import dev.sapphic.wearablebackpacks.Backpacks;
 import dev.sapphic.wearablebackpacks.advancement.BackpackCriteria;
 import dev.sapphic.wearablebackpacks.block.BackpackBlock;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
+import dev.sapphic.wearablebackpacks.integration.TrinketsIntegration;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.advancement.criterion.Criteria;
@@ -18,6 +19,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
@@ -102,7 +104,7 @@ public final class BackpackItem extends DyeableArmorItem {
     final ItemStack backpack, final World world, final Entity entity, final int slot, final boolean selected
   ) {
     super.inventoryTick(backpack, world, entity, slot, selected);
-    if (!(entity instanceof PlayerEntity)) {
+    if (!(entity instanceof PlayerEntity player)) {
       return;
     }
     if (!world.isClient) {
@@ -113,19 +115,24 @@ public final class BackpackItem extends DyeableArmorItem {
         BackpackCriteria.DYED.trigger((ServerPlayerEntity) entity);
       }
     }
-    if ((slot != EquipmentSlot.CHEST.getEntitySlotId()) && !((PlayerEntity) entity).getAbilities().creativeMode) {
-      final DefaultedList<ItemStack> stacks = Backpack.getContents(backpack);
-      boolean hasContents = false;
-      for (final ItemStack stack : stacks) {
-        if (!stack.isEmpty()) {
-          hasContents = true;
-          ((PlayerEntity) entity).getInventory().offerOrDrop(stack);
-        }
-      }
-      if (hasContents) {
-        backpack.removeSubNbt("BlockEntityTag");
-      }
+    if (TrinketsIntegration.isBackpackEquipped(player)) {
+        return;
     }
+    // TODO: why is this for?. it was crashing the game when clicking the backpack
+//
+//    if ((slot != EquipmentSlot.CHEST.getEntitySlotId()) && !((PlayerEntity) entity).getAbilities().creativeMode) {
+//      final DefaultedList<ItemStack> stacks = Backpack.getContents(backpack);
+//      boolean hasContents = false;
+//      for (final ItemStack stack : stacks) {
+//        if (!stack.isEmpty()) {
+//          hasContents = true;
+//          ((PlayerEntity) entity).getInventory().offerOrDrop(stack);
+//        }
+//      }
+//      if (hasContents) {
+//        backpack.removeSubNbt("BlockEntityTag");
+//      }
+//    }
   }
   
   @Override

@@ -2,15 +2,22 @@ package dev.sapphic.wearablebackpacks.block;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import dev.emi.trinkets.api.SlotReference;
+import dev.emi.trinkets.api.TrinketEnums;
+import dev.emi.trinkets.api.TrinketInventory;
+import dev.emi.trinkets.api.TrinketsApi;
 import dev.sapphic.wearablebackpacks.Backpack;
+import dev.sapphic.wearablebackpacks.BackpackOptions;
 import dev.sapphic.wearablebackpacks.Backpacks;
 import dev.sapphic.wearablebackpacks.advancement.BackpackCriteria;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
+import dev.sapphic.wearablebackpacks.integration.TrinketsIntegration;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import dev.sapphic.wearablebackpacks.mixin.BucketItemAccessor;
 import dev.sapphic.wearablebackpacks.stat.BackpackStats;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -51,6 +58,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -239,16 +247,31 @@ public final class BackpackBlock extends BlockWithEntity implements Waterloggabl
   @Override
   public void onBreak(final World world, final BlockPos pos, final BlockState state, final PlayerEntity player) {
     final @Nullable BlockEntity be = world.getBlockEntity(pos);
-    if ((be instanceof BackpackBlockEntity) && player.isSneaking() && !player.hasStackEquipped(EquipmentSlot.CHEST)) {
+    boolean trinketsSupported = Backpacks.config.allowBackpackOnTrinketSlot;
+    boolean chestSlotInUse = player.hasStackEquipped(EquipmentSlot.CHEST) && player.getEquippedStack(EquipmentSlot.CHEST).getItem() == Backpacks.backpackItem;
+    boolean trinketSlotInUse = TrinketsIntegration.isBackpackEquipped(player);
+    boolean alreadyWearingBackpack = chestSlotInUse || trinketSlotInUse;
+    if ((be instanceof BackpackBlockEntity) && player.isSneaking() && !alreadyWearingBackpack) {
       final ItemStack stack = this.getPickStack(be, world, pos, state);
       final NbtCompound tag = stack.getOrCreateSubNbt("BlockEntityTag");
       Inventories.writeNbt(tag, ((Backpack) be).getContents());
-      player.equipStack(EquipmentSlot.CHEST, stack);
+      // Both slots are empty
+      // prefer trinket slot
+      if (trinketsSupported) {
+        TrinketsIntegration.equipBackpack(stack, player);
+      } else {
+        player.equipStack(EquipmentSlot.CHEST, stack);
+      }
       super.onBreak(world, pos, state, player);
       world.removeBlockEntity(pos);
-      return;
     }
     super.onBreak(world, pos, state, player);
+  }
+
+  private void equipOnBreak(final World world, final BlockPos pos, final BlockState state, final PlayerEntity player, BackpackBlockEntity be, EquipmentSlot slot) {
+
+
+
   }
   
   @Override
