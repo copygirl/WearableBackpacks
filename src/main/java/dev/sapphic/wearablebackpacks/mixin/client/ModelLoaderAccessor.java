@@ -1,4 +1,4 @@
-package dev.sapphic.wearablebackpacks.client.mixin;
+package dev.sapphic.wearablebackpacks.mixin.client;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -17,7 +17,7 @@ public interface ModelLoaderAccessor {
   static Map<Identifier, StateManager<Block, BlockState>> getStaticDefinitions() {
     throw new AssertionError();
   }
-
+  
   @Mutable
   @Accessor("STATIC_DEFINITIONS")
   static void setStaticDefinitions(final Map<Identifier, StateManager<Block, BlockState>> map) {

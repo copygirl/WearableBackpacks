@@ -10,20 +10,20 @@ import net.minecraft.util.Identifier;
 
 public final class SimpleCriterion extends AbstractCriterion<SimpleCriterion.Conditions> {
   private final Identifier id;
-
+  
   SimpleCriterion(final Identifier id) {
     this.id = id;
   }
-
+  
   @Override
   public Identifier getId() {
     return this.id;
   }
-
+  
   public void trigger(final ServerPlayerEntity player) {
-    this.test(player, conditions -> true);
+    this.trigger(player, conditions -> true);
   }
-
+  
   @Override
   protected Conditions conditionsFromJson(
     final JsonObject json, final EntityPredicate.Extended predicate,
@@ -31,7 +31,7 @@ public final class SimpleCriterion extends AbstractCriterion<SimpleCriterion.Con
   ) {
     return new Conditions(predicate);
   }
-
+  
   public final class Conditions extends AbstractCriterionConditions {
     private Conditions(final EntityPredicate.Extended predicate) {
       super(SimpleCriterion.this.id, predicate);

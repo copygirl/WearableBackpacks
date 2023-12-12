@@ -5,10 +5,11 @@
   "version": "$version",
   "description": "Adds beautiful, balanced backpacks",
   "license": "MIT",
+  "icon": "assets/wearablebackpacks/icon.png",
   "depends": {
-    "fabricloader": ">=0.11.6",
-    "minecraft": "1.16.5",
-    "java": ">=8"
+    "fabricloader": "*",
+    "minecraft": "1.19.2",
+    "java": ">=17"
   },
   "entrypoints": {
     "client": [
@@ -18,20 +19,22 @@
     "main": [
       "dev.sapphic.wearablebackpacks.Backpacks",
       "dev.sapphic.wearablebackpacks.advancement.BackpackCriteria",
-      "dev.sapphic.wearablebackpacks.event.BackpackEntityEvents",
       "dev.sapphic.wearablebackpacks.loot.BackpackLootFunctions",
       "dev.sapphic.wearablebackpacks.network.BackpackServerNetwork",
       "dev.sapphic.wearablebackpacks.stat.BackpackStats"
-    ]
+    ],
+    "modmenu": ["dev.sapphic.wearablebackpacks.integration.ModMenuIntegration"]
   },
   "mixins": [
-    "mixins/wearablebackpacks/mixins.client.json",
-    "mixins/wearablebackpacks/mixins.server.json"
+    "wearablebackpacks.mixins.json"
   ],
   "authors": [
     "Chloe Dawn",
     "copygirl",
-    "asie"
+    "asie",
+    "DaniKing",
+    "Sunconure11",
+    "HauntedPasta1"
   ],
   "contact": {
     "homepage": "https://bit.ly/33owdaZ",

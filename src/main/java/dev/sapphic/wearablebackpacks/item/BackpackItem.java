@@ -1,9 +1,14 @@
 package dev.sapphic.wearablebackpacks.item;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import dev.sapphic.wearablebackpacks.Backpack;
+import dev.sapphic.wearablebackpacks.BackpackOptions;
+import dev.sapphic.wearablebackpacks.Backpacks;
 import dev.sapphic.wearablebackpacks.advancement.BackpackCriteria;
 import dev.sapphic.wearablebackpacks.block.BackpackBlock;
 import dev.sapphic.wearablebackpacks.block.entity.BackpackBlockEntity;
+import dev.sapphic.wearablebackpacks.integration.TrinketsIntegration;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.advancement.criterion.Criteria;
@@ -14,12 +19,11 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.DyeableArmorItem;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -29,29 +33,32 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ModifiableWorld;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.Validate;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
 
 public final class BackpackItem extends DyeableArmorItem {
   private final Block block;
-
+  
   public BackpackItem(final Block block, final Settings settings) {
-    super(BackpackMaterial.INSTANCE, EquipmentSlot.CHEST, settings);
+    super(BackpackMaterial.INSTANCE, Backpacks.config.enableChestArmorEquip ?  EquipmentSlot.CHEST : EquipmentSlot.MAINHAND, settings);
     Validate.isInstanceOf(BackpackBlock.class, block);
     this.block = block;
   }
 
+
   private static BlockState getBlockStateFromTag(
     final BlockPos pos, final ModifiableWorld world, final ItemStack stack, final BlockState state
   ) {
-    final @Nullable NbtCompound blockStateTag = stack.getSubTag("BlockStateTag");
+    final @Nullable NbtCompound blockStateTag = stack.getSubNbt("BlockStateTag");
     if (blockStateTag != null) {
       BlockState parsedState = state;
       final StateManager<Block, BlockState> container = state.getBlock().getStateManager();
@@ -71,13 +78,13 @@ public final class BackpackItem extends DyeableArmorItem {
     }
     return state;
   }
-
+  
   private static <T extends Comparable<T>> BlockState with(
     final BlockState state, final Property<T> property, final String value
   ) {
     return property.parse(value).map(v -> state.with(property, v)).orElse(state);
   }
-
+  
   @Override
   public ActionResult useOnBlock(final ItemUsageContext context) {
     final ActionResult placeResult = this.place(new ItemPlacementContext(context));
@@ -86,18 +93,18 @@ public final class BackpackItem extends DyeableArmorItem {
     }
     return placeResult;
   }
-
+  
   @Override
   public String getTranslationKey() {
     return this.block.getTranslationKey();
   }
-
+  
   @Override
   public void inventoryTick(
     final ItemStack backpack, final World world, final Entity entity, final int slot, final boolean selected
   ) {
     super.inventoryTick(backpack, world, entity, slot, selected);
-    if (!(entity instanceof PlayerEntity)) {
+    if (!(entity instanceof PlayerEntity player)) {
       return;
     }
     if (!world.isClient) {
@@ -108,21 +115,26 @@ public final class BackpackItem extends DyeableArmorItem {
         BackpackCriteria.DYED.trigger((ServerPlayerEntity) entity);
       }
     }
-    if ((slot != EquipmentSlot.CHEST.getEntitySlotId()) && !((PlayerEntity) entity).abilities.creativeMode) {
-      final DefaultedList<ItemStack> stacks = Backpack.getContents(backpack);
-      boolean hasContents = false;
-      for (final ItemStack stack : stacks) {
-        if (!stack.isEmpty()) {
-          hasContents = true;
-          ((PlayerEntity) entity).inventory.offerOrDrop(world, stack);
-        }
-      }
-      if (hasContents) {
-        backpack.removeSubTag("BlockEntityTag");
-      }
+    if (TrinketsIntegration.isBackpackEquipped(player)) {
+        return;
     }
+    // TODO: why is this for?. it was crashing the game when clicking the backpack
+//
+//    if ((slot != EquipmentSlot.CHEST.getEntitySlotId()) && !((PlayerEntity) entity).getAbilities().creativeMode) {
+//      final DefaultedList<ItemStack> stacks = Backpack.getContents(backpack);
+//      boolean hasContents = false;
+//      for (final ItemStack stack : stacks) {
+//        if (!stack.isEmpty()) {
+//          hasContents = true;
+//          ((PlayerEntity) entity).getInventory().offerOrDrop(stack);
+//        }
+//      }
+//      if (hasContents) {
+//        backpack.removeSubNbt("BlockEntityTag");
+//      }
+//    }
   }
-
+  
   @Override
   @Environment(EnvType.CLIENT)
   public void appendTooltip(
@@ -132,14 +144,14 @@ public final class BackpackItem extends DyeableArmorItem {
     super.appendTooltip(stack, world, tooltip, context);
     this.block.appendTooltip(stack, world, tooltip, context);
   }
-
+  
   @Override
   public void appendStacks(final ItemGroup group, final DefaultedList<ItemStack> stacks) {
     if (this.isIn(group)) {
-      this.block.addStacksForDisplay(group, stacks);
+      this.block.appendStacks(group, stacks);
     }
   }
-
+  
   private @Nullable BlockState getPlacementState(final ItemPlacementContext context) {
     final @Nullable BlockState state = this.block.getPlacementState(context);
     if ((state != null) && state.canPlaceAt(context.getWorld(), context.getBlockPos())) {
@@ -151,7 +163,7 @@ public final class BackpackItem extends DyeableArmorItem {
     }
     return null;
   }
-
+  
   public ActionResult place(final ItemPlacementContext context) {
     if (!context.canPlace()) {
       return ActionResult.FAIL;

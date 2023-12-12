@@ -28,14 +28,14 @@ import java.util.List;
  */
 public final class BackpackDyeingRecipe extends SpecialCraftingRecipe {
   public static final Identifier ID = new Identifier(Backpacks.ID, "backpack_dyeing");
-
+  
   public static final SpecialRecipeSerializer<BackpackDyeingRecipe> SERIALIZER =
     new SpecialRecipeSerializer<>(BackpackDyeingRecipe::new);
-
+  
   private BackpackDyeingRecipe(final Identifier id) {
     super(id);
   }
-
+  
   @Override
   public boolean matches(final CraftingInventory matrix, final World world) {
     ItemStack backpack = ItemStack.EMPTY;
@@ -58,7 +58,7 @@ public final class BackpackDyeingRecipe extends SpecialCraftingRecipe {
     }
     return !backpack.isEmpty() && !dyes.isEmpty();
   }
-
+  
   @Override
   public ItemStack craft(final CraftingInventory matrix) {
     ItemStack backpack = ItemStack.EMPTY;
@@ -88,13 +88,13 @@ public final class BackpackDyeingRecipe extends SpecialCraftingRecipe {
     }
     return ItemStack.EMPTY;
   }
-
+  
   @Override
   @Environment(EnvType.CLIENT)
   public boolean fits(final int width, final int height) {
     return (width * height) >= 2;
   }
-
+  
   @Override
   public RecipeSerializer<?> getSerializer() {
     return SERIALIZER;

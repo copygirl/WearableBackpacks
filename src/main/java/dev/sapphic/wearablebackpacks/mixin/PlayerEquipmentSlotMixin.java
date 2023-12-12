@@ -16,7 +16,7 @@ abstract class PlayerEquipmentSlotMixin extends Slot {
   PlayerEquipmentSlotMixin(final Inventory inventory, final int index, final int x, final int y) {
     super(inventory, index, x, y);
   }
-
+  
   @Inject(method = "canTakeItems(Lnet/minecraft/entity/player/PlayerEntity;)Z",
     at = @At(value = "RETURN", ordinal = 1), require = 1, allow = 1, cancellable = true)
   private void retainBackpackIfNonEmpty(final PlayerEntity player, final CallbackInfoReturnable<Boolean> cir) {

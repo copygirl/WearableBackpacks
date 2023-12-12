@@ -1,4 +1,12 @@
 {
+  "text.autoconfig.wearablebackpacks.option.rows": "The number of rows in the backpack",
+  "text.autoconfig.wearablebackpacks.option.cols": "The number of columns in the backpack",
+  "text.autoconfig.wearablebackpacks.option.damage": "Damage",
+  "text.autoconfig.wearablebackpacks.option.defense": "Defense",
+  "text.autoconfig.wearablebackpacks.option.toughness": "Toughness",
+  "text.autoconfig.wearablebackpacks.option.enableChestArmorEquip": "Equip as chest armor",
+  "text.autoconfig.wearablebackpacks.option.enableEquippedInteraction": "Enable equipped interaction",
+  "text.autoconfig.wearablebackpacks.option.allowBackpackOnTrinketSlot": "Allow backpack on Trinket slot",
   "advancements.wearablebackpacks.deeper_pockets.title": "Deeper Pockets",
   "advancements.wearablebackpacks.deeper_pockets.description": "Equip a wearable backpack",
   "advancements.wearablebackpacks.bursting_with_color.title": "Bursting With Color",

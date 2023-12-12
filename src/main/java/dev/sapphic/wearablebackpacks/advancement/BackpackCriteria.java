@@ -8,11 +8,11 @@ import net.minecraft.util.Identifier;
 public final class BackpackCriteria implements ModInitializer {
   public static final SimpleCriterion EQUIPPED = criterion("backpack_equipped");
   public static final SimpleCriterion DYED = criterion("backpack_dyed");
-
+  
   private static SimpleCriterion criterion(final String name) {
     return new SimpleCriterion(new Identifier(Backpacks.ID, name));
   }
-
+  
   @Override
   public void onInitialize() {
     CriterionRegistry.register(EQUIPPED);

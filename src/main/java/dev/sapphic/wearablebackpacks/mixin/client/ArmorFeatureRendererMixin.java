@@ -1,6 +1,7 @@
-package dev.sapphic.wearablebackpacks.client.mixin;
+package dev.sapphic.wearablebackpacks.mixin.client;
 
 import dev.sapphic.wearablebackpacks.client.BackpacksClient;
+import dev.sapphic.wearablebackpacks.integration.TrinketsIntegration;
 import dev.sapphic.wearablebackpacks.item.BackpackItem;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
@@ -24,7 +25,7 @@ abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extends Biped
   ArmorFeatureRendererMixin(final FeatureRendererContext<T, M> context) {
     super(context);
   }
-
+  
   @Inject(
     method = "renderArmor(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/entity/EquipmentSlot;ILnet/minecraft/client/render/entity/model/BipedEntityModel;)V",
     at = @At(shift = At.Shift.BEFORE, value = "INVOKE", opcode = Opcodes.INVOKEVIRTUAL,
@@ -34,6 +35,18 @@ abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extends Biped
   private void renderBackpack(final MatrixStack stack, final VertexConsumerProvider pipelines, final T entity, final EquipmentSlot slot, final int light, final A model, final CallbackInfo ci, final ItemStack itemStack) {
     if (itemStack.getItem() instanceof BackpackItem) {
       BackpacksClient.renderBackpack(stack, pipelines, itemStack, entity, light, this.getContextModel());
+      ci.cancel();
+    }
+  }
+  @Inject(
+          method = "Lnet/minecraft/client/render/entity/feature/ArmorFeatureRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V",
+          at = @At("HEAD"),
+          cancellable = true
+  )
+  private void renderTrinketsBackpack(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, final CallbackInfo ci) {
+    ItemStack backpack = TrinketsIntegration.getBackpack(livingEntity);
+    if (backpack.getItem() instanceof BackpackItem) {
+      BackpacksClient.renderBackpack(matrixStack, vertexConsumerProvider, backpack, livingEntity, i, this.getContextModel());
       ci.cancel();
     }
   }

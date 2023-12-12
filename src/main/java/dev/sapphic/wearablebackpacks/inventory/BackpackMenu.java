@@ -10,38 +10,35 @@ import net.minecraft.screen.slot.Slot;
 public final class BackpackMenu extends ScreenHandler {
   public static final int HOTBAR_ROWS = 1;
   public static final int HOTBAR_COLS = 9;
-
+  
   public static final int INVENTORY_ROWS = 3;
   public static final int INVENTORY_COLS = 9;
-
+  
   public static final int HOTBAR_SLOTS = HOTBAR_COLS * HOTBAR_ROWS;
   public static final int INVENTORY_SLOTS = INVENTORY_COLS * INVENTORY_ROWS;
-
+  
   public static final int TITLE_PADDING = 18;
   public static final int SLOT_DIMENSIONS = 18;
-
+  
   public static final int THIN_EDGE = 8;
-
-  public static final ScreenHandlerType<BackpackMenu> TYPE = new ScreenHandlerType<>(BackpackMenu::new);
-
   private final BackpackContainer backpack;
-
+  
   public BackpackMenu(final int containerId, final PlayerInventory inventory) {
     this(containerId, inventory, new WornBackpack());
   }
-
+  
   public BackpackMenu(final int containerId, final PlayerInventory inventory, final BackpackContainer backpack) {
     super(TYPE, containerId);
     final int rows = backpack.getRows();
     final int columns = backpack.getColumns();
-
+    
     backpack.onOpen(inventory.player);
-
+    
     this.backpack = backpack;
-
+    
     final int backpackXOffset;
     final int playerXOffset;
-
+    
     if (columns > 9) {
       backpackXOffset = 0;
       playerXOffset = (18 * (columns - 9)) / 2;
@@ -57,11 +54,11 @@ public final class BackpackMenu extends ScreenHandler {
         this.addSlot(new BackpackSlot(backpack, index, x, y));
       }
     }
-
+    
     final int yOffset = (rows - 4) * 18;
-
+    
     // TODO Fix magic numbers
-
+    
     for (int row = 0; row < 3; ++row) {
       for (int column = 0; column < 9; ++column) {
         final int index = column + (row * 9) + 9;
@@ -70,26 +67,26 @@ public final class BackpackMenu extends ScreenHandler {
         this.addSlot(new Slot(inventory, index, x, y));
       }
     }
-
+    
     for (int column = 0; column < 9; ++column) {
       final int x = playerXOffset + 8 + (column * 18);
       final int y = 161 + yOffset;
       this.addSlot(new Slot(inventory, column, x, y));
     }
   }
-
+  
   public int getRows() {
     return this.backpack.getRows();
   }
-
+  
   public int getColumns() {
     return this.backpack.getColumns();
   }
-
+  
   private int getSlotCount() {
     return HOTBAR_SLOTS + INVENTORY_SLOTS + (this.getColumns() * this.getRows());
   }
-
+  
   @Override
   public ItemStack transferSlot(final PlayerEntity player, final int index) {
     ItemStack original = ItemStack.EMPTY;
@@ -115,16 +112,20 @@ public final class BackpackMenu extends ScreenHandler {
       slot.onTakeItem(player, stack);
     }
     return original;
-  }
-
+  }  public static final ScreenHandlerType<BackpackMenu> TYPE = new ScreenHandlerType<>(BackpackMenu::new);
+  
   @Override
   public void close(final PlayerEntity player) {
     super.close(player);
     this.backpack.onClose(player);
   }
-
+  
   @Override
   public boolean canUse(final PlayerEntity player) {
     return this.backpack.canPlayerUse(player);
   }
+  
+
+  
+  
 }
